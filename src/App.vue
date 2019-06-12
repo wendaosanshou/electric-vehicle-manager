@@ -12,4 +12,15 @@
   text-align: center;
   color: #2c3e50;
 }
+
+.ly-flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.el-btn {
+  cursor: pointer;
+}
 </style>

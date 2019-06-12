@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
+import UserManage from './views/system-settings/UserManage.vue';
 
 Vue.use(Router);
 
@@ -9,9 +10,14 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [{
-      path: '/home',
+      path: '/',
       name: 'home',
       component: Home,
+      children: [{
+        path: '/user-manage',
+        name: 'UserManage',
+        component: UserManage,
+      }]
     },
     {
       path: '/about',

@@ -28,6 +28,9 @@
         </div>
       </div>
       <div class="home-title-crumbs">所在位置：xxx</div>
+      <div class="home-body">
+        <router-view/>
+      </div>
     </div>
   </div>
 </template>
@@ -49,7 +52,7 @@ export default {
           isActive: false
         },
         {
-          name: "定位监控",
+          name: "系统设置",
           logo: "jiankog_icon_normal@2x.png",
           isActive: false
         }
@@ -147,8 +150,13 @@ export default {
     }
   }
   .home-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     flex-grow: 1;
     min-width: 1053px;
+    min-height: 100vh;
     .home-content-title {
       box-sizing: border-box;
       display: flex;
@@ -204,6 +212,10 @@ export default {
       font-weight: 400;
       text-align: left;
       background: rgba(245, 245, 246, 1);
+    }
+    .home-body {
+      width: 100%;
+      flex-grow: 1;
     }
   }
 }
