@@ -51,7 +51,7 @@ export default {
     },
     onLogin() {
       this.$router.push({
-        path: "/home"
+        path: "/user-manage"
       });
     }
   },
@@ -60,15 +60,17 @@ export default {
 </script>
 
 <style lang="scss">
+@import "~@/assets/style/function.scss";
+
 .page-login {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   .page-login-body {
     box-sizing: border-box;
     width: 100%;
-    height: 100vh;
-    padding-top: 15%;
-    background: url("../assets/login/login-bg.png");
+    min-height: 100vh;
+    padding-top: d2r(266px);
+    background: url("~@/assets/login/login-bg.png");
     background-size: 100% 100%;
   }
   .login-form {
@@ -76,8 +78,8 @@ export default {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    width: 767px;
-    height: 400px;
+    width: d2r(1150px);
+    height: d2r(600px);
     margin: 0 auto;
     .login-form-pic {
       box-sizing: border-box;
@@ -85,10 +87,10 @@ export default {
       flex-direction: column;
       justify-content: flex-start;
       align-items: center;
-      width: 295px;
-      height: 400px;
+      width: d2r(443px);
+      height: d2r(600px);
       border-radius: 5px 0px 0px 5px;
-      background: url("../assets/login/login-form-image.png");
+      background: url("~@/assets/login/login-form-image.png");
       background-size: 100% 100%;
     }
     .login-form-body {
@@ -97,13 +99,13 @@ export default {
       flex-direction: column;
       justify-content: flex-start;
       align-items: flex-start;
-      width: 471px;
-      height: 400px;
-      padding-top: 49px;
-      padding-left: 69px;
+      width: d2r(707px);
+      height: d2r(600px);
+      padding-top: d2r(73px);
+      padding-left: d2r(103px);
       background: #ffffff;
       .form-title {
-        font-size: 29px;
+        font-size: d2r(43px);
         font-family: Helvetica-Bold;
         font-weight: bold;
         padding: 0;
@@ -113,26 +115,26 @@ export default {
       .form-ipt-wraper {
         box-sizing: border-box;
         position: relative;
-        margin-top: 24px;
-        width: 333px;
-        height: 33px;
-        padding-left: 37px;
+        margin-top: d2r(38px);
+        width: d2r(500px);
+        height: d2r(50px);
+        padding-left: d2r(55px);
         background: rgba(247, 247, 247, 1);
         border: 1px solid rgba(203, 203, 203, 1);
         .form-icon {
           position: absolute;
           display: block;
-          left: 13px;
+          left: d2r(13px);
           top: 50%;
-          width: 14px;
-          height: 14px;
+          width: d2r(21px);
+          height: d2r(21px);
           transform: translateY(-50%);
         }
         .form-ipt {
           box-sizing: border-box;
           width: 100%;
           height: 100%;
-          font-size: 11px;
+          font-size: d2r(17px);
           font-family: PingFangSC-Regular;
           font-weight: 400;
           color: rgba(0, 0, 0, 1);
@@ -142,13 +144,13 @@ export default {
       }
       .form-username {
         .icon-username {
-          background: url("../assets/login/icon-user.png");
+          background: url("~@/assets/login/icon-user.png");
           background-size: 100% 100%;
         }
       }
       .form-password {
         .icon-password {
-          background: url("../assets/login/icon-lock.png");
+          background: url("~@/assets/login/icon-lock.png");
           background-size: 100% 100%;
         }
       }
@@ -162,22 +164,22 @@ export default {
         border: 0;
         .form-verifycode-ipt-wraper {
           position: relative;
-          width: 220px;
-          height: 33px;
-          padding-left: 37px;
+          width: d2r(330px);
+          height: d2r(50px);
+          padding-left: d2r(55px);
           background: rgba(247, 247, 247, 1);
           border: 1px solid rgba(203, 203, 203, 1);
           .icon-verifycode {
-            background: url("../assets/login/icon-security.png");
+            background: url("~@/assets/login/icon-security.png");
             background-size: 100% 100%;
           }
         }
         .form-verifycode-number {
-          width: 107px;
-          height: 33px;
-          line-height: 33px;
-          margin-left: 7px;
-          font-size: 14px;
+          width: d2r(160px);
+          height: d2r(50px);
+          line-height: d2r(50px);
+          margin-left: d2r(10px);
+          font-size: d2r(30px);
           color: #ffffff;
           background: rgba(255, 117, 37, 1);
         }
@@ -188,39 +190,37 @@ export default {
         justify-content: flex-start;
         align-items: center;
         position: relative;
-        margin-top: 13px;
-        width: 145px;
-        height: 19px;
+        margin-top: d2r(27px);
         .remain-password-checkbox {
           display: block;
-          width: 13px;
-          height: 13px;
+          width: d2r(20px);
+          height: d2r(20px);
           cursor: pointer;
-          background: url("../assets/login/icon-checkbox-gray.png");
+          background: url("~@/assets/login/icon-checkbox-gray.png");
           background-size: 100% 100%;
           &.active {
-            background: url("../assets/login/icon-checkbox-yellow.png");
+            background: url("~@/assets/login/icon-checkbox-yellow.png");
             background-size: 100% 100%;
           }
         }
         .remain-password-label {
-          margin-left: 4px;
-          font-size: 12px;
+          margin-left: d2r(4px);
+          font-size: d2r(20px);
           font-family: PingFangSC-Regular;
           font-weight: 400;
           color: rgba(155, 155, 155, 1);
         }
       }
       .form-btn-login {
-        width: 333px;
-        height: 44px;
-        line-height: 44px;
-        font-size: 15px;
+        width: d2r(500px);
+        height: d2r(60px);
+        line-height: d2r(60px);
+        font-size: d2r(22px);
         font-family: PingFangSC-Medium;
         font-weight: 500;
         color: rgba(255, 255, 255, 1);
         background: rgba(255, 117, 37, 1);
-        margin-top: 14px;
+        margin-top: d2r(23px);
       }
     }
   }

@@ -1,0 +1,5 @@
+$basic-ratio: 1.4;
+
+@function d2r($designpx) {
+    @return $designpx / $basic-ratio;
+}

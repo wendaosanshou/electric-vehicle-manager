@@ -1,15 +1,25 @@
 <template>
   <div class="user-manage">
-    <h3 class="user-manage-title">用户管理</h3>
+    <h3 class="user-manage-title">
+      <i class="icon-dot"></i>
+      <span class="title-label">用户管理</span>
+    </h3>
     <div class="user-manage-header">
       <div class="user-manage-menu">
         <div class="menu-account menu-ipt-wraper">
           <span class="menu-label">账号</span>
-          <el-input size="small" class="menu-ipt" v-model="input" placeholder="请输入手机号"></el-input>
+          <el-input class="menu-ipt" size="mini" v-model="account" placeholder="请输入手机号"></el-input>
         </div>
         <div class="menu-user-name menu-ipt-wraper">
           <span class="menu-label">角色姓名</span>
-          <el-input size="small" class="menu-ipt" v-model="input" placeholder="角色姓名"></el-input>
+          <el-select class="menu-ipt" size="mini" v-model="userName" placeholder="请选择">
+            <el-option
+              v-for="item in userNames"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </div>
         <div class="menu-btn-wraper">
           <div class="el-btn btn-search">查询</div>
@@ -17,41 +27,67 @@
         </div>
       </div>
       <div class="user-manage-crud ly-flex-row">
-        <div class="el-btn crud-btn-add crud-btn ly-flex-row">
+        <div class="el-btn crud-btn-add crud-btn ly-flex-row" @click="handleUserAdd">
           <i class="icon-btn-add"></i>
           <span class="btn-content">添加用户</span>
         </div>
-        <div class="el-btn crud-btn-delete crud-btn ly-flex-row">
+        <user-delete/>
+        <!-- <div class="el-btn crud-btn-delete crud-btn ly-flex-row">
           <i class="icon-btn-delete"></i>
           <span class="btn-content">删除用户</span>
-        </div>
-        <div class="el-btn crud-btn-edit crud-btn ly-flex-row">
+        </div> -->
+        <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEidt">
           <i class="icon-btn-edit"></i>
           <span class="btn-content">编辑用户</span>
         </div>
       </div>
     </div>
     <dir class="user-manage-export">
-      <el-checkbox class="checkbox-select-all" v-model="checked">全选</el-checkbox>
-      <el-button size="mini" class="btn-export">导出</el-button>
+      <el-checkbox size="mini" class="checkbox-select-all" v-model="checked">全选</el-checkbox>
+      <el-button size="mini" class="button-fix btn-export">导出</el-button>
     </dir>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table class="table-fix" size="mini" :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="date" label="序号" width="180"></el-table-column>
       <el-table-column prop="name" label="账号（手机号）" width="180"></el-table-column>
       <el-table-column prop="address" label="账号姓名"></el-table-column>
-      <el-table-column prop="address" label="所属组织（业务办理点）"></el-table-column>
+      <el-table-column prop="address" label="所属组织（业务办理点）" width="220"></el-table-column>
       <el-table-column prop="address" label="手机号码"></el-table-column>
       <el-table-column prop="address" label="邮箱"></el-table-column>
       <el-table-column prop="address" label="备注"></el-table-column>
     </el-table>
+    <div class="pagination-wraper">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage4"
+        :page-sizes="[100, 200, 300, 400]"
+        :page-size="100"
+        layout="prev, pager, next, jumper"
+        :total="400"
+      ></el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
+import UserDelete from './UserDelete'
+
 export default {
   data() {
     return {
+      account: '',
+      userName: 0,
+      userNames: [{
+        value: 0,
+        label: '全部'
+      },{
+        value: 1,
+        label: '超级系统管理员'
+      },{
+        value: 2,
+        label: '系统管理员'
+      }],
       tableData: [
         {
           date: "2016-05-02",
@@ -75,28 +111,61 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    handleUserAdd() {
+      this.$router.push({
+        path: 'user-add'
+      })
+    },
+    handleUserEidt() {
+      this.$router.push({
+        path: 'user-edit'
+      })
+    }
+  },
+  components: {
+    UserDelete
   }
 };
 </script>
 
 <style lang="scss">
+$basic-ratio: 1.4;
+
+@function d2r($designpx) {
+  @return $designpx / $basic-ratio;
+}
+
 .user-manage {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 0 25px 41px 27px;
+  padding: 0 d2r(38px) d2r(62px) d2r(42px);
   background: #ffffff;
 }
 
 .user-manage-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
-  height: 47px;
-  line-height: 47px;
-  font-size: 11px;
-  font-family: PingFangSC-Regular;
-  font-weight: 400;
+  height: d2r(70px);
   color: rgba(59, 72, 89, 1);
-  text-align: left;
+  .icon-dot {
+    width: d2r(12px);
+    height: d2r(12px);
+    border-radius: 100%;
+    background: #ff7525;
+  }
+  .title-label {
+    margin-left: d2r(10px);
+    font-size: d2r(17px);
+    font-family: PingFangSC-Regular;
+    font-weight: 400;
+    color: #3b4859;
+  }
 }
 
 .user-manage-header {
@@ -111,8 +180,8 @@ export default {
     justify-content: flex-start;
     align-items: center;
     width: auto;
-    height: 53px;
-    padding: 0 25px 0 15px;
+    height: d2r(80px);
+    padding: 0 d2r(37px) 0 d2r(23px);
     background: #f5f5f6;
     .menu-ipt-wraper {
       display: flex;
@@ -122,45 +191,44 @@ export default {
       .menu-label {
         display: block;
         width: auto;
-        height: 15px;
-        font-size: 9px;
+        font-size: d2r(14px);
         font-family: PingFangSC-Regular;
         font-weight: 400;
         color: rgba(59, 72, 89, 1);
         white-space: nowrap;
       }
       .menu-ipt {
-        margin-left: 4px;
+        margin-left: d2r(6px);
       }
     }
     .menu-account {
     }
     .menu-user-name {
-      margin-left: 16px;
+      margin-left: d2r(24px);
     }
     .menu-btn-wraper {
-      margin-left: 27px;
+      margin-left: d2r(40px);
       box-sizing: border-box;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
       .btn-search {
-        width: 106px;
-        height: 23px;
-        line-height: 23px;
+        width: d2r(160px);
+        height: d2r(35px);
+        line-height: d2r(35px);
         background: #ff7525;
-        font-size: 11px;
+        font-size: d2r(16px);
         font-family: PingFangSC-Semibold;
         font-weight: 600;
         color: #ffffff;
       }
       .btn-clear {
-        width: 106px;
-        height: 23px;
-        line-height: 23px;
-        margin-left: 6px;
-        font-size: 11px;
+        width: d2r(160px);
+        height: d2r(35px);
+        line-height: d2r(35px);
+        margin-left: d2r(9px);
+        font-size: d2r(16px);
         font-family: PingFangSC-Semibold;
         font-weight: 600;
         color: #ffffff;
@@ -170,39 +238,39 @@ export default {
   }
   .user-manage-crud {
     .crud-btn {
-      width: 121px;
-      height: 53px;
-      font-size: 11px;
+      width: d2r(181px);
+      height: d2r(80px);
+      font-size: d2r(16px);
       font-family: PingFangSC-Semibold;
       font-weight: 600;
       color: rgba(255, 255, 255, 1);
-      border-radius: 3px;
+      border-radius: d2r(4px);
     }
     .crud-btn-add {
-      margin-left: 14px;
+      margin-left: d2r(10px);
       background: rgba(0, 211, 184, 1);
       .icon-btn-add {
-        width: 27px;
-        height: 20px;
-        margin-left: 21px;
+        width: d2r(41px);
+        height: d2r(30px);
+        margin-left: d2r(32px);
       }
     }
     .crud-btn-delete {
       margin-left: 7px;
       background: #f87554;
       .icon-btn-delete {
-        width: 19px;
-        height: 24px;
-        margin-left: 21px;
+        width: d2r(29px);
+        height: d2r(36px);
+        margin-left: d2r(10px);
       }
     }
     .crud-btn-edit {
       margin-left: 7px;
       background: #6fa8e0;
       .icon-btn-edit {
-        width: 24px;
-        height: 24px;
-        margin-left: 21px;
+        width: d2r(36px);
+        height: d2r(36px);
+        margin-left: d2r(10px);
       }
     }
   }
@@ -213,11 +281,15 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  .checkbox-select-all {
-  }
   .btn-export {
-    width: 106px;
-    height: 23px;
   }
+}
+
+.pagination-wraper {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>
