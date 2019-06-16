@@ -32,7 +32,7 @@
           ></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
-        <el-button class="button-fix" size="mini" type="primary">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="onSearchLocation">查询</el-button>
       </div>
     </div>
 
@@ -40,13 +40,18 @@
       <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
       <div class="map-content" id="map-container"></div>
     </div>
+
+     <location-dialog v-model="filingDialogVisible"></location-dialog>
   </div>
 </template>
 
 <script>
+import LocationDialog from './LocationDialog'
+
 export default {
   data() {
     return {
+      filingDialogVisible: false,
       aMap: {},
       heatMap: {},
       mapValue: 0,
@@ -87,6 +92,15 @@ export default {
     };
   },
   methods: {
+    onSearchLocation() {
+      // 如果是查询备案
+      // if (this.searchValue === 2) {
+      this.filingDialogVisible = true;
+      // }
+    },
+    onDialogHide() {
+      this.filingDialogVisible = false;
+    },
     onMapSelect(value) {
       if (this.mapValue === 0) {
         this.initAMap();
@@ -101,7 +115,8 @@ export default {
     addMarker() {
       var marker = new AMap.Marker({
         position: new AMap.LngLat(116.39, 39.92),
-        icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+        icon:
+          "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
         offset: new AMap.Pixel(-13, -30)
       });
     },
@@ -149,6 +164,9 @@ export default {
         });
       });
     }
+  },
+  components: {
+    LocationDialog
   },
   mounted() {
     this.initMap();
@@ -214,6 +232,42 @@ $basic-ratio: 1.4;
     .map-content {
       width: 100%;
       height: 100%;
+    }
+  }
+}
+
+.dialog-small-right {
+  .dialog-content {
+    max-height: d2r(611px);
+    background: #ffffff;
+    overflow: scroll;
+    .form-title {
+      box-sizing: border-box;
+      width: 100%;
+      height: d2r(33px);
+      font-size: d2r(13px);
+      line-height: d2r(33px);
+      color: #4a4a4a;
+      text-align: left;
+      padding-left: d2r(23px);
+      background: #ffffff;
+    }
+    .form-item-wrap {
+      .form-item {
+        box-sizing: border-box;
+        width: 100%;
+        height: d2r(34px);
+        line-height: d2r(34px);
+        font-size: d2r(13px);
+        color: #9b9b9b;
+        text-align: left;
+        padding-left: d2r(23px);
+        margin-top: 2px;
+        background:rgba(221,221,221,0.24);
+        &:nth-child(1) {
+          margin-top: 0;
+        }
+      }
     }
   }
 }

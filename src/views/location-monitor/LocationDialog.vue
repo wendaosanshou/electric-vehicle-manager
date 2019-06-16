@@ -1,0 +1,122 @@
+<template>
+  <div class="location-dialog">
+    <el-dialog
+        class="dialog-small-right dialog-fix"
+        title="备案信息"
+        :visible.sync="dialogVisible"
+        @close="onDialogHide"
+        :modal="false"
+      >
+        <div class="dialog-content">
+          <div class="form-title">车主信息</div>
+          <div class="form-item-wrap">
+            <div class="form-item">购车人：某某某</div>
+            <div class="form-item">身份证号：000000000000000000</div>
+            <div class="form-item">性别：男</div>
+            <div class="form-item">联系电话：15268111219</div>
+            <div class="form-item">家庭住址：暂无</div>
+          </div>
+          <div class="form-title">车辆信息</div>
+          <div class="form-item-wrap">
+            <div class="form-item">车编号：13290311962324569483</div>
+            <div class="form-item">车牌号：000399</div>
+            <div class="form-item">IMEI：866133040179428</div>
+            <div class="form-item">电机编号：无</div>
+            <div class="form-item">制造商：小刀</div>
+            <div class="form-item">产品型号：暂无</div>
+            <div class="form-item">颜色：红色</div>
+            <div class="form-item">获得方式：购买</div>
+            <div class="form-item">车辆温度：27℃</div>
+          </div>
+          <div class="form-title">网络信息</div>
+          <div class="form-item-wrap">
+            <div class="form-item">位置区域码：23783</div>
+            <div class="form-item">基站小区编码：97428822</div>
+            <div class="form-item">小区标识：179</div>
+            <div class="form-item">信号强度：5</div>
+            <div class="form-item">信号接收功率：-122dBm</div>
+            <div class="form-item">信噪比：246</div>
+          </div>
+          <div class="form-title">数据时间</div>
+          <div class="form-item-wrap">
+            <div class="form-item">更新时间：2019-05-28 17:10:26</div>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
+          <el-button size="mini" @click="onDialogHide">取 消</el-button>
+        </div>
+      </el-dialog>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      dialogVisible: false
+    }
+  },
+  model: {
+    prop: 'visible',
+    event: 'change'
+  },
+  props: {
+    visible: Boolean
+  },
+  watch: {
+    visible() {
+      this.dialogVisible = this.visible
+    }
+  },
+  methods: {
+    onDialogHide() {
+      this.$emit('change', false)
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+$basic-ratio: 1.4;
+
+@function d2r($designpx) {
+  @return $designpx / $basic-ratio;
+}
+
+.dialog-small-right {
+  .dialog-content {
+    max-height: d2r(611px);
+    background: #ffffff;
+    overflow: scroll;
+    .form-title {
+      box-sizing: border-box;
+      width: 100%;
+      height: d2r(33px);
+      font-size: d2r(13px);
+      line-height: d2r(33px);
+      color: #4a4a4a;
+      text-align: left;
+      padding-left: d2r(23px);
+      background: #ffffff;
+    }
+    .form-item-wrap {
+      .form-item {
+        box-sizing: border-box;
+        width: 100%;
+        height: d2r(34px);
+        line-height: d2r(34px);
+        font-size: d2r(13px);
+        color: #9b9b9b;
+        text-align: left;
+        padding-left: d2r(23px);
+        margin-top: 2px;
+        background:rgba(221,221,221,0.24);
+        &:nth-child(1) {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}
+</style>

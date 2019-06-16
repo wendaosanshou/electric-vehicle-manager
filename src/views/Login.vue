@@ -7,18 +7,18 @@
           <h3 class="form-title">用户登录</h3>
           <div class="form-username form-ipt-wraper">
             <i class="icon-username form-icon"></i>
-            <input class="form-username-ipt form-ipt" type="text" placeholder="用户名">
+            <input class="form-username-ipt form-ipt" type="text" placeholder="用户名" v-model="account">
           </div>
           <div class="form-password form-ipt-wraper">
             <i class="icon-password form-icon"></i>
-            <input class="form-password-ipt form-ipt" type="text" placeholder="请输入密码">
+            <input class="form-password-ipt form-ipt" type="text" placeholder="请输入密码" v-model="password">
           </div>
           <div class="form-verifycode form-ipt-wraper">
             <div class="form-verifycode-ipt-wraper">
               <i class="icon-verifycode form-icon"></i>
-              <input class="form-verifycode-ipt form-ipt" type="text" placeholder="验证码">
+              <input class="form-verifycode-ipt form-ipt" type="text" placeholder="验证码" v-model="verifyCode">
             </div>
-            <div class="form-verifycode-number">XDJT</div>
+            <div class="form-verifycode-number" :class="{active: allowToogleVerifyCode, 'get-verify-code': !hasVerifyCode}">{{allowToogleVerifyCode ? verifyCodeImage : '获取验证码'}}</div>
           </div>
           <div class="form-remain-password">
             <i
@@ -28,7 +28,7 @@
             ></i>
             <span class="remain-password-label">记住密码</span>
           </div>
-          <div class="form-btn-login" @click="onLogin">登录</div>
+          <div class="form-btn-login" :class="{active: allowLogin}" @click="onLogin">登录</div>
         </div>
       </div>
     </div>
@@ -37,25 +37,55 @@
 
 <script>
 // @ is an alias to /src
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: "home",
   data() {
     return {
-      selectRemainPassword: true
+      selectRemainPassword: true,
+      account: '',
+      password: '',
+      verifyCode: '',
+      verifyCodeImage: '0123'
     };
   },
+  computed: {
+    allowToogleVerifyCode() {
+      return this.account && this.account.length > 0
+    },
+    hasVerifyCodeImage() {
+      return this.verifyCodeImage && this.verifyCodeImage.length > 0
+    },
+    allowLogin() {
+      return this.account && this.verifyCode === this.verifyCodeImage && this.password
+    }
+  },
   methods: {
+    ...mapActions('login', ['diapatchLogin']),
     onSelectRemainPassword() {
       this.selectRemainPassword = !this.selectRemainPassword;
     },
+    initVerifyCode() {
+      if (this.allowToogleVerifyCode) {
+        this.$apis.getVerifyCode(`${this.account}`)
+      }
+    },
     onLogin() {
-      this.$router.push({
-        path: "/user-manage"
-      });
+      this.diapatchLogin(`${this.account}/${this.password}`).then(() => {
+        this.$router.push({
+          path: "/user-manage"
+        });
+      })
+      // this.$router.push({
+      //   path: "/user-manage"
+      // });
     }
   },
-  components: {}
+  components: {},
+  mounted() {
+    this.initVerifyCode()
+  }
 };
 </script>
 
@@ -174,6 +204,15 @@ export default {
             background-size: 100% 100%;
           }
         }
+        .get-verify-code {
+          width: d2r(160px);
+          height: d2r(50px);
+          line-height: d2r(50px);
+          margin-left: d2r(10px);
+          font-size: d2r(17px);
+          color: #ffffff;
+          background: rgba(255, 117, 37, 1);
+        }
         .form-verifycode-number {
           width: d2r(160px);
           height: d2r(50px);
@@ -181,7 +220,16 @@ export default {
           margin-left: d2r(10px);
           font-size: d2r(30px);
           color: #ffffff;
+          opacity: 0.4;
           background: rgba(255, 117, 37, 1);
+          cursor: pointer;
+          &.get-verify-code {
+            color: #ffffff;
+            font-size: d2r(17px);
+          }
+          &.active {
+            opacity: 1;
+          }
         }
       }
       .form-remain-password {
@@ -221,6 +269,10 @@ export default {
         color: rgba(255, 255, 255, 1);
         background: rgba(255, 117, 37, 1);
         margin-top: d2r(23px);
+        opacity: 0.4;
+        &.active {
+          opacity: 1;
+        }
       }
     }
   }

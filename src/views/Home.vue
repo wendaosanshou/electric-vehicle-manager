@@ -1,24 +1,25 @@
 <template>
   <div class="home">
-    <div class="home-sidebar">
+    <div class="home-sidebar" :class="{'is-collapse': isCollapse}">
       <div class="home-sidebar-title">
-        <i class="home-sidebar-logo"></i>
+        <i class="home-sidebar-logo" @click="onCollapse"></i>
         <span class="home-sidebar-text">电动车智慧管理平台</span>
       </div>
       <div class="home-sidebar-menu">
         <el-menu
           default-active="1"
-          class="el-menu-vertical-demo menu-fix"
+          class="sidebar-meun-content menu-fix"
           @select="handleSelect"
           @open="handleOpen"
           @close="handleClose"
           background-color="#303030"
           text-color="#CBCBCB"
           active-text-color="#FF5E00"
+          :collapse="isCollapse"
         >
           <template v-for="(item, index) in sidbarMenus">
             <el-menu-item :key="index" :index="item.index" v-if="!item.children">
-              <i class="el-icon-menu"></i>
+              <i :class="item.logo"></i>
               <span slot="title">{{item.name}}</span>
             </el-menu-item>
             <el-submenu
@@ -35,23 +36,12 @@
                 v-for="(childrenItem, childrenIndex) in item.children"
                 :key="childrenIndex"
               >
-                <i :class="childrenItem.logo"></i>
+                <!-- <i :class="childrenItem.logo"></i> -->
                 <span>{{childrenItem.name}}</span>
               </el-menu-item>
             </el-submenu>
           </template>
         </el-menu>
-
-        <!-- <div
-          class="sidebar-item"
-          :class="{'is-active': item.isActive}"
-          v-for="(item, index) in sidbarMenus"
-          :key="index"
-          @click="onMenuItemClick(item, index)"
-        >
-          <img :src="getItemLogo(item.logo)" class="icon-item">
-          <span class="item-name">{{item.name}}</span>
-        </div> -->
       </div>
     </div>
     <div class="home-content">
@@ -63,7 +53,7 @@
           <div class="home-title-login-out" @click="onLoginOut"></div>
         </div>
       </div>
-      <div class="home-title-crumbs">所在位置：xxx</div>
+      <div class="home-title-crumbs">所在位置：{{activePageName}}</div>
       <div class="home-body">
         <router-view/>
       </div>
@@ -72,62 +62,67 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+// const { mapGetters, mapMutations } = createNamespacedHelpers('common')
+
 export default {
   name: "home",
   data() {
     return {
+      isCollapse: false,
+      pathName: '',
       sidbarMenus: [
         {
           name: "定位监控",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-location-outline",
           path: "location-monitor",
           index: '1'
         },
         {
           name: "历史轨迹",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-location-information",
           path: "history-track",
           index: '2'
         },
         {
           name: "告警监控",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-truck",
           path: "alarm-monitor",
           index: '3'
         },
         {
           name: "告警分析",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-ship",
           path: "alarm-analysis",
           index: '4'
         },
         {
           name: "电子围栏",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-postcard",
           path: "electric-fence",
           index: '5'
         },
         {
           name: "办理状态查询",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-search",
           path: "process-search",
           index: '6'
         },
         {
           name: "办理状态管理",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-set-up",
           path: "process-manage",
           index: '7'
         },
         {
           name: "备案信息管理",
-          logo: "jiankog_icon_normal@2x.png",
+          logo: "el-icon-copy-document",
           path: "record-manage",
           index: '8'
         },
         {
           name: "系统设置",
-          logo: "el-icon-location",
+          logo: "el-icon-setting",
           path: "user-manage",
           index: '9',
           children: [
@@ -166,7 +161,14 @@ export default {
       ]
     };
   },
+  computed: {
+    ...mapGetters('common', ['activePageName'])
+  },
   methods: {
+    ...mapMutations('common', ['updateActivePageName']),
+    onCollapse() {
+      this.isCollapse = !this.isCollapse
+    },
     getItemLogo(logo) {
       return require(`@/assets/icons/${logo}`);
     },
@@ -193,12 +195,16 @@ export default {
       for (let index = 0; index < menu.length; index++) {
         const menuItem = menu[index];
         if (menuItem.index === menuIndex) {
+          this.pathName += this.pathName ? ` > ${menuItem.name}` : menuItem.name
+          this.updateActivePageName(this.pathName)
+          this.pathName = ''
           this.$router.push({
             path: menuItem.path
           });
           break;
         }
         if (menuItem.children && menuItem.children.length > 0) {
+          this.pathName += `${menuItem.name}`
           this.onMenuLoop(menuItem.children, menuIndex)
         }
       }
@@ -231,8 +237,24 @@ $basic-ratio: 1.4;
   min-height: 100vh;
   .home-sidebar {
     width: d2r(340px);
-    min-height: 100vh;
+    height: 100vh;
+    overflow: scroll;
     background: rgba(48, 48, 48, 1);
+    transition: all 0.1s;
+    &.is-collapse {
+      width: 64px;
+      .home-sidebar-title {
+        width: 100%;
+        height: 64px;
+        .home-sidebar-text {
+        display: none;
+      }
+      .home-sidebar-logo {
+        width: 24px;
+        height: 24px;
+      }
+      }
+    }
     .home-sidebar-title {
       box-sizing: border-box;
       display: flex;
@@ -246,6 +268,7 @@ $basic-ratio: 1.4;
       .home-sidebar-logo {
         width: d2r(102px);
         height: d2r(102px);
+        cursor: pointer;
         background: url("../assets/home/logo_img@2x.png");
         background-size: 100% 100%;
       }
@@ -260,7 +283,13 @@ $basic-ratio: 1.4;
     .home-sidebar-menu {
       width: 100%;
       height: auto;
+      flex: 1;
+      overflow: scroll;
       padding-bottom: d2r(40px);
+      .sidebar-meun-content {
+        border-right: 0!important;
+        transition: all 0.3s;
+      }
       .sidebar-item {
         box-sizing: border-box;
         display: flex;

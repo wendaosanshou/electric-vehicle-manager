@@ -169,4 +169,14 @@ $basic-ratio: 1.4;
   color: #f66713;
   font-size: d2r(16px);
 }
+
+.dialog-small-right {
+  .el-dialog {
+    margin-top: d2r(230px)!important;
+    margin-right: d2r(64px);
+    width: d2r(300px);
+    box-shadow:0px 5px 20px 0px rgba(159,158,193,1);
+border-radius:d2r(9px);
+  }
+}
 </style>

@@ -1,9 +1,20 @@
 const common = {
   namespaced: true,
-  state: {},
-  mutations: {},
+  state: {
+    activePageName: ''
+  },
+  mutations: {
+    updateActivePageName(state, activePageName) {
+      console.log(state, activePageName)
+      console.log('updateActivePageName', activePageName)
+      state.activePageName = activePageName
+      console.log(state.activePageName)
+    }
+  },
   actions: {},
-  getters: {}
+  getters: {
+    activePageName: state => state.activePageName
+  }
 };
 
 export default common;
