@@ -80,31 +80,31 @@ export default {
         {
           name: "定位监控",
           logo: "jiankog_icon_normal@2x.png",
-          path: "record-manage",
+          path: "location-monitor",
           index: '1'
         },
         {
           name: "历史轨迹",
           logo: "jiankog_icon_normal@2x.png",
-          path: "record-manage",
+          path: "history-track",
           index: '2'
         },
         {
           name: "告警监控",
           logo: "jiankog_icon_normal@2x.png",
-          path: "record-manage",
+          path: "alarm-monitor",
           index: '3'
         },
         {
           name: "告警分析",
           logo: "jiankog_icon_normal@2x.png",
-          path: "record-manage",
+          path: "alarm-analysis",
           index: '4'
         },
         {
           name: "电子围栏",
           logo: "jiankog_icon_normal@2x.png",
-          path: "record-manage",
+          path: "electric-fence",
           index: '5'
         },
         {
@@ -140,25 +140,25 @@ export default {
             {
               name: "角色权限管理",
               logo: "el-icon-location",
-              path: "user-manage",
+              path: "role-manage",
               index: '9-2',
             },
             {
               name: "业务办理点管理",
               logo: "el-icon-location",
-              path: "user-manage",
+              path: "business-manage",
               index: '9-3',
             },
             {
               name: "设备安装点管理",
               logo: "el-icon-location",
-              path: "user-manage",
+              path: "equipment-manage",
               index: '9-4',
             },
             {
               name: "APP资讯管理",
               logo: "el-icon-location",
-              path: "user-manage",
+              path: "app-advisory",
               index: '9-5',
             }
           ]
@@ -205,7 +205,9 @@ export default {
     },
     handleSelect(menuIndex, indexPath) {
       this.onMenuLoop(this.sidbarMenus, menuIndex)
-    }
+    },
+    handleOpen() {},
+    handleClose() {}
   },
   components: {}
 };

@@ -83,7 +83,7 @@ $basic-ratio: 1.4;
 }
 
 .user-add-form {
-  padding-top: d2r(15px); 
+  padding-top: d2r(15px);
   .el-form-item {
     margin-bottom: d2r(5px);
     .el-form-item__label {
@@ -92,9 +92,9 @@ $basic-ratio: 1.4;
       font-size: d2r(16px);
     }
     .el-form-item__content {
-      width: 500px;
+      width: d2r(500px);
       .el-select {
-        width: 500px;
+        width: d2r(500px);
       }
     }
   }
@@ -108,9 +108,9 @@ $basic-ratio: 1.4;
       font-size: d2r(16px);
     }
     .el-form-item__content {
-      width: 500px;
+      width: d2r(500px);
       .el-select {
-        width: 500px;
+        width: d2r(500px);
       }
     }
   }
@@ -129,6 +129,19 @@ $basic-ratio: 1.4;
   }
 }
 
+.table-disable-hover {
+  &.el-table--enable-row-hover .el-table__body tr:hover > td {
+    background-color: transparent !important;
+  }
+}
+
+.tree-fix {
+  font-size: d2r(13px) !important;
+  .el-tree-node__label {
+    font-size: d2r(13px)!important;
+  }
+}
+
 .ipt-fix {
   &.el-input__inner {
     border-radius: 0;
@@ -139,6 +152,10 @@ $basic-ratio: 1.4;
   .el-textarea__inner {
     border-radius: 0;
   }
+}
+
+.el-select-dropdown__item {
+  font-size: d2r(14px) !important;
 }
 
 .menu-fix {

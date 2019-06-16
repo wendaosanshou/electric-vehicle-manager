@@ -2,11 +2,19 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
-import UserManage from './views/system-settings/UserManage.vue';
-import UserAdd from './views/system-settings/user-add/UserAdd.vue';
+import LocationMonitor from './views/location-monitor/LocationMonitor.vue'
+import HistoryTrack from './views/history-track/HistoryTrack.vue'
+import AlarmMonitor from './views/alarm-monitor/AlarmMonitor.vue'
+import AlarmAnalysis from './views/alarm-analysis/AlarmAnalysis.vue'
+import ElectricFence from './views/electric-fence/ElectricFence.vue'
 import RecordInfoManage from './views/record-info-manage/RecordInfoManage.vue'
 import RecordSetting from './views/record-setting/RecordSetting.vue'
 import ProcessManage from './views/process-manage/ProcessManage.vue'
+import UserManage from './views/system-settings/user-manage/UserManage.vue';
+import UserAdd from './views/system-settings/user-manage/user-add/UserAdd.vue';
+import RoleManage from './views/system-settings/role-manage/RoleManage.vue'
+import BusinessPointManage from './views/system-settings/business-point-manage/BusinessPointManage.vue'
+import AppAdvisory from './views/system-settings/app-advisory/AppAdvisory.vue'
 
 Vue.use(Router);
 
@@ -18,6 +26,26 @@ export default new Router({
       name: 'home',
       component: Home,
       children: [{
+        path: 'location-monitor',
+        name: 'LocationMonitor',
+        component: LocationMonitor
+      }, {
+        path: 'history-track',
+        name: 'HistoryTrack',
+        component: HistoryTrack
+      },{
+        path: 'alarm-monitor',
+        name: 'AlarmMonitor',
+        component: AlarmMonitor
+      },{
+        path: 'alarm-analysis',
+        name: 'AlarmAnalysis',
+        component: AlarmAnalysis
+      }, {
+        path: 'electric-fence',
+        name: 'ElectricFence',
+        component: ElectricFence
+      }, {
         path: 'user-manage',
         name: 'UserManage',
         component: UserManage,
@@ -43,8 +71,24 @@ export default new Router({
         component: ProcessManage
       }, {
         path: 'record-setting',
-        name: 'record-setting',
+        name: 'RecordSetting',
         component: RecordSetting
+      }, {
+        path: 'role-manage',
+        name: 'RoleManage',
+        component: RoleManage
+      }, {
+        path: 'business-manage',
+        name: 'BusinessPointManage',
+        component: BusinessPointManage
+      }, {
+        path: 'equipment-manage',
+        name: 'EquipmentManage',
+        component: BusinessPointManage
+      }, {
+        path: 'app-advisory',
+        name: 'AppAdvisory',
+        component: AppAdvisory
       }]
     },
     {

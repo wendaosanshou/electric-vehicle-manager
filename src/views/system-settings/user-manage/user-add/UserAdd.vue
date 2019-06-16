@@ -50,8 +50,8 @@
       </el-form-item>
     </el-form>
     <div class="user-add-btn-wrap">
-        <el-button class="button-fix" size="mini" type="primary">提交</el-button>
-        <el-button class="button-fix" size="mini" type="primary">取消</el-button>
+      <el-button class="button-fix" size="mini" type="primary">提交</el-button>
+      <el-button class="button-fix" size="mini" type="primary">取消</el-button>
     </div>
   </div>
 </template>
@@ -59,8 +59,8 @@
 <script>
 import PageTitle from "@/components/PageTitle.vue";
 import PageBack from "@/components/PageBack.vue";
-import OrgAddDialog from './OrgAddDialog'
-import UserAddDialog from './UserAddDialog'
+import OrgAddDialog from "./OrgAddDialog";
+import UserAddDialog from "./UserAddDialog";
 
 export default {
   data() {
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     isUserAdd() {
-      return this.$route && this.$route.name === 'UserAdd'
+      return this.$route && this.$route.name === "UserAdd";
     }
   },
   components: {
@@ -85,7 +85,7 @@ export default {
     UserAddDialog
   },
   mounted() {
-    console.log(this.$route)
+    console.log(this.$route);
   }
 };
 </script>
@@ -105,7 +105,8 @@ $basic-ratio: 1.4;
     justify-content: space-between;
     align-items: center;
   }
-  .el-input, .el-textarea{
+  .el-input,
+  .el-textarea {
     width: d2r(500px);
   }
   .user-add-btn-wrap {
@@ -113,11 +114,11 @@ $basic-ratio: 1.4;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-      padding-left: d2r(112px);
-      padding-top: d2r(41px);
+    padding-left: d2r(112px);
+    padding-top: d2r(41px);
   }
   .form-btn-wrap {
-display: flex;
+    display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
