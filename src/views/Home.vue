@@ -234,11 +234,11 @@ $basic-ratio: 1.4;
   justify-content: flex-start;
   align-items: flex-start;
   width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   .home-sidebar {
     width: d2r(340px);
     height: 100vh;
-    overflow: scroll;
     background: rgba(48, 48, 48, 1);
     transition: all 0.1s;
     &.is-collapse {
@@ -262,7 +262,7 @@ $basic-ratio: 1.4;
       justify-content: flex-start;
       align-items: center;
       width: 100%;
-      height: d2r(200px);
+      height: 150px;
       padding-top: d2r(29px);
       background: rgba(246, 103, 19, 1);
       .home-sidebar-logo {
@@ -282,8 +282,7 @@ $basic-ratio: 1.4;
     }
     .home-sidebar-menu {
       width: 100%;
-      height: auto;
-      flex: 1;
+      height: calc(100% - 160px);
       overflow: scroll;
       padding-bottom: d2r(40px);
       .sidebar-meun-content {

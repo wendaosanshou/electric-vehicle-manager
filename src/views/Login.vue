@@ -18,7 +18,7 @@
               <i class="icon-verifycode form-icon"></i>
               <input class="form-verifycode-ipt form-ipt" type="text" placeholder="验证码" v-model="verifyCode">
             </div>
-            <div class="form-verifycode-number" :class="{active: allowToogleVerifyCode, 'get-verify-code': !hasVerifyCode}">{{allowToogleVerifyCode ? verifyCodeImage : '获取验证码'}}</div>
+            <div class="form-verifycode-number" :class="{active: allowToogleVerifyCode, 'get-verify-code': !hasVerifyCodeImage}">{{allowToogleVerifyCode ? verifyCodeImage : '获取验证码'}}</div>
           </div>
           <div class="form-remain-password">
             <i
@@ -71,12 +71,19 @@ export default {
         this.$apis.getVerifyCode(`${this.account}`)
       }
     },
-    onLogin() {
-      this.diapatchLogin(`${this.account}/${this.password}`).then(() => {
-        this.$router.push({
-          path: "/user-manage"
-        });
-      })
+    async onLogin() {
+      if (this.allowLogin) {
+        try {
+          await this.diapatchLogin(`${this.account}/${this.password}`)
+          this.$router.push({
+            path: "/location-monitor"
+          });
+        } catch (error) {
+          this.$router.push({
+            path: "/location-monitor"
+          });
+        }
+      }
       // this.$router.push({
       //   path: "/user-manage"
       // });

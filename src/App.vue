@@ -138,7 +138,7 @@ $basic-ratio: 1.4;
 .tree-fix {
   font-size: d2r(13px) !important;
   .el-tree-node__label {
-    font-size: d2r(13px)!important;
+    font-size: d2r(13px) !important;
   }
 }
 
@@ -154,7 +154,7 @@ $basic-ratio: 1.4;
   }
 }
 
-.el-select-dropdown__item {
+.el-select-dropdown__item, .el-select-dropdown__empty {
   font-size: d2r(14px) !important;
 }
 
@@ -172,11 +172,11 @@ $basic-ratio: 1.4;
 
 .dialog-small-right {
   .el-dialog {
-    margin-top: d2r(230px)!important;
+    margin-top: d2r(230px) !important;
     margin-right: d2r(64px);
     width: d2r(300px);
-    box-shadow:0px 5px 20px 0px rgba(159,158,193,1);
-border-radius:d2r(9px);
+    box-shadow: 0px 5px 20px 0px rgba(159, 158, 193, 1);
+    border-radius: d2r(9px);
   }
 }
 </style>

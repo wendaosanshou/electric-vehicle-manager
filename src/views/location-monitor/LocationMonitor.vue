@@ -41,12 +41,12 @@
       <div class="map-content" id="map-container"></div>
     </div>
 
-     <location-dialog v-model="filingDialogVisible"></location-dialog>
+    <location-dialog v-model="filingDialogVisible"></location-dialog>
   </div>
 </template>
 
 <script>
-import LocationDialog from './LocationDialog'
+import LocationDialog from "./LocationDialog";
 
 export default {
   data() {
@@ -123,19 +123,58 @@ export default {
     initMap() {
       this.onMapSelect();
     },
-    initAMap() {
+    initInfoWindow() {},
+    addControl() {
       const scale = new AMap.Scale({
         visible: false
       });
       const toolBar = new AMap.ToolBar({
         visible: false
       });
-      this.aMap = new AMap.Map("map-container", {
-        resizeEnable: true
-      });
       this.aMap.addControl(scale);
       this.aMap.addControl(toolBar);
       scale.show();
+    },
+    getInfoWindow() {
+      var infoWindow = new AMap.InfoWindow({
+          isCustom: true,  //使用自定义窗体
+          content: createInfoWindow(title, `<div></div>`),
+          offset: new AMap.Pixel(16, -45)
+      });
+      return infoWindow
+    },
+    addMarker() {
+      // this.aMap.clearMap();
+      var marker = new AMap.Marker({
+        position: new AMap.LngLat(116.39, 39.92),
+        icon:
+          "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+        offset: new AMap.Pixel(-13, -30)
+      });
+      // var infoWindow = this.getInfoWindow()
+      // AMap.event.addListener(marker, 'click', function () {
+      //   console.log('123')
+      //     infoWindow.open(map, marker.getPosition());
+      // });
+      this.aMap.add(marker);
+    },
+    initMap() {
+      this.aMap = new AMap.Map("map-container", {
+        zoom: 13,
+        center: [116.43, 39.92],
+        resizeEnable: true
+      });
+    },
+    initAMap() {
+      // 必须先初始化地图
+      // this.initMap()
+      this.aMap = new AMap.Map("map-container", {
+        zoom: 13,
+        center: [116.43, 39.92],
+        resizeEnable: true
+      });
+      this.addControl();
+      // this.addMarker()
     },
     initHeatMap() {
       var map = new AMap.Map("map-container", {
@@ -263,7 +302,7 @@ $basic-ratio: 1.4;
         text-align: left;
         padding-left: d2r(23px);
         margin-top: 2px;
-        background:rgba(221,221,221,0.24);
+        background: rgba(221, 221, 221, 0.24);
         &:nth-child(1) {
           margin-top: 0;
         }
