@@ -1,62 +1,69 @@
 <template>
   <div class="role-add">
     <el-button class="button-fix" icon="el-icon-edit" size="mini" @click="onDialogShow">添加角色</el-button>
-    <el-dialog
-      class="dialog-fix"
-      title="添加角色"
-      :visible.sync="dialogVisible"
-      @close="onDialogHide"
-    >
+    <el-dialog class="dialog-fix" title="添加角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-title">添加角色</div>
       <div class="dialog-content">
         <el-table
           class="role-manage-table table-fix table-disable-hover"
-          :data="tableData"
+          :data="roleTable"
           size="mini"
           border
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="username" label="角色编号" width="180" align="center">
-            <template>
+          <el-table-column prop="id" label="角色编号" align="center">
+            <template slot-scope="scope">
+              <el-input
+                    size="mini"
+                    class="ipt-fix"
+                    v-model="scope.row.code"
+                    placeholder="填写角色编号"
+                  ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="角色名称" align="center">
+            <template slot-scope="scope">
               <div class="table-col-item">
-                <div class="user-number">系统自动设置</div>
+                <div class="user-name">
+                  <el-input
+                    size="mini"
+                    class="ipt-fix"
+                    v-model="scope.row.name"
+                    placeholder="填写角色名称"
+                  ></el-input>
+                </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="sex" label="角色名称" align="center">
+          <el-table-column prop="author" label="角色权限" width="230" align="center">
             <template>
-              <div class="table-col-item">
-                <div class="user-name">填写角色名称</div>
+              <div class="role-manage-tree-wrap">
+                <role-manage-tree @onChange="onRoleChange"></role-manage-tree>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="processPoint" label="角色权限" align="center">
-            <template>
-              <!-- <div class="table-col-item">
-                <div class="content-label">目录列表</div>
-                <el-button
-                  class="button-fix"
-                  icon="el-icon-delete"
-                  size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)"
-                >设置</el-button>
-              </div> -->
-              <role-manage-tree></role-manage-tree>
-            </template>
-          </el-table-column>
-          <el-table-column prop="installationPoint" label="角色说明" align="center">
-            <template>
+          <el-table-column prop="note" label="角色说明" align="center">
+            <template slot-scope="scope">
               <div class="table-col-item">
-                <div class="user-name">填写角色说明</div>
+                <div class="user-name">
+                  <el-input
+                    v-model="scope.row.note"
+                    type="textarea"
+                    class="item-ipt-textarea ipt-fix"
+                    size="mini"
+                    resize="none"
+                    :autosize="{ minRows: 10, maxRows: 10}"
+                    placeholder="填写角色说明"
+                  ></el-input>
+                </div>
               </div>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
+        <el-button size="mini" type="primary" @click="onAddRole">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -64,59 +71,64 @@
 </template>
 
 <script>
-import RoleManageTree from './RoleManageTree'
+import { mapGetters, mapActions } from "vuex";
+import RoleManageTree from "./RoleManageTree";
 
 export default {
   data() {
     return {
       dialogVisible: false,
-      tableData: [
+      authorList: [],
+      roleTable: [
         {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
+          name: "",
+          note: "",
+          author: "",
+          code: "",
+          id: ""
         }
       ]
     };
   },
-  props: {
-    type: {
-      type: Boolean,
-      default: 'add'
-    }
-  },
-  computed: {
-    isAddType() {
-      return this.type && this.type === 'add'
-    },
-    isDeleteType() {
-      return this.type && this.type === 'delete'
-    },
-    isEditType() {
-      return this.type && this.type === 'edit'
-    },
-    btnContent() {
-      if (this.isDeleteType) {
-        return '删除'
-      } else if (this.isEditType) {
-        return '修改'
-      } else if (this.isAddType) {
-        return '添加角色'
-      }
-    }
-  },
   methods: {
+    ...mapActions(["addRole"]),
     onDialogShow() {
       this.dialogVisible = true;
     },
     onDialogHide() {
       this.dialogVisible = false;
+    },
+    removeNode(item, array) {
+      for (let index = 0; index < array.length; index++) {
+        if (item === array[index]) {
+          array.splice(index, 1);
+        }
+      }
+      return array;
+    },
+    onRoleChange(data) {
+      const { role, isCheck, isChildreCheck } = data;
+      if (isCheck) {
+        this.authorList.push(role.id);
+      } else {
+        this.authorList = this.removeNode(role.id, this.authorList);
+      }
+      console.log("onRoleChange", this.authorList.join(","));
+    },
+    async onAddRole() {
+      const [role] = this.roleTable;
+      if (role.name && role.code && this.authorList.length > 0 && role.note) {
+        await this.addRole({
+          name: role.name,
+          code: role.code,
+          author: this.authorList.join(","),
+          note: role.note
+        });
+        this.onDialogHide();
+        this.$emit('onRefreshRoleInfo')
+      } else {
+        this.$message("输入信息不完整");
+      }
     }
   },
   components: {
@@ -153,7 +165,7 @@ $basic-ratio: 1.4;
   justify-content: center;
   align-items: center;
   font-size: d2r(13px);
-  color: #3B4859;
+  color: #3b4859;
   min-height: d2r(443px);
 }
 
@@ -161,5 +173,17 @@ $basic-ratio: 1.4;
   padding: 0;
 }
 
+.user-number {
+  color: #cccccc;
+}
 
+.btn-confirm {
+  margin-top: d2r(10px);
+}
+
+.role-manage-tree-wrap {
+  width: 100%;
+  height: d2r(500px);
+  overflow: scroll;
+}
 </style>

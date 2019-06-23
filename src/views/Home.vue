@@ -49,7 +49,7 @@
         <div class="home-title-label">欢迎您，登录电动车智慧管理平台！</div>
         <div class="home-title-menu">
           <i class="home-title-logo"></i>
-          <span class="home-title-desc">用户名00000</span>
+          <span class="home-title-desc">用户名：{{userInfo.name}}</span>
           <div class="home-title-login-out" @click="onLoginOut"></div>
         </div>
       </div>
@@ -162,10 +162,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('common', ['activePageName'])
+    ...mapGetters(['activePageName', 'userInfo'])
+  },
+  watch: {
+    $route() {
+      this.initActiveMenu()
+    }
   },
   methods: {
-    ...mapMutations('common', ['updateActivePageName']),
+    ...mapMutations(['updateActivePageName']),
     onCollapse() {
       this.isCollapse = !this.isCollapse
     },
@@ -196,7 +201,7 @@ export default {
         const menuItem = menu[index];
         if (menuItem.index === menuIndex) {
           this.pathName += this.pathName ? ` > ${menuItem.name}` : menuItem.name
-          this.updateActivePageName(this.pathName)
+          // this.updateActivePageName(this.pathName)
           this.pathName = ''
           this.$router.push({
             path: menuItem.path
@@ -213,19 +218,86 @@ export default {
       this.onMenuLoop(this.sidbarMenus, menuIndex)
     },
     handleOpen() {},
-    handleClose() {}
+    handleClose() {},
+    initActiveMenu() {
+      const { path } = this.$route
+      let activeMenu = ''
+      switch(path) {
+        case '/location-monitor': 
+          activeMenu = '定位监控'
+          break;
+        case '/history-track': 
+          activeMenu = '历史轨迹'
+          break;
+        case '/alarm-monitor': 
+          activeMenu = '告警监控'
+          break;
+        case '/alarm-analysis': 
+          activeMenu = '告警分析'
+          break;
+        case '/electric-fence': 
+          activeMenu = '电子围栏'
+          break;
+        case '/process-search': 
+          activeMenu = '办理状态查询'
+          break;
+        case '/process-manage': 
+          activeMenu = '办理状态管理'
+          break;
+        case '/record-manage': 
+          activeMenu = '备案信息管理'
+          break;
+        case '/user-manage': 
+          activeMenu = '系统设置 > 用户管理'
+          break;
+        case '/role-manage': 
+          activeMenu = '系统设置 > 角色权限管理'
+          break;
+        case '/business-manage': 
+          activeMenu = '系统设置 > 业务办理点管理'
+          break;
+        case '/equipment-manage': 
+          activeMenu = '系统设置 > 设备安装点管理'
+          break;
+        case '/equipment-manage': 
+          activeMenu = '系统设置 > 设备安装点管理'
+          break;
+        case '/app-advisory': 
+          activeMenu = '系统设置 > APP资讯管理'
+          break;
+        default: 
+          activeMenu = ''
+          break;
+      }
+      console.log(path, activeMenu)
+      if (activeMenu) {
+        this.updateActivePageName(activeMenu)
+      }
+    }
   },
-  components: {}
+  components: {},
+  mounted() {
+  }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // @import "~@/assets/style/function.scss";
 
 $basic-ratio: 1.4;
 
 @function d2r($designpx) {
   @return $designpx / $basic-ratio;
+}
+
+// 兼容文案显示效果
+.el-menu-item span {
+  transition: all 0.3s;
+  opacity: 1;
+}
+
+.is-collapse .el-menu-item span {
+  opacity: 0;
 }
 
 .home {
@@ -287,7 +359,7 @@ $basic-ratio: 1.4;
       padding-bottom: d2r(40px);
       .sidebar-meun-content {
         border-right: 0!important;
-        transition: all 0.3s;
+        transition: width 0.3s;
       }
       .sidebar-item {
         box-sizing: border-box;

@@ -7,18 +7,35 @@
           <h3 class="form-title">用户登录</h3>
           <div class="form-username form-ipt-wraper">
             <i class="icon-username form-icon"></i>
-            <input class="form-username-ipt form-ipt" type="text" placeholder="用户名" v-model="account">
+            <input
+              class="form-username-ipt form-ipt"
+              type="text"
+              placeholder="用户名"
+              v-model="account"
+            >
           </div>
           <div class="form-password form-ipt-wraper">
             <i class="icon-password form-icon"></i>
-            <input class="form-password-ipt form-ipt" type="text" placeholder="请输入密码" v-model="password">
+            <input
+              class="form-password-ipt form-ipt"
+              type="password"
+              placeholder="请输入密码"
+              v-model="password"
+            >
           </div>
           <div class="form-verifycode form-ipt-wraper">
             <div class="form-verifycode-ipt-wraper">
               <i class="icon-verifycode form-icon"></i>
-              <input class="form-verifycode-ipt form-ipt" type="text" placeholder="验证码" v-model="verifyCode">
+              <input
+                class="form-verifycode-ipt form-ipt"
+                type="text"
+                placeholder="验证码"
+                v-model="verifyCode"
+              >
             </div>
-            <div class="form-verifycode-number" :class="{active: allowToogleVerifyCode, 'get-verify-code': !hasVerifyCodeImage}">{{allowToogleVerifyCode ? verifyCodeImage : '获取验证码'}}</div>
+            <div class="form-verifycode-number" @click="refreshCode">
+              <verify-code class="verifycode-label" :identifyCode="identifyCode"></verify-code>
+            </div>
           </div>
           <div class="form-remain-password">
             <i
@@ -37,61 +54,103 @@
 
 <script>
 // @ is an alias to /src
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from "vuex";
+import VerifyCode from "@/components/VerifyCode.vue";
 
 export default {
   name: "home",
   data() {
     return {
       selectRemainPassword: true,
-      account: '',
-      password: '',
-      verifyCode: '',
-      verifyCodeImage: '0123'
+      account: "",
+      password: "",
+      verifyCode: "",
+      identifyCodes: "1234567890",
+      identifyCode: ""
     };
   },
   computed: {
     allowToogleVerifyCode() {
-      return this.account && this.account.length > 0
-    },
-    hasVerifyCodeImage() {
-      return this.verifyCodeImage && this.verifyCodeImage.length > 0
+      return this.account && this.account.length > 0;
     },
     allowLogin() {
-      return this.account && this.verifyCode === this.verifyCodeImage && this.password
+      return this.account && this.password;
     }
   },
   methods: {
-    ...mapActions('login', ['diapatchLogin']),
+    ...mapActions(["userLogin"]),
     onSelectRemainPassword() {
       this.selectRemainPassword = !this.selectRemainPassword;
     },
+    // 生成一个随机数
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    },
+    refreshCode() {
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
+      }
+    },
     initVerifyCode() {
-      if (this.allowToogleVerifyCode) {
-        this.$apis.getVerifyCode(`${this.account}`)
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+    },
+    clearUserLoginForm() {
+      this.$util.removeStorage('user_login')
+    },
+    saveUserLoginForm() {
+      this.$util.setStorage('user_login', {
+        account: this.account,
+        password: this.password
+      })
+    },
+    initUserStorageForm() {
+      let { account, password} = this.$util.getStorage('user_login')
+      if (account && password) {
+        this.account = account
+        this.password = password
       }
     },
     async onLogin() {
-      if (this.allowLogin) {
-        try {
-          await this.diapatchLogin(`${this.account}/${this.password}`)
-          this.$router.push({
-            path: "/location-monitor"
+      try {
+        if (this.allowLogin) {
+          if (this.verifyCode !== this.identifyCode) {
+            this.$message({
+              type: "error",
+              message: "验证码输入错误!"
+            });
+            return this.initVerifyCode();
+          }
+          await this.userLogin({
+            account: this.account,
+            password: this.password
           });
-        } catch (error) {
+          if (this.selectRemainPassword) {
+            this.saveUserLoginForm()
+          } else {
+            this.clearUserLoginForm()
+          }
           this.$router.push({
             path: "/location-monitor"
           });
         }
+      } catch (error) {
+        this.initVerifyCode();
       }
-      // this.$router.push({
-      //   path: "/user-manage"
-      // });
     }
   },
-  components: {},
+  components: {
+    VerifyCode
+  },
   mounted() {
-    this.initVerifyCode()
+    this.initUserStorageForm()
+    this.initVerifyCode();
   }
 };
 </script>
@@ -227,15 +286,10 @@ export default {
           margin-left: d2r(10px);
           font-size: d2r(30px);
           color: #ffffff;
-          opacity: 0.4;
-          background: rgba(255, 117, 37, 1);
           cursor: pointer;
-          &.get-verify-code {
-            color: #ffffff;
-            font-size: d2r(17px);
-          }
-          &.active {
-            opacity: 1;
+          .verifycode-label {
+            width: d2r(160px);
+            height: d2r(50px);
           }
         }
       }
@@ -277,6 +331,7 @@ export default {
         background: rgba(255, 117, 37, 1);
         margin-top: d2r(23px);
         opacity: 0.4;
+        cursor: pointer;
         &.active {
           opacity: 1;
         }

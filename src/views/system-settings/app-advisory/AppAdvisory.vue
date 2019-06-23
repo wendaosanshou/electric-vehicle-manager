@@ -8,85 +8,67 @@
     </div>
     <div class="app-advisory-content">
       <el-table
-        class="role-manage-table table-fix"
-        :data="tableData"
+        class="role-manage-table table-fix table-disable-select-all"
+        :data="sortInfoWeb"
         size="mini"
         border
         stripe
         style="width: 100%"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="username" label="序号" width="180" align="center"></el-table-column>
-        <el-table-column prop="sex" label="资讯标题" align="center"></el-table-column>
-        <el-table-column prop="processPoint" label="创建人" align="center"></el-table-column>
-        <el-table-column prop="installationPoint" label="创建时间" align="center"></el-table-column>
-        <el-table-column prop="installationPoint" label="生效时间" align="center"></el-table-column>
-        <el-table-column prop="installationPoint" label="截止时间" align="center"></el-table-column>
-        <el-table-column prop="processUser" label="操作" align="center" width="280">
+        <el-table-column prop="id" label="序号" align="center"></el-table-column>
+        <el-table-column prop="title" label="资讯标题" align="center"></el-table-column>
+        <el-table-column label="创建人" align="center"></el-table-column>
+        <el-table-column prop="time" label="创建时间" width="160"  align="center"></el-table-column>
+        <el-table-column prop="active_time" label="生效时间" width="160"  align="center"></el-table-column>
+        <el-table-column prop="expire_time" label="截止时间" width="160"  align="center"></el-table-column>
+        <el-table-column label="操作" align="center" width="260">
           <template>
             <div class="table-col-btn-wrap">
-                 <advisory-edit></advisory-edit>
-            <advisory-delete></advisory-delete>
+              <advisory-edit></advisory-edit>
+              <advisory-delete></advisory-delete>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="installationPoint" label="备注信息" align="center"></el-table-column>
+        <el-table-column label="备注信息" align="center"></el-table-column>
       </el-table>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
-import AdvisoryAdd from './AdvisoryAdd'
-import AdvisoryDelete from './AdvisoryDelete'
-import AdvisoryEdit from './AdvisoryEdit'
+import AdvisoryAdd from "./AdvisoryAdd";
+import AdvisoryDelete from "./AdvisoryDelete";
+import AdvisoryEdit from "./AdvisoryEdit";
 
 export default {
   data() {
-    return {
-      tableData: [
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        }
-      ]
-    };
+    return {};
+  },
+  computed: {
+    ...mapGetters(["infoWeb"]),
+    sortInfoWeb() {
+      if (this.infoWeb && this.infoWeb.length > 0) {
+        return this.infoWeb.sort((a, b) => a.id - b.id);
+      }
+      return this.infoWeb;
+    }
+  },
+  methods: {
+    ...mapActions(["getInfoWeb"])
   },
   components: {
     PageTitle,
     AdvisoryDelete,
     AdvisoryEdit,
     AdvisoryAdd
+  },
+  mounted() {
+    this.getInfoWeb({
+      index: 1
+    });
   }
 };
 </script>
@@ -119,10 +101,10 @@ $basic-ratio: 1.4;
   .app-advisory-content {
     margin-top: d2r(39px);
     .table-col-btn-wrap {
-        display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
     }
   }
 }

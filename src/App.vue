@@ -179,4 +179,23 @@ $basic-ratio: 1.4;
     border-radius: d2r(9px);
   }
 }
+
+.dialog-small-org {
+  .el-dialog {
+    width: d2r(460px);
+  }
+}
+
+.role-tag-fix {
+  margin-left: d2r(6px);
+  cursor: pointer;
+}
+
+.table-disable-select-all thead {
+    .el-table-column--selection {
+      .cell {
+        display: none;
+      }
+    }
+  }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <div class="advisory-edit">
-    <el-button class="button-fix" size="mini" type="primary" @click="onDialogShow">添加咨询</el-button>
+    <el-button class="button-fix" size="mini" type="primary" icon="el-icon-plus" @click="onDialogShow">
+      添加咨询
+    </el-button>
     <el-dialog
       class="dialog-fix dialog-container"
       title="添加APP咨询"

@@ -8,13 +8,13 @@
       <div class="user-manage-menu">
         <div class="menu-account menu-ipt-wraper">
           <span class="menu-label">账号</span>
-          <el-input class="menu-ipt" size="mini" v-model="account" placeholder="请输入手机号"></el-input>
+          <el-input class="menu-ipt" size="mini" v-model="searchAccount" placeholder="请输入手机号"></el-input>
         </div>
         <div class="menu-user-name menu-ipt-wraper">
           <span class="menu-label">角色姓名</span>
-          <el-select class="menu-ipt" size="mini" v-model="userName" placeholder="请选择">
+          <el-select class="menu-ipt" size="mini" v-model="searchRole" placeholder="请选择">
             <el-option
-              v-for="item in userNames"
+              v-for="item in roles"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -22,8 +22,8 @@
           </el-select>
         </div>
         <div class="menu-btn-wraper">
-          <div class="el-btn btn-search">查询</div>
-          <div class="el-btn btn-clear">清空</div>
+          <div class="el-btn btn-search" @click="handleSearchAllUser">查询</div>
+          <div class="el-btn btn-clear" @click="handleClearSearchParams">清空</div>
         </div>
       </div>
       <div class="user-manage-crud ly-flex-row">
@@ -31,11 +31,7 @@
           <i class="icon-btn-add"></i>
           <span class="btn-content">添加用户</span>
         </div>
-        <user-delete/>
-        <!-- <div class="el-btn crud-btn-delete crud-btn ly-flex-row">
-          <i class="icon-btn-delete"></i>
-          <span class="btn-content">删除用户</span>
-        </div> -->
+        <user-delete @onRefresh="handelRefresh"/>
         <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEidt">
           <i class="icon-btn-edit"></i>
           <span class="btn-content">编辑用户</span>
@@ -43,24 +39,27 @@
       </div>
     </div>
     <dir class="user-manage-export">
-      <el-checkbox size="mini" class="checkbox-select-all" v-model="checked">全选</el-checkbox>
+      <el-checkbox size="mini" class="checkbox-select-all" v-model="isCheckedAll">全选</el-checkbox>
       <el-button size="mini" class="button-fix btn-export">导出</el-button>
     </dir>
-    <el-table class="table-fix" size="mini" :data="tableData" border style="width: 100%">
+    <el-table ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
+      @selection-change="handleSelectionChange"
+      @select="handleSelect">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="date" label="序号" width="180"></el-table-column>
-      <el-table-column prop="name" label="账号（手机号）" width="180"></el-table-column>
-      <el-table-column prop="address" label="账号姓名"></el-table-column>
-      <el-table-column prop="address" label="所属组织（业务办理点）" width="220"></el-table-column>
-      <el-table-column prop="address" label="手机号码"></el-table-column>
-      <el-table-column prop="address" label="邮箱"></el-table-column>
-      <el-table-column prop="address" label="备注"></el-table-column>
+      <el-table-column prop="id" label="序号"></el-table-column>
+      <el-table-column prop="account" label="账号（手机号）"></el-table-column>
+      <el-table-column prop="name" label="账号姓名"></el-table-column>
+      <el-table-column prop="site_name" label="所属组织（业务办理点）"></el-table-column>
+      <el-table-column prop="role_name" label="角色名称"></el-table-column>
+      <el-table-column prop="phone" label="手机号码"></el-table-column>
+      <el-table-column prop="email" label="邮箱"></el-table-column>
+      <el-table-column prop="note" label="备注"></el-table-column>
     </el-table>
     <div class="pagination-wraper">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
+        :current-page="1"
         :page-sizes="[100, 200, 300, 400]"
         :page-size="100"
         layout="prev, pager, next, jumper"
@@ -71,61 +70,100 @@
 </template>
 
 <script>
-import UserDelete from './UserDelete'
+import { mapGetters, mapMutations, mapActions } from "vuex";
+import UserDelete from "./UserDelete";
 
 export default {
   data() {
     return {
-      account: '',
-      userName: 0,
-      userNames: [{
-        value: 0,
-        label: '全部'
-      },{
-        value: 1,
-        label: '超级系统管理员'
-      },{
-        value: 2,
-        label: '系统管理员'
-      }],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      searchSize: 10,
+      searchIndex: 1,
+      searchAccount: "",
+      searchRole: "",
+      isCheckedAll: false,
+      selectItem: '',
+      tableData: []
     };
   },
+  computed: {
+    ...mapGetters(['allUser', 'allRoles', 'selectUser']),
+    roles() {
+      let roles = [{
+        value: '',
+        label: "全部"
+      }]
+      this.allRoles.forEach(item => {
+        roles.push({
+          value: item.id,
+          label: item.name
+        })
+      });
+      return roles
+    }
+  },
   methods: {
+    ...mapMutations(['udpateSelectUser']),
+    ...mapActions(["getAllUser"]),
+    handleSizeChange() {},
+    handleCurrentChange() {},
+    handleSearchAllUser() {
+      this.getAllUser({
+        page_size: 10,
+        page_index: 1,
+        account: this.searchAccount,
+        role: this.searchRole
+      });
+    },
+    handleClearSearchParams() {
+      this.searchAccount = ''
+      this.searchRole = ''
+    },
+    handleSelectionChange(val) {
+      console.log('handleSelectionChange')
+      if (val.length > 1) {
+        this.$refs.userTable.clearSelection()
+        this.$refs.userTable.toggleRowSelection(val.pop())
+      }
+    },
+    handleSelect(val) {
+      console.log('handleSelect', val)
+      const [selectItem] = val
+      this.udpateSelectUser(selectItem)
+    },
     handleUserAdd() {
       this.$router.push({
-        path: 'user-add'
-      })
+        path: "user-add"
+      });
     },
     handleUserEidt() {
-      this.$router.push({
-        path: 'user-edit'
-      })
+      if(this.selectUser && this.selectUser.account) {
+        this.$router.push({
+          path: "user-edit"
+        });
+      } else {
+        this.$message({
+          type: "info",
+          message: "请至少选择一个用户!"
+        });
+      }
+    },
+    initAllUser() {
+      this.getAllUser({
+        page_size: this.searchSize,
+        page_index: this.searchIndex,
+        account: this.searchAccount,
+        role: ""
+      });
+    },
+    handelRefresh() {
+      this.initAllUser()
     }
   },
   components: {
     UserDelete
+  },
+  mounted() {
+    this.initAllUser();
   }
 };
 </script>

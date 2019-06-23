@@ -1,6 +1,6 @@
 <template>
   <div class="advisory-delete">
-    <el-button class="button-fix" size="mini" type="primary" @click="onDialogShow">删除</el-button>
+    <el-button class="button-fix" icon="el-icon-delete" size="mini" type="danger" @click="onDialogShow">删除</el-button>
     <el-dialog class="dialog-fix" title="添加角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="app-advisory-title">
         <page-title>选择你要删除的APP咨询</page-title>

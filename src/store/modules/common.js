@@ -1,5 +1,4 @@
 const common = {
-  namespaced: true,
   state: {
     activePageName: ''
   },

@@ -358,7 +358,7 @@ $basic-ratio: 1.4;
 }
 
 .record-setting-container.setting-dialog {
-  padding: 0;
+  padding: d2r(25px) d2r(38px) d2r(33px) d2r(30px);
   overflow: scroll;
   .setting-part-container {
     display: flex;
@@ -369,8 +369,6 @@ $basic-ratio: 1.4;
     margin-top: d2r(11px);
     &:nth-child(0) {
       margin-top: 0;
-    }
-    .setting-title {
     }
     .setting-content {
       margin-left: 0;

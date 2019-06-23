@@ -2,31 +2,39 @@
   <div class="role-manage">
     <div class="role-manage-title">
       <page-title>角色权限管理</page-title>
-      <role-add-dialog></role-add-dialog>
+      <role-add-dialog @onRefreshRoleInfo="getAllRoles"></role-add-dialog>
     </div>
     <div class="role-manage-content">
       <div class="role-manage-subtitle">当前角色</div>
       <el-table
         class="role-manage-table table-fix"
-        :data="tableData"
+        :data="sortAllRoles"
         size="mini"
         border
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="username" label="角色编号" width="180" align="center"></el-table-column>
-        <el-table-column prop="sex" label="角色名称" align="center"></el-table-column>
-        <el-table-column prop="processPoint" label="角色权限" align="center"></el-table-column>
-        <el-table-column prop="installationPoint" label="角色说明" align="center"></el-table-column>
-        <el-table-column prop="processUser" label="操作" align="center" width="280">
-          <template>
+        <el-table-column prop="code" label="角色编号" width="180" align="center"></el-table-column>
+        <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
+        <el-table-column prop="author" label="角色权限" align="center" width="350">
+           <template slot-scope="scope">
+            <el-tag
+              class="role-tag"
+              type="success"
+              v-for="(item, index) in scope.row.roleNames"
+              :key="index"
+              size="mini"
+              disable-transitions>{{item}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="note" label="角色说明" align="center"></el-table-column>
+        <el-table-column label="操作" align="center" width="280">
+          <template slot-scope="scope">
             <div class="btn-container">
-              <role-edit-dialog></role-edit-dialog>
+              <role-edit-dialog :data="deepClone(scope.row)" @onRefreshRoleInfo="getAllRoles"></role-edit-dialog>
               <div class="part-line"></div>
-              <role-delete-dialog></role-delete-dialog>
+              <role-delete-dialog :data="deepClone(scope.row)" @onRefreshRoleInfo="getAllRoles"></role-delete-dialog>
             </div>
-            <!-- <el-button class="button-fix" icon="el-icon-edit" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
-            <!-- <el-button class="button-fix" icon="el-icon-delete" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -35,6 +43,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import PageTitle from "@/components/PageTitle.vue";
 import PageBack from "@/components/PageBack.vue";
 import RoleAddDialog from "./RoleAddDialog";
@@ -44,46 +53,24 @@ import RoleDeleteDialog from "./RoleDeleteDialog";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        }
-      ]
     };
   },
+  computed: {
+    ...mapGetters(['allRoles']),
+    sortAllRoles() {
+      return this.allRoles.sort((a, b) => a.code - b.code)
+    }
+  },
   methods: {
+    ...mapActions(['getAllRoles', 'deleteRole']),
     handleEdit() {},
-    handleDelete() {}
+    handleDelete() {},
+    handleDeleteRole() {
+
+    },
+    deepClone(data) {
+      return JSON.parse(JSON.stringify(data))
+    }
   },
   components: {
     PageTitle,
@@ -91,6 +78,9 @@ export default {
     RoleAddDialog,
     RoleEditDialog,
     RoleDeleteDialog
+  },
+  mounted() {
+    this.getAllRoles()
   }
 };
 </script>
@@ -146,5 +136,10 @@ $basic-ratio: 1.4;
       }
     }
   }
+}
+
+.role-tag {
+  margin-left: d2r(6px);
+  cursor: pointer;
 }
 </style>

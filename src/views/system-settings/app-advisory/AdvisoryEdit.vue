@@ -1,6 +1,6 @@
 <template>
   <div class="advisory-edit">
-    <el-button class="button-fix" size="mini" type="primary" @click="onDialogShow">修改</el-button>
+    <el-button class="button-fix" icon="el-icon-edit" size="mini" type="primary" @click="onDialogShow">修改</el-button>
       <el-dialog
         class="dialog-fix dialog-container"
         title="修改APP咨询"

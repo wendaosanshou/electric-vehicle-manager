@@ -2,11 +2,17 @@
   <div class="point-content">
     <div class="point-item">
       <div class="point-item-label">当前组织名称</div>
-      <el-input class="item-ipt ipt-fix" size="mini" placeholder="请填写当前组织名称"></el-input>
+      <el-input
+        v-model="businessForm.name"
+        class="item-ipt ipt-fix"
+        size="mini"
+        placeholder="请填写当前组织名称"
+      ></el-input>
     </div>
     <div class="point-item point-item-textarea">
       <div class="point-item-label">备注</div>
       <el-input
+        v-model="businessForm.note"
         type="textarea"
         class="item-ipt-textarea ipt-fix"
         size="mini"
@@ -17,23 +23,84 @@
     </div>
     <div class="point-item">
       <div class="point-item-label">组织类型</div>
-      <el-select class="item-ipt ipt-fix" size="small" v-model="organization" placeholder="请选择活动区域">
-        <el-option label="区域一" value="shanghai"></el-option>
+      <el-select
+        v-model="businessForm.organization_id"
+        class="item-ipt ipt-fix"
+        size="small"
+        placeholder="请选择活动区域"
+      >
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in allOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
-      <el-button class="point-btn button-fix" size="mini" type="primary">修改</el-button>
+      <el-button
+        class="point-btn point-btn-edit button-fix"
+        :class="{active: isAllowAdd}"
+        size="mini"
+        type="primary"
+        @click="handleEditBusinessPoint"
+      >修改</el-button>
       <el-button class="point-btn button-fix" size="mini">取消</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   data() {
     return {
-      organization: []
+      businessForm: {}
     };
+  },
+  props: {
+    defaultForm: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  watch: {
+    defaultForm() {
+      this.initBusinessForm();
+    }
+  },
+  computed: {
+    ...mapGetters(["allOrg"]),
+    isAllowAdd() {
+      return Object.keys(this.businessForm).every(key => {
+        if (
+          ["name", "note", "parent_id", "organization_id"].indexOf(key) > -1
+        ) {
+          return this.businessForm[key];
+        } else {
+          return true;
+        }
+      });
+    }
+  },
+  methods: {
+    ...mapActions(["editBusinessPoint"]),
+    initBusinessForm() {
+      this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
+    },
+    async handleEditBusinessPoint() {
+      try {
+        if (this.isAllowAdd) {
+          console.log("handleEditBusinessPoint");
+          await this.editBusinessPoint(this.businessForm);
+          this.$emit("onRefresh");
+        }
+      } catch (error) {
+        this.$message({
+          type: "info",
+          message: "编辑失败!"
+        });
+      }
+    }
+  },
+  mounted() {
+    this.initBusinessForm();
   }
 };
 </script>
@@ -82,6 +149,13 @@ $basic-ratio: 1.4;
     justify-content: flex-start;
     align-items: center;
     padding: d2r(60px) 0 0 d2r(164px);
+  }
+}
+
+.point-btn-edit {
+  opacity: 0.4;
+  &.active {
+    opacity: 1;
   }
 }
 </style>

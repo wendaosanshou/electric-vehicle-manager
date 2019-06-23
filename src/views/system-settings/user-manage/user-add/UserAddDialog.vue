@@ -7,16 +7,28 @@
         <span class="refresh-link">刷新</span>
       </div>
       <div class="table-container">
-        <el-table class="table-fix" :data="tableData" size="mini" border stripe style="width: 100%">
+        <el-table ref="roleTable" class="table-fix table-disable-select-all" :data="allRoles" size="mini" border stripe style="width: 100%"
+          @selection-change="handleSelectionChange"
+          @select="handleSelect">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="processPoint" label="角色编号" align="center"></el-table-column>
-          <el-table-column prop="installationPoint" label="角色姓名" align="center"></el-table-column>
-          <el-table-column prop="processUser" label="角色权限" align="center"></el-table-column>
-          <el-table-column prop="businessAuditor" label="角色说明" align="center"></el-table-column>
+          <el-table-column prop="code" label="角色编号" align="center"></el-table-column>
+          <el-table-column prop="name" label="角色姓名" align="center"></el-table-column>
+          <el-table-column prop="author" label="角色权限" align="center" width="380">
+            <template slot-scope="scope">
+            <el-tag
+              class="role-tag role-tag-fix"
+              type="success"
+              v-for="(item, index) in scope.row.roleNames"
+              :key="index"
+              size="mini"
+              disable-transitions>{{item}}</el-tag>
+          </template>
+          </el-table-column>
+          <el-table-column prop="note" label="角色说明" align="center"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
+        <el-button size="mini" type="primary" @click="handleDialogConfirm">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -24,59 +36,47 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import PageTitle from "@/components/PageTitle.vue";
 
 export default {
   data() {
     return {
       dialogVisible: false,
-      tableData: [
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        }
-      ]
+      selectValue: ''
     };
   },
+  computed: {
+    ...mapGetters(['allRoles'])
+  },
   methods: {
+    ...mapActions(['getAllRoles']),
     onDialogShow() {
       this.dialogVisible = true;
     },
     onDialogHide() {
       this.dialogVisible = false;
+    },
+    handleSelectionChange(val) {
+      if (val.length > 1) {
+        this.$refs.roleTable.clearSelection()
+        this.$refs.roleTable.toggleRowSelection(val.pop())
+      }
+    },
+    handleSelect(val) {
+      console.log('handleSelect', val)
+      this.selectValue = val
+    },
+    handleDialogConfirm() {
+      this.$emit('onSelectRole', this.selectValue)
+      this.onDialogHide()
     }
   },
   components: {
     PageTitle
+  },
+  mounted() {
+    this.getAllRoles()
   }
 };
 </script>
