@@ -4,7 +4,7 @@
       <page-title>APP咨询管理</page-title>
     </div>
     <div class="app-btn-wrap">
-      <advisory-add></advisory-add>
+      <advisory-add @onRefresh="initInfoWeb"></advisory-add>
     </div>
     <div class="app-advisory-content">
       <el-table
@@ -15,18 +15,17 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="序号" align="center"></el-table-column>
-        <el-table-column prop="title" label="资讯标题" align="center"></el-table-column>
+        <el-table-column prop="title" label="资讯标题" width="180" align="center"></el-table-column>
         <el-table-column label="创建人" align="center"></el-table-column>
-        <el-table-column prop="time" label="创建时间" width="160"  align="center"></el-table-column>
-        <el-table-column prop="active_time" label="生效时间" width="160"  align="center"></el-table-column>
-        <el-table-column prop="expire_time" label="截止时间" width="160"  align="center"></el-table-column>
+        <el-table-column prop="time" label="创建时间" width="140" align="center"></el-table-column>
+        <el-table-column prop="active_time" label="生效时间" width="140" align="center"></el-table-column>
+        <el-table-column prop="expire_time" label="截止时间" width="140" align="center"></el-table-column>
         <el-table-column label="操作" align="center" width="260">
-          <template>
+          <template slot-scope="scope">
             <div class="table-col-btn-wrap">
-              <advisory-edit></advisory-edit>
-              <advisory-delete></advisory-delete>
+              <advisory-add :defaultData="scope.row" dialogType="edit" @onRefresh="initInfoWeb"></advisory-add>
+              <advisory-delete :defaultData="scope.row" @onRefresh="initInfoWeb"></advisory-delete>
             </div>
           </template>
         </el-table-column>
@@ -57,7 +56,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getInfoWeb"])
+    ...mapActions(["getInfoWeb"]),
+    initInfoWeb() {
+      this.getInfoWeb({
+        index: 1
+      });
+    }
   },
   components: {
     PageTitle,
@@ -66,9 +70,7 @@ export default {
     AdvisoryAdd
   },
   mounted() {
-    this.getInfoWeb({
-      index: 1
-    });
+    this.initInfoWeb();
   }
 };
 </script>

@@ -235,6 +235,51 @@ const Login = {
       } catch (error) {
         console.log(error);
       }
+    },
+    async addInfoWeb({ commit }, data) {
+      try {
+        const result = await $apis.addInfoWeb({
+          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          data: data
+        });
+        vm.$message({
+          type: "success",
+          message: "添加成功!"
+        });
+        console.log(result)
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async updateInfoWeb({ commit }, data) {
+      try {
+        const result = await $apis.updateInfoWeb({
+          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          data: data
+        });
+        vm.$message({
+          type: "success",
+          message: "更新成功!"
+        });
+        console.log(result)
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async deleteInfoWeb({ commit }, data) {
+      try {
+        const result = await $apis.deleteInfoWeb({
+          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "删除成功!"
+        });
+        console.log(result)
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   getters: {

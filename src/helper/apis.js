@@ -99,7 +99,15 @@ export default {
     return $ajax.get(requestUrl('business/install'), data);
   },
   getInfoWeb(data) {
-    console.log(data)
     return $ajax.get(requestUrl(`info/web/${data.index}`), data);
+  },
+  addInfoWeb(data) {
+    return $ajax.post(requestUrl('info/upload'), data);
+  },
+  updateInfoWeb(data) {
+    return $ajax.post(requestUrl('info/update'), data);
+  },
+  deleteInfoWeb(data) {
+    return $ajax.get(requestUrl(`info/delete/${data.id}`), data);
   }
 };

@@ -1,24 +1,29 @@
 <template>
   <div class="advisory-delete">
-    <el-button class="button-fix" icon="el-icon-delete" size="mini" type="danger" @click="onDialogShow">删除</el-button>
+    <el-button
+      class="button-fix"
+      icon="el-icon-delete"
+      size="mini"
+      type="danger"
+      @click="onDialogShow"
+    >删除</el-button>
     <el-dialog class="dialog-fix" title="添加角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="app-advisory-title">
         <page-title>选择你要删除的APP咨询</page-title>
       </div>
       <div class="dialog-content">
         <el-table class="table-fix" size="mini" :data="tableData" border style="width: 100%">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="date" label="序号" width="180"></el-table-column>
-          <el-table-column prop="name" label="账号（手机号）" width="180"></el-table-column>
-          <el-table-column prop="address" label="账号姓名"></el-table-column>
-          <el-table-column prop="address" label="所属组织（业务办理点）" width="220"></el-table-column>
-          <el-table-column prop="address" label="手机号码"></el-table-column>
-          <el-table-column prop="address" label="邮箱"></el-table-column>
-          <el-table-column prop="address" label="备注"></el-table-column>
+          <el-table-column prop="id" label="序号" align="center"></el-table-column>
+          <el-table-column prop="title" label="资讯标题" width="120" align="center"></el-table-column>
+          <el-table-column label="创建人" align="center"></el-table-column>
+          <el-table-column prop="time" label="创建时间" align="center"></el-table-column>
+          <el-table-column prop="active_time" label="生效时间" align="center"></el-table-column>
+          <el-table-column prop="expire_time" label="截止时间" align="center"></el-table-column>
+          <el-table-column prop="address" label="备注信息"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
+        <el-button size="mini" type="primary" @click="handleDeleteInfoWeb">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -26,27 +31,37 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 
 export default {
   data() {
     return {
       dialogVisible: false,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普"
-        }
-      ]
+      tableData: []
     };
   },
+  props: {
+    defaultData: {
+      type: Object,
+      default: () => {}
+    }
+  },
   methods: {
+    ...mapActions(['deleteInfoWeb']),
     onDialogShow() {
+      this.tableData = [this.defaultData];
       this.dialogVisible = true;
     },
     onDialogHide() {
       this.dialogVisible = false;
+    },
+    async handleDeleteInfoWeb() {
+      await this.deleteInfoWeb({
+        id: this.defaultData.id
+      })
+      this.$emit('onRefresh')
+      this.onDialogHide()
     }
   },
   components: {

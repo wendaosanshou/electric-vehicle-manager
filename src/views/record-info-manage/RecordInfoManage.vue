@@ -4,7 +4,7 @@
       <div class="menu-item menu-col-less">
         <div class="item-selector-wraper">
           <div class="item-label">县区</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -15,7 +15,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">街道办事处</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -26,7 +26,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">业务办理点</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -39,7 +39,7 @@
       <div class="menu-item menu-col-less">
         <div class="item-selector-wraper">
           <div class="item-label">县区</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -50,7 +50,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">街道办事处</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -61,7 +61,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">设备安装点</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -72,17 +72,17 @@
         </div>
       </div>
       <div class="menu-item menu-col-less">
-        <div class="item-selector-wraper">
+        <div class="item-selector-wraper ipt-fix">
           <div class="item-label">车主手机号</div>
           <el-input class="item-selector" size="mini" v-model="input" placeholder="请输入手机号"></el-input>
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">安装工手机号</div>
-          <el-input class="item-selector" size="mini" v-model="input" placeholder="请输入手机号"></el-input>
+          <el-input class="item-selector ipt-fix" size="mini" v-model="input" placeholder="请输入手机号"></el-input>
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">安装状态</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -94,7 +94,7 @@
       </div>
       <div class="menu-item menu-col-less menu-item-long">
         <div class="item-selector-wraper">
-          <div class="item-label">审核时间</div>
+          <div class="item-label ipt-fix">审核时间</div>
           <el-date-picker
             class="item-selector-datapicker"
             size="mini"
@@ -106,7 +106,7 @@
           ></el-date-picker>
         </div>
         <div class="item-selector-wraper">
-          <div class="item-label">派单时间</div>
+          <div class="item-label ipt-fix">派单时间</div>
           <el-date-picker
             class="item-selector-datapicker"
             size="mini"
@@ -118,7 +118,7 @@
           ></el-date-picker>
         </div>
         <div class="item-selector-wraper">
-          <div class="item-label">安装时间</div>
+          <div class="item-label ipt-fix">安装时间</div>
           <el-date-picker
             class="item-selector-datapicker"
             size="mini"
@@ -132,7 +132,7 @@
       </div>
       <div class="menu-item menu-col-more">
         <div class="item-selector-wraper">
-          <div class="item-label">合约期</div>
+          <div class="item-label ipt-fix">合约期</div>
           <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
@@ -144,7 +144,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">激活状态</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -155,7 +155,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">IMEI</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -166,7 +166,7 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">ICCID</div>
-          <el-select class="item-selector" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"

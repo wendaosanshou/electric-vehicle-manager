@@ -8,56 +8,69 @@
         :visible.sync="dialogVisible"
         @close="onDialogHide"
       >
+      {{form}}
         <div class="dialog-content">
           <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
-            <el-form-item label="序号">
-              <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="登录账号（手机号）"></el-input>
-            </el-form-item>
-            <el-form-item label="标题">
-              <el-input class="ipt-fix" size="mini" v-model="form.region" placeholder="自动填充"></el-input>
-            </el-form-item>
-            <el-form-item label="缩略图">
-              <div class="form-btn-wrap">
-                <el-input
-                  class="ipt-fix ipt-half-width"
-                  size="mini"
-                  v-model="form.type"
-                  placeholder="输入密码"
-                ></el-input>
-                <el-button class="button-fix btn-select" size="mini" type="primary">提交</el-button>
-              </div>
-            </el-form-item>
-            <el-form-item label="上传页面">
-              <div class="form-btn-wrap">
-                <el-input
-                  class="ipt-fix ipt-half-width"
-                  size="mini"
-                  v-model="form.type"
-                  placeholder="输入姓名"
-                ></el-input>
-                <el-button class="button-fix btn-select" size="mini" type="primary">提交</el-button>
-              </div>
-            </el-form-item>
-            <el-form-item label="生效时间">
-              <el-input class="ipt-fix" size="mini" v-model="form.type" placeholder="输入姓名"></el-input>
-            </el-form-item>
-            <el-form-item label="截止时间">
-              <div class="form-btn-wrap">
-                <el-input class="ipt-fix" size="mini" v-model="form.type" placeholder="输入姓名"></el-input>
-              </div>
-            </el-form-item>
-            <el-form-item label="备注信息">
+          <el-form-item label="序号">
+            <el-input
+              class="ipt-fix"
+              size="mini"
+              v-model="userInfo.account"
+              placeholder="登录账号（手机号）"
+              disabled
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="标题">
+            <el-input class="ipt-fix" size="mini" v-model="form.title" placeholder="输入标题"></el-input>
+          </el-form-item>
+          <el-form-item label="缩略图">
+            <div class="form-btn-wrap">
               <el-input
-                type="textarea"
-                class="ipt-fix"
+                class="ipt-fix ipt-half-width"
                 size="mini"
-                resize="none"
-                :autosize="{ minRows: 10, maxRows: 10}"
-                v-model="form.type"
-                placeholder="请输入备注信息（50字内）"
+                v-model="form.img_url"
+                placeholder="选择页面缩略图上传"
               ></el-input>
-            </el-form-item>
-          </el-form>
+              <el-upload :show-file-list="false" class="page-upload" :action="imageUploadUrl">
+                <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
+              </el-upload>
+            </div>
+          </el-form-item>
+          <el-form-item label="上传页面">
+            <div class="form-btn-wrap">
+              <el-input
+                class="ipt-fix ipt-half-width"
+                size="mini"
+                v-model="form.html_url"
+                placeholder="选择页面上传"
+              ></el-input>
+              <el-upload :show-file-list="false" class="page-upload" :action="htmlUploadUrl">
+                <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
+              </el-upload>
+            </div>
+          </el-form-item>
+          <el-form-item label="生效时间">
+            <el-date-picker v-model="form.active_time" size="mini" type="date" placeholder="生效时间"></el-date-picker>
+            <!-- <el-input class="ipt-fix" size="mini" v-model="form.active_time" placeholder="输入姓名"></el-input> -->
+          </el-form-item>
+          <el-form-item label="截止时间">
+            <div class="form-btn-wrap">
+              <el-date-picker v-model="form.expire_time" size="mini" type="date" placeholder="截止时间"></el-date-picker>
+              <!-- <el-input class="ipt-fix" size="mini" v-model="form.expire_time" placeholder="输入姓名"></el-input> -->
+            </div>
+          </el-form-item>
+          <el-form-item label="备注信息">
+            <el-input
+              type="textarea"
+              class="ipt-fix"
+              size="mini"
+              resize="none"
+              :autosize="{ minRows: 10, maxRows: 10}"
+              v-model="form.content"
+              placeholder="请输入备注信息（50字内）"
+            ></el-input>
+          </el-form-item>
+        </el-form>
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
@@ -68,19 +81,31 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   data() {
     return {
       dialogVisible: false,
       form: {
-        data1: "",
-        data2: "",
-        data3: ""
+        title: "",
+        content: "",
+        img_url: "",
+        html_url: "",
+        active_time: "",
+        expire_time: ""
       }
     };
   },
+  props: {
+    defaultData: {
+      type: Object,
+      default: {}
+    }
+  },
   methods: {
     onDialogShow() {
+      this.form = JSON.parse(JSON.stringify(this.defaultData))
       this.dialogVisible = true;
     },
     onDialogHide() {
