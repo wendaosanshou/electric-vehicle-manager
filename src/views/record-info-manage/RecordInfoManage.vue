@@ -82,9 +82,9 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">安装状态</div>
-          <el-select class="item-selector ipt-fix" size="mini" v-model="countyArea" placeholder="请选择">
+          <el-select class="item-selector ipt-fix" size="mini" v-model="installStatus" placeholder="请选择">
             <el-option
-              v-for="item in options"
+              v-for="item in installStatusList"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -179,7 +179,7 @@
     </div>
     <div class="record-btn-contanier">
       <div class="btn-left-container">
-        <el-button class="button-fix" size="mini" type="primary">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="getAllWorkList">查询</el-button>
         <el-button class="button-fix" size="mini" type="primary">清空</el-button>
         <el-button class="button-fix" size="mini" type="primary" v-if="isProcessManage">派单快查</el-button>
         <el-button class="button-fix" size="mini">导出</el-button>
@@ -188,47 +188,33 @@
         <div class="btn-right-label color-primary" v-if="isRecordInfoManage">请点击手机号码进行修改</div>
         <div class="btn-right-button" v-else-if="isProcessManage">
           <el-checkbox size="mini" class="checkbox-select-all" v-model="checked">全选</el-checkbox>
-          <el-button class="btn-export button-fix" size="mini" type="primary">派单</el-button>
+          <el-button class="btn-export button-fix" size="mini" type="primary" @click="onDistributeWork">派单</el-button>
         </div>
       </div>
     </div>
-    <el-table class="table-fix" :data="tableData" size="mini" border stripe style="width: 100%">
-      <el-table-column prop="username" label="车主姓名" width="180" align="center"></el-table-column>
+    <el-table class="table-fix" :data="workList" size="mini" border stripe style="width: 100%">
+      <el-table-column prop="own_nam" label="车主姓名" width="180" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="180" align="center">
         <template slot-scope="scope">
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="点击修改信息"
-            placement="top"
-            v-if="isRecordInfoManage"
-          >
-            <div class="table-mobile" @click="onMobileSetting">{{scope.row.mobile}}</div>
-          </el-tooltip>
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="查询办理详情"
-            placement="top"
-            v-else-if="isProcessManage"
-          >
-            <div class="table-mobile" @click="onSearchProcessDetail">{{scope.row.mobile}}</div>
+          <el-tooltip class="item" effect="dark" content="点击修改信息" placement="top">
+            <div class="table-mobile" @click="onMobileSetting">{{scope.row.own_phone}}</div>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column prop="sex" label="性别" align="center"></el-table-column>
+      <el-table-column prop="own_sex" label="性别" align="center"></el-table-column>
       <el-table-column prop="processPoint" label="业务办理点" align="center"></el-table-column>
-      <el-table-column prop="installationPoint" label="设备安装点" align="center"></el-table-column>
-      <el-table-column prop="processUser" label="业务办理员" align="center"></el-table-column>
-      <el-table-column prop="businessAuditor" label="业务审核员" align="center"></el-table-column>
-      <el-table-column prop="auditTime" label="审核时间" align="center"></el-table-column>
-      <el-table-column prop="businessAuditor2" label="业务审核员" align="center"></el-table-column>
+      <el-table-column prop="install_name" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="sys_business_account" label="业务办理员手机" align="center"></el-table-column>
+      <el-table-column prop="sys_audit_account" label="审核人手机" align="center"></el-table-column>
+      <el-table-column prop="audit_time" label="审核时间" width="160px" align="center"></el-table-column>
+      <el-table-column label="安装状态" align="center">
+        <template slot-scope="scope">
+          {{getProcessTips(scope.row.process)}}
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination-wraper">
       <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage4"
         :page-sizes="[100, 200, 300, 400]"
         :page-size="100"
         layout="prev, pager, next, jumper"
@@ -240,58 +226,52 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import BtnQuery from "./RecordManageQuery";
 import ProcssDetailDialog from "./ProcssDetailDialog";
 
 export default {
   data() {
     return {
+      checked: false,
+      input: '',
+      value1: '',
+      options: [],
       procssDetailDialogVisible: false,
       countyArea: "",
+      installStatus: 0,
+      installStatusList: [
+        {
+          value: 0,
+          label: '默认'
+        },
+        {
+          value: 1,
+          label: '预约状态'
+        },
+        {
+          value: 2,
+          label: '已审核'
+        },
+        {
+          value: 3,
+          label: '已指派'
+        },
+        {
+          value: 4,
+          label: '已安装'
+        }
+      ],
       countyAreas: [
         {
           value: 1,
           label: "北京"
         }
-      ],
-      tableData: [
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        }
       ]
     };
   },
   computed: {
+    ...mapGetters(['workList']),
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManage";
     },
@@ -303,19 +283,76 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["getWorkList", 'setWorkDistribute']),
+    getProcessTips(process) {
+      let processTips = ''
+      switch (process) {
+        case 0:
+          processTips = '默认'
+          break;
+        case 1:
+          processTips = '预约状态'
+          break;
+        case 2:
+          processTips = '已审核'
+          break;
+        case 3:
+          processTips = '已指派'
+          break;
+        case 4:
+          processTips = '已安装'
+          break;
+        default:
+          break;
+      }
+      return processTips
+    },
+    async onDistributeWork() {
+      let ids = this.workList.filter(item => {
+        return item.install_status === 2
+      }).map(item => {
+        return item.id
+      })
+      if (this.checked) {
+        await this.setWorkDistribute({
+          distribute_id: ids
+        })
+        this.getAllWorkList()
+      }
+    },
+    onChangeDialog() {
+
+    },
     onMobileSetting() {
       this.$router.push("/record-setting");
     },
-    onSearchProcessDetail() {
-      this.procssDetailDialogVisible = true;
-    },
-    onChangeDialog() {
-      this.procssDetailDialogVisible = false;
+    async getAllWorkList() {
+      await this.getWorkList({
+        page_size: 100,
+        page_index: 1,
+        business: 2,
+        install: 3,
+        client_account: "",
+        install_account: "",
+        business_account: "",
+        audit_account: "",
+        install_status: this.installStatus,
+        audit_time: "",
+        distribute_time: "",
+        install_time: "",
+        contract_content: 0,
+        contract_active: 0,
+        imei: "",
+        iccid: ""
+      });
     }
   },
   components: {
     BtnQuery,
     ProcssDetailDialog
+  },
+  mounted() {
+    this.getAllWorkList()
   }
 };
 </script>

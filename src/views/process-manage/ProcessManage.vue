@@ -165,33 +165,34 @@
         <el-button class="button-fix" size="mini" type="primary">一键快查</el-button>
         <el-button class="button-fix" size="mini">导出</el-button>
       </div>
-      <div class="btn-right-container">
+      <!-- <div class="btn-right-container">
         <el-checkbox size="mini" class="checkbox-select-all" v-model="checked">全选</el-checkbox>
         <el-button class="btn-export button-fix" size="mini" type="primary">派单</el-button>
-      </div>
+      </div> -->
     </div>
-    <el-table class="table-fix" :data="tableData" size="mini" border stripe style="width: 100%">
-      <el-table-column prop="username" label="车主姓名" width="180" align="center"></el-table-column>
+    <el-table class="table-fix" :data="workList" size="mini" border stripe style="width: 100%">
+      <el-table-column prop="own_nam" label="车主姓名" width="180" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="180" align="center">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="点击修改信息" placement="top">
-            <div class="table-mobile" @click="onMobileSetting">{{scope.row.mobile}}</div>
+            <div class="table-mobile" @click="onMobileSetting">{{scope.row.own_phone}}</div>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column prop="sex" label="性别" align="center"></el-table-column>
+      <el-table-column prop="own_sex" label="性别" align="center"></el-table-column>
       <el-table-column prop="processPoint" label="业务办理点" align="center"></el-table-column>
-      <el-table-column prop="installationPoint" label="设备安装点" align="center"></el-table-column>
-      <el-table-column prop="processUser" label="业务办理员" align="center"></el-table-column>
-      <el-table-column prop="businessAuditor" label="业务审核员" align="center"></el-table-column>
-      <el-table-column prop="auditTime" label="审核时间" align="center"></el-table-column>
-      <el-table-column prop="businessAuditor2" label="业务审核员" align="center"></el-table-column>
+      <el-table-column prop="install_name" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="sys_business_account" label="业务办理员手机" align="center"></el-table-column>
+      <el-table-column prop="sys_audit_account" label="审核人手机" align="center"></el-table-column>
+      <el-table-column prop="audit_time" label="审核时间" width="160px" align="center"></el-table-column>
+      <el-table-column label="安装状态" align="center">
+        <template slot-scope="scope">
+          {{getProcessTips(scope.row.process)}}
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination-wraper">
       <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage4"
         :page-sizes="[100, 200, 300, 400]"
         :page-size="100"
         layout="prev, pager, next, jumper"
@@ -202,54 +203,26 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   data() {
     return {
+      checked: false,
+      input: '',
+      value1: '',
+      options: [],
       countyArea: "",
       countyAreas: [
         {
           value: 1,
           label: "北京"
         }
-      ],
-      tableData: [
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        },
-        {
-          username: "某某某",
-          mobile: "18710923477",
-          sex: "男",
-          processPoint: "业务办理点1",
-          installationPoint: "测试安装点",
-          processUser: "商户1",
-          businessAuditor: "商户2",
-          auditTime: "审核时间",
-          businessAuditor2: "职员1"
-        }
       ]
     };
   },
   computed: {
+    ...mapGetters(['workList']),
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManange";
     },
@@ -258,11 +231,58 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["getWorkList"]),
+    getProcessTips(process) {
+      let processTips = ''
+      switch (process) {
+        case 0:
+          processTips = '默认'
+          break;
+        case 1:
+          processTips = '预约状态'
+          break;
+        case 2:
+          processTips = '已审核'
+          break;
+        case 3:
+          processTips = '已指派'
+          break;
+        case 4:
+          processTips = '已安装'
+          break;
+        default:
+          break;
+      }
+      return processTips
+    },
     onMobileSetting() {
       this.$router.push("/record-setting");
+    },
+    async getAllWorkList() {
+      await this.getWorkList({
+        page_size: 100,
+        page_index: 1,
+        business: 2,
+        install: 2,
+        client_account: "",
+        install_account: "",
+        business_account: "",
+        audit_account: "",
+        install_status: 1,
+        audit_time: "",
+        distribute_time: "",
+        install_time: "",
+        contract_content: 0,
+        contract_active: 0,
+        imei: "",
+        iccid: ""
+      });
     }
   },
-  components: {}
+  components: {},
+  mounted() {
+    this.getAllWorkList()
+  }
 };
 </script>
 

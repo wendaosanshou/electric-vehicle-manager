@@ -9,7 +9,7 @@
     >
       <div class="filing-dialog-content">
         <el-date-picker
-          v-model="value1"
+          v-model="pickerTime"
           size="mini"
             clss="ipt-fix"
           type="daterange"
@@ -32,12 +32,13 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { mapGetters, mapActions } from "vuex";
 import { setTimeout } from "timers";
 export default {
   data() {
     return {
-      value1: "",
+      pickerTime: [],
       dialogVisible: false
     };
   },
@@ -49,6 +50,7 @@ export default {
     visible: Boolean
   },
   computed: {
+    ...mapGetters(["currentLocationInfo"]),
     isAllowConfirm() {
       return this.value1;
     }
@@ -59,12 +61,30 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getHistoryInfo"]),
+    ...mapActions(["clearHistoryInfo"]),
     onDialogHide() {
       this.$emit("change", false);
     },
-    onDialogConfirm() {
+    async onDialogConfirm() {
+      const [startDate, endDate] = this.pickerTime
       this.onDialogHide();
+      if (startDate && endDate) {
+        console.log({
+          id: this.currentLocationInfo.id,
+          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+        })
+        await this.clearHistoryInfo({
+          id: this.currentLocationInfo.id,
+          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+        });
+      } else {
+        this.$message({
+          type: "error",
+          message: "请选择正确的时间段!"
+        });
+      }
     }
   },
   mounted() {}

@@ -21,7 +21,7 @@
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="searchValue"
+          v-model="searchType"
           placeholder="请选择活动区域"
         >
           <el-option
@@ -31,14 +31,13 @@
             :key="item.value"
           ></el-option>
         </el-select>
-        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
+        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
         <el-button class="button-fix" size="mini" type="primary" @click="onSearchLocation">查询</el-button>
       </div>
     </div>
-
     <div class="monitor-container">
       <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
-      <div class="map-content" id="map-container"></div>
+      <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
     </div>
 
     <location-dialog v-model="filingDialogVisible"></location-dialog>
@@ -50,7 +49,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from '@/mixins/map-mixin'
 import FilingLoseDialog from "./FilingLoseDialog";
 import HistoryTrackDialog from "../history-track/HistoryTrackDialog";
@@ -75,48 +74,52 @@ export default {
           value: 0,
           label: "地图模式"
         },
-        {
-          value: 1,
-          label: "热力图模式"
-        }
+        // {
+        //   value: 1,
+        //   label: "热力图模式"
+        // }
       ],
-      searchValue: 0,
-      searchNumber: "",
+      searchType: 'account',
+      searchValue: "",
       searchList: [
         {
-          value: 0,
+          value: 'account',
           label: "手机号"
         },
         {
-          value: 1,
+          value: 'imei',
           label: "终端IMEI"
         },
         {
-          value: 2,
+          value: 'record',
           label: "防盗备案号"
         },
         {
-          value: 3,
+          value: 'iccid',
           label: "IMSI"
         },
         {
-          value: 4,
+          value: 'cert',
           label: "身份证号"
         }
       ]
     };
   },
   computed: {
-    ...mapGetters(["allDeviceInfo", "deviceIds"]),
+    ...mapGetters(["allDeviceInfo", "deviceIds", "allLocationInfo", 'currentLocationInfo', 'deviceInfo']),
     allDeviceIds() {
       return this.allDeviceInfo.map(item => item.id);
     }
   },
   methods: {
-    ...mapActions(["getDeviceInfo", "getSomeDeviceInfo"]),
+    ...mapMutations(['updateCurrentLocationInfo']),
+    ...mapActions(["getAllDeviceInfo", "getSomeDeviceInfo", "getDeviceInfo"]),
     async onSearchLocation() {
-      await this.getSomeDeviceInfo([1]);
-      this.addLocationMarker([116.205467, 39.907761])
+      await this.getDeviceInfo({
+        type: this.searchType,
+        value: this.searchValue
+      })
+      this.filingDialogVisible = true;
     },
     onDialogHide() {
       this.filingDialogVisible = false;
@@ -129,7 +132,8 @@ export default {
         this.initHeatMap('map-container', this.positionCenter);
       }
     },
-    addLocationMarker(position) {
+    addLocationMarker(info) {
+      const position = [info.lng, info.lat]
       this.map.clearMap();
       this.addInfoWindow(position, this.getLocationMarkerContent())
       this.map.setZoomAndCenter(17, position)
@@ -184,8 +188,12 @@ export default {
       }, 100)
       return markerContent
     },
-    toogleLocationLabel(className) {
+    async toogleLocationLabel(className) {
       if (className.indexOf('location-marker-label-1') > -1) {
+        await this.getDeviceInfo({
+          type: 'imei',
+          value: this.currentLocationInfo.imei
+        })
         this.filingDialogVisible = true;
       } else if (className.indexOf('location-marker-label-2') > -1) {
         this.historyTrackVisible = true
@@ -209,7 +217,7 @@ export default {
           that.aMap.setZoomAndCenter(15, position)
         })
     },
-    getCicleMarkerContent(position) {
+    getCicleMarkerContent(positionInfo) {
       let markerContent = document.createElement("div");
       let markerContent1 = document.createElement("div");
       let markerContent2 = document.createElement("div");
@@ -224,16 +232,17 @@ export default {
       markerContent3.innerHTML = '000';
       setTimeout(() => {
         $(markerContent).on('click', () => {
-          this.addLocationMarker(position)
+          this.updateCurrentLocationInfo(positionInfo)
+          this.addLocationMarker(positionInfo)
         })
       }, 100)
       return markerContent;
     },
     addCicleMarkers() {
-      let [firstPosition] = this.deviceIds;
       this.map.clearMap();
-      this.deviceIds.forEach(item => {
-        this.addMarker([item.lat_amap, item.lng_amap], this.getCicleMarkerContent([item.lat_amap, item.lng_amap]));
+      this.allLocationInfo.forEach(item => {
+        const position = [item.lng, item.lat]
+        this.addMarker(position, this.getCicleMarkerContent(item));
       });
       this.map.setFitView();
     },
@@ -252,6 +261,19 @@ export default {
         content: content  //使用默认信息窗体框样式，显示信息内容
       });
       infoWindow.open(this.map,position)
+    },
+    getLocationArray(locationInfo) {
+      return locationInfo.map(item => { 
+        return [item.lng , item.lat]
+      })
+    },
+    async init() {
+      await this.getAllDeviceInfo();
+      const locationArray = this.getLocationArray(this.allLocationInfo)
+      const [positionCenter] = locationArray
+      console.log('positionCenter', positionCenter)
+      this.initAMap('map-container', positionCenter);
+      this.addCicleMarkers()
     }
   },
   components: {
@@ -262,8 +284,9 @@ export default {
     ClearHistoryDialog
   },
   mounted() {
-    this.onMapSelect();
-    this.getDeviceInfo();
+    // this.onMapSelect();
+    // this.getAllDeviceInfo();
+    this.init()
   }
 };
 </script>

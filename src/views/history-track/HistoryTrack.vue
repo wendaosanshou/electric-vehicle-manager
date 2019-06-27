@@ -3,7 +3,7 @@
     <div class="track-title">
       <div class="track-time">
         <el-date-picker
-          v-model="value2"
+          v-model="pickerTime"
           size="mini"
           clss="ipt-fix"
           type="datetimerange"
@@ -49,21 +49,30 @@
     <div class="monitor-container">
       <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
       <div class="car-marker-menu" v-if="isShowHistoryTrack">
-        <div class="car-marker-item" :class="{active: carSpeed === 0.25}" @click="onSetSpeed(0.25)">1/4X</div>
-        <div class="car-marker-item" :class="{active: carSpeed === 0.5}" @click="onSetSpeed(0.5)">1/2X</div>
+        <div
+          class="car-marker-item"
+          :class="{active: carSpeed === 0.25}"
+          @click="onSetSpeed(0.25)"
+        >1/4X</div>
+        <div
+          class="car-marker-item"
+          :class="{active: carSpeed === 0.5}"
+          @click="onSetSpeed(0.5)"
+        >1/2X</div>
         <div class="car-marker-item" :class="{active: carSpeed === 2}" @click="onSetSpeed(2)">2X</div>
         <div class="car-marker-item" :class="{active: carSpeed === 4}" @click="onSetSpeed(4)">4X</div>
         <div class="car-marker-item" @click="pauseMove">暂停</div>
         <div class="car-marker-item" @click="startMove">开始</div>
         <div class="car-marker-item" @click="stopMove">停止</div>
       </div>
-      <div class="map-content" id="history-map-container"></div>
+      <div class="map-content js-map-container" id="history-map-container" :style="{height: pageHeight}"></div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import dayjs from "dayjs";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import { setTimeout } from "timers";
 
@@ -71,7 +80,7 @@ export default {
   mixins: [MapMixin],
   data() {
     return {
-      positionCenter: [116.43, 39.92],
+      pickerTime: [],
       isShowHistoryTrack: false,
       isPauseMove: false,
       carSpeed: 1,
@@ -142,30 +151,39 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["historylineArr", "deviceIds"])
+    ...mapGetters(["historylineArr", "deviceIds", "allLocationInfo", "currentLocationInfo"])
   },
   methods: {
-    ...mapActions(["getHistoryInfo"]),
-    onHistorySearch() {
-      // this.getHistoryInfo({
-      //   id: 1,
-      //   start: "2019-06-05 00:00:00",
-      //   end: "2019-06-06 00:00:00"
-      // });
-      this.drawHistoryLine();
-      this.drawCarMarker()
-      this.isShowHistoryTrack = true
+    ...mapMutations(['updateCurrentLocationInfo']),
+    ...mapActions(["getHistoryInfo", "getAllDeviceInfo"]),
+    async onHistorySearch() {
+      const [startDate, endDate] = this.pickerTime;
+      if (startDate && endDate) {
+        await this.getHistoryInfo({
+          id: this.currentLocationInfo.id,
+          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+        });
+        this.drawHistoryLine();
+        this.drawCarMarker();
+        this.isShowHistoryTrack = true;
+      } else {
+        this.$message({
+          type: "error",
+          message: "请选择正确的时间段!"
+        });
+      }
     },
     onSetSpeed(speed) {
-      this.carSpeed = speed
+      this.carSpeed = speed;
     },
     pauseMove() {
-      this.isPauseMove = true
-      this.carMarker.pauseMove()
+      this.isPauseMove = true;
+      this.carMarker.pauseMove();
     },
     stopMove() {
-      this.isPauseMove = false
-      this.carSpeed = 1
+      this.isPauseMove = false;
+      this.carSpeed = 1;
       this.carMarker.stopMove();
     },
     resumeMove() {
@@ -173,13 +191,13 @@ export default {
     },
     startMove() {
       if (this.isPauseMove) {
-        this.resumeMove()
+        this.resumeMove();
       } else {
         this.carMarker.moveAlong(this.historylineArr, 200 * this.carSpeed);
       }
     },
     drawCarMarker() {
-      let [firstPosition] = this.historylineArr
+      let [firstPosition] = this.historylineArr;
       this.carMarker = new AMap.Marker({
         map: this.map,
         position: firstPosition,
@@ -212,7 +230,7 @@ export default {
       });
       this.map.setFitView();
     },
-    getCicleMarkerContent(position) {
+    getCicleMarkerContent(positionInfo) {
       let markerContent = document.createElement("div");
       let markerContent1 = document.createElement("div");
       let markerContent2 = document.createElement("div");
@@ -224,21 +242,26 @@ export default {
       markerContent2.append(markerContent3);
       markerContent1.append(markerContent2);
       markerContent.append(markerContent1);
-      markerContent3.innerHTML = "000";
+      markerContent3.innerHTML = '000';
+      setTimeout(() => {
+        $(markerContent).on('click', () => {
+          this.updateCurrentLocationInfo(positionInfo)
+          console.log(positionInfo)
+          this.$message({
+            type: "success",
+            message: `已选择设备${positionInfo.id}进行查询!`
+          });
+        })
+      }, 100)
       return markerContent;
     },
     addCicleMarkers() {
-      if (this.deviceIds && this.deviceIds.length > 0) {
-        let [firstPosition] = this.deviceIds;
-        this.map.clearMap();
-        this.deviceIds.forEach(item => {
-          this.addMarker(
-            [item.lat_amap, item.lng_amap],
-            this.getCicleMarkerContent([item.lat_amap, item.lng_amap])
-          );
-        });
-        this.map.setFitView();
-      }
+      this.map.clearMap();
+      this.allLocationInfo.forEach(item => {
+        const position = [item.lng, item.lat];
+        this.addMarker(position, this.getCicleMarkerContent(item));
+      });
+      this.map.setFitView();
     },
     addMarker(position, content) {
       new AMap.Marker({
@@ -248,13 +271,21 @@ export default {
         offset: new AMap.Pixel(-13, -30)
       });
     },
-    init() {
-      this.initAMap("history-map-container", this.positionCenter);
+    getLocationArray(locationInfo) {
+      return locationInfo.map(item => {
+        return [item.lng, item.lat];
+      });
+    },
+    async init() {
+      await this.getAllDeviceInfo();
+      const locationArray = this.getLocationArray(this.allLocationInfo);
+      const [positionCenter] = locationArray;
+      this.initAMap("history-map-container", positionCenter);
       this.addCicleMarkers();
     }
   },
   mounted() {
-    this.init()
+    this.init();
   }
 };
 </script>
@@ -332,7 +363,7 @@ $basic-ratio: 1.4;
   width: d2r(364px);
   height: d2r(37px);
   font-size: d2r(17px);
-  background: #6FA8E0FF;
+  background: #6fa8e0ff;
   color: #ffffff;
   z-index: 100;
   .car-marker-item {
@@ -342,7 +373,7 @@ $basic-ratio: 1.4;
     text-align: center;
     cursor: pointer;
     &.active {
-      background: #9ACDFFFF;
+      background: #9acdffff;
     }
   }
 }

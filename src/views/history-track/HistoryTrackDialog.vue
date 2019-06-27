@@ -10,7 +10,7 @@
       <div class="history-dialog-content">
         <div class="history-dialog-title">
           <el-date-picker
-            v-model="value2"
+            v-model="pickerTime"
             size="mini"
             clss="ipt-fix"
             type="datetimerange"
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
 import { setTimeout } from "timers";
 export default {
@@ -88,7 +89,7 @@ export default {
           }
         ]
       },
-      value2: "",
+      pickerTime: "",
       dialogVisible: false
     };
   },
@@ -110,7 +111,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["historylineArr"])
+    ...mapGetters(["historylineArr", "currentLocationInfo"]),
+    positionCenter() {
+      const {lat, lng} = this.currentLocationInfo
+      return [lng, lat]
+    }
   },
   methods: {
     ...mapActions(["getHistoryInfo"]),
@@ -177,19 +182,28 @@ export default {
       // 初始化地图
       this.map = new AMap.Map("history-map-container", {
         zoom: 17,
-        center: [116.397428, 39.90923],
+        center: this.positionCenter,
         resizeEnable: true
       });
     },
-    onSearchHistory() {
-      this.getHistoryInfo({
-        id: 1,
-        start: "2019-06-05 00:00:00",
-        end: "2019-06-06 00:00:00"
-      });
-      this.drawHistoryLine();
+    async onSearchHistory() {
+      console.log(this.pickerTime)
+      const [startDate, endDate] = this.pickerTime
+      if (startDate && endDate) {
+        await this.getHistoryInfo({
+          id: this.currentLocationInfo.id,
+          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+        });
+        this.drawHistoryLine();
       this.drawCarMarker()
       this.isShowHistoryTrack = true
+      } else {
+        this.$message({
+          type: "error",
+          message: "请选择正确的时间段!"
+        });
+      }
     }
   },
   mounted() {

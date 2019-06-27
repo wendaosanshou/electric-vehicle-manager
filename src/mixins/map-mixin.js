@@ -2,10 +2,19 @@ export default {
   data() {
     return {
       map: {},
-      heatMap: {}
+      heatMap: {},
+      pageHeight: '800px'
     };
   },
   methods: {
+    getMapHeight() {
+      let pageHeight = document.documentElement.clientHeight
+      let rect = document.querySelector('.js-map-container').getBoundingClientRect()
+      let { top } = rect
+      let mapHeight = pageHeight - top - 16
+      console.log('getMapHeight', pageHeight, top, mapHeight)
+      this.pageHeight = `${mapHeight}px`
+    },
     addControl() {
       const scale = new AMap.Scale({
         visible: false
@@ -63,5 +72,10 @@ export default {
         });
       });
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.getMapHeight()
+    })
   }
 };

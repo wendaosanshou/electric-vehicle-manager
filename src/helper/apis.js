@@ -11,11 +11,42 @@ export default {
     const { account, password } = data
     return $ajax.get(requestUrl(`sys/login/${account}/${password}`));
   },
+  getWorkPage(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`work/page?token=${token}`), data);
+  },
+  setWorkDistribute(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`work/distribute?token=${token}`), data);
+  },
+  setDeviceTrace(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`dev/trace/${data.id}/${data.second}?token=${token}`));
+    // return $ajax.post(requestUrl(`dev/trace/${data.id}/${data.second}`), { token });
+  },
+  getDeviceParams(data) {
+    const { token } = data
+    return $ajax.get(requestUrl(`param/${data.id}?token=${token}`));
+  },
+  getAllDeviceInfo(data) {
+    const { token } = data
+    return $ajax.get(requestUrl('dev/info/web'), { token });
+  },
   getDeviceInfo(data) {
-    return $ajax.get(requestUrl('dev/info'), data);
+    const { token } = data
+    return $ajax.get(requestUrl(`dev/${data.type}/${data.value}`), { token });
   },
   getHistoryInfo(data) {
-    return $ajax.post(requestUrl('history/info'), data);
+    const { token } = data
+    return $ajax.post(requestUrl(`history/info?token=${token}`), data);
+  },
+  clearHistoryInfo(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`history/clear?token=${token}`), data);
+  },
+  loseDeviceFile(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`dev/dis?token=${token}`), data);
   },
   getSomeDeviceInfo(data) {
     return $ajax.post(requestUrl('dev/id'), data);

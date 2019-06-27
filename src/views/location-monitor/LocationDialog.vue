@@ -10,21 +10,21 @@
         <div class="dialog-content">
           <div class="form-title">车主信息</div>
           <div class="form-item-wrap">
-            <div class="form-item">购车人：某某某</div>
-            <div class="form-item">身份证号：000000000000000000</div>
-            <div class="form-item">性别：男</div>
-            <div class="form-item">联系电话：15268111219</div>
-            <div class="form-item">家庭住址：暂无</div>
+            <div class="form-item">购车人：{{userInfo.name}}</div>
+            <div class="form-item">身份证号：{{userInfo.certificates_code}}</div>
+            <div class="form-item">性别：{{userInfo.sex === 0 ? "男" : "女"}}</div>
+            <div class="form-item">联系电话：{{userInfo.phone}}</div>
+            <div class="form-item">家庭住址：{{userInfo.address}}</div>
           </div>
           <div class="form-title">车辆信息</div>
           <div class="form-item-wrap">
-            <div class="form-item">车编号：13290311962324569483</div>
-            <div class="form-item">车牌号：000399</div>
-            <div class="form-item">IMEI：866133040179428</div>
-            <div class="form-item">电机编号：无</div>
-            <div class="form-item">制造商：小刀</div>
-            <div class="form-item">产品型号：暂无</div>
-            <div class="form-item">颜色：红色</div>
+            <div class="form-item">车编号：{{vehicleInfo.id}}</div>
+            <div class="form-item">车牌号：{{vehicleInfo.id}}</div>
+            <div class="form-item">IMEI：{{deviceInfo.imei}}</div>
+            <div class="form-item">电机编号：{{deviceInfo.power}}</div>
+            <div class="form-item">制造商：{{deviceInfo.brand}}</div>
+            <div class="form-item">产品型号：{{deviceInfo.model}}</div>
+            <div class="form-item">颜色：{{deviceInfo.color}}</div>
             <div class="form-item">获得方式：购买</div>
             <div class="form-item">车辆温度：27℃</div>
           </div>
@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   data() {
     return {
@@ -63,6 +65,15 @@ export default {
   },
   props: {
     visible: Boolean
+  },
+  computed: {
+    ...mapGetters(['deviceInfo']),
+    vehicleInfo(){
+      return this.deviceInfo.vehicle_info
+    },
+    userInfo() {
+      return this.deviceInfo.user_info
+    }
   },
   watch: {
     visible() {

@@ -13,7 +13,7 @@
           <el-date-picker
             size="mini"
             class="ipt-fix"
-            v-model="form.date"
+            v-model="form.time"
             type="date"
             placeholder="选择日期"
           ></el-date-picker>
@@ -26,19 +26,19 @@
             size="mini"
             resize="none"
             :autosize="{ minRows: 5, maxRows: 5}"
-            v-model="form.losePlace"
+            v-model="form.address"
             placeholder="请输入丢失地点"
           ></el-input>
         </div>
         <div class="filing-item">
-          <div class="filing-dialog-title">丢失地点</div>
+          <div class="filing-dialog-title">案件描述</div>
           <el-input
             type="textarea"
             class="ipt-fix"
             size="mini"
             resize="none"
             :autosize="{ minRows: 10, maxRows: 10}"
-            v-model="form.caseDescription"
+            v-model="form.note"
             placeholder="请输入案件描述"
           ></el-input>
         </div>
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { mapGetters, mapActions } from "vuex";
 import { setTimeout } from "timers";
 export default {
@@ -64,9 +65,9 @@ export default {
     return {
       dialogVisible: false,
       form: {
-        date: "",
-        losePlace: "",
-        caseDescription: ""
+        address: "",
+        time: "",
+        note: ""
       }
     };
   },
@@ -78,8 +79,9 @@ export default {
     visible: Boolean
   },
   computed: {
+    ...mapGetters(['currentLocationInfo']),
     isAllowConfirm() {
-      return this.form.date && this.form.losePlace && this.form.caseDescription;
+      return this.form.address && this.form.time
     }
   },
   watch: {
@@ -88,13 +90,28 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getHistoryInfo"]),
+    ...mapActions(["loseDeviceFile"]),
     onDialogHide() {
       this.$emit("change", false);
     },
     onSearchHistory() {},
-    onDialogConfirm() {
-      this.onDialogHide();
+    async onDialogConfirm() {
+       if (this.isAllowConfirm) {
+        const params = {
+          id: this.currentLocationInfo.id,
+          address: this.form.address,
+          time: dayjs(this.form.time).format("YYYY-MM-DD"),
+          note: this.form.note
+        }
+        console.log(params)
+        await this.loseDeviceFile(params)
+        this.onDialogHide();
+      } else {
+        this.$message({
+          type: "error",
+          message: "请填写丢失时间与丢失地点!"
+        });
+      }
     }
   },
   mounted() {}

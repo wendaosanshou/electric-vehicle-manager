@@ -6,6 +6,7 @@ import common from "./modules/common";
 import login from "./modules/login"
 import roleManage from './modules/role-manage'
 import userManage from './modules/user-manage'
+import work from './modules/work'
 
 Vue.use(Vuex);
 
@@ -19,7 +20,8 @@ export default new Vuex.Store({
     common: common,
     login: login,
     roleManage: roleManage,
-    userManage: userManage
+    userManage: userManage,
+    work: work
   },
   plugins: [vuexLocal.plugin]
 });

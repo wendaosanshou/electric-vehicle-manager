@@ -285,6 +285,18 @@ $basic-ratio: 1.4;
   background-size: 100% 100%; 
 }
 
+.amap-info {
+  .amap-info-contentContainer {
+  .amap-info-outer {
+    border: 0;
+    box-shadow: 0 0 0 rgba(0,0,0,0.1);
+  }
+  &:hover {
+    box-shadow: 0 0 0 rgba(0,0,0,0.1);
+  }
+}
+}
+
 .location-marker {
   position: relative;
   width: d2r(400px);

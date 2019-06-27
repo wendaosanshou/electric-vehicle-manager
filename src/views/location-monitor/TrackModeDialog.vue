@@ -8,15 +8,15 @@
       @close="onDialogHide"
     >
       <div class="filing-dialog-content">
-        <el-radio-group class="radio-group" v-model="modeValue">
-            <el-radio class="radio-item" :label="1">追踪模式（一分钟一次）</el-radio>
-            <el-radio class="radio-item radio-item-last" :label="2">普通模式（五分钟一次）（默认）</el-radio>
+        <el-radio-group class="radio-group" v-model="selectValue">
+            <el-radio class="radio-item" :label="30">极限模式（三十秒一次）</el-radio>
+            <el-radio class="radio-item radio-item-last" :label="60">追踪模式（一分钟一次）</el-radio>
+            <el-radio class="radio-item radio-item-last" :label="300">普通模式（五分钟一次）（默认）</el-radio>
         </el-radio-group>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button
           class="btn-confirm"
-          :class="{'active': isAllowConfirm}"
           size="mini"
           type="primary"
           @click="onDialogConfirm"
@@ -32,13 +32,8 @@ import { setTimeout } from "timers";
 export default {
   data() {
     return {
-        modeValue: '',
-      dialogVisible: false,
-      form: {
-        date: "",
-        losePlace: "",
-        caseDescription: ""
-      }
+        selectValue: '',
+      dialogVisible: false
     };
   },
   model: {
@@ -49,25 +44,37 @@ export default {
     visible: Boolean
   },
   computed: {
-    isAllowConfirm() {
-      return this.form.date && this.form.losePlace && this.form.caseDescription;
-    }
+    ...mapGetters(['currentLocationInfo', 'deviceParams'])
   },
   watch: {
     visible() {
       this.dialogVisible = this.visible;
+      if (this.dialogVisible) {
+          this.initDeviceParams()
+      }
     }
   },
   methods: {
-    ...mapActions(["getHistoryInfo"]),
+    ...mapActions(["getHistoryInfo", "setDeviceTrace", "getDeviceParams"]),
     onDialogHide() {
       this.$emit("change", false);
     },
-    onDialogConfirm() {
-        this.onDialogHide()
+    async initDeviceParams() {
+      await this.getDeviceParams({
+        id: this.currentLocationInfo.id
+      })
+      this.selectValue = this.deviceParams.interval_time
+    },
+    async onDialogConfirm() {
+      await this.setDeviceTrace({
+        id: this.currentLocationInfo.id,
+        second: this.selectValue
+      })
+      this.onDialogHide()
     }
   },
-  mounted() {}
+  mounted() {
+  }
 };
 </script>
 
@@ -108,7 +115,7 @@ $basic-ratio: 1.4;
         font-size: d2r(18px);
     }
     .radio-item-last {
-        margin-top: d2r(48px);
+        margin-top: d2r(16px);
     }
 }
 
