@@ -42,18 +42,33 @@
     </div>
 
     <location-dialog v-model="filingDialogVisible"></location-dialog>
+    <history-track-dialog v-model="historyTrackVisible"></history-track-dialog>
+    <filing-lose-dialog v-model="filingLoseDialogVisible"></filing-lose-dialog>
+    <track-mode-dialog v-model="trackModeVisible"></track-mode-dialog>
+    <clear-history-dialog v-model="clearHistoryDialogVisible"></clear-history-dialog>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import MapMixin from '@/mixins/map-mixin'
+import FilingLoseDialog from "./FilingLoseDialog";
+import HistoryTrackDialog from "../history-track/HistoryTrackDialog";
 import LocationDialog from "./LocationDialog";
+import TrackModeDialog from "./TrackModeDialog";
+import ClearHistoryDialog from "./ClearHistoryDialog";
+import { setTimeout } from 'timers';
 
 export default {
+  mixins: [MapMixin],
   data() {
     return {
       filingDialogVisible: false,
-      aMap: {},
-      heatMap: {},
+      filingLoseDialogVisible: false,
+      historyTrackVisible: false,
+      trackModeVisible: false,
+      clearHistoryDialogVisible: false,
+      positionCenter: [116.43, 39.92],
       mapValue: 0,
       mapList: [
         {
@@ -91,124 +106,164 @@ export default {
       ]
     };
   },
+  computed: {
+    ...mapGetters(["allDeviceInfo", "deviceIds"]),
+    allDeviceIds() {
+      return this.allDeviceInfo.map(item => item.id);
+    }
+  },
   methods: {
-    onSearchLocation() {
-      // 如果是查询备案
-      // if (this.searchValue === 2) {
-      this.filingDialogVisible = true;
-      // }
+    ...mapActions(["getDeviceInfo", "getSomeDeviceInfo"]),
+    async onSearchLocation() {
+      await this.getSomeDeviceInfo([1]);
+      this.addLocationMarker([116.205467, 39.907761])
     },
     onDialogHide() {
       this.filingDialogVisible = false;
     },
     onMapSelect(value) {
       if (this.mapValue === 0) {
-        this.initAMap();
+        this.initAMap('map-container', this.positionCenter);
+        this.addCicleMarkers()
       } else if (this.mapValue === 1) {
-        this.initHeatMap();
+        this.initHeatMap('map-container', this.positionCenter);
       }
     },
-    isSupportCanvas() {
-      var elem = document.createElement("canvas");
-      return !!(elem.getContext && elem.getContext("2d"));
+    addLocationMarker(position) {
+      this.map.clearMap();
+      this.addInfoWindow(position, this.getLocationMarkerContent())
+      this.map.setZoomAndCenter(17, position)
+      setTimeout(() => {
+        this.initLocaionEvent(position)
+      }, 100)
     },
-    addMarker() {
-      var marker = new AMap.Marker({
-        position: new AMap.LngLat(116.39, 39.92),
-        icon:
-          "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+    getLocationMarkerContent() {
+      let markerContent = document.createElement("div");
+      let markerLabel1 = document.createElement("div");
+      let markerLabel2 = document.createElement("div");
+      let markerLabel3 = document.createElement("div");
+      let markerLabel4 = document.createElement("div");
+      let markerLabel5 = document.createElement("div");
+      let markerIcon = document.createElement("i");
+      let markerList = [{
+        node: markerLabel1,
+        label: '备案<br/>信息',
+        className: 'location-marker-label location-marker-label-1'
+      },{
+        node: markerLabel2,
+        label: '历史<br/>轨迹',
+        className: 'location-marker-label location-marker-label-2'
+      },{
+        node: markerLabel3,
+        label: '追踪<br/>模式',
+        className: 'location-marker-label location-marker-label-3'
+      },{
+        node: markerLabel4,
+        label: '丢失<br/>立案',
+        className: 'location-marker-label location-marker-label-4'
+      },{
+        node: markerLabel5,
+        label: '清除<br/>轨迹',
+        className: 'location-marker-label location-marker-label-5'
+      },{
+        node: markerIcon,
+        label: '',
+        className: 'location-marker-icon'
+      }]
+      markerList.forEach(item => {
+        item.node.className = item.className
+        item.node.innerHTML = item.label
+       
+        markerContent.append(item.node)
+      })
+      markerContent.className = 'location-marker'
+      setTimeout(() => {
+        $('.amap-info-close').on('click', () => {
+          this.addCicleMarkers()
+        })
+      }, 100)
+      return markerContent
+    },
+    toogleLocationLabel(className) {
+      if (className.indexOf('location-marker-label-1') > -1) {
+        this.filingDialogVisible = true;
+      } else if (className.indexOf('location-marker-label-2') > -1) {
+        this.historyTrackVisible = true
+      } else if (className.indexOf('location-marker-label-3') > -1) {
+        this.trackModeVisible = true
+      } else if (className.indexOf('location-marker-label-4') > -1) {
+        this.filingLoseDialogVisible = true
+      } else if (className.indexOf('location-marker-label-5') > -1) {
+        this.clearHistoryDialogVisible = true
+      }
+    },
+    initLocaionEvent(position) {
+      let that = this
+       $('.location-marker').on('click', '.location-marker-label', function() {
+          $('.location-marker-label').removeClass('active')
+          let $this = $(this)
+          console.log($this.attr('class'))
+          $this.addClass('active')
+          that.toogleLocationLabel($this.attr('class'))
+        }).on('click', '.location-marker-icon', () => {
+          that.aMap.setZoomAndCenter(15, position)
+        })
+    },
+    getCicleMarkerContent(position) {
+      let markerContent = document.createElement("div");
+      let markerContent1 = document.createElement("div");
+      let markerContent2 = document.createElement("div");
+      let markerContent3 = document.createElement("div");
+      markerContent.className = "mark-content";
+      markerContent1.className = "mark-content-1";
+      markerContent2.className = "mark-content-2";
+      markerContent3.className = "mark-content-3";
+      markerContent2.append(markerContent3);
+      markerContent1.append(markerContent2);
+      markerContent.append(markerContent1);
+      markerContent3.innerHTML = '000';
+      setTimeout(() => {
+        $(markerContent).on('click', () => {
+          this.addLocationMarker(position)
+        })
+      }, 100)
+      return markerContent;
+    },
+    addCicleMarkers() {
+      let [firstPosition] = this.deviceIds;
+      this.map.clearMap();
+      this.deviceIds.forEach(item => {
+        this.addMarker([item.lat_amap, item.lng_amap], this.getCicleMarkerContent([item.lat_amap, item.lng_amap]));
+      });
+      this.map.setFitView();
+    },
+    addMarker(position, content) {
+      new AMap.Marker({
+        map: this.map,
+        position: position,
+        content: content,
+        icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
         offset: new AMap.Pixel(-13, -30)
       });
     },
-    initMap() {
-      this.onMapSelect();
-    },
-    initInfoWindow() {},
-    addControl() {
-      const scale = new AMap.Scale({
-        visible: false
+    addInfoWindow(position, content) {
+      let infoWindow = new AMap.InfoWindow({
+        anchor: 'bottom-center',
+        content: content  //使用默认信息窗体框样式，显示信息内容
       });
-      const toolBar = new AMap.ToolBar({
-        visible: false
-      });
-      this.aMap.addControl(scale);
-      this.aMap.addControl(toolBar);
-      scale.show();
-    },
-    getInfoWindow() {
-      var infoWindow = new AMap.InfoWindow({
-          isCustom: true,  //使用自定义窗体
-          content: createInfoWindow(title, `<div></div>`),
-          offset: new AMap.Pixel(16, -45)
-      });
-      return infoWindow
-    },
-    addMarker() {
-      // this.aMap.clearMap();
-      var marker = new AMap.Marker({
-        position: new AMap.LngLat(116.39, 39.92),
-        icon:
-          "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-        offset: new AMap.Pixel(-13, -30)
-      });
-      // var infoWindow = this.getInfoWindow()
-      // AMap.event.addListener(marker, 'click', function () {
-      //   console.log('123')
-      //     infoWindow.open(map, marker.getPosition());
-      // });
-      this.aMap.add(marker);
-    },
-    initMap() {
-      this.aMap = new AMap.Map("map-container", {
-        zoom: 13,
-        center: [116.43, 39.92],
-        resizeEnable: true
-      });
-    },
-    initAMap() {
-      // 必须先初始化地图
-      // this.initMap()
-      this.aMap = new AMap.Map("map-container", {
-        zoom: 13,
-        center: [116.43, 39.92],
-        resizeEnable: true
-      });
-      this.addControl();
-      // this.addMarker()
-    },
-    initHeatMap() {
-      var map = new AMap.Map("map-container", {
-        resizeEnable: true,
-        center: [116.418261, 39.921984],
-        zoom: 11
-      });
-
-      if (!this.isSupportCanvas()) {
-        alert(
-          "热力图仅对支持canvas的浏览器适用,您所使用的浏览器不能使用热力图功能,请换个浏览器试试~"
-        );
-      }
-
-      var heatmap;
-      map.plugin(["AMap.Heatmap"], function() {
-        //初始化heatmap对象
-        heatmap = new AMap.Heatmap(map, {
-          radius: 25, //给定半径
-          opacity: [0, 0.8]
-        });
-        //设置数据集：该数据为北京部分“公园”数据
-        heatmap.setDataSet({
-          data: heatmapData,
-          max: 100
-        });
-      });
+      infoWindow.open(this.map,position)
     }
   },
   components: {
-    LocationDialog
+    LocationDialog,
+    HistoryTrackDialog,
+    FilingLoseDialog,
+    TrackModeDialog,
+    ClearHistoryDialog
   },
   mounted() {
-    this.initMap();
+    this.onMapSelect();
+    this.getDeviceInfo();
   }
 };
 </script>

@@ -23,7 +23,6 @@
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
-      {{form}}
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
           <el-form-item label="序号">
@@ -46,7 +45,7 @@
                 v-model="form.img_url"
                 placeholder="选择页面缩略图上传"
               ></el-input>
-              <el-upload :show-file-list="false" class="page-upload" :action="imageUploadUrl">
+              <el-upload :show-file-list="false" class="page-upload" :action="imageUploadUrl" :on-success="onImageUploadSuccess">
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
               </el-upload>
             </div>
@@ -59,7 +58,7 @@
                 v-model="form.html_url"
                 placeholder="选择页面上传"
               ></el-input>
-              <el-upload :show-file-list="false" class="page-upload" :action="htmlUploadUrl">
+              <el-upload :show-file-list="false" class="page-upload" :action="htmlUploadUrl" :on-success="onFileUploadSuccess">
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
               </el-upload>
             </div>
@@ -151,6 +150,38 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+    },
+    onImageUploadSuccess(res) {
+      const { code, data} = res
+      if (code === '10000') {
+        this.$message({
+          type: "success",
+          message: "上传成功!"
+        })
+        this.form.img_url = data
+      } else {
+        this.$message({
+          type: "error",
+          message: "上传失败!"
+        })
+      }
+      console.log('onImageUploadSuccess', res)
+    },
+    onFileUploadSuccess(res) {
+      const { code, data} = res
+      if (code === '10000') {
+        this.$message({
+          type: "success",
+          message: "上传成功!"
+        })
+        this.form.html_url = data
+      } else {
+        this.$message({
+          type: "error",
+          message: "上传失败!"
+        })
+      }
+      console.log('onFileUploadSuccess', res)
     },
     async handleAddInfoWeb() {
       const data = {

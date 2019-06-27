@@ -1,7 +1,20 @@
 <template>
   <div class="history-track">
     <div class="track-title">
-      <div class="title-left">
+      <div class="track-time">
+        <el-date-picker
+          v-model="value2"
+          size="mini"
+          clss="ipt-fix"
+          type="datetimerange"
+          :picker-options="pickerOptions"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          align="right"
+        ></el-date-picker>
+      </div>
+      <div class="title-right">
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
@@ -11,7 +24,7 @@
           <el-option
             :label="item.label"
             :value="item.value"
-            v-for="item in searchTypeList"
+            v-for="item in alarmTypes"
             :key="item.value"
           ></el-option>
         </el-select>
@@ -24,152 +37,84 @@
           <el-option
             :label="item.label"
             :value="item.value"
-            v-for="item in searchList"
+            v-for="item in accountList"
             :key="item.value"
           ></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
       </div>
       <div class="title-right">
-        <el-button class="button-fix" size="mini" type="primary">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
 
     <div class="monitor-container">
-      <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
       <div class="map-content" id="map-container"></div>
+      <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
+      <alarm-analysis-table v-model="isAlarmTableVisible"></alarm-analysis-table>
     </div>
+
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import MapMixin from '@/mixins/map-mixin'
+import AlarmTipsDialog from '../alarm-monitor/AlarmTipsDialog'
+import AlarmAnalysisTable from './AlarmAnalysisTable'
+
 export default {
+  mixins: [MapMixin],
   data() {
     return {
+      isAlarmTipsVisible: false,
+      isAlarmTableVisible: false,
       value2: "",
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      },
       searchNumber: "",
       searchType: 0,
-      searchTypeList: [
-        {
-          value: 0,
-          label: "全部告警类型"
-        },
-        {
-          value: 1,
-          label: "位移告警"
-        },
-        {
-          value: 2,
-          label: "震动告警"
-        },
-        {
-          value: 3,
-          label: "温度告警"
-        },
-        {
-          value: 4,
-          label: "超速告警"
-        },
-        {
-          value: 5,
-          label: "摔倒告警"
-        },
-        {
-          value: 6,
-          label: "电瓶低电压告警"
-        },
-        {
-          value: 7,
-          label: "外置电源断电告警"
-        },
-        {
-          value: 8,
-          label: "内置电池低电压告警"
-        }
-      ],
       searchValue: "",
-      searchList: [
-        {
-          value: 0,
-          label: "手机号"
-        },
-        {
-          value: 1,
-          label: "终端IMEI"
-        },
-        {
-          value: 2,
-          label: "防盗备案号"
-        },
-        {
-          value: 3,
-          label: "IMSI"
-        },
-        {
-          value: 4,
-          label: "身份证号"
-        }
-      ],
-      aMap: {}
     };
   },
-  methods: {
-    onMapSelect(value) {
-      if (this.mapValue === 0) {
-        this.initAMap();
+  computed: {
+    ...mapGetters(['deviceIds', 'alarmTypes', 'accountList', 'pickerOptions'])
+  },
+  watch: {
+    isAlarmTableVisible() {
+      if (!this.isAlarmTableVisible) {
+        this.isAlarmTipsVisible = false
       }
-    },
-    initMap() {
-      this.onMapSelect();
-    },
-    initAMap() {
-      const scale = new AMap.Scale({
-        visible: false
-      });
-      const toolBar = new AMap.ToolBar({
-        visible: false
-      });
-      this.aMap = new AMap.Map("map-container", {
-        resizeEnable: true
-      });
-      this.aMap.addControl(scale);
-      this.aMap.addControl(toolBar);
-      scale.show();
     }
   },
+  methods: {
+    ...mapActions(['getAlarmInfo']),
+    onSearchAlarm() {
+      this.isAlarmTipsVisible = true
+      this.isAlarmTableVisible = true
+      this.addAlarmMarkers()
+    },
+    getAlarmMarkerContent(position) {
+      let markerContent = document.createElement("div");
+      let markerContent1 = document.createElement("div");
+      markerContent.className = "alarm-mark-content";
+      markerContent1.className = "alarm-mark-content-1";
+      markerContent.append(markerContent1);
+      return markerContent;
+    },
+    addAlarmMarkers() {
+      let [firstPosition] = this.deviceIds;
+      this.map.clearMap();
+      this.deviceIds.forEach(item => {
+        this.addMarker([item.lat_amap, item.lng_amap], this.getAlarmMarkerContent([item.lat_amap, item.lng_amap]));
+      });
+      this.map.setFitView();
+    },
+  },
+  components: {
+    AlarmTipsDialog,
+    AlarmAnalysisTable
+  },
   mounted() {
-    this.initAMap();
+    this.initAMap('map-container', this.positionCenter);
   }
 };
 </script>
@@ -193,7 +138,7 @@ $basic-ratio: 1.4;
     height: d2r(70px);
     padding: 0 d2r(17px) 0 d2r(20px);
     background: #f5f5f6;
-    .title-left {
+    .title-right {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;

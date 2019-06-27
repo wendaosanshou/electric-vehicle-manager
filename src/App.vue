@@ -129,6 +129,19 @@ $basic-ratio: 1.4;
   }
 }
 
+.table-fix-yellow {
+  .el-table__header-wrapper .el-table__header {
+    thead {
+      color: #ffffff;
+      background: #FF7525FF;
+      tr,
+      th {
+        background: #FF7525FF;
+      }
+    }
+  }
+}
+
 .table-disable-hover {
   &.el-table--enable-row-hover .el-table__body tr:hover > td {
     background-color: transparent !important;
@@ -144,17 +157,18 @@ $basic-ratio: 1.4;
 
 .ipt-fix {
   &.el-input__inner {
-    border-radius: 0;
+    border-radius: 0!important;
   }
   .el-input__inner {
-    border-radius: 0;
+    border-radius: 0!important;
   }
   .el-textarea__inner {
-    border-radius: 0;
+    border-radius: 0!important;
   }
 }
 
-.el-select-dropdown__item, .el-select-dropdown__empty {
+.el-select-dropdown__item,
+.el-select-dropdown__empty {
   font-size: d2r(14px) !important;
 }
 
@@ -180,9 +194,36 @@ $basic-ratio: 1.4;
   }
 }
 
+.dialog-table-right {
+  .el-dialog {
+    margin-top: d2r(220px) !important;
+    margin-right: d2r(37px);
+    width: d2r(662px);
+    box-shadow: 0px 5px 20px 0px rgba(159, 158, 193, 1);
+    border-radius: d2r(9px);
+  }
+}
+
+.dialog-small-left {
+  .el-dialog {
+    margin-top: d2r(280px) !important;
+    margin-left: d2r(424px);
+    width: d2r(300px);
+  }
+}
+
 .dialog-small-org {
   .el-dialog {
     width: d2r(460px);
+  }
+}
+
+.dialog-allow-click {
+  &.el-dialog__wrapper {
+    pointer-events: none;
+    .el-dialog {
+      pointer-events: auto;
+    }
   }
 }
 
@@ -192,10 +233,135 @@ $basic-ratio: 1.4;
 }
 
 .table-disable-select-all thead {
-    .el-table-column--selection {
-      .cell {
-        display: none;
-      }
+  .el-table-column--selection {
+    .cell {
+      display: none;
     }
   }
+}
+
+.mark-content,
+.mark-content-1,
+.mark-content-2,
+.mark-content-3 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.mark-content {
+  width: d2r(100px);
+  height: d2r(100px);
+  border-radius: 100%;
+  background: rgba(255, 117, 37, 0.3);
+  .mark-content-1 {
+    width: d2r(88px);
+    height: d2r(88px);
+    border-radius: 100%;
+    background: rgba(255, 117, 37, 0.4);
+    .mark-content-2 {
+      width: d2r(73px);
+      height: d2r(73px);
+      border-radius: 100%;
+      background: rgba(255, 117, 37, 0.6);
+    }
+    .mark-content-3 {
+      width: d2r(48px);
+      height: d2r(48px);
+      line-height: d2r(48px);
+      text-align: center;
+      color: #ffffff;
+      font-size: d2r(17px);
+      border-radius: 100%;
+      background: rgba(255, 117, 37, 1);
+    }
+  }
+}
+
+.alarm-mark-content {
+  width: d2r(22px);
+  height: d2r(27px);
+  background: url('~@/assets/icons/weiyi_icon@2x.png');
+  background-size: 100% 100%; 
+}
+
+.location-marker {
+  position: relative;
+  width: d2r(400px);
+  height: d2r(290px);
+  .location-marker-label {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: d2r(23px);
+    color: #ffffff;
+    width: d2r(100px);
+    height: d2r(100px);
+    border-radius: 100%;
+    background: #ffc8a7ff;
+    &.active {
+      background: #ff7525ff;
+    }
+  }
+  .location-marker-label-1 {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+  .location-marker-label-2 {
+    position: absolute;
+    left: d2r(40px);
+    bottom: d2r(117px);
+  }
+  .location-marker-label-3 {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+  .location-marker-label-4 {
+    position: absolute;
+    right: d2r(40px);
+    bottom: d2r(117px);
+  }
+  .location-marker-label-5 {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  .location-marker-icon {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: d2r(57px);
+    height: d2r(97px);
+    background: url("~@/assets/icons/weizhi@2x.png");
+    background-size: 100% 100%;
+  }
+}
+
+.amap-info-content {
+  background: #ffffff00;
+  cursor: pointer;
+}
+
+.amap-info-outer,
+.amap-menu-outer {
+  box-shadow: 0;
+  &:hover {
+    box-shadow: 0;
+  }
+}
+
+.amap-info-sharp {
+  opacity: 0;
+}
+
+.dialog-no-header {
+  .el-dialog .el-dialog__header {
+    display: none !important;
+  }
+}
 </style>

@@ -1,83 +1,55 @@
 <template>
   <div class="electric-fence">
     <div class="fence-title">
-      <div class="title-left">
-        <el-select
-          class="ipt-fix ipt-selector"
+      <div class="track-time">
+        <el-date-picker
+          v-model="value2"
           size="mini"
-          v-model="searchType"
-          placeholder="请选择告警类型"
-        >
-          <el-option
-            :label="item.label"
-            :value="item.value"
-            v-for="item in searchTypeList"
-            :key="item.value"
-          ></el-option>
-        </el-select>
+          clss="ipt-fix"
+          type="datetimerange"
+          :picker-options="pickerOptions"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          align="right"
+        ></el-date-picker>
+      </div>
+      <div class="title-right">
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
           v-model="searchValue"
-          placeholder="请选择活动区域"
+          placeholder="请选择电子围栏"
         >
           <el-option
             :label="item.label"
             :value="item.value"
-            v-for="item in searchList"
+            v-for="item in accountList"
             :key="item.value"
           ></el-option>
         </el-select>
-        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
       </div>
       <div class="title-right">
-        <el-button class="button-fix" size="mini" type="primary">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
 
     <div class="monitor-container">
-      <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
-      <div class="map-content" id="map-container"></div>
+      <div class="map-content" id="electric-map-container"></div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import MapMixin from '@/mixins/map-mixin'
+
 export default {
+  mixins: [MapMixin],
   data() {
     return {
       value2: "",
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      },
+      positionCenter: [116.43, 39.92],
       searchNumber: "",
       searchType: 0,
       searchTypeList: [
@@ -145,31 +117,10 @@ export default {
     };
   },
   methods: {
-    onMapSelect(value) {
-      if (this.mapValue === 0) {
-        this.initAMap();
-      }
-    },
-    initMap() {
-      this.onMapSelect();
-    },
-    initAMap() {
-      const scale = new AMap.Scale({
-        visible: false
-      });
-      const toolBar = new AMap.ToolBar({
-        visible: false
-      });
-      this.aMap = new AMap.Map("map-container", {
-        resizeEnable: true
-      });
-      this.aMap.addControl(scale);
-      this.aMap.addControl(toolBar);
-      scale.show();
-    }
+    ...mapActions(['getAlarmInfo']),
   },
   mounted() {
-    this.initAMap();
+    this.initAMap('electric-map-container', this.positionCenter);
   }
 };
 </script>

@@ -11,6 +11,19 @@ export default {
     const { account, password } = data
     return $ajax.get(requestUrl(`sys/login/${account}/${password}`));
   },
+  getDeviceInfo(data) {
+    return $ajax.get(requestUrl('dev/info'), data);
+  },
+  getHistoryInfo(data) {
+    return $ajax.post(requestUrl('history/info'), data);
+  },
+  getSomeDeviceInfo(data) {
+    return $ajax.post(requestUrl('dev/id'), data);
+  },
+  getAlarmInfo(data) {
+    const { token } = data
+    return $ajax.get(requestUrl(`alarm/${data.pageIndex}/${data.alarmValue}`), { token });
+  },
   getAllUser(data) {
     return $ajax.post(requestUrl('sys/page'), data);
   },
@@ -109,5 +122,9 @@ export default {
   },
   deleteInfoWeb(data) {
     return $ajax.get(requestUrl(`info/delete/${data.id}`), data);
+  },
+  // 预约查询
+  getWorkInfo(data) {
+    return $ajax.get(requestUrl(`work/15914005598/1`), data);
   }
 };

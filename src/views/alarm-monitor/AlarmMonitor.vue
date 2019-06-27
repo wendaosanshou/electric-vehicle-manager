@@ -31,53 +31,35 @@
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
       </div>
       <div class="title-right">
-        <el-button class="button-fix" size="mini" type="primary">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
 
     <div class="monitor-container">
-      <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
-      <div class="map-content" id="map-container"></div>
+      <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
+      <div class="map-content" id="alarm-map-container"></div>
     </div>
+
+    <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
+    <alarm-detail-dialog v-model="isAlarmDetailVisible"></alarm-detail-dialog>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import MapMixin from '@/mixins/map-mixin'
+import AlarmDetailDialog from './AlarmDetailDialog'
+import AlarmTipsDialog from './AlarmTipsDialog'
+import { setTimeout } from 'timers';
+
 export default {
+  mixins: [MapMixin],
   data() {
     return {
+      isAlarmDetailVisible: false,
+      isAlarmTipsVisible: false,
       value2: "",
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      },
+      positionCenter: [116.43, 39.92],
       searchNumber: "",
       searchType: 0,
       searchTypeList: [
@@ -140,36 +122,53 @@ export default {
           value: 4,
           label: "身份证号"
         }
-      ],
-      aMap: {}
+      ]
     };
   },
-  methods: {
-    onMapSelect(value) {
-      if (this.mapValue === 0) {
-        this.initAMap();
+  computed: {
+    ...mapGetters(['deviceIds'])
+  },
+  watch: {
+    isAlarmDetailVisible() {
+      if (!this.isAlarmDetailVisible) {
+        this.isAlarmTipsVisible = false
       }
-    },
-    initMap() {
-      this.onMapSelect();
-    },
-    initAMap() {
-      const scale = new AMap.Scale({
-        visible: false
-      });
-      const toolBar = new AMap.ToolBar({
-        visible: false
-      });
-      this.aMap = new AMap.Map("map-container", {
-        resizeEnable: true
-      });
-      this.aMap.addControl(scale);
-      this.aMap.addControl(toolBar);
-      scale.show();
     }
   },
+  methods: {
+    ...mapActions(['getAlarmInfo']),
+    onSearchAlarm() {
+      this.isAlarmTipsVisible = true
+      this.isAlarmDetailVisible = true
+      this.addAlarmMarkers()
+    },
+    getAlarmMarkerContent(position) {
+      let markerContent = document.createElement("div");
+      let markerContent1 = document.createElement("div");
+      markerContent.className = "alarm-mark-content";
+      markerContent1.className = "alarm-mark-content-1";
+      markerContent.append(markerContent1);
+      return markerContent;
+    },
+    addAlarmMarkers() {
+      let [firstPosition] = this.deviceIds;
+      this.map.clearMap();
+      this.deviceIds.forEach(item => {
+        this.addMarker([item.lat_amap, item.lng_amap], this.getAlarmMarkerContent([item.lat_amap, item.lng_amap]));
+      });
+      this.map.setFitView();
+    },
+  },
+  components: {
+    AlarmDetailDialog,
+    AlarmTipsDialog,
+  },
   mounted() {
-    this.initAMap();
+    this.initAMap('alarm-map-container', this.positionCenter);
+    this.getAlarmInfo({
+      pageIndex: 1,
+      alarmValue: 1
+    })
   }
 };
 </script>
