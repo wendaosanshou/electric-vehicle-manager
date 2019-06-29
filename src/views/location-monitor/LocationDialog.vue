@@ -26,7 +26,7 @@
             <div class="form-item">产品型号：{{deviceInfo.model}}</div>
             <div class="form-item">颜色：{{deviceInfo.color}}</div>
             <div class="form-item">获得方式：购买</div>
-            <div class="form-item">车辆温度：27℃</div>
+            <div class="form-item">车辆温度：{{deviceInfo.temperature}}℃</div>
           </div>
           <div class="form-title">网络信息</div>
           <div class="form-item-wrap">
@@ -69,10 +69,16 @@ export default {
   computed: {
     ...mapGetters(['deviceInfo']),
     vehicleInfo(){
-      return this.deviceInfo.vehicle_info
+      if (this.deviceInfo && this.deviceInfo.vehicle_info) {
+        return this.deviceInfo.vehicle_info
+      }
+      return {}
     },
     userInfo() {
-      return this.deviceInfo.user_info
+      if (this.deviceInfo && this.deviceInfo.user_info) {
+        return this.deviceInfo.user_info
+      }
+      return {}
     }
   },
   watch: {

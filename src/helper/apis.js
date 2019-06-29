@@ -11,9 +11,37 @@ export default {
     const { account, password } = data
     return $ajax.get(requestUrl(`sys/login/${account}/${password}`));
   },
+  getAlarmAnalyse(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`alarm/analyse?token=${token}`), data);
+  },
+  getAlarmLatest(data) {
+    const { token, alarmId, deviceId, alarmValue } = data
+    return $ajax.get(requestUrl(`alarm/latest/${alarmId}/${deviceId}/${alarmValue}?token=${token}`));
+  },
+  getAlarmInfo(data) {
+    const { token } = data
+    return $ajax.get(requestUrl(`alarm/${data.pageIndex}/${data.alarmValue}`), { token });
+  },
+  modifyWorkItem(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`work/modify?token=${token}`), data);
+  },
   getWorkPage(data) {
     const { token } = data
     return $ajax.post(requestUrl(`work/page?token=${token}`), data);
+  },
+  getVehicleInfo(data) {
+    const { token, id } = data
+    return $ajax.get(requestUrl(`vehicle/${id}?token=${token}`));
+  },
+  renewContract(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`contract/renew?token=${token}`), data);
+  },
+  getContractHistory(data) {
+    const { token, id } = data
+    return $ajax.get(requestUrl(`contract/all/${id}?token=${token}`));
   },
   setWorkDistribute(data) {
     const { token } = data
@@ -50,10 +78,6 @@ export default {
   },
   getSomeDeviceInfo(data) {
     return $ajax.post(requestUrl('dev/id'), data);
-  },
-  getAlarmInfo(data) {
-    const { token } = data
-    return $ajax.get(requestUrl(`alarm/${data.pageIndex}/${data.alarmValue}`), { token });
   },
   getAllUser(data) {
     return $ajax.post(requestUrl('sys/page'), data);

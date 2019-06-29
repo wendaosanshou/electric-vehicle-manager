@@ -1,9 +1,9 @@
 <template>
   <div class="dialog">
-    <el-button class="button-fix btn-select" size="mini" type="primary" @click="onDialogShow">选择所属组织</el-button>
+    <el-button class="button-fix btn-select" :class="[dialogConfig.buttonClass]" size="mini" type="primary" @click="onDialogShow">{{dialogConfig.buttonTxt}}</el-button>
     <el-dialog
       class="dialog-add-org dialog-small-org dialog-fix"
-      title="选择所属组织"
+      :title="dialogConfig.title"
       width="460"
       :visible.sync="dialogVisible"
       @close="onDialogHide"
@@ -11,7 +11,7 @@
     <div class="add-org-body">
       <div class="dialog-title">当前组织</div>
       <el-tree
-        :data="businessAllTree"
+        :data="treeData"
         :expand-on-click-node="false"
         class="role-tree tree-fix"
         default-expand-all
@@ -41,8 +41,51 @@ export default {
       currentBusinessPoint: {}
     };
   },
+  props: {
+    selectType: {
+      type: String,
+      default: 'all-tree'
+    }
+  },
   computed: {
-    ...mapGetters(["businessAllTree"])
+    ...mapGetters(["businessAllTree", "businessHandleTree", "businessInstallTree"]),
+    treeData() {
+      if (this.selectType === 'all-tree') {
+        return this.businessAllTree
+      } else if (this.selectType === 'handle-tree') {
+        return this.businessHandleTree
+      } else if (this.selectType === 'install-tree') {
+        return this.businessInstallTree
+      } else {
+        return this.businessAllTree
+      }
+    },
+    dialogConfig() {
+      if (this.selectType === 'all-tree') {
+        return {
+          title: '请选择组织',
+          buttonTxt: '选择所属组织',
+          buttonClass: ''
+        }
+      } else if (this.selectType === 'handle-tree') {
+        return {
+          title: '请选择业务办理点',
+          buttonTxt: '请选择',
+          buttonClass: 'btn-small'
+        }
+      } else if (this.selectType === 'install-tree') {
+        return {
+          title: '请选择设备安装点',
+          buttonTxt: '请选择',
+          buttonClass: 'btn-small'
+        }
+      }
+    }
+  },
+  watch: {
+    treeData() {
+      console.log(JSON.parse(JSON.stringify(this.treeData)))
+    }
   },
   methods: {
     ...mapActions(["getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall']),
@@ -96,6 +139,9 @@ $basic-ratio: 1.4;
   margin-left: d2r(10px);
   width: d2r(160px);
   height: d2r(38px);
+  &.btn-small {
+     width: d2r(60px);
+  }
 }
 
 .dialog-add-org {

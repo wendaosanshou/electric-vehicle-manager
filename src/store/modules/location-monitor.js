@@ -1,7 +1,41 @@
 import { $apis } from "@/helper";
-import Vue from 'vue';
+import Vue from "vue";
 
-const vm = new Vue()
+const vm = new Vue();
+
+const convertGps = list => {
+  let promiseArr = [];
+  console.log("convertGps", list);
+  for (let i = 0; i < list.length; i++) {
+    let item = list[i];
+    let { lng, lat } = item;
+    let gps = [lng / 1000000, lat / 1000000];
+    let promise = new Promise((resolve, reject) => {
+      AMap.convertFrom(gps, "gps", function(status, result) {
+        if (result.info === "ok") {
+          const [{ lng, lat }] = result.locations; // Array.<LngLat>
+          item.lng = lng;
+          item.lat = lat;
+          resolve(item);
+        }
+      });
+    });
+    promiseArr.push(promise);
+  }
+  setTimeout(() => {
+    
+  }, 5000)
+  // return new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve()
+  //   }, 5000)
+  // })
+  try {
+    return Promise.all(promiseArr);
+  } catch (error) {
+    return Promise.resolve(promiseArr);
+  }
+};
 
 const locationMonitor = {
   state: {
@@ -51,52 +85,64 @@ const locationMonitor = {
       },
       {
         value: 2,
-        label: "震动告警"
-      },
-      {
-        value: 3,
         label: "温度告警"
       },
       {
+        value: 3,
+        label: "内置电池低电压告警"
+      },
+      {
         value: 4,
-        label: "超速告警"
-      },
-      {
-        value: 5,
-        label: "摔倒告警"
-      },
-      {
-        value: 6,
         label: "电瓶低电压告警"
       },
       {
-        value: 7,
+        value: 16,
         label: "外置电源断电告警"
       },
       {
-        value: 8,
-        label: "内置电池低电压告警"
+        value: 32,
+        label: "震动告警"
+      },
+      {
+        value: 64,
+        label: "摔倒告警"
+      },
+      {
+        value: 128,
+        label: "超速告警"
+      },
+      {
+        value: 256,
+        label: "紧急告警"
+      },
+      {
+        value: 512,
+        label: "非法行驶告警"
+      },
+      {
+        value: 1024,
+        label: "防盗告警"
       }
     ],
     accountList: [
       {
-        value: 0,
+        value: "account",
         label: "手机号"
       },
       {
-        value: 1,
+        value: "imei",
         label: "终端IMEI"
       },
       {
-        value: 2,
+        value: "record",
         label: "防盗备案号"
       },
       {
-        value: 3,
+        value: "iccid",
         label: "IMSI"
       },
       {
-        value: 4,
+        value: "cert",
         label: "身份证号"
       }
     ],
@@ -134,13 +180,13 @@ const locationMonitor = {
   },
   mutations: {
     updateDeviceParams(state, deviceParams) {
-      state.deviceParams = deviceParams
+      state.deviceParams = deviceParams;
     },
     updateHistoryInfo(state, historyInfo) {
-      state.historyInfo = historyInfo
+      state.historyInfo = historyInfo;
     },
     updateCurrentLocationInfo(state, currentLocationInfo) {
-      state.currentLocationInfo = currentLocationInfo
+      state.currentLocationInfo = currentLocationInfo;
     },
     updateDeviceIds(state, deviceIds) {
       // state.deviceIds = deviceIds;
@@ -152,14 +198,14 @@ const locationMonitor = {
         { lat_amap: 116.375467, lng_amap: 39.707761 },
         { lat_amap: 116.415467, lng_amap: 39.757761 },
         { lat_amap: 116.385467, lng_amap: 39.787761 }
-      ]
+      ];
     },
     updateAllDeviceInfo(state, allDeviceInfo) {
-      console.log('allDeviceInfo', allDeviceInfo)
-      state.allDeviceInfo = allDeviceInfo
+      console.log("allDeviceInfo", allDeviceInfo);
+      state.allDeviceInfo = allDeviceInfo;
     },
     updateDeviceInfo(state, deviceInfo) {
-      state.deviceInfo = deviceInfo
+      state.deviceInfo = deviceInfo;
     }
   },
   actions: {
@@ -174,6 +220,10 @@ const locationMonitor = {
           message: "立案成功!"
         });
       } catch (error) {
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
         console.log(error);
       }
     },
@@ -188,6 +238,10 @@ const locationMonitor = {
           message: "清除历史轨迹成功!"
         });
       } catch (error) {
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
         console.log(error);
       }
     },
@@ -200,6 +254,10 @@ const locationMonitor = {
         commit("updateDeviceParams", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async setDeviceTrace({ commit }, data) {
@@ -214,6 +272,10 @@ const locationMonitor = {
         });
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getDeviceInfo({ commit }, data) {
@@ -222,9 +284,24 @@ const locationMonitor = {
           token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
           ...data
         });
-        commit("updateDeviceInfo", result.data);
+
+        if (result.data && result.data.lat) {
+          await convertGps([result.data]);
+          commit("updateDeviceInfo", result.data);
+          commit("updateAllDeviceInfo", [result.data]);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "未查到对应gps信息!"
+          });
+          return Promise.reject()
+        }
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getAllDeviceInfo({ commit }, data) {
@@ -233,9 +310,14 @@ const locationMonitor = {
           token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
           data
         });
+        await convertGps(result.data);
         commit("updateAllDeviceInfo", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getSomeDeviceInfo({ commit }, data) {
@@ -247,6 +329,10 @@ const locationMonitor = {
         commit("updateDeviceIds", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getHistoryInfo({ commit }, data) {
@@ -255,9 +341,15 @@ const locationMonitor = {
           token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
           ...data
         });
+        await convertGps(result.data);
+        console.log("convertGps", result.data);
         commit("updateHistoryInfo", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getAlarmInfo({ commit }, data) {
@@ -269,6 +361,10 @@ const locationMonitor = {
         commit("updateDeviceIds", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     }
   },
@@ -277,20 +373,15 @@ const locationMonitor = {
     allDeviceInfo: state => state.allDeviceInfo,
     deviceInfo: state => state.deviceInfo,
     allLocationInfo: state => {
-      return state.allDeviceInfo
-      .filter(item => {
-        return item.lat > 0 && item.lng > 0
-      }).map(item => {
-        item.lng = item.lng / 1000000
-        item.lat = item.lat / 1000000
-        return item
-      })
+      return state.allDeviceInfo.filter(item => {
+        return item.lat > 0 && item.lng > 0;
+      });
     },
     historyInfo: state => state.historyInfo,
     historylineArr: state => {
       return state.historyInfo.map(item => {
-        return [item.lng / 1000000, item.lat / 1000000]
-      })
+        return [item.lng, item.lat];
+      });
     },
     alarmTypes: state => state.alarmTypes,
     accountList: state => state.accountList,
@@ -300,4 +391,4 @@ const locationMonitor = {
   }
 };
 
-export default locationMonitor
+export default locationMonitor;

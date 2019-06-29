@@ -27,6 +27,10 @@ const RoleManage = {
         commit("updateAllRoles", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async addRole({ commit }, data) {
@@ -42,6 +46,10 @@ const RoleManage = {
         console.log(result);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async editRole({ commit }, data) {
@@ -58,6 +66,10 @@ const RoleManage = {
         console.log(result);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async deleteRole({ commit }, data) {
@@ -70,7 +82,13 @@ const RoleManage = {
           message: "删除成功!"
         });
         console.log(result);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
+      }
     }
   },
   getters: {

@@ -38,7 +38,7 @@ export default {
     event: 'change'
   },
   computed: {
-      ...mapGetters(['allUser'])
+      ...mapGetters(['allUser', 'alarmAnalyse'])
   },
   props: {
     visible: Boolean

@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
-// const { mapGetters, mapMutations } = createNamespacedHelpers('common')
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { setTimeout } from 'timers';
 
 export default {
   name: "home",
@@ -170,6 +170,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getAllOrg', 'getAllBusinessPoint', 'getBusinessHandle', 'getBusinessInstall']),
     ...mapMutations(['updateActivePageName']),
     onCollapse() {
       this.isCollapse = !this.isCollapse
@@ -273,10 +274,16 @@ export default {
       if (activeMenu) {
         this.updateActivePageName(activeMenu)
       }
-    }
+    },
+    async initAllBusinessPoint() {
+      //  进页面初始化角色权限数据
+      await this.getAllBusinessPoint();
+      await this.getBusinessHandle()
+      await this.getBusinessInstall()
+    },
   },
-  components: {},
   mounted() {
+    this.initAllBusinessPoint()
   }
 };
 </script>

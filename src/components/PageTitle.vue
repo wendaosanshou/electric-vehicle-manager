@@ -1,6 +1,6 @@
 <template>
   <div class="page-title">
-    <i class="icon-dot"></i>
+    <i class="icon-dot" v-if="hasDot"></i>
     <span class="title-label">
       <slot></slot>
     </span>
@@ -9,7 +9,12 @@
 
 <script>
 export default {
-  props: ["title"]
+  props: {
+    hasDot: {
+      type: Boolean,
+      default: true
+    }
+  }
 };
 </script>
 

@@ -58,7 +58,7 @@ export default new Router({
         component: UserAdd,
       }, {
         path: 'record-manage',
-        name: 'RecordInfoManage',
+        name: 'RecordManage',
         component: RecordInfoManage
       }, {
         path: 'process-manage',
@@ -67,7 +67,7 @@ export default new Router({
       }, {
         path: 'process-search',
         name: 'ProcessSearch',
-        component: ProcessManage
+        component: RecordInfoManage
       }, {
         path: 'record-setting',
         name: 'RecordSetting',

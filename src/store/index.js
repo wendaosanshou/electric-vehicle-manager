@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import VuexPersistence from 'vuex-persist'
 import locationMonitor from "./modules/location-monitor";
+import alarmMonitor from "./modules/alarm-monitor";
 import common from "./modules/common";
 import login from "./modules/login"
 import roleManage from './modules/role-manage'
@@ -11,7 +12,7 @@ import work from './modules/work'
 Vue.use(Vuex);
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
+  storage: window.sessionStorage
 })
 
 export default new Vuex.Store({
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     login: login,
     roleManage: roleManage,
     userManage: userManage,
+    alarmMonitor: alarmMonitor,
     work: work
   },
   plugins: [vuexLocal.plugin]

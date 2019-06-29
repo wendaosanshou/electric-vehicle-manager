@@ -3,7 +3,7 @@
     <div class="track-title">
       <div class="track-time">
         <el-date-picker
-          v-model="value2"
+          v-model="pickerTime"
           size="mini"
           clss="ipt-fix"
           type="datetimerange"
@@ -18,7 +18,7 @@
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="searchType"
+          v-model="alarmValue"
           placeholder="请选择告警类型"
         >
           <el-option
@@ -31,7 +31,7 @@
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="searchValue"
+          v-model="searchType"
           placeholder="请选择活动区域"
         >
           <el-option
@@ -41,7 +41,7 @@
             :key="item.value"
           ></el-option>
         </el-select>
-        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
+        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
       </div>
       <div class="title-right">
         <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
@@ -49,19 +49,19 @@
     </div>
 
     <div class="monitor-container">
-      <div class="map-content" id="map-container"></div>
+      <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
       <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
       <alarm-analysis-table v-model="isAlarmTableVisible"></alarm-analysis-table>
     </div>
-
   </div>
 </template>
 
 <script>
+import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
-import MapMixin from '@/mixins/map-mixin'
-import AlarmTipsDialog from '../alarm-monitor/AlarmTipsDialog'
-import AlarmAnalysisTable from './AlarmAnalysisTable'
+import MapMixin from "@/mixins/map-mixin";
+import AlarmTipsDialog from "../alarm-monitor/AlarmTipsDialog";
+import AlarmAnalysisTable from "./AlarmAnalysisTable";
 
 export default {
   mixins: [MapMixin],
@@ -69,28 +69,56 @@ export default {
     return {
       isAlarmTipsVisible: false,
       isAlarmTableVisible: false,
-      value2: "",
-      searchNumber: "",
-      searchType: 0,
+      pickerTime: "",
       searchValue: "",
+      alarmValue: 0,
+      searchType: 'account'
     };
   },
   computed: {
-    ...mapGetters(['deviceIds', 'alarmTypes', 'accountList', 'pickerOptions'])
+    ...mapGetters([
+      "deviceIds",
+      "pickerOptions",
+      "accountList",
+      "alarmTypes",
+      "deviceInfo",
+      'alarmLatest'
+    ])
   },
   watch: {
     isAlarmTableVisible() {
       if (!this.isAlarmTableVisible) {
-        this.isAlarmTipsVisible = false
+        this.isAlarmTipsVisible = false;
       }
     }
   },
   methods: {
-    ...mapActions(['getAlarmInfo']),
-    onSearchAlarm() {
-      this.isAlarmTipsVisible = true
-      this.isAlarmTableVisible = true
-      this.addAlarmMarkers()
+    ...mapActions(["getAlarmInfo", "getAlarmAnalyse", "getDeviceInfo"]),
+    async onSearchAlarm() {
+      const [startDate, endDate] = this.pickerTime;
+      console.log(startDate, endDate, this.searchValue)
+      if (startDate && endDate && this.searchValue) {
+        await this.getDeviceInfo({
+          type: this.searchType,
+          value: this.searchValue
+        });
+        await this.getAlarmAnalyse({
+          id: this.deviceInfo.id,
+          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          page_size: 100,
+          page_index: 2,
+          alarm: this.alarmValue
+        });
+        this.isAlarmTipsVisible = true;
+        this.isAlarmTableVisible = true;
+        this.addAlarmMarkers()
+      } else {
+        this.$message({
+          type: "error",
+          message: "请输入正确的查询条件!"
+        });
+      }
     },
     getAlarmMarkerContent(position) {
       let markerContent = document.createElement("div");
@@ -101,13 +129,19 @@ export default {
       return markerContent;
     },
     addAlarmMarkers() {
-      let [firstPosition] = this.deviceIds;
       this.map.clearMap();
-      this.deviceIds.forEach(item => {
-        this.addMarker([item.lat_amap, item.lng_amap], this.getAlarmMarkerContent([item.lat_amap, item.lng_amap]));
+      this.alarmLatest.forEach(item => {
+        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent([item.lng, item.lat]));
       });
       this.map.setFitView();
     },
+    drawAlarmMap() {
+      if (this.alarmLatest && this.alarmLatest.length > 0) {
+        const [{lng, lat}] = this.alarmLatest
+        this.initAMap('map-container', [lng, lat]);
+        this.addAlarmMarkers()
+      }
+    }
   },
   components: {
     AlarmTipsDialog,

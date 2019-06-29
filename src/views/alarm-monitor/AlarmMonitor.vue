@@ -1,43 +1,43 @@
 <template>
   <div class="history-track">
+    <!-- {{accountList}} -->
     <div class="track-title">
       <div class="title-left">
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="searchType"
+          v-model="alarmValue"
           placeholder="请选择告警类型"
         >
           <el-option
             :label="item.label"
             :value="item.value"
-            v-for="item in searchTypeList"
+            v-for="item in alarmTypes"
             :key="item.value"
           ></el-option>
         </el-select>
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="searchValue"
-          placeholder="请选择活动区域"
+          v-model="searchType"
+          placeholder="请选择号码类型"
         >
           <el-option
             :label="item.label"
             :value="item.value"
-            v-for="item in searchList"
+            v-for="item in accountList"
             :key="item.value"
           ></el-option>
         </el-select>
-        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
+        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
       </div>
       <div class="title-right">
         <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
-
     <div class="monitor-container">
       <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
-      <div class="map-content" id="alarm-map-container"></div>
+      <div class="map-content js-map-container" id="alarm-map-container" :style="{height: pageHeight}"></div>
     </div>
 
     <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
@@ -60,73 +60,13 @@ export default {
       isAlarmTipsVisible: false,
       value2: "",
       positionCenter: [116.43, 39.92],
-      searchNumber: "",
-      searchType: 0,
-      searchTypeList: [
-        {
-          value: 0,
-          label: "全部告警类型"
-        },
-        {
-          value: 1,
-          label: "位移告警"
-        },
-        {
-          value: 2,
-          label: "震动告警"
-        },
-        {
-          value: 3,
-          label: "温度告警"
-        },
-        {
-          value: 4,
-          label: "超速告警"
-        },
-        {
-          value: 5,
-          label: "摔倒告警"
-        },
-        {
-          value: 6,
-          label: "电瓶低电压告警"
-        },
-        {
-          value: 7,
-          label: "外置电源断电告警"
-        },
-        {
-          value: 8,
-          label: "内置电池低电压告警"
-        }
-      ],
       searchValue: "",
-      searchList: [
-        {
-          value: 0,
-          label: "手机号"
-        },
-        {
-          value: 1,
-          label: "终端IMEI"
-        },
-        {
-          value: 2,
-          label: "防盗备案号"
-        },
-        {
-          value: 3,
-          label: "IMSI"
-        },
-        {
-          value: 4,
-          label: "身份证号"
-        }
-      ]
+      alarmValue: 0,
+      searchType: 'account'
     };
   },
   computed: {
-    ...mapGetters(['deviceIds'])
+    ...mapGetters(['deviceIds', 'alarmLatest', 'deviceInfo', 'accountList', 'alarmTypes'])
   },
   watch: {
     isAlarmDetailVisible() {
@@ -136,11 +76,32 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAlarmInfo']),
-    onSearchAlarm() {
-      this.isAlarmTipsVisible = true
-      this.isAlarmDetailVisible = true
-      this.addAlarmMarkers()
+    ...mapActions(['getAlarmInfo', 'getAlarmLatest', "getDeviceInfo"]),
+    async onSearchAlarm() {
+      console.log(this.alarmType && this.searchType)
+      if (this.searchValue) {
+         await this.getDeviceInfo({
+          type: this.searchType,
+          value: this.searchValue
+        });
+        await this.getAlarmLatest({
+          alarmId: 0,
+          deviceId: this.deviceInfo.id,
+          alarmValue: this.alarmValue
+        })
+        this.drawAlarmMap()
+        this.isAlarmTipsVisible = true
+        this.isAlarmDetailVisible = true
+        console.log(this.deviceInfo)
+      } else {
+        this.$message({
+          type: "error",
+          message: "请输入正确的查询条件!"
+        });
+      }
+      // this.isAlarmTipsVisible = true
+      // this.isAlarmDetailVisible = true
+      // this.addAlarmMarkers()
     },
     getAlarmMarkerContent(position) {
       let markerContent = document.createElement("div");
@@ -151,24 +112,27 @@ export default {
       return markerContent;
     },
     addAlarmMarkers() {
-      let [firstPosition] = this.deviceIds;
       this.map.clearMap();
-      this.deviceIds.forEach(item => {
-        this.addMarker([item.lat_amap, item.lng_amap], this.getAlarmMarkerContent([item.lat_amap, item.lng_amap]));
+      this.alarmLatest.forEach(item => {
+        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent([item.lng, item.lat]));
       });
       this.map.setFitView();
     },
+    drawAlarmMap() {
+      const [{lng, lat}] = this.alarmLatest
+      this.initAMap('alarm-map-container', [lng, lat]);
+      this.addAlarmMarkers()
+    },
+    async initAlarmLatest() {
+      this.initAMap('alarm-map-container', this.positionCenter);
+    }
   },
   components: {
     AlarmDetailDialog,
     AlarmTipsDialog,
   },
   mounted() {
-    this.initAMap('alarm-map-container', this.positionCenter);
-    this.getAlarmInfo({
-      pageIndex: 1,
-      alarmValue: 1
-    })
+    this.initAlarmLatest()
   }
 };
 </script>

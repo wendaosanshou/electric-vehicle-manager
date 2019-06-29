@@ -7,6 +7,8 @@
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
+      <!-- {{historylineArr}} -->
+      <!-- {{historylineArr}} -->
       <div class="history-dialog-content">
         <div class="history-dialog-title">
           <el-date-picker
@@ -54,6 +56,7 @@ import { setTimeout } from "timers";
 export default {
   data() {
     return {
+      loading: {},
       map: {},
       isShowHistoryTrack: false,
       isPauseMove: false,
@@ -113,8 +116,8 @@ export default {
   computed: {
     ...mapGetters(["historylineArr", "currentLocationInfo"]),
     positionCenter() {
-      const {lat, lng} = this.currentLocationInfo
-      return [lng, lat]
+      const { lat, lng } = this.currentLocationInfo;
+      return [lng, lat];
     }
   },
   methods: {
@@ -146,6 +149,7 @@ export default {
     },
     drawCarMarker() {
       let [firstPosition] = this.historylineArr;
+      console.log('firstPosition', firstPosition)
       this.carMarker = new AMap.Marker({
         map: this.map,
         position: firstPosition,
@@ -186,9 +190,18 @@ export default {
         resizeEnable: true
       });
     },
+    renderLoading() {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+    },
     async onSearchHistory() {
-      console.log(this.pickerTime)
-      const [startDate, endDate] = this.pickerTime
+      console.log(this.pickerTime);
+      this.renderLoading()
+      const [startDate, endDate] = this.pickerTime;
       if (startDate && endDate) {
         await this.getHistoryInfo({
           id: this.currentLocationInfo.id,
@@ -196,14 +209,15 @@ export default {
           end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
         });
         this.drawHistoryLine();
-      this.drawCarMarker()
-      this.isShowHistoryTrack = true
+        this.drawCarMarker();
+        this.isShowHistoryTrack = true;
       } else {
         this.$message({
           type: "error",
           message: "请选择正确的时间段!"
         });
       }
+      this.loading.close()
     }
   },
   mounted() {

@@ -33,7 +33,7 @@ function requestHandle(params) {
   let defer = $q.defer();
   axios(params)
     .then(res => {
-      console.log("axios", res);
+      // console.log("axios", res);
       if (res.data) {
         if (res.data.code && res.data.code === "10000") {
           defer.resolve(res.data);

@@ -1,6 +1,6 @@
 import { $apis } from "@/helper";
 import Vue from 'vue';
-import { construct, destruct } from '@aximario/json-tree';
+import { construct } from '@/helper/json-tree'
 
 const vm = new Vue()
 
@@ -11,6 +11,9 @@ const Login = {
     businessAll: [],
     businessHandle: [],
     businessInstall: [],
+    businessAllTree: [],
+    businessHandleTree: [],
+    businessInstallTree: [],
     infoWeb: [],
     selectUser: {},
     businessType: 1 // 业务类型，1-业务办理点 2-设备安装点
@@ -26,10 +29,15 @@ const Login = {
       state.allOrg = allOrg
     },
     updateBusinessAll(state, businessAll) {
-      console.log('updateAllBusinessPoint', businessAll)
-      state.businessAll = businessAll.map(item => {
+      let mapBusinessAll = businessAll.map(item => {
         item.label = item.name
         return item
+      })
+      state.businessAll = mapBusinessAll
+      state.businessAllTree = construct(mapBusinessAll, {
+        id: 'id',
+        pid: 'parent_id',
+        children: 'children'
       })
     },
     updateBusinessHandle(state, businessHandle) {
@@ -48,17 +56,19 @@ const Login = {
         const currentHandle = allBusinessHandle[index]
         const allKeys = uniqueBusinessHandle.map(item => item.id)
         if (allKeys.indexOf(currentHandle.id) === -1) {
+          currentHandle.label = currentHandle.name
           uniqueBusinessHandle.push(currentHandle)
         }
       }
-      // 赋值并且添加label属性
-      state.businessHandle = uniqueBusinessHandle.map(item => {
-        item.label = item.name
-        return item
+      console.log('businessHandle---', JSON.parse(JSON.stringify(uniqueBusinessHandle)))
+      state.businessHandleTree = construct(uniqueBusinessHandle, {
+        id: 'id',
+        pid: 'parent_id',
+        children: 'children'
       })
       // 业务类型，新增业务的时候需要
       state.businessType = 1
-      console.log('businessHandle---', JSON.parse(JSON.stringify(state.businessHandle)))
+      console.log('businessHandleTree', JSON.parse(JSON.stringify(state.businessHandleTree)))
     },
     updateBusinessInstall(state, businessInstall) {
       // 过滤掉非市，区，街道
@@ -76,17 +86,19 @@ const Login = {
        const currentInstall = allBusinessInstall[index]
        const allKeys = uniqueBusinessInstall.map(item => item.id)
        if (allKeys.indexOf(currentInstall.id) === -1) {
+          currentInstall.label = currentInstall.name
          uniqueBusinessInstall.push(currentInstall)
        }
      }
-     // 赋值并且添加label属性
-     state.businessInstall = uniqueBusinessInstall.map(item => {
-       item.label = item.name
-       return item
-     })
+     console.log('businessInstall---', JSON.parse(JSON.stringify(uniqueBusinessInstall)))
+     state.businessInstallTree = construct(uniqueBusinessInstall, {
+        id: 'id',
+        pid: 'parent_id',
+        children: 'children'
+      })
      // 业务类型，新增业务的时候需要
      state.businessType = 2
-     console.log('businessInstall---', JSON.parse(JSON.stringify(state.businessInstall)))
+     console.log('businessInstallTree--', JSON.parse(JSON.stringify(state.businessInstallTree)))
     },
     updateInfoWeb(state, infoWeb) {
       state.infoWeb = infoWeb
@@ -102,6 +114,10 @@ const Login = {
         commit("udpateAllUser", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async addSysUser({ commit }, data) {
@@ -117,6 +133,10 @@ const Login = {
         history.back()
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async editSysUser({ commit }, data) {
@@ -132,6 +152,10 @@ const Login = {
         history.back()
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async deleteSysUser({ commit }, data) {
@@ -146,6 +170,10 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getAllOrg({ commit }, data) {
@@ -157,6 +185,10 @@ const Login = {
         commit("updateAllOrg", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getAllBusinessPoint({ commit }, data) {
@@ -168,6 +200,10 @@ const Login = {
         commit("updateBusinessAll", result.data);
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async addBusinessPoint({ commit }, data) {
@@ -182,6 +218,10 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async deleteBusinessPoint({ commit }, data) {
@@ -196,6 +236,10 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async editBusinessPoint({ commit }, data) {
@@ -210,6 +254,10 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getBusinessHandle({ commit }, data) {
@@ -218,6 +266,10 @@ const Login = {
         commit('updateBusinessHandle', result.data)
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getBusinessInstall({ commit }, data) {
@@ -226,6 +278,10 @@ const Login = {
         commit('updateBusinessInstall', result.data)
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async getInfoWeb({ commit }, data) {
@@ -234,6 +290,10 @@ const Login = {
         commit('updateInfoWeb', result.data)
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async addInfoWeb({ commit }, data) {
@@ -249,6 +309,10 @@ const Login = {
         console.log(result)
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async updateInfoWeb({ commit }, data) {
@@ -264,6 +328,10 @@ const Login = {
         console.log(result)
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     },
     async deleteInfoWeb({ commit }, data) {
@@ -279,6 +347,10 @@ const Login = {
         console.log(result)
       } catch (error) {
         console.log(error);
+        vm.$message({
+          type: "error",
+          message: "服务器出小差了~"
+        });
       }
     }
   },
@@ -288,27 +360,10 @@ const Login = {
     allOrg: state => state.allOrg,
     businessAll: state => state.businessAll,
     businessType: state => state.businessType,
-    businessHandleTree: state => {
-      return construct(state.businessHandle, {
-        id: 'id',
-        pid: 'parent_id',
-        children: 'children'
-      })
-    },
-    businessInstallTree: state => {
-      return construct(state.businessInstall, {
-        id: 'id',
-        pid: 'parent_id',
-        children: 'children'
-      })
-    },
-    businessAllTree: state => {
-      return construct(state.businessAll, {
-        id: 'id',
-        pid: 'parent_id',
-        children: 'children'
-      })
-    },
+    businessHandle: state => state.businessHandle,
+    businessHandleTree: state => state.businessHandleTree,
+    businessInstallTree: state => state.businessInstallTree,
+    businessAllTree: state => state.businessAllTree,
     infoWeb: state => state.infoWeb
   }
 };

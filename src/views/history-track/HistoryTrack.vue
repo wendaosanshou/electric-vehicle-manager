@@ -15,7 +15,7 @@
         ></el-date-picker>
       </div>
       <div class="title-right">
-        <el-select
+        <!-- <el-select
           class="ipt-fix ipt-selector"
           size="mini"
           v-model="searchType"
@@ -27,21 +27,21 @@
             v-for="item in searchTypeList"
             :key="item.value"
           ></el-option>
-        </el-select>
+        </el-select> -->
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="searchValue"
+          v-model="searchType"
           placeholder="请选择活动区域"
         >
           <el-option
             :label="item.label"
             :value="item.value"
-            v-for="item in searchList"
+            v-for="item in accountList"
             :key="item.value"
           ></el-option>
         </el-select>
-        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchNumber" placeholder="请输入内容"></el-input>
+        <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
         <el-button class="button-fix" size="mini" type="primary" @click="onHistorySearch">查询</el-button>
       </div>
     </div>
@@ -80,6 +80,7 @@ export default {
   mixins: [MapMixin],
   data() {
     return {
+      loading: {},
       pickerTime: [],
       isShowHistoryTrack: false,
       isPauseMove: false,
@@ -117,50 +118,26 @@ export default {
           }
         ]
       },
-      searchNumber: "",
-      searchType: 0,
-      searchTypeList: [
-        {
-          value: 0,
-          label: "全部告警类型"
-        }
-      ],
       searchValue: "",
-      searchList: [
-        {
-          value: 0,
-          label: "手机号"
-        },
-        {
-          value: 1,
-          label: "终端IMEI"
-        },
-        {
-          value: 2,
-          label: "防盗备案号"
-        },
-        {
-          value: 3,
-          label: "IMSI"
-        },
-        {
-          value: 4,
-          label: "身份证号"
-        }
-      ]
+      searchType: 'account',
     };
   },
   computed: {
-    ...mapGetters(["historylineArr", "deviceIds", "allLocationInfo", "currentLocationInfo"])
+    ...mapGetters(["historylineArr", "deviceIds", "allLocationInfo", "currentLocationInfo", "accountList", "deviceInfo"])
   },
   methods: {
     ...mapMutations(['updateCurrentLocationInfo']),
-    ...mapActions(["getHistoryInfo", "getAllDeviceInfo"]),
+    ...mapActions(["getHistoryInfo", "getAllDeviceInfo", "getDeviceInfo"]),
     async onHistorySearch() {
       const [startDate, endDate] = this.pickerTime;
       if (startDate && endDate) {
+        this.renderLoading()
+        await this.getDeviceInfo({
+          type: this.searchType,
+          value: this.searchValue
+        });
         await this.getHistoryInfo({
-          id: this.currentLocationInfo.id,
+          id: this.deviceInfo.id,
           start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
           end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
         });
@@ -173,6 +150,15 @@ export default {
           message: "请选择正确的时间段!"
         });
       }
+      this.loading.close()
+    },
+    renderLoading() {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
     },
     onSetSpeed(speed) {
       this.carSpeed = speed;
@@ -246,11 +232,9 @@ export default {
       setTimeout(() => {
         $(markerContent).on('click', () => {
           this.updateCurrentLocationInfo(positionInfo)
-          console.log(positionInfo)
-          this.$message({
-            type: "success",
-            message: `已选择设备${positionInfo.id}进行查询!`
-          });
+          const { imei } = positionInfo
+          this.searchType = 'imei'
+          this.searchValue = imei
         })
       }, 100)
       return markerContent;
@@ -269,6 +253,14 @@ export default {
         position: position,
         content: content,
         offset: new AMap.Pixel(-13, -30)
+      });
+    },
+    renderLoading() {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
     },
     getLocationArray(locationInfo) {
