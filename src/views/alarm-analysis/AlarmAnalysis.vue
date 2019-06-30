@@ -5,7 +5,7 @@
         <el-date-picker
           v-model="pickerTime"
           size="mini"
-          clss="ipt-fix"
+          class="ipt-fix"
           type="datetimerange"
           :picker-options="pickerOptions"
           range-separator="至"
@@ -93,7 +93,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getAlarmInfo", "getAlarmAnalyse", "getDeviceInfo"]),
+    ...mapActions(["getAlarmAnalyse", "getDeviceInfo"]),
     async onSearchAlarm() {
       const [startDate, endDate] = this.pickerTime;
       console.log(startDate, endDate, this.searchValue)

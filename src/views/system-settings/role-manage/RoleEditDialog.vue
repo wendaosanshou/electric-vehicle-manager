@@ -124,10 +124,11 @@ export default {
         })
       }
     },
-    handleEditRole() {
+    async handleEditRole() {
       const [role] = this.tableData
-      if(role.name && this.authorList.length > 0 && role.note) {
-        this.editRole({
+      if(role.name && role.note) {
+        await this.editRole({
+          id: role.id,
           name: role.name,
           code: role.code,
           author: this.authorList.join(','),

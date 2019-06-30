@@ -64,11 +64,11 @@
             </div>
           </el-form-item>
           <el-form-item label="生效时间">
-            <el-date-picker v-model="form.active_time" type="datetime" placeholder="生效时间"></el-date-picker>
+            <el-date-picker class="ipt-fix" size="mini" v-model="form.active_time" type="datetime" placeholder="生效时间"></el-date-picker>
           </el-form-item>
           <el-form-item label="截止时间">
             <div class="form-btn-wrap">
-              <el-date-picker v-model="form.expire_time" type="datetime" placeholder="截止时间"></el-date-picker>
+              <el-date-picker class="ipt-fix" size="mini" v-model="form.expire_time" type="datetime" placeholder="截止时间"></el-date-picker>
             </div>
           </el-form-item>
           <el-form-item label="备注信息">

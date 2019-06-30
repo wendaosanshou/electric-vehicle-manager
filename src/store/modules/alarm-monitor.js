@@ -2,8 +2,14 @@ import { $apis } from "@/helper";
 import Vue from "vue";
 const vm = new Vue();
 
+const getToken = (rootState) => {
+  const { userInfo } = rootState.login
+  return userInfo.token || ''
+}
+
 const convertGps = list => {
-    let promiseArr = []
+  let promiseArr = []
+  try {
     console.log('convertGps', list)
     for(let i = 0; i < list.length; i++) {
         let item = list[i]
@@ -21,7 +27,14 @@ const convertGps = list => {
         })
         promiseArr.push(promise)
     }
-    return Promise.all(promiseArr)
+      return Promise.all(promiseArr)
+    } catch (error) {
+      vm.$message({
+        type: "error",
+        message: "gps数据转化异常~"
+      });
+      return Promise.resolve(promiseArr);
+    }
 }
 
 const Login = {
@@ -42,10 +55,10 @@ const Login = {
     }
   },
   actions: {
-    async getAlarmAnalyse({ commit }, data) {
+    async getAlarmAnalyse({ commit, rootState }, data) {
       try {
         const result = await $apis.getAlarmAnalyse({
-          token: 'ywnjb3vudf8xxze1ntkymdk5ntc1oda=',
+          token: getToken(rootState),
           ...data
         });
         await convertGps(result.data)
@@ -54,17 +67,13 @@ const Login = {
         console.log(result);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
         return Promise.reject(error);
       }
     },
-    async getAlarmLatest({ commit }, data) {
+    async getAlarmLatest({ commit, rootState }, data) {
       try {
         const result = await $apis.getAlarmLatest({
-            token: 'ywnjb3vudf8xxze1ntkymdk5ntc1oda=',
+            token: getToken(rootState),
             ...data
         });
         const convertResult = await convertGps(result.data)
@@ -73,10 +82,6 @@ const Login = {
         console.log(result);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
         return Promise.reject(error);
       }
     }

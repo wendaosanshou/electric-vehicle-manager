@@ -125,7 +125,7 @@
     </div>
     <div class="setting-owner-info setting-part-container">
       <page-title class="setting-title" :hasDot="false">车主信息</page-title>
-      <div class="setting-content">
+      <div class="setting-content setting-image-wraper">
         <el-row :gutter="20">
           <el-col :span="6">
             <div class="item-selector-wraper">
@@ -373,6 +373,7 @@ export default {
         work: "",
         imgs: ""
       },
+      defaultImages: [],
       value: ""
     };
   },
@@ -380,10 +381,19 @@ export default {
     ...mapGetters(["workItem", "vehicleInfo"]),
     imagelist() {
       const { imgs } = this.form;
+      let images = []
       if (imgs && imgs.split(SPLIT_IMAGE_SYMBOL).length > 0) {
-        return imgs.split(SPLIT_IMAGE_SYMBOL);
+        images = imgs.split(SPLIT_IMAGE_SYMBOL);
+      } else {
+        images = [imgs]
       }
-      return [imgs];
+      return [...this.defaultImages, ...images];
+    },
+    getAllImages() {
+      const { imgs } = this.form;
+      if (imgs && imgs.split(SPLIT_IMAGE_SYMBOL).length > 0) {
+        imgs.split(SPLIT_IMAGE_SYMBOL);
+      }
     },
     isRecordSetting() {
       return this.$route && this.$route.name === "RecordSetting";
@@ -456,6 +466,8 @@ export default {
       await this.getVehicleInfo({
         id: this.workItem.vehicle
       });
+      const { img_own, img_frame, img_device, img_vehicle } = this.workItem
+      this.defaultImages = [img_own, img_frame, img_device, img_vehicle]
       this.form = {
         pre_time: this.workItem.pre_time,
         business_name: this.workItem.business_name,
@@ -480,7 +492,7 @@ export default {
         device: this.workItem.device,
         imei: this.workItem.imei,
         iccid: this.workItem.iccid,
-        work: this.workItem.contract_id,
+        work: this.workItem.id,
         imgs: this.workItem.imgs
       };
     },
@@ -521,6 +533,7 @@ $basic-ratio: 1.4;
   @return $designpx / $basic-ratio;
 }
 
+
 .record-setting-container {
   padding: 0 d2r(161px) d2r(40px) 0;
   &.is-record-setting {
@@ -546,7 +559,9 @@ $basic-ratio: 1.4;
       min-height: d2r(70px);
       margin-left: d2r(25px);
       padding: d2r(18px) 0 d2r(22px) 0;
+      overflow: scroll;
       background: #f5f5f6;
+      
       .item-selector-wraper {
         display: flex;
         flex-direction: row;
@@ -684,4 +699,10 @@ $basic-ratio: 1.4;
     }
   }
 }
+
+.setting-image-wraper {
+        width: d2r(1232px);
+        padding: d2r(18px) d2r(22px) d2r(22px) d2r(22px);
+        overflow: scroll;
+      }
 </style>

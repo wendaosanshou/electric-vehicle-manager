@@ -9,12 +9,14 @@ import AlarmAnalysis from './views/alarm-analysis/AlarmAnalysis.vue'
 import ElectricFence from './views/electric-fence/ElectricFence.vue'
 import RecordInfoManage from './views/record-info-manage/RecordInfoManage.vue'
 import RecordSetting from './views/record-setting/RecordSetting.vue'
-import ProcessManage from './views/process-manage/ProcessManage.vue'
 import UserManage from './views/system-settings/user-manage/UserManage.vue';
 import UserAdd from './views/system-settings/user-manage/user-add/UserAdd.vue';
 import RoleManage from './views/system-settings/role-manage/RoleManage.vue'
 import BusinessPointManage from './views/system-settings/business-point-manage/BusinessPointManage.vue'
 import AppAdvisory from './views/system-settings/app-advisory/AppAdvisory.vue'
+import DeviceManage from './views/system-settings/device-manage/DeviceManage.vue'
+import DeviceUpdate from './views/system-settings/device-update/DeviceUpdate.vue'
+import DeviceVersion from './views/system-settings/device-version/DeviceVersion.vue'
 
 Vue.use(Router);
 
@@ -88,6 +90,18 @@ export default new Router({
         path: 'app-advisory',
         name: 'AppAdvisory',
         component: AppAdvisory
+      }, {
+        path: 'device-manage',
+        name: 'DeviceManage',
+        component: DeviceManage
+      }, {
+        path: 'device-update',
+        name: 'DeviceUpdate',
+        component: DeviceUpdate
+      }, {
+        path: 'device-version',
+        name: 'DeviceVersion',
+        component: DeviceVersion
       }]
     },
     {

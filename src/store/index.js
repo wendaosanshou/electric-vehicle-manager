@@ -7,6 +7,7 @@ import common from "./modules/common";
 import login from "./modules/login"
 import roleManage from './modules/role-manage'
 import userManage from './modules/user-manage'
+import deviceManage from './modules/device-manage'
 import work from './modules/work'
 
 Vue.use(Vuex);
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     login: login,
     roleManage: roleManage,
     userManage: userManage,
+    deviceManage: deviceManage,
     alarmMonitor: alarmMonitor,
     work: work
   },

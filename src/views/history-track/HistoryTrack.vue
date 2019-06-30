@@ -15,19 +15,6 @@
         ></el-date-picker>
       </div>
       <div class="title-right">
-        <!-- <el-select
-          class="ipt-fix ipt-selector"
-          size="mini"
-          v-model="searchType"
-          placeholder="请选择告警类型"
-        >
-          <el-option
-            :label="item.label"
-            :value="item.value"
-            v-for="item in searchTypeList"
-            :key="item.value"
-          ></el-option>
-        </el-select> -->
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
@@ -130,7 +117,8 @@ export default {
     ...mapActions(["getHistoryInfo", "getAllDeviceInfo", "getDeviceInfo"]),
     async onHistorySearch() {
       const [startDate, endDate] = this.pickerTime;
-      if (startDate && endDate) {
+      try {
+         if (startDate && endDate) {
         this.renderLoading()
         await this.getDeviceInfo({
           type: this.searchType,
@@ -149,6 +137,9 @@ export default {
           type: "error",
           message: "请选择正确的时间段!"
         });
+      }
+      } catch (error) {
+        console.log(error)
       }
       this.loading.close()
     },

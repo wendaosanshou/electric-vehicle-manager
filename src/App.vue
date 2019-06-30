@@ -129,6 +129,17 @@ $basic-ratio: 1.4;
   }
 }
 
+.el-table__fixed .el-table__header {
+thead {
+      color: #ffffff;
+      background: #bbbbc4;
+      tr,
+      th {
+        background: #bbbbc4;
+      }
+    }
+}
+
 .table-fix-yellow {
   .el-table__header-wrapper .el-table__header {
     thead {
@@ -173,6 +184,7 @@ $basic-ratio: 1.4;
 }
 
 .menu-fix {
+  width: 100%;
   .el-menu-item,
   .el-submenu {
     text-align: left;

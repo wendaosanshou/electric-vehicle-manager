@@ -76,7 +76,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAlarmInfo', 'getAlarmLatest', "getDeviceInfo"]),
+    ...mapActions(['getAlarmLatest', "getDeviceInfo"]),
     async onSearchAlarm() {
       console.log(this.alarmType && this.searchType)
       if (this.searchValue) {

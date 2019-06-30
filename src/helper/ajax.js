@@ -4,6 +4,8 @@ import { $util } from "@/helper";
 import Vue from "vue";
 const vm = new Vue();
 
+axios.defaults.timeout = 5000
+
 function getErrorTips(code) {
   const errorMap = {
     "10000": "无错误",
@@ -24,7 +26,12 @@ function getErrorTips(code) {
     '10015': "发送验证码失败",
     '10016': "账户或者密码错误",
     '10017': "资讯记录不存在",
-    '10018': "设备入库失败"
+    '10018': "设备入库失败",
+    '10019': "设备不在线",
+    '10020': "设备不存在",
+    '10021': "业务点已经绑定",
+    '10022': "指定账户不存在",
+    '10023': "角色不能删除",
   };
   return errorMap[code] || '服务器开小差了'
 }
@@ -51,6 +58,28 @@ function requestHandle(params) {
 
   return defer.promise;
 }
+
+
+axios.interceptors.response.use(function (response) {
+  // console.log('interceptors-response', response)
+  // Do something with response data
+  return response;
+}, function (error) {
+  const errorInfo = error.toString()
+  console.log('interceptors-error', error.toString())
+  if (errorInfo.indexOf('timeout') > -1) {
+    vm.$message({
+      type: "error",
+      message: `服务器请求超时了~ 错误类型：${error}`
+    })
+  } else {
+    vm.$message({
+      type: "error",
+      message: `服务器开小差了~ 错误类型：${error}`
+    })
+  }
+  return Promise.reject(error);
+});
 
 export default {
   post: function(url, params, op) {

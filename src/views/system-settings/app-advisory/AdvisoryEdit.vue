@@ -8,7 +8,6 @@
         :visible.sync="dialogVisible"
         @close="onDialogHide"
       >
-      {{form}}
         <div class="dialog-content">
           <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
           <el-form-item label="序号">
@@ -50,13 +49,11 @@
             </div>
           </el-form-item>
           <el-form-item label="生效时间">
-            <el-date-picker v-model="form.active_time" size="mini" type="date" placeholder="生效时间"></el-date-picker>
-            <!-- <el-input class="ipt-fix" size="mini" v-model="form.active_time" placeholder="输入姓名"></el-input> -->
+            <el-date-picker class="ipt-fix" v-model="form.active_time" size="mini" type="date" placeholder="生效时间"></el-date-picker>
           </el-form-item>
           <el-form-item label="截止时间">
             <div class="form-btn-wrap">
-              <el-date-picker v-model="form.expire_time" size="mini" type="date" placeholder="截止时间"></el-date-picker>
-              <!-- <el-input class="ipt-fix" size="mini" v-model="form.expire_time" placeholder="输入姓名"></el-input> -->
+              <el-date-picker class="ipt-fix" v-model="form.expire_time" size="mini" type="date" placeholder="截止时间"></el-date-picker>
             </div>
           </el-form-item>
           <el-form-item label="备注信息">

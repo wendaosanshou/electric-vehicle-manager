@@ -2,6 +2,7 @@
   <div class="business-point-manage">
     <div class="point-manage-title">
       <page-title>{{pagetTitle}}</page-title>
+      {{formType}}
     </div>
     <div class="point-manange-content">
       <div class="point-manage-tree">
@@ -52,7 +53,7 @@ import BusinessPointEdit from "./BusinessPointEdit.vue";
 export default {
   data() {
     return {
-      formType: "form-add",
+      formType: "form-edit",
       currentBusinessPoint: {},
       checkChangePoint: {}
     };
@@ -101,6 +102,7 @@ export default {
       this.currentBusinessPoint = a;
     },
     handleNodeClick(data) {
+      this.formType = "form-edit";
       this.currentBusinessPoint = data;
     },
     onCheckChange(data, isCheck) {

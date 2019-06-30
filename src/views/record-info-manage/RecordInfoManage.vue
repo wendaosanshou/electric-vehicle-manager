@@ -111,36 +111,40 @@
         </template>
         <template v-if="!isProcessSearch">
           <div class="item-selector-wraper">
-          <div class="item-label ipt-fix">派单时间</div>
-          <el-date-picker
-            class="item-selector-datapicker ipt-fix"
-            size="mini"
-            v-model="distributeTime"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-        </div>
-        <div class="item-selector-wraper">
-          <div class="item-label ipt-fix">安装时间</div>
-          <el-date-picker
-            class="item-selector-datapicker ipt-fix"
-            size="mini"
-            v-model="installTime"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-        </div>
+            <div class="item-label ipt-fix">派单时间</div>
+            <el-date-picker
+              class="item-selector-datapicker ipt-fix"
+              size="mini"
+              v-model="distributeTime"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+          </div>
+          <div class="item-selector-wraper">
+            <div class="item-label ipt-fix">安装时间</div>
+            <el-date-picker
+              class="item-selector-datapicker ipt-fix"
+              size="mini"
+              v-model="installTime"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+          </div>
         </template>
-        
       </div>
       <div class="menu-item menu-col-more" v-if="!isProcessSearch">
         <div class="item-selector-wraper">
           <div class="item-label">合约期</div>
-          <el-select class="item-selector ipt-fix" size="mini" v-model="contractContent" placeholder="请选择">
+          <el-select
+            class="item-selector ipt-fix"
+            size="mini"
+            v-model="contractContent"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in contractContentList"
               :key="item.value"
@@ -184,9 +188,21 @@
       <div class="btn-left-container">
         <el-button class="button-fix" size="mini" type="primary" @click="handleSearchWrokList">查询</el-button>
         <el-button class="button-fix" size="mini" type="primary" @click="handleClearSearch">清空</el-button>
-        <el-button class="button-fix" size="mini" type="primary" @click="handleQuickSearchOneButton" v-if="isProcessSearch">一键快查</el-button>
-        <el-button class="button-fix" size="mini" type="primary" @click="handleQuickSearchOrder" v-if="isProcessManage">派单快查</el-button>
-        <el-button class="button-fix" size="mini" @click="exportExcel">导出</el-button>
+        <el-button
+          class="button-fix"
+          size="mini"
+          type="primary"
+          @click="handleQuickSearchOneButton"
+          v-if="isProcessSearch"
+        >一键快查</el-button>
+        <el-button
+          class="button-fix"
+          size="mini"
+          type="primary"
+          @click="handleQuickSearchOrder"
+          v-if="isProcessManage"
+        >派单快查</el-button>
+        <el-button class="button-fix" size="mini" @click="handleExportExcel">导出</el-button>
       </div>
       <div class="btn-right-container">
         <div class="btn-right-label color-primary" v-if="isRecordManage">请点击手机号码进行修改</div>
@@ -201,25 +217,42 @@
         </div>
       </div>
     </div>
+    
+
+    <!-- 显示用的table -->
     <el-table
       class="table-fix"
-      id="out-table"
       :data="workList"
       size="mini"
+      id="out-table"
       border
       stripe
       style="width: 100%"
-      @selection-change="handleSelectionChange"
-    >
-    <el-table-column type="selection" width="55" v-if="isProcessManage"></el-table-column>
-      <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
-      <el-table-column label="车主手机号" align="center">
+      @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" v-if="isProcessManage"></el-table-column>
+      <el-table-column fixed prop="own_name" label="车主姓名" align="center"></el-table-column>
+      <el-table-column label="车主手机号" width="120" align="center">
         <template slot-scope="scope">
           <div v-if="isProcessSearch">{{scope.row.own_phone}}</div>
-          <el-tooltip class="item" effect="dark" content="点击查看详细信息" placement="top" v-else-if="isProcessManage">
-            <div class="table-mobile" @click="onProcessDilaogChange(scope.row)">{{scope.row.own_phone}}</div>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="点击查看详细信息"
+            placement="top"
+            v-else-if="isProcessManage"
+          >
+            <div
+              class="table-mobile"
+              @click="onProcessDilaogChange(scope.row)"
+            >{{scope.row.own_phone}}</div>
           </el-tooltip>
-           <el-tooltip class="item" effect="dark" content="点击修改信息" placement="top" v-else-if="isRecordManage">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="点击修改信息"
+            placement="top"
+            v-else-if="isRecordManage"
+          >
             <div class="table-mobile" @click="onMobileSetting(scope.row)">{{scope.row.own_phone}}</div>
           </el-tooltip>
         </template>
@@ -227,15 +260,29 @@
       <el-table-column prop="own_sex" label="性别" align="center">
         <template slot-scope="scope">{{scope.row.own_sex === 0 ? "男" : "女"}}</template>
       </el-table-column>
-      <el-table-column prop="business_name" label="业务办理点" align="center"></el-table-column>
-      <el-table-column prop="install_name" label="设备安装点" align="center"></el-table-column>
-      <el-table-column prop="sys_business_account" label="业务办理员手机" width="120" align="center"></el-table-column>
-      <el-table-column prop="sys_audit_account" label="审核人手机" align="center"></el-table-column>
-      <el-table-column prop="audit_time" label="审核时间" width="160px" align="center"></el-table-column>
+      <el-table-column prop="business_name" width="120" label="业务办理点" align="center"></el-table-column>
+      <el-table-column prop="install_name" width="120" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="sys_business_account" width="120" label="业务办理员手机" align="center"></el-table-column>
+      <el-table-column prop="sys_audit_account" width="120" label="审核人手机" align="center"></el-table-column>
+      <el-table-column prop="audit_time" width="180" label="审核时间" align="center"></el-table-column>
+      <el-table-column prop="sys_distribute_account" width="120" label="派单员手机" align="center"></el-table-column>
+      <el-table-column prop="distribute_time" label="派单时间" align="center"></el-table-column>
       <el-table-column label="安装状态" align="center">
         <template slot-scope="scope">{{getProcessTips(scope.row.process)}}</template>
       </el-table-column>
+      <el-table-column prop="sys_install_account" width="120"  label="安装工手机" align="center"></el-table-column>
+      <el-table-column prop="install_time" width="180"  label="安装时间" align="center"></el-table-column>
+      <el-table-column prop="install_position" width="120"  label="安装地理位置" align="center"></el-table-column>
+      <el-table-column prop="imei" label="IMEI" width="120"  align="center"></el-table-column>
+      <el-table-column prop="iccid" label="iccid" width="120"  align="center"></el-table-column>
+      <el-table-column prop="contract_content" width="120"  label="合约期" align="center">
+        <template slot-scope="scope">{{getContractContent(scope.row.contract_content)}}</template>
+      </el-table-column>
+      <el-table-column prop="contract_active" width="120"  label="激活状态" align="center">
+        <template slot-scope="scope">{{getActiveTips(scope.row.contract_active)}}</template>
+      </el-table-column>
     </el-table>
+
     <div class="pagination-wraper">
       <el-pagination
         class="pagination-fix"
@@ -248,7 +295,76 @@
         @current-change="handleCurrentChange"
       ></el-pagination>
     </div>
-    <procss-detail-dialog v-model="procssDetailDialogVisible" @change="onChangeDialog" @on-refresh="handleSearchWrokList"></procss-detail-dialog>
+    <procss-detail-dialog
+      v-model="procssDetailDialogVisible"
+      @change="onChangeDialog"
+      @on-refresh="handleSearchWrokList"
+    ></procss-detail-dialog>
+
+
+
+    <!-- 导数据用的table,不需要显示出来 -->
+    <!-- <el-table
+      class="table-fix export-table"
+      id="out-table"
+      :data="exportWorkList"
+      size="mini"
+      border
+      stripe
+      style="width: 100%"
+      v-show="false">
+      <el-table-column fixed prop="own_name" label="车主姓名" align="center"></el-table-column>
+      <el-table-column label="车主手机号" width="120" align="center">
+        <template slot-scope="scope">
+          <div v-if="isProcessSearch">{{scope.row.own_phone}}</div>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="点击查看详细信息"
+            placement="top"
+            v-else-if="isProcessManage"
+          >
+            <div
+              class="table-mobile"
+              @click="onProcessDilaogChange(scope.row)"
+            >{{scope.row.own_phone}}</div>
+          </el-tooltip>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="点击修改信息"
+            placement="top"
+            v-else-if="isRecordManage"
+          >
+            <div class="table-mobile" @click="onMobileSetting(scope.row)">{{scope.row.own_phone}}</div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column prop="own_sex" label="性别" align="center">
+        <template slot-scope="scope">{{scope.row.own_sex === 0 ? "男" : "女"}}</template>
+      </el-table-column>
+      <el-table-column prop="business_name" width="120" label="业务办理点" align="center"></el-table-column>
+      <el-table-column prop="install_name" width="120" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="sys_business_account" width="120" label="业务办理员手机" align="center"></el-table-column>
+      <el-table-column prop="sys_audit_account" width="120" label="审核人手机" align="center"></el-table-column>
+      <el-table-column prop="audit_time" width="180" label="审核时间" align="center"></el-table-column>
+      <el-table-column prop="sys_distribute_account" width="120" label="派单员手机" align="center"></el-table-column>
+      <el-table-column prop="distribute_time" label="派单时间" align="center"></el-table-column>
+      <el-table-column label="安装状态" align="center">
+        <template slot-scope="scope">{{getProcessTips(scope.row.process)}}</template>
+      </el-table-column>
+      <el-table-column prop="sys_install_account" width="120"  label="安装工手机" align="center"></el-table-column>
+      <el-table-column prop="install_time" width="180"  label="安装时间" align="center"></el-table-column>
+      <el-table-column prop="install_position" width="120"  label="安装地理位置" align="center"></el-table-column>
+      <el-table-column prop="imei" label="IMEI" width="120"  align="center"></el-table-column>
+      <el-table-column prop="iccid" label="iccid" width="120"  align="center"></el-table-column>
+      <el-table-column prop="contract_content" width="120"  label="合约期" align="center">
+        <template slot-scope="scope">{{getContractContent(scope.row.contract_content)}}</template>
+      </el-table-column>
+      <el-table-column prop="contract_active" width="120"  label="激活状态" align="center">
+        <template slot-scope="scope">{{getActiveTips(scope.row.contract_active)}}</template>
+      </el-table-column>
+    </el-table> -->
   </div>
 </template>
 
@@ -260,6 +376,7 @@ import XLSX from "xlsx";
 import OrgAddDialog from "../system-settings/user-manage/user-add/OrgAddDialog";
 import BtnQuery from "./RecordManageQuery";
 import ProcssDetailDialog from "./ProcssDetailDialog";
+import { setTimeout } from 'timers';
 
 export default {
   data() {
@@ -342,7 +459,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["workList", "workItem", "workListTotal"]),
+    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal"]),
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManage";
     },
@@ -354,26 +471,51 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateWorkItem']),
+    ...mapMutations(["updateWorkItem"]),
     ...mapActions(["getWorkList", "setWorkDistribute"]),
     handleSelectionChange(selectList) {
-      console.log(selectList)
-      this.selectList = selectList.filter(item => {
-        return item.process === 2;
-      })
-      .map(item => {
-        return item.id;
-      });
-      console.log(JSON.parse(JSON.stringify(this.selectList)))
+      console.log(selectList);
+      this.selectList = selectList
+        .filter(item => {
+          return item.process === 2;
+        })
+        .map(item => {
+          return item.id;
+        });
+      console.log(JSON.parse(JSON.stringify(this.selectList)));
     },
     handleSizeChange(pageSize = 10) {
-      this.pageSize = pageSize
-      console.log(pageSize)
+      this.pageSize = pageSize;
+      console.log(pageSize);
     },
     handleCurrentChange(currentPage = 1) {
-      this.pageIndex = currentPage
-      this.handleSearchWrokList()
-      console.log(currentPage)
+      this.pageIndex = currentPage;
+      this.handleSearchWrokList();
+      console.log(currentPage);
+    },
+    async handleExportExcel() {
+      await this.getWorkList({
+        page_size: 10000,
+        page_index: 1,
+        business: "",
+        install: "",
+        client_account: "",
+        install_account: "",
+        business_account: "",
+        audit_account: "",
+        install_status: "",
+        audit_time: "",
+        distribute_time: "",
+        install_time: "",
+        contract_content: "",
+        contract_active: "",
+        imei: "",
+        iccid: ""
+      });
+      setTimeout(() => {
+        console.log(this.exportWorkList)
+        this.exportExcel()
+      }, 100)
     },
     exportExcel() {
       /* 从表生成工作簿对象 */
@@ -423,6 +565,40 @@ export default {
       console.log("onSelectInstallPoint", data);
       this.installPoint = data;
     },
+    getContractContent(contract_content) {
+      let contractContent = "";
+      switch (contract_content) {
+        case 0:
+          contractContent = "全部";
+          break;
+        case 1:
+          contractContent = "一年合约期";
+          break;
+        case 2:
+          contractContent = "两年合约期";
+          break;
+        default:
+          break;
+      }
+      return contractContent;
+    },
+    getActiveTips(contract_active) {
+      let activeTips = "";
+      switch (contract_active) {
+        case 0:
+          activeTips = "全部";
+          break;
+        case 1:
+          activeTips = "激活";
+          break;
+        case 2:
+          activeTips = "过期";
+          break;
+        default:
+          break;
+      }
+      return activeTips;
+    },
     getProcessTips(process) {
       let processTips = "";
       switch (process) {
@@ -456,18 +632,18 @@ export default {
         this.$message({
           type: "error",
           message: "未选中审核通过的订单!"
-        })
+        });
       }
     },
     onProcessDilaogChange(workItem) {
-      this.updateWorkItem(workItem)
-      this.procssDetailDialogVisible = true
+      this.updateWorkItem(workItem);
+      this.procssDetailDialogVisible = true;
     },
     onChangeDialog() {
-      this.procssDetailDialogVisible = false
+      this.procssDetailDialogVisible = false;
     },
     onMobileSetting(workItem) {
-      this.updateWorkItem(workItem)
+      this.updateWorkItem(workItem);
       if (this.isRecordManage) {
         this.$router.push("/record-setting");
       }
@@ -505,14 +681,14 @@ export default {
       console.log(searchParam);
     },
     handleQuickSearchOneButton() {
-      this.pageSize = 10000
-      this.handleClearSearch()
-      this.handleSearchWrokList()
+      this.pageSize = 10000;
+      this.handleClearSearch();
+      this.handleSearchWrokList();
     },
     handleQuickSearchOrder() {
-      this.pageSize = 10000
-      this.installStatus = 3
-      this.handleSearchWrokList()
+      this.pageSize = 10000;
+      this.installStatus = 3;
+      this.handleSearchWrokList();
     },
     async getAllWorkList() {
       await this.getWorkList({
@@ -638,7 +814,11 @@ $basic-ratio: 1.4;
   color: #0960bd;
   cursor: pointer;
   &.not-allow-click {
-    color: #3B4859FF;
+    color: #3b4859ff;
   }
+}
+
+.export-table {
+  display: none;
 }
 </style>

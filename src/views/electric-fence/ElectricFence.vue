@@ -117,7 +117,6 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['getAlarmInfo']),
   },
   mounted() {
     this.initAMap('electric-map-container', this.positionCenter);

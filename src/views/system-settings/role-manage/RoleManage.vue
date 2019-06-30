@@ -18,13 +18,16 @@
         <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
         <el-table-column prop="author" label="角色权限" align="center" width="350">
            <template slot-scope="scope">
-            <el-tag
-              class="role-tag"
-              type="success"
-              v-for="(item, index) in scope.row.roleNames"
-              :key="index"
-              size="mini"
-              disable-transitions>{{item}}</el-tag>
+            <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂未任何权限信息</div>
+             <div v-else>
+               <el-tag
+                class="role-tag"
+                type="success"
+                v-for="(item, index) in scope.row.roleNames"
+                :key="index"
+                size="mini"
+                disable-transitions>{{item}}</el-tag>
+             </div>
           </template>
         </el-table-column>
         <el-table-column prop="note" label="角色说明" align="center"></el-table-column>

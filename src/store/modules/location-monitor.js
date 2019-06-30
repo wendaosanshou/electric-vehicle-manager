@@ -3,36 +3,37 @@ import Vue from "vue";
 
 const vm = new Vue();
 
+const getToken = rootState => {
+  const { userInfo } = rootState.login;
+  return userInfo.token || "";
+};
+
 const convertGps = list => {
   let promiseArr = [];
-  console.log("convertGps", list);
-  for (let i = 0; i < list.length; i++) {
-    let item = list[i];
-    let { lng, lat } = item;
-    let gps = [lng / 1000000, lat / 1000000];
-    let promise = new Promise((resolve, reject) => {
-      AMap.convertFrom(gps, "gps", function(status, result) {
-        if (result.info === "ok") {
-          const [{ lng, lat }] = result.locations; // Array.<LngLat>
-          item.lng = lng;
-          item.lat = lat;
-          resolve(item);
-        }
-      });
-    });
-    promiseArr.push(promise);
-  }
-  setTimeout(() => {
-    
-  }, 5000)
-  // return new Promise((resolve, reject) => {
-  //   setTimeout(() => {
-  //     resolve()
-  //   }, 5000)
-  // })
   try {
+    console.log("convertGps", list);
+    for (let i = 0; i < list.length; i++) {
+      let item = list[i];
+      let { lng, lat } = item;
+      let gps = [lng / 1000000, lat / 1000000];
+      let promise = new Promise((resolve, reject) => {
+        AMap.convertFrom(gps, "gps", function(status, result) {
+          if (result.info === "ok") {
+            const [{ lng, lat }] = result.locations; // Array.<LngLat>
+            item.lng = lng;
+            item.lat = lat;
+            resolve(item);
+          }
+        });
+      });
+      promiseArr.push(promise);
+    }
     return Promise.all(promiseArr);
   } catch (error) {
+    vm.$message({
+      type: "error",
+      message: "gps数据转化异常~"
+    });
     return Promise.resolve(promiseArr);
   }
 };
@@ -189,16 +190,7 @@ const locationMonitor = {
       state.currentLocationInfo = currentLocationInfo;
     },
     updateDeviceIds(state, deviceIds) {
-      // state.deviceIds = deviceIds;
-      state.deviceIds = [
-        { lat_amap: 116.205467, lng_amap: 39.907761 },
-        { lat_amap: 116.368904, lng_amap: 39.913423 },
-        { lat_amap: 116.325467, lng_amap: 39.837761 },
-        { lat_amap: 116.405467, lng_amap: 39.877761 },
-        { lat_amap: 116.375467, lng_amap: 39.707761 },
-        { lat_amap: 116.415467, lng_amap: 39.757761 },
-        { lat_amap: 116.385467, lng_amap: 39.787761 }
-      ];
+      state.deviceIds = deviceIds;
     },
     updateAllDeviceInfo(state, allDeviceInfo) {
       console.log("allDeviceInfo", allDeviceInfo);
@@ -209,10 +201,10 @@ const locationMonitor = {
     }
   },
   actions: {
-    async loseDeviceFile({ commit }, data) {
+    async loseDeviceFile({ commit, rootState }, data) {
       try {
         const result = await $apis.loseDeviceFile({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -220,17 +212,14 @@ const locationMonitor = {
           message: "立案成功!"
         });
       } catch (error) {
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
         console.log(error);
+        return Promise.reject(error)
       }
     },
-    async clearHistoryInfo({ commit }, data) {
+    async clearHistoryInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.clearHistoryInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -238,32 +227,26 @@ const locationMonitor = {
           message: "清除历史轨迹成功!"
         });
       } catch (error) {
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
         console.log(error);
+        return Promise.reject(error)
       }
     },
-    async getDeviceParams({ commit }, data) {
+    async getDeviceParams({ commit, rootState }, data) {
       try {
         const result = await $apis.getDeviceParams({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         commit("updateDeviceParams", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async setDeviceTrace({ commit }, data) {
+    async setDeviceTrace({ commit, rootState }, data) {
       try {
         const result = await $apis.setDeviceTrace({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -272,73 +255,52 @@ const locationMonitor = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getDeviceInfo({ commit }, data) {
+    async getDeviceInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.getDeviceInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
-
-        if (result.data && result.data.lat) {
-          await convertGps([result.data]);
-          commit("updateDeviceInfo", result.data);
-          commit("updateAllDeviceInfo", [result.data]);
-        } else {
-          vm.$message({
-            type: "error",
-            message: "未查到对应gps信息!"
-          });
-          return Promise.reject()
-        }
+        await convertGps([result.data]);
+        commit("updateDeviceInfo", result.data);
+        commit("updateAllDeviceInfo", [result.data]);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getAllDeviceInfo({ commit }, data) {
+    async getAllDeviceInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllDeviceInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data
         });
         await convertGps(result.data);
         commit("updateAllDeviceInfo", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getSomeDeviceInfo({ commit }, data) {
+    async getSomeDeviceInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.getSomeDeviceInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data
         });
         commit("updateDeviceIds", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getHistoryInfo({ commit }, data) {
+    async getHistoryInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.getHistoryInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         await convertGps(result.data);
@@ -346,25 +308,7 @@ const locationMonitor = {
         commit("updateHistoryInfo", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
-      }
-    },
-    async getAlarmInfo({ commit }, data) {
-      try {
-        const result = await $apis.getAlarmInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
-          ...data
-        });
-        commit("updateDeviceIds", result.data);
-      } catch (error) {
-        console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     }
   },

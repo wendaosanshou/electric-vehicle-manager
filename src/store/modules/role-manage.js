@@ -2,6 +2,11 @@ import { $apis, $util } from "@/helper";
 import Vue from 'vue';
 const vm = new Vue()
 
+const getToken = (rootState) => {
+  const { userInfo } = rootState.login
+  return userInfo.token || ''
+}
+
 const RoleManage = {
   state: {
     allRoles: []
@@ -19,24 +24,21 @@ const RoleManage = {
     }
   },
   actions: {
-    async getAllRoles({ commit }, data) {
+    async getAllRoles({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllRole({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda="
+          token: getToken(rootState)
         });
         commit("updateAllRoles", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async addRole({ commit }, data) {
+    async addRole({ commit, rootState }, data) {
       try {
         const result = await $apis.addRole({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data
         });
         vm.$message({
@@ -46,17 +48,14 @@ const RoleManage = {
         console.log(result);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async editRole({ commit }, data) {
+    async editRole({ commit, rootState }, data) {
       try {
         console.log("editRole", data);
         const result = await $apis.editRole({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data
         });
         vm.$message({
@@ -66,16 +65,13 @@ const RoleManage = {
         console.log(result);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async deleteRole({ commit }, data) {
+    async deleteRole({ commit, rootState }, data) {
       try {
         const result = await $apis.deleteRole(data.id, {
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda="
+          token: getToken(rootState)
         });
         vm.$message({
           type: "success",
@@ -84,10 +80,7 @@ const RoleManage = {
         console.log(result);
       } catch (error) {
         console.log(error)
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     }
   },

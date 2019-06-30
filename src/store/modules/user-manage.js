@@ -4,9 +4,15 @@ import { construct } from '@/helper/json-tree'
 
 const vm = new Vue()
 
+const getToken = (rootState) => {
+  const { userInfo } = rootState.login
+  return userInfo.token || ''
+}
+
 const Login = {
   state: {
     allUser: [],
+    allUserTotal: 0,
     allOrg: [],
     businessAll: [],
     businessHandle: [],
@@ -23,7 +29,8 @@ const Login = {
       state.selectUser = selectUser
     },
     udpateAllUser(state, allUser) {
-      state.allUser = allUser;
+      state.allUser = allUser.data;
+      state.allUserTotal = allUser.total
     },
     updateAllOrg(state, allOrg) {
       state.allOrg = allOrg
@@ -105,25 +112,22 @@ const Login = {
     }
   },
   actions: {
-    async getAllUser({ commit }, data) {
+    async getAllUser({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllUser({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
-        commit("udpateAllUser", result.data);
+        commit("udpateAllUser", result);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async addSysUser({ commit }, data) {
+    async addSysUser({ commit, rootState }, data) {
       try {
         const result = await $apis.addSysUser({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data
         });
         vm.$message({
@@ -133,16 +137,13 @@ const Login = {
         history.back()
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async editSysUser({ commit }, data) {
+    async editSysUser({ commit, rootState }, data) {
       try {
         const result = await $apis.editSysUser({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data
         });
         vm.$message({
@@ -152,16 +153,13 @@ const Login = {
         history.back()
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async deleteSysUser({ commit }, data) {
+    async deleteSysUser({ commit, rootState }, data) {
       try {
         const result = await $apis.deleteSysUser({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -170,46 +168,37 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getAllOrg({ commit }, data) {
+    async getAllOrg({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllOrg({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         commit("updateAllOrg", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getAllBusinessPoint({ commit }, data) {
+    async getAllBusinessPoint({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllBusinessPoint({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         commit("updateBusinessAll", result.data);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async addBusinessPoint({ commit }, data) {
+    async addBusinessPoint({ commit, rootState }, data) {
       try {
         const result = await $apis.addBusinessPoint({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data: data
         });
         vm.$message({
@@ -218,16 +207,13 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async deleteBusinessPoint({ commit }, data) {
+    async deleteBusinessPoint({ commit, rootState }, data) {
       try {
         const result = await $apis.deleteBusinessPoint({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -236,16 +222,13 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async editBusinessPoint({ commit }, data) {
+    async editBusinessPoint({ commit, rootState }, data) {
       try {
         const result = await $apis.editBusinessPoint({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data: data
         });
         vm.$message({
@@ -254,52 +237,40 @@ const Login = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getBusinessHandle({ commit }, data) {
+    async getBusinessHandle({ commit, rootState }, data) {
       try {
         const result = await $apis.getBusinessHandle();
         commit('updateBusinessHandle', result.data)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getBusinessInstall({ commit }, data) {
+    async getBusinessInstall({ commit, rootState }, data) {
       try {
         const result = await $apis.getBusinessInstall();
         commit('updateBusinessInstall', result.data)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getInfoWeb({ commit }, data) {
+    async getInfoWeb({ commit, rootState }, data) {
       try {
         const result = await $apis.getInfoWeb(data);
         commit('updateInfoWeb', result.data)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async addInfoWeb({ commit }, data) {
+    async addInfoWeb({ commit, rootState }, data) {
       try {
         const result = await $apis.addInfoWeb({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data: data
         });
         vm.$message({
@@ -309,16 +280,13 @@ const Login = {
         console.log(result)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async updateInfoWeb({ commit }, data) {
+    async updateInfoWeb({ commit, rootState }, data) {
       try {
         const result = await $apis.updateInfoWeb({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           data: data
         });
         vm.$message({
@@ -328,16 +296,13 @@ const Login = {
         console.log(result)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async deleteInfoWeb({ commit }, data) {
+    async deleteInfoWeb({ commit, rootState }, data) {
       try {
         const result = await $apis.deleteInfoWeb({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -347,15 +312,13 @@ const Login = {
         console.log(result)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     }
   },
   getters: {
     allUser: state => state.allUser,
+    allUserTotal: state => state.allUserTotal,
     selectUser: state => state.selectUser,
     allOrg: state => state.allOrg,
     businessAll: state => state.businessAll,

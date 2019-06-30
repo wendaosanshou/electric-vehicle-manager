@@ -3,9 +3,15 @@ import Vue from "vue";
 
 const vm = new Vue();
 
+const getToken = (rootState) => {
+  const { userInfo } = rootState.login
+  return userInfo.token || ''
+}
+
 const common = {
   state: {
     workList: [],
+    exportWorkList: [],
     workListTotal: 10,
     workItem: {},
     vehicleInfo: {},
@@ -16,6 +22,10 @@ const common = {
       const { data, total } = workList
       state.workList = data;
       state.workListTotal = total
+    },
+    updateExportWorkList(state, workList) {
+      const { data, total } = workList
+      state.exportWorkList = data;
     },
     updateVehicleInfo(state, vehicleInfo) {
       state.vehicleInfo = vehicleInfo
@@ -28,25 +38,22 @@ const common = {
     }
   },
   actions: {
-    async getContractHistory({ commit }, data) {
+    async getContractHistory({ commit, rootState }, data) {
       try {
         const result = await $apis.getContractHistory({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         commit('updateContractHistory', result.data)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async renewContract({ commit }, data) {
+    async renewContract({ commit, rootState }, data) {
       try {
         const result = await $apis.renewContract({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -55,31 +62,25 @@ const common = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getVehicleInfo({ commit }, data) {
+    async getVehicleInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.getVehicleInfo({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         commit('updateVehicleInfo', result.data)
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async modifyWorkItem({ commit }, data) {
+    async modifyWorkItem({ commit, rootState }, data) {
       try {
         const result = await $apis.modifyWorkItem({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -88,16 +89,14 @@ const common = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
+        return Promise.reject(error)
       }
     },
-    async setWorkDistribute({ commit }, data) {
+    async setWorkDistribute({ commit, rootState }, data) {
       try {
         const result = await $apis.setWorkDistribute({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         vm.$message({
@@ -106,25 +105,31 @@ const common = {
         });
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
-        });
+        return Promise.reject(error)
       }
     },
-    async getWorkList({ commit }, data) {
+    async getWorkList({ commit, rootState }, data) {
       try {
         const result = await $apis.getWorkPage({
-          token: "ywnjb3vudf8xxze1ntkymdk5ntc1oda=",
+          token: getToken(rootState),
           ...data
         });
         commit("updateWorkList", result);
       } catch (error) {
         console.log(error);
-        vm.$message({
-          type: "error",
-          message: "服务器出小差了~"
+        return Promise.reject(error)
+      }
+    },
+    async getExportWorkList({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getWorkPage({
+          token: getToken(rootState),
+          ...data
         });
+        commit("updateWorkList", result);
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error)
       }
     }
   },
@@ -133,7 +138,8 @@ const common = {
     workListTotal: state => state.workListTotal,
     workItem: state => state.workItem,
     vehicleInfo: state => state.vehicleInfo,
-    contractHistory: state => state.contractHistory
+    contractHistory: state => state.contractHistory,
+    exportWorkList: state => state.exportWorkList
   }
 };
 

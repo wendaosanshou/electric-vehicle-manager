@@ -1,18 +1,20 @@
 const common = {
   state: {
-    activePageName: ''
+    activePageName: '',
+    defaultActiveMenu: '1'
   },
   mutations: {
     updateActivePageName(state, activePageName) {
-      console.log(state, activePageName)
-      console.log('updateActivePageName', activePageName)
       state.activePageName = activePageName
-      console.log(state.activePageName)
+    },
+    updateDefaultActiveMenu(state, defaultActiveMenu) {
+      state.defaultActiveMenu = defaultActiveMenu
     }
   },
   actions: {},
   getters: {
-    activePageName: state => state.activePageName
+    activePageName: state => state.activePageName,
+    defaultActiveMenu: state => state.defaultActiveMenu
   }
 };
 

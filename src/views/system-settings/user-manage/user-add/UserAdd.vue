@@ -6,7 +6,7 @@
     </div>
     <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
       <el-form-item label="账号">
-        <el-input class="ipt-fix" size="mini" v-model="form.account" placeholder="登录账号（手机号）"></el-input>
+        <el-input class="ipt-fix" size="mini" v-model="form.account" placeholder="登录账号（手机号）" disabled></el-input>
       </el-form-item>
       <!-- <el-form-item label="序号" v-if="!isUserAdd">
         <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="自动填充"></el-input>
@@ -61,13 +61,12 @@
     </el-form>
     <div class="user-add-btn-wrap">
       <el-button
-        :class="{active: isAllowAdd}"
         class="button-fix button-add-confirm"
         size="mini"
         type="primary"
         @click="handleConfirm"
       >提交</el-button>
-      <el-button class="button-fix" size="mini" type="primary">取消</el-button>
+      <el-button class="button-fix" size="mini" type="primary" @click="onCancelEdit">取消</el-button>
     </div>
   </div>
 </template>
@@ -130,24 +129,21 @@ export default {
       this.form.site_name = value.name;
     },
     async handleAddSysUser() {
-      if (this.isAllowAdd) {
-        await this.addSysUser(this.form);
-      }
+      await this.addSysUser(this.form);
     },
     async handleEditSysUser() {
-      if (this.isAllowAdd) {
-        try {
-          await this.editSysUser(this.form);
-        } catch (error) {
-          
-        }
+      const params = {
+        id: this.selectUser.id,
+        ...this.form
       }
+      console.log(params)
+      await this.editSysUser(params);
     },
     async handleConfirm() {
       if (this.isUserAdd) {
-        this.handleAddSysUser();
+        await this.handleAddSysUser();
       } else {
-        this.handleEditSysUser();
+        await this.handleEditSysUser();
       }
     },
     initFormData() {
@@ -167,6 +163,9 @@ export default {
         };
         console.log("initFormData", this.form);
       }
+    },
+    onCancelEdit() {
+      history.back()
     }
   },
   components: {
@@ -225,7 +224,7 @@ $basic-ratio: 1.4;
 }
 
 .button-add-confirm {
-  opacity: 0.4;
+  opacity: 1;
   &.active {
     opacity: 1;
   }

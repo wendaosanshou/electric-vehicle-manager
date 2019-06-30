@@ -8,11 +8,11 @@
       <div class="user-manage-menu">
         <div class="menu-account menu-ipt-wraper">
           <span class="menu-label">账号</span>
-          <el-input class="menu-ipt" size="mini" v-model="searchAccount" placeholder="请输入手机号"></el-input>
+          <el-input class="menu-ipt ipt-fix" size="mini" v-model="searchAccount" placeholder="请输入手机号"></el-input>
         </div>
         <div class="menu-user-name menu-ipt-wraper">
-          <span class="menu-label">角色姓名</span>
-          <el-select class="menu-ipt" size="mini" v-model="searchRole" placeholder="请选择">
+          <span class="menu-label">角色名称</span>
+          <el-select class="menu-ipt ipt-fix" size="mini" v-model="searchRole" placeholder="请选择">
             <el-option
               v-for="item in roles"
               :key="item.value"
@@ -28,21 +28,21 @@
       </div>
       <div class="user-manage-crud ly-flex-row">
         <div class="el-btn crud-btn-add crud-btn ly-flex-row" @click="handleUserAdd">
-          <i class="icon-btn-add"></i>
+          <i class="el-icon-folder-add icon-btn-add"></i>
           <span class="btn-content">添加用户</span>
         </div>
         <user-delete @onRefresh="handelRefresh"/>
-        <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEidt">
-          <i class="icon-btn-edit"></i>
+        <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEdit">
+          <i class="el-icon-edit-outline icon-btn-add"></i>
           <span class="btn-content">编辑用户</span>
         </div>
       </div>
     </div>
     <dir class="user-manage-export">
-      <el-checkbox size="mini" class="checkbox-select-all" v-model="isCheckedAll">全选</el-checkbox>
-      <el-button size="mini" class="button-fix btn-export">导出</el-button>
+      <!-- <el-checkbox size="mini" class="checkbox-select-all" v-model="isCheckedAll">全选</el-checkbox> -->
+      <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
     </dir>
-    <el-table ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
+    <el-table id="out-table" ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
       @selection-change="handleSelectionChange"
       @select="handleSelect">
       <el-table-column type="selection" width="55"></el-table-column>
@@ -59,25 +59,26 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="pageIndex"
+        :page-size="pageSize"
         layout="prev, pager, next, jumper"
-        :total="400"
+        :total="allUserTotal"
       ></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import UserDelete from "./UserDelete";
 
 export default {
   data() {
     return {
-      searchSize: 10,
-      searchIndex: 1,
+      pageSize: 10,
+      pageIndex: 1,
       searchAccount: "",
       searchRole: "",
       isCheckedAll: false,
@@ -86,7 +87,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['allUser', 'allRoles', 'selectUser']),
+    ...mapGetters(['allUser', 'allRoles', 'selectUser', 'allUserTotal']),
     roles() {
       let roles = [{
         value: '',
@@ -104,12 +105,44 @@ export default {
   methods: {
     ...mapMutations(['udpateSelectUser']),
     ...mapActions(["getAllUser"]),
-    handleSizeChange() {},
-    handleCurrentChange() {},
+     exportExcel() {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "sheetjs.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    handleSizeChange(pageSize) {
+      console.log(pageSize)
+      this.pageSize = pageSize
+      this.handleSearchAllUser()
+    },
+    handleCurrentChange(pageIndex) {
+      console.log(pageIndex)
+      this.pageIndex = pageIndex
+      this.handleSearchAllUser()
+    },
     handleSearchAllUser() {
       this.getAllUser({
-        page_size: 10,
-        page_index: 1,
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
         account: this.searchAccount,
         role: this.searchRole
       });
@@ -135,7 +168,7 @@ export default {
         path: "user-add"
       });
     },
-    handleUserEidt() {
+    handleUserEdit() {
       if(this.selectUser && this.selectUser.account) {
         this.$router.push({
           path: "user-edit"
@@ -149,8 +182,8 @@ export default {
     },
     initAllUser() {
       this.getAllUser({
-        page_size: this.searchSize,
-        page_index: this.searchIndex,
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
         account: this.searchAccount,
         role: ""
       });
@@ -287,29 +320,16 @@ $basic-ratio: 1.4;
     .crud-btn-add {
       margin-left: d2r(10px);
       background: rgba(0, 211, 184, 1);
-      .icon-btn-add {
-        width: d2r(41px);
-        height: d2r(30px);
-        margin-left: d2r(32px);
-      }
     }
-    .crud-btn-delete {
-      margin-left: 7px;
-      background: #f87554;
-      .icon-btn-delete {
-        width: d2r(29px);
-        height: d2r(36px);
-        margin-left: d2r(10px);
-      }
+    .icon-btn-add {
+      width: d2r(41px);
+      height: d2r(30px);
+      font-size: d2r(30px);
+      margin-left: d2r(32px);
     }
     .crud-btn-edit {
       margin-left: 7px;
       background: #6fa8e0;
-      .icon-btn-edit {
-        width: d2r(36px);
-        height: d2r(36px);
-        margin-left: d2r(10px);
-      }
     }
   }
 }

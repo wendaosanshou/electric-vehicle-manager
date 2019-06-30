@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
     <div class="el-btn crud-btn-delete crud-btn ly-flex-row" @click="onDialogShow">
-      <i class="icon-btn-delete"></i>
+      <i class="el-icon-folder-remove icon-btn-delete"></i>
       <span class="btn-content">删除用户</span>
     </div>
     <el-dialog
@@ -18,13 +18,10 @@
           ref="userTable"
           class="table-fix table-disable-select-all"
           size="mini"
-          :data="allUser"
+          :data="deleteUsers"
           border
           style="width: 100%"
-          @selection-change="handleSelectionChange"
-          @select="handleSelect"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="id" label="序号" width="55"></el-table-column>
           <el-table-column prop="account" label="账号（手机号）"></el-table-column>
           <el-table-column prop="name" label="账号姓名"></el-table-column>
@@ -51,46 +48,29 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      selectItem: {}
+      selectItem: {},
+      deleteUsers: []
     };
   },
   computed: {
-    ...mapGetters(["allUser"]),
-    isAllowDelete() {
-      return this.selectItem && this.selectItem.id
-    }
+    ...mapGetters(["allUser", "selectUser"])
   },
   methods: {
     ...mapActions(['deleteSysUser']),
     onDialogShow() {
+      this.deleteUsers = [this.selectUser]
       this.dialogVisible = true;
     },
     onDialogHide() {
       this.dialogVisible = false;
     },
-    handleSelectionChange(val) {
-      console.log("handleSelectionChange");
-      if (val.length > 1) {
-        this.$refs.userTable.clearSelection();
-        this.$refs.userTable.toggleRowSelection(val.pop());
-      }
-    },
-    handleSelect(val) {
-      console.log("handleSelect", val);
-      const [ selectItem ] = val
-      this.selectItem = selectItem;
-    },
     async onDialogConfirm() {
-      if (this.selectItem && this.selectItem.id) {
+      if (this.selectUser && this.selectUser.id) {
         await this.deleteSysUser({
-          id: this.selectItem.id
+          id: this.selectUser.id
         })
         this.onDialogHide()
         this.$emit('onRefresh')
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
       } else {
          this.$message({
           type: "info",
@@ -144,4 +124,16 @@ $basic-ratio: 1.4;
 .table-container {
   padding: 0 d2r(30px) d2r(51px) d2r(30px);
 }
+
+.crud-btn-delete {
+  margin-left: 7px;
+  background: #f87554;
+  .icon-btn-delete {
+    width: d2r(41px);
+    height: d2r(30px);
+    font-size: d2r(30px);
+    margin-left: d2r(32px);
+  }
+}
+
 </style>

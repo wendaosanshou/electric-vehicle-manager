@@ -19,10 +19,6 @@ export default {
     const { token, alarmId, deviceId, alarmValue } = data
     return $ajax.get(requestUrl(`alarm/latest/${alarmId}/${deviceId}/${alarmValue}?token=${token}`));
   },
-  getAlarmInfo(data) {
-    const { token } = data
-    return $ajax.get(requestUrl(`alarm/${data.pageIndex}/${data.alarmValue}`), { token });
-  },
   modifyWorkItem(data) {
     const { token } = data
     return $ajax.post(requestUrl(`work/modify?token=${token}`), data);
@@ -178,8 +174,28 @@ export default {
   deleteInfoWeb(data) {
     return $ajax.get(requestUrl(`info/delete/${data.id}`), data);
   },
-  // 预约查询
-  getWorkInfo(data) {
-    return $ajax.get(requestUrl(`work/15914005598/1`), data);
+  searchProducts(data) {
+    return $ajax.post(requestUrl(`produce/query`), data);
+  },
+  getProductPage(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`produce/page?token=${token}`), data);
+  },
+  importProducts(data) {
+    return $ajax.post(requestUrl(`produce/import`), data);
+  },
+  deleteProduct(data) {
+    const { imei, token } = data
+    return $ajax.post(requestUrl(`produce/delete/${imei}?token=${token}`), data);
+  },
+  getFirmwareList(data) {
+    return $ajax.post(requestUrl(`firmware/query`), data);
+  },
+  addFirmware(data) {
+    return $ajax.post(requestUrl(`firmware/query`), data);
+  },
+  deleteFirmware(data) {
+    const { id, token } = data
+    return $ajax.post(requestUrl(`firmware/delete/${id}?token=${token}`));
   }
 };
