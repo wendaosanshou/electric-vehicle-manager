@@ -298,7 +298,7 @@ export default {
         });
         setTimeout(() => {
           this.$router.replace("/login");
-        }, 1000);
+        }, 500);
       }
     },
     initActiveMenu() {
@@ -346,6 +346,15 @@ export default {
           break;
         case "/app-advisory":
           activeMenu = "系统设置 > APP资讯管理";
+          break;
+        case "/device-manage":
+          activeMenu = "系统设置 > 设备管理";
+          break;
+        case "/device-update":
+          activeMenu = "系统设置 > 设备在线升级";
+          break;
+        case "/device-version":
+          activeMenu = "系统设置 > 设备版本管理";
           break;
         default:
           activeMenu = "";

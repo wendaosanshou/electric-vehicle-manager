@@ -2,7 +2,7 @@
   <div class="export-table">
        <el-table
       class="table-fix export-table"
-      id="out-table"
+      id="export-out-table"
       :data="workList"
       size="mini"
       border

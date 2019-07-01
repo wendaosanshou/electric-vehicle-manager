@@ -14,11 +14,13 @@ const Login = {
     productListTotal: 0,
     productPages: [],
     productPagesTotal: 0,
-    firewareList: []
+    firewareList: [],
+    firewareListTotal: 0
   },
   mutations: {
-    updateFirewareList(state, firewareList) {
-      state.firewareList = firewareList
+    updateFirewareList(state, result) {
+      state.firewareList = result.data
+      state.firewareListTotal = result.total
     },
     updateProductList(state, productList) {
       state.productList = productList.data
@@ -27,9 +29,46 @@ const Login = {
     updateProductPage(state, result) {
       state.productPages = result.data
       state.productPagesTotal = result.total
-    }
+    },
   },
   actions: {
+    async getFirmwareList({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getFirmwareList({
+            token: getToken(rootState),
+            ...data
+        });
+        commit('updateFirewareList', result)
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async addFirmware({ commit, rootState }, data) {
+      try {
+        const result = await $apis.addFirmware({
+            token: getToken(rootState),
+            ...data
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async deleteFirmware({ commit, rootState }, data) {
+      try {
+        const result = await $apis.deleteFirmware({
+            token: getToken(rootState),
+            ...data
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
     async getProductPage({ commit, rootState }, data) {
       try {
         const result = await $apis.getProductPage({
@@ -37,18 +76,6 @@ const Login = {
             ...data
         });
         commit('updateProductPage', result)
-        console.log(result);
-      } catch (error) {
-        console.log(error)
-        return Promise.reject(error)
-      }
-    },
-    async getFirmwareList({ commit, rootState }, data) {
-      try {
-        const result = await $apis.getFirmwareList({
-            token: getToken(rootState),
-            ...data
-        });
         console.log(result);
       } catch (error) {
         console.log(error)
@@ -106,7 +133,8 @@ const Login = {
     productListTotal: state => state.productListTotal,
     productPages: state => state.productPages,
     productPagesTotal: state => state.productPagesTotal,
-    firewareList: state => state.firewareList
+    firewareList: state => state.firewareList,
+    firewareListTotal: state => state.firewareListTotal
   }
 };
 

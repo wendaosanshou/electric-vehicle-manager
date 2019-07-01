@@ -95,7 +95,7 @@
     </div>
     <el-table
       class="table-fix"
-      id="out-table"
+      id="process-export-table"
       :data="workList"
       size="mini"
       border
@@ -210,7 +210,7 @@ export default {
     ...mapActions(["getWorkList"]),
     exportExcel() {
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#process-export-table"));
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",

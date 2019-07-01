@@ -29,7 +29,9 @@ export default {
     initAMap(id, position = [116.43, 39.92]) {
       // 初始化地图
       this.map = new AMap.Map(id, {
+        expandZoomRange:true,
         zoom: 13,
+        zooms:[3,20],
         center: position,
         resizeEnable: true
       });

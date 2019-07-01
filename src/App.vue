@@ -366,6 +366,13 @@ thead {
   }
 }
 
+.mark-car {
+  width: d2r(48px);
+  height: d2r(53px);
+  background: url('~@/assets/icons/motuochefuwu-copy@2x.png');
+  background-size: 100% 100%;
+}
+
 .amap-info-content {
   background: #ffffff00;
   cursor: pointer;

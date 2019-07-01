@@ -7,34 +7,56 @@
       size="mini"
       @click="onDialogShow"
     >上传版本</el-button>
-    <el-dialog class="dialog-fix" title="单个设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
+    <el-dialog
+      class="dialog-fix"
+      title="单个设备升级"
+      :visible.sync="dialogVisible"
+      @close="onDialogHide"
+    >
       <div class="dialog-content">
-        <el-form class="user-add-form device-form-fix" label-position="right" label-width="220px" :model="form">
+        <el-form
+          class="user-add-form device-form-fix"
+          label-position="right"
+          label-width="220px"
+          :model="form"
+        >
           <el-form-item label="选择需要上传的设备升级版本文件">
             <div class="form-btn-wrap">
               <el-input
                 class="ipt-fix ipt-half-width"
                 size="mini"
-                v-model="form.img_url"
-                placeholder="(*.xsl,*.xml)"
+                v-model="form.version_url"
+                placeholder="(*.upd)"
+                disabled
               ></el-input>
-              <el-upload :show-file-list="false" class="page-upload" :action="imageUploadUrl" :on-success="onImageUploadSuccess">
+              <el-upload
+                :show-file-list="false"
+                class="page-upload"
+                :action="imageUploadUrl"
+                :on-success="onImageUploadSuccess"
+              >
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
               </el-upload>
             </div>
           </el-form-item>
+          <el-form-item label="md5">
+            <el-input class="ipt-fix" size="mini" v-model="form.md5" placeholder="请输入md5"></el-input>
+          </el-form-item>
+           <el-form-item label="版本名称">
+            <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称"></el-input>
+          </el-form-item>
           <el-form-item label="版本说明">
-            <el-input
-              class="ipt-fix"
-              size="mini"
-              v-model="form.imei"
-              placeholder="设备号"
-            ></el-input>
+            <el-input type="textarea"
+            class="ipt-fix"
+            size="mini"
+            resize="none"
+            :autosize="{ minRows: 10, maxRows: 10}"
+            v-model="form.note" placeholder="请输入版本说明"></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="handleUpdateDevice">确 定</el-button>
+        <el-button size="mini" type="primary" @click="handleAddFirmware">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -49,12 +71,13 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
+      imageUploadUrl: "http://47.92.237.140/api/v1/file/firmware",
       form: {
-        imei: "",
-        id: "",
-        note: "",
-        img_url: ""
+        version: "",
+        version_url: "www.baidu.com",
+        operation: "",
+        md5: "",
+        note: ""
       }
     };
   },
@@ -65,29 +88,40 @@ export default {
     },
     type: {
       type: String,
-      default: 'is-edit'
+      default: "is-edit"
     }
   },
   computed: {
-    ...mapGetters(["userInfo"]),
+    ...mapGetters(["userInfo"])
   },
   methods: {
-    ...mapActions(["importProducts"]),
+    ...mapActions(["importProducts", "addFirmware"]),
     onImageUploadSuccess(res) {
-      const { code, data} = res
-      if (code === '10000') {
+      const { code, data } = res;
+      if (code === "10000") {
         this.$message({
           type: "success",
           message: "上传成功!"
-        })
-        this.form.img_url = data
+        });
+        this.form.version_url = data;
       } else {
         this.$message({
           type: "error",
           message: "上传失败!"
-        })
+        });
       }
-      console.log('onImageUploadSuccess', res)
+      console.log("onImageUploadSuccess", res);
+    },
+    async handleAddFirmware() {
+      await this.addFirmware({
+        version: this.form.version,
+        version_url: this.form.version_url,
+        md5: this.form.md5,
+        operation: this.userInfo.account,
+        note: this.form.note
+      });
+      this.$emit('onRefresh')
+      this.onDialogHide()
     },
     onDialogShow() {
       if (this.isEditDialog) {
@@ -152,7 +186,7 @@ $basic-ratio: 1.4;
 
 .el-form-item {
   .el-form-item__label {
-    width: d2r(220px)!important;
+    width: d2r(220px) !important;
   }
 }
 
@@ -167,6 +201,6 @@ $basic-ratio: 1.4;
 }
 
 .ipt-half-width {
-      width: d2r(330px) !important;
+  width: d2r(330px) !important;
 }
 </style>

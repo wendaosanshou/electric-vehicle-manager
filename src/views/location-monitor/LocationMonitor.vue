@@ -69,6 +69,7 @@ export default {
       trackModeVisible: false,
       clearHistoryDialogVisible: false,
       positionCenter: [116.43, 39.92],
+      markerClusterer: [],
       mapValue: 0,
       mapList: [
         {
@@ -91,7 +92,7 @@ export default {
       "allLocationInfo",
       "currentLocationInfo",
       "deviceInfo",
-      'accountList'
+      "accountList"
     ]),
     allDeviceIds() {
       return this.allDeviceInfo.map(item => item.id);
@@ -227,7 +228,7 @@ export default {
         });
     },
     getCicleMarkerContent(positionInfo) {
-      console.log('getCicleMarkerContent', positionInfo)
+      // console.log("getCicleMarkerContent", positionInfo);
       let markerContent = document.createElement("div");
       let markerContent1 = document.createElement("div");
       let markerContent2 = document.createElement("div");
@@ -239,7 +240,7 @@ export default {
       markerContent2.append(markerContent3);
       markerContent1.append(markerContent2);
       markerContent.append(markerContent1);
-      markerContent3.innerHTML = '000';
+      markerContent3.innerHTML = "000";
       setTimeout(() => {
         $(markerContent).on("click", () => {
           this.updateCurrentLocationInfo(positionInfo);
@@ -250,14 +251,67 @@ export default {
     },
     addCicleMarkers() {
       this.map.clearMap();
+      this.markerClusterer = []
       this.allLocationInfo.forEach(item => {
         const position = [item.lng, item.lat];
         this.addMarker(position, this.getCicleMarkerContent(item));
       });
+      // this.addMarkerClusterer()
       this.map.setFitView();
     },
+    renderClusterMarker() {
+      let markerContent = document.createElement("div");
+      let markerContent1 = document.createElement("div");
+      let markerContent2 = document.createElement("div");
+      let markerContent3 = document.createElement("div");
+      markerContent.className = "mark-content";
+      markerContent1.className = "mark-content-1";
+      markerContent2.className = "mark-content-2";
+      markerContent3.className = "mark-content-3";
+      markerContent2.append(markerContent3);
+      markerContent1.append(markerContent2);
+      markerContent.append(markerContent1);
+      return markerContent;
+    },
+    _renderClusterMarker(context) {
+      let markerContent = document.createElement("div");
+      let markerContent1 = document.createElement("div");
+      let markerContent2 = document.createElement("div");
+      let markerContent3 = document.createElement("div");
+      markerContent.className = "mark-content";
+      markerContent1.className = "mark-content-1";
+      markerContent2.className = "mark-content-2";
+      markerContent3.className = "mark-content-3";
+      markerContent2.append(markerContent3);
+      markerContent1.append(markerContent2);
+      markerContent.append(markerContent1);
+      markerContent3.innerHTML = context.count;
+      context.marker.setContent(markerContent)
+    },
+    addMarkerClusterer(markers) {
+      var styles = [
+        {
+          url: "https://webapi.amap.com/theme/v1.3/m2.png",
+          size: new AMap.Size(48, 48),
+          offset: new AMap.Pixel(-16, -30),
+          textColor:'#FFFFFF'
+        }
+      ];
+
+      this.map.plugin(["AMap.MarkerClusterer"], () => {
+        cluster = new AMap.MarkerClusterer(
+          this.map, // 地图实例
+          this.markerClusterer, // 海量点组成的数组
+          {
+            // styles: styles,
+            gridSize: 80,
+            renderClusterMarker: this._renderClusterMarker
+          }
+        );
+      });
+    },
     addMarker(position, content) {
-      new AMap.Marker({
+      let marker = new AMap.Marker({
         map: this.map,
         position: position,
         content: content,
@@ -265,6 +319,7 @@ export default {
           "//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png",
         offset: new AMap.Pixel(-13, -30)
       });
+      this.markerClusterer.push(marker);
     },
     addInfoWindow(position, content) {
       let infoWindow = new AMap.InfoWindow({

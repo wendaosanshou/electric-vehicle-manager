@@ -173,15 +173,18 @@ export default {
         this.carMarker.moveAlong(this.historylineArr, 200 * this.carSpeed);
       }
     },
+    getCarMarkerContent() {
+      let markerContent = document.createElement("div");
+      markerContent.className = "mark-car";
+      return markerContent;
+    },
     drawCarMarker() {
       let [firstPosition] = this.historylineArr;
       this.carMarker = new AMap.Marker({
         map: this.map,
         position: firstPosition,
-        icon: "https://webapi.amap.com/images/car.png",
-        offset: new AMap.Pixel(-26, -13),
-        autoRotation: true,
-        angle: -90
+        content: this.getCarMarkerContent(),
+        offset: new AMap.Pixel(-26, -13)
       });
 
       var passedPolyline = new AMap.Polyline({

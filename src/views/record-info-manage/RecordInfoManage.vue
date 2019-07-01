@@ -202,7 +202,7 @@
           @click="handleQuickSearchOrder"
           v-if="isProcessManage"
         >派单快查</el-button>
-        <el-button class="button-fix" size="mini" @click="handleExportExcel">导出</el-button>
+        <el-button class="button-fix" size="mini" @click="exportExcel">导出</el-button>
       </div>
       <div class="btn-right-container">
         <div class="btn-right-label color-primary" v-if="isRecordManage">请点击手机号码进行修改</div>
@@ -224,13 +224,13 @@
       class="table-fix"
       :data="workList"
       size="mini"
-      id="out-table"
+      id="record-export-table"
       border
       stripe
       style="width: 100%"
       @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" v-if="isProcessManage"></el-table-column>
-      <el-table-column fixed prop="own_name" label="车主姓名" align="center"></el-table-column>
+      <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="120" align="center">
         <template slot-scope="scope">
           <div v-if="isProcessSearch">{{scope.row.own_phone}}</div>
@@ -264,14 +264,20 @@
       <el-table-column prop="install_name" width="120" label="设备安装点" align="center"></el-table-column>
       <el-table-column prop="sys_business_account" width="120" label="业务办理员手机" align="center"></el-table-column>
       <el-table-column prop="sys_audit_account" width="120" label="审核人手机" align="center"></el-table-column>
-      <el-table-column prop="audit_time" width="180" label="审核时间" align="center"></el-table-column>
+      <el-table-column prop="audit_time" width="180" label="审核时间" align="center">
+        <template slot-scope="scope">{{getInstallTime(scope.row.audit_time)}}</template>
+      </el-table-column>
       <el-table-column prop="sys_distribute_account" width="120" label="派单员手机" align="center"></el-table-column>
-      <el-table-column prop="distribute_time" label="派单时间" align="center"></el-table-column>
+      <el-table-column prop="distribute_time" label="派单时间" align="center">
+        <template slot-scope="scope">{{getInstallTime(scope.row.distribute_time)}}</template>
+      </el-table-column>
       <el-table-column label="安装状态" align="center">
         <template slot-scope="scope">{{getProcessTips(scope.row.process)}}</template>
       </el-table-column>
       <el-table-column prop="sys_install_account" width="120"  label="安装工手机" align="center"></el-table-column>
-      <el-table-column prop="install_time" width="180"  label="安装时间" align="center"></el-table-column>
+      <el-table-column prop="install_time" width="180"  label="安装时间" align="center">
+        <template slot-scope="scope">{{getInstallTime(scope.row.install_time)}}</template>
+      </el-table-column>
       <el-table-column prop="install_position" width="120"  label="安装地理位置" align="center"></el-table-column>
       <el-table-column prop="imei" label="IMEI" width="120"  align="center"></el-table-column>
       <el-table-column prop="iccid" label="iccid" width="120"  align="center"></el-table-column>
@@ -306,7 +312,7 @@
     <!-- 导数据用的table,不需要显示出来 -->
     <!-- <el-table
       class="table-fix export-table"
-      id="out-table"
+      id="record-export-table"
       :data="exportWorkList"
       size="mini"
       border
@@ -473,6 +479,12 @@ export default {
   methods: {
     ...mapMutations(["updateWorkItem"]),
     ...mapActions(["getWorkList", "setWorkDistribute"]),
+    getInstallTime(installTime) {
+      if (installTime.indexOf('2000-01-01') > -1) {
+        return ''
+      }
+      return installTime
+    },
     handleSelectionChange(selectList) {
       console.log(selectList);
       this.selectList = selectList
@@ -512,14 +524,14 @@ export default {
         imei: "",
         iccid: ""
       });
-      setTimeout(() => {
-        console.log(this.exportWorkList)
-        this.exportExcel()
-      }, 100)
+      console.log(this.exportWorkList)
+      this.exportExcel()
     },
     exportExcel() {
+      console.log(document.querySelector("#record-export-table"))
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#record-export-table"));
+      console.log(wb)
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -586,7 +598,7 @@ export default {
       let activeTips = "";
       switch (contract_active) {
         case 0:
-          activeTips = "全部";
+          activeTips = "";
           break;
         case 1:
           activeTips = "激活";

@@ -19,7 +19,7 @@
     </div>
     <div class="table-container">
       <el-table
-        id="out-table"
+        id="device-out-table"
         ref="userTable"
         class="table-fix table-disable-select-all"
         size="mini"
@@ -31,11 +31,11 @@
         <el-table-column prop="imei" label="IMEI"></el-table-column>
         <el-table-column prop="operation" label="创建人"></el-table-column>
         <el-table-column prop="import_time" label="入库时间"></el-table-column>
-        <el-table-column label="操作" width="280">
+        <el-table-column label="操作" width="180">
           <template slot-scope="scope">
             <div class="btn-container">
-              <device-edit :data="deepClone(scope.row)"></device-edit>
-              <div class="part-line"></div>
+              <!-- <device-edit :data="deepClone(scope.row)"></device-edit> -->
+              <!-- <div class="part-line"></div> -->
               <device-delete :data="deepClone(scope.row)" @onRefresh="onSearchProducts"></device-delete>
             </div>
           </template>

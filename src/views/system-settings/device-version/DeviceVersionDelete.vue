@@ -2,26 +2,32 @@
   <div class="role-add">
     <el-button
       class="button-fix"
-      icon="el-icon-refresh"
-      type="primary"
+      icon="el-icon-delete"
+      type="danger"
       size="mini"
       @click="onDialogShow"
-    >删除版本</el-button>
-    <el-dialog class="dialog-fix" title="删除版本" :visible.sync="dialogVisible" @close="onDialogHide">
+    >删除</el-button>
+    <el-dialog class="dialog-fix" title="修改角色" :visible.sync="dialogVisible" @close="onDialogHide">
+      <page-title class="dialog-title">选择要删除的设备版本信息</page-title>
+      {{tableData}}
       <div class="dialog-content">
-        <el-form class="user-add-form device-form-fix" label-position="right" label-width="180px" :model="form">
-          <el-form-item label="选择需要删除的版本文件">
-            <el-input
-              class="ipt-fix"
-              size="mini"
-              v-model="form.imei"
-              placeholder="设备号"
-            ></el-input>
-          </el-form-item>
-        </el-form>
+        <el-table
+          class="role-manage-table table-fix table-disable-hover"
+          :data="tableData"
+          size="mini"
+          border
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="id" label="序号"></el-table-column>
+          <el-table-column prop="version" label="版本号"></el-table-column>
+          <el-table-column prop="version_date" label="上传时间"></el-table-column>
+          <el-table-column prop="operation" label="上传操作人"></el-table-column>
+          <el-table-column prop="note" label="版本说明"></el-table-column>
+        </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="handleUpdateDevice">确 定</el-button>
+        <el-button size="mini" type="primary" @click="handleDelete">删 除</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -36,57 +42,31 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
-      form: {
-        imei: "",
-        id: "",
-        note: "",
-        img_url: ""
-      }
+      tableData: []
     };
   },
   props: {
     data: {
       type: Object,
       default: () => {}
-    },
-    type: {
-      type: String,
-      default: 'is-edit'
     }
   },
-  computed: {
-    ...mapGetters(["userInfo"]),
-  },
   methods: {
-    ...mapActions(["importProducts"]),
-    onImageUploadSuccess(res) {
-      const { code, data} = res
-      if (code === '10000') {
-        this.$message({
-          type: "success",
-          message: "上传成功!"
-        })
-        this.form.img_url = data
-      } else {
-        this.$message({
-          type: "error",
-          message: "上传失败!"
-        })
-      }
-      console.log('onImageUploadSuccess', res)
-    },
+    ...mapActions(["deleteFirmware"]),
     onDialogShow() {
-      if (this.isEditDialog) {
-        this.form = this.data;
-      }
+      this.tableData = [this.data];
       this.dialogVisible = true;
     },
     onDialogHide() {
       this.dialogVisible = false;
     },
-    handleUpdateDevice() {
-      console.log(this.form);
+    async handleDelete() {
+      const [deviceVersion] = this.tableData;
+      await this.deleteFirmware({
+        id: deviceVersion.id
+      })
+      this.$emit('onRefresh')
+      this.onDialogHide();
     }
   },
   components: {
@@ -135,25 +115,5 @@ $basic-ratio: 1.4;
   width: 100%;
   height: d2r(500px);
   overflow: scroll;
-}
-
-.el-form-item {
-  .el-form-item__label {
-    width: d2r(220px)!important;
-  }
-}
-
-.form-btn-wrap {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  .btn-select {
-    margin-left: d2r(10px);
-  }
-}
-
-.ipt-half-width {
-      width: d2r(330px) !important;
 }
 </style>

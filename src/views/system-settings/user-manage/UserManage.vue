@@ -42,7 +42,8 @@
       <!-- <el-checkbox size="mini" class="checkbox-select-all" v-model="isCheckedAll">全选</el-checkbox> -->
       <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
     </dir>
-    <el-table id="out-table" ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
+    <!-- {{allUser}} -->
+    <el-table id="user-export-table" ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
       @selection-change="handleSelectionChange"
       @select="handleSelect">
       <el-table-column type="selection" width="55"></el-table-column>
@@ -95,7 +96,7 @@ export default {
       }]
       this.allRoles.forEach(item => {
         roles.push({
-          value: item.id,
+          value: item.name,
           label: item.name
         })
       });
@@ -104,10 +105,10 @@ export default {
   },
   methods: {
     ...mapMutations(['udpateSelectUser']),
-    ...mapActions(["getAllUser"]),
+    ...mapActions(["getAllUser", "getAllRoles"]),
      exportExcel() {
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#user-export-table"));
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -187,6 +188,7 @@ export default {
         account: this.searchAccount,
         role: ""
       });
+      this.getAllRoles()
     },
     handelRefresh() {
       this.initAllUser()

@@ -125,7 +125,7 @@
     </div>
     <div class="setting-owner-info setting-part-container">
       <page-title class="setting-title" :hasDot="false">车主信息</page-title>
-      <div class="setting-content setting-image-wraper">
+      <div class="setting-content">
         <el-row :gutter="20">
           <el-col :span="6">
             <div class="item-selector-wraper">
@@ -293,7 +293,7 @@
     </div>
     <div class="setting-picture-info setting-part-container">
       <page-title class="setting-title" :hasDot="false">照片信息</page-title>
-      <div class="setting-content">
+      <div class="setting-content setting-image-wraper">
         <img class="setting-image" :src="item" v-for="(item, index) in imagelist" :key="index">
         <el-upload
           class="page-upload"
@@ -559,7 +559,6 @@ $basic-ratio: 1.4;
       min-height: d2r(70px);
       margin-left: d2r(25px);
       padding: d2r(18px) 0 d2r(22px) 0;
-      overflow: scroll;
       background: #f5f5f6;
       
       .item-selector-wraper {
@@ -701,8 +700,9 @@ $basic-ratio: 1.4;
 }
 
 .setting-image-wraper {
-        width: d2r(1232px);
-        padding: d2r(18px) d2r(22px) d2r(22px) d2r(22px);
-        overflow: scroll;
-      }
+  box-sizing: border-box;
+  max-width: d2r(1232px);
+  padding-right: d2r(36px)!important;
+  overflow: scroll;
+}
 </style>

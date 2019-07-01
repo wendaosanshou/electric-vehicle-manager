@@ -192,10 +192,11 @@ export default {
     return $ajax.post(requestUrl(`firmware/query`), data);
   },
   addFirmware(data) {
-    return $ajax.post(requestUrl(`firmware/query`), data);
+    const { token } = data
+    return $ajax.post(requestUrl(`firmware/add?token=${token}`), data);
   },
   deleteFirmware(data) {
     const { id, token } = data
-    return $ajax.post(requestUrl(`firmware/delete/${id}?token=${token}`));
+    return $ajax.get(requestUrl(`firmware/delete/${id}?token=${token}`));
   }
 };

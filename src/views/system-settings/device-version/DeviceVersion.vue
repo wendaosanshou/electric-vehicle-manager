@@ -3,8 +3,8 @@
     <div class="device-manage-title">
       <page-title>设备版本管理</page-title>
       <div class="manage-title-container">
-        <device-version-upload class="device-btn"></device-version-upload>
-        <device-version-delete class="device-btn"></device-version-delete>
+        <device-version-upload class="device-btn" @onRefresh="onSearchDeviceUpdate"></device-version-upload>
+        <!-- <device-version-delete class="device-btn"></device-version-delete> -->
       </div>
     </div>
     <div class="user-manage-header">
@@ -12,14 +12,14 @@
         <div class="user-menu-item">
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">版本名称</span>
-            <el-input class="menu-ipt ipt-fix" size="mini" v-model="imei" placeholder="请输入imei号"></el-input>
+            <el-input class="menu-ipt ipt-fix" size="mini" v-model="version" placeholder="请输入版本名称"></el-input>
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">上传时间</span>
             <el-input
               class="menu-ipt ipt-fix"
               size="mini"
-              v-model="enterDate"
+              v-model="timePicker"
               placeholder="请输入入库时间"
             ></el-input>
           </div>
@@ -34,33 +34,38 @@
         <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
       </div>
     </div>
-    <div class="table-container">
-
-    </div>
+    <div class="table-container"></div>
+    <!-- {{firewareList[0]}} -->
     <el-table
       ref="userTable"
       class="table-fix table-disable-select-all"
       size="mini"
-      :data="allUser"
+      :data="firewareList"
       border
       style="width: 100%"
     >
       <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="account" label="版本号"></el-table-column>
-      <el-table-column prop="name" label="上传时间"></el-table-column>
-      <el-table-column prop="site_name" label="上传操作人"></el-table-column>
-      <el-table-column prop="role_name" label="版本说明"></el-table-column>
+      <el-table-column prop="version" label="版本名称"></el-table-column>
+      <el-table-column prop="version_date" label="上传时间"></el-table-column>
+      <el-table-column prop="operation" label="上传操作人"></el-table-column>
+      <el-table-column prop="note" label="版本说明"></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+            <div class="btn-container">
+              <device-version-delete :data="deepClone(scope.row)" @onRefresh="onSearchDeviceUpdate"></device-version-delete>
+            </div>
+          </template>
+      </el-table-column>
     </el-table>
 
     <div class="pagination-wraper">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="pageIndex"
+        :page-size="pageSize"
         layout="prev, pager, next, jumper"
-        :total="400"
+        :total="firewareListTotal"
       ></el-pagination>
     </div>
   </div>
@@ -69,36 +74,50 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
-import DeviceVersionDelete from './DeviceVersionDelete'
-import DeviceVersionUpload from './DeviceVersionUpload'
+import DeviceVersionDelete from "./DeviceVersionDelete";
+import DeviceVersionUpload from "./DeviceVersionUpload";
 
 export default {
   data() {
     return {
+      version: "",
+      timePicker: "",
+      operation: "",
       pageIndex: 1,
-      pageSize: 10,
-      allUser: []
+      pageSize: 10
     };
   },
+  computed: {
+    ...mapGetters(['firewareList', 'firewareListTotal'])
+  },
   methods: {
-    ...mapActions(['getProductPage']),
+    ...mapActions(["getFirmwareList"]),
+    deepClone(data) {
+      return JSON.parse(JSON.stringify(data))
+    },
     onSearchDeviceUpdate() {
-
+      this.getFirmwareList({
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
+        version: this.version,
+        date: this.timePicker,
+        operation: this.operation
+      });
     },
-    onClearSearchParams() {
-
-    },
+    onClearSearchParams() {},
     handleSelectionChange() {},
     handleSelect() {},
     handleSizeChange() {},
     handleCurrentChange() {},
-    handleGetProductPage() {
-    }
+    handleGetProductPage() {}
   },
   components: {
     PageTitle,
     DeviceVersionDelete,
     DeviceVersionUpload
+  },
+  mounted() {
+    this.onSearchDeviceUpdate()
   }
 };
 </script>
@@ -111,7 +130,7 @@ $basic-ratio: 1.4;
 }
 
 .device-manage {
-    padding: 0 d2r(38px) d2r(36px) d2r(42px);
+  padding: 0 d2r(38px) d2r(36px) d2r(42px);
 }
 
 .role-manage-title {
@@ -198,7 +217,7 @@ $basic-ratio: 1.4;
 }
 
 .table-container {
-    margin-top: d2r(20px);
+  margin-top: d2r(20px);
 }
 
 .pagination-wraper {
