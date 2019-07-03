@@ -9,7 +9,7 @@
     >删除</el-button>
     <el-dialog class="dialog-fix" title="修改角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <page-title class="dialog-title">选择要删除的设备版本信息</page-title>
-      {{tableData}}
+      <!-- {{tableData}} -->
       <div class="dialog-content">
         <el-table
           class="role-manage-table table-fix table-disable-hover"

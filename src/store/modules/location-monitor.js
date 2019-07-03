@@ -10,6 +10,7 @@ const getToken = rootState => {
 
 const convertGps = list => {
   let promiseArr = [];
+  let tid = ''
   try {
     console.log("convertGps", list);
     for (let i = 0; i < list.length; i++) {
@@ -28,12 +29,26 @@ const convertGps = list => {
       });
       promiseArr.push(promise);
     }
-    return Promise.all(promiseArr);
+
+    return new Promise((resolve, reject) => {
+      tid = setTimeout(() => {
+        vm.$message({
+          type: "error",
+          message: "gps数据转化超时~"
+        });
+        resolve(promiseArr)
+      }, 10000)
+      Promise.all(promiseArr).then(() => {
+        resolve(promiseArr)
+        clearTimeout(tid)
+      })
+    })
   } catch (error) {
     vm.$message({
       type: "error",
       message: "gps数据转化异常~"
     });
+    clearTimeout(tid)
     return Promise.resolve(promiseArr);
   }
 };

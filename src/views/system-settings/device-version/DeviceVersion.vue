@@ -92,6 +92,11 @@ export default {
   },
   methods: {
     ...mapActions(["getFirmwareList"]),
+    onClearSearchParams() {
+      this.version = ''
+      this.timePicker = ''
+      this.operation = ''
+    },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     },
@@ -104,12 +109,14 @@ export default {
         operation: this.operation
       });
     },
-    onClearSearchParams() {},
-    handleSelectionChange() {},
-    handleSelect() {},
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    handleGetProductPage() {}
+    handleSizeChange(pageSize) {
+      this.pageSize = pageSize
+      this.onSearchDeviceUpdate()
+    },
+    handleCurrentChange(pageIndex) {
+      this.pageIndex = pageIndex
+      this.onSearchDeviceUpdate()
+    }
   },
   components: {
     PageTitle,
