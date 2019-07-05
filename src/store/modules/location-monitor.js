@@ -37,7 +37,7 @@ const convertGps = list => {
           message: "gps数据转化超时~"
         });
         resolve(promiseArr)
-      }, 10000)
+      }, 30 * 1000)
       Promise.all(promiseArr).then(() => {
         resolve(promiseArr)
         clearTimeout(tid)

@@ -3,7 +3,7 @@
     <div class="device-manage-title">
       <page-title>设备在线升级</page-title>
       <div class="manage-title-container">
-        <device-update-one class="device-btn"></device-update-one>
+        <device-update-one class="device-btn" @on-refresh="handleGetProductPage"></device-update-one>
         <device-update-more class="device-btn"></device-update-more>
         <device-update-history class="device-btn"></device-update-history>
       </div>
@@ -17,12 +17,13 @@
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">入库时间</span>
-            <el-input
-              class="menu-ipt ipt-fix"
+             <el-date-picker
               size="mini"
+              class="menu-ipt ipt-fix"
               v-model="importTime"
-              placeholder="请输入入库时间"
-            ></el-input>
+              type="date"
+              placeholder="请输入入库时间">
+            </el-date-picker>
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">创建人</span>
@@ -41,12 +42,13 @@
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">升级时间</span>
-            <el-input
-              class="menu-ipt ipt-fix"
-              size="mini"
+            <el-date-picker
               v-model="updateTime"
-              placeholder="请输入升级信息"
-            ></el-input>
+              type="date"
+              size="mini"
+              class="menu-ipt ipt-fix"
+              placeholder="请输入升级信息">
+            </el-date-picker>
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">升级操作人</span>
@@ -64,7 +66,8 @@
         <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
       </div>
     </div>
-    <div class="table-container"></div>
+    <!-- {{productPages}} -->
+    <div class="table-container">
     <el-table
       ref="userTable"
       class="table-fix table-disable-select-all"
@@ -94,10 +97,12 @@
         :total="productPagesTotal"
       ></el-pagination>
     </div>
+    </div>
   </div>
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import DeviceUpdateHistory from "./DeviceUpdateHistory";
@@ -142,14 +147,16 @@ export default {
       this.handleGetProductPage()
     },
     async handleGetProductPage() {
+      const updateTime = this.updateTime ? dayjs(this.updateTime).format("YYYY-MM-DD HH:mm:ss") : this.updateTime
+      const importTime = this.importTime ? dayjs(this.importTime).format("YYYY-MM-DD HH:mm:ss") : this.importTime
       await this.getProductPage({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         imei: this.imei,
         import_operation: this.importOperation, //引入操作人
         update_operation: this.updateOperation, //升级操作人
-        update_time: this.updateTime, //升级时间
-        import_time: this.importTime, //引入时间
+        update_time: updateTime, //升级时间
+        import_time: importTime, //引入时间
         version: this.version //版本
       });
     }

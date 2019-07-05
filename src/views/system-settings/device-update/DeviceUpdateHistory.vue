@@ -17,17 +17,21 @@
       <div class="dialog-content">
         <el-table
           class="role-manage-table table-fix table-disable-hover"
-          :data="tableData"
+          :data="produceLog"
           size="mini"
           border
           stripe
           style="width: 100%"
         >
           <el-table-column prop="id" label="序号"></el-table-column>
-          <el-table-column prop="imei" label="IMEI"></el-table-column>
-          <el-table-column prop="operation" label="创建人"></el-table-column>
-          <el-table-column prop="import_time" label="入库时间"></el-table-column>
-          <el-table-column prop="note" label="备注信息"></el-table-column>
+          <el-table-column prop="imeis" label="IMEI">
+            <template slot-scope="scope">
+              {{getImeisString(scope.row.imeis)}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="version" label="升级文件"></el-table-column>
+          <el-table-column prop="update_time" label="升级时间"></el-table-column>
+          <el-table-column prop="operation" label="操作人"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -57,9 +61,16 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['produceLog'])
+  },
   methods: {
-    ...mapActions(["deleteProduct"]),
+    ...mapActions(["deleteProduct", "getUpdateLog"]),
+    getImeisString(imeis) {
+      return imeis.replace(/[^\d|,]/gi, '')
+    },
     onDialogShow() {
+      this.initUpdateLog()
       if (this.data && Object.keys(this.data).length > 0) {
         this.tableData = [this.data];
       }
@@ -67,6 +78,9 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+    },
+    initUpdateLog() {
+      this.getUpdateLog()
     },
     handleDelete() {
       const [device] = this.tableData;

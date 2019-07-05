@@ -174,6 +174,14 @@ export default {
   deleteInfoWeb(data) {
     return $ajax.get(requestUrl(`info/delete/${data.id}`), data);
   },
+  updateProduce(data){
+    const { token } = data
+    return $ajax.post(requestUrl(`produce/update?token=${token}`), data);
+  },
+  getUpdateLog(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`produce/update/log?token=${token}`), data);
+  },
   searchProducts(data) {
     return $ajax.post(requestUrl(`produce/query`), data);
   },

@@ -7,29 +7,28 @@
       size="mini"
       @click="onDialogShow"
     >批量升级</el-button>
-    <el-dialog class="dialog-fix" title="多个设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
+    <el-dialog class="dialog-fix" title="批量设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
-        <el-form class="user-add-form" label-position="right" label-width="140px" :model="form">
+        <el-form class="user-add-form device-form-fix" label-position="right" label-width="140px" :model="form">
           <el-form-item label="IMEI">
-            <el-input
-              class="ipt-fix"
-              size="mini"
-              v-model="form.imei"
-              placeholder="请输入IMEI"
-            ></el-input>
+            <el-select multiple filterable class="ipt-fix" size="mini" v-model="imeis" placeholder="请选择">
+                <el-option
+                  v-for="item in productPages"
+                  :key="item.imei"
+                  :label="item.imei"
+                  :value="item.imei">
+                </el-option>
+              </el-select>
           </el-form-item>
-          <el-form-item label="设备升级文件">
-             <div class="form-btn-wrap">
-              <el-input
-                class="ipt-fix ipt-half-width"
-                size="mini"
-                v-model="form.img_url"
-                placeholder="(*.xsl,*.xml)"
-              ></el-input>
-              <el-upload :show-file-list="false" class="page-upload" :action="imageUploadUrl" :on-success="onImageUploadSuccess">
-                <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
-              </el-upload>
-            </div>
+          <el-form-item label="设备升级文件" class="ipt-select-last">
+              <el-select class="ipt-fix" @change="onVersionChange" v-model="form.version" placeholder="请选择">
+                <el-option
+                  v-for="item in firewareList"
+                  :key="item.id"
+                  :label="item.version"
+                  :value="item.id">
+                </el-option>
+              </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -49,12 +48,11 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
+      currentVersion: {},
+      imeis: "", 
       form: {
         imei: "",
-        id: "",
-        note: "",
-        img_url: ""
+        version: ""
       }
     };
   },
@@ -69,25 +67,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo"]),
+    ...mapGetters(["userInfo", "firewareList", "productPages"]),
   },
   methods: {
-    ...mapActions(["importProducts"]),
-    onImageUploadSuccess(res) {
-      const { code, data} = res
-      if (code === '10000') {
-        this.$message({
-          type: "success",
-          message: "上传成功!"
-        })
-        this.form.img_url = data
-      } else {
-        this.$message({
-          type: "error",
-          message: "上传失败!"
-        })
-      }
-      console.log('onImageUploadSuccess', res)
+    ...mapActions(["updateProduce"]),
+    onVersionChange(versionId) {
+      console.log('onVersionChange', versionId)
+      let [currentVersion] = this.firewareList.filter(item => item.id === versionId)
+      this.currentVersion = currentVersion
+      console.log(currentVersion)
     },
     onDialogShow() {
       if (this.isEditDialog) {
@@ -98,8 +86,28 @@ export default {
     onDialogHide() {
       this.dialogVisible = false;
     },
-    handleUpdateDevice() {
+    async getAllProductPage() {
+      await this.getProductPage({
+        page_size: 1000,
+        page_index: 1,
+        imei: '',
+        import_operation: '', //引入操作人
+        update_operation: '', //升级操作人
+        update_time: '', //升级时间
+        import_time: '', //引入时间
+        version: '' //版本
+      });
+    },
+    async handleUpdateDevice() {
       console.log(this.form);
+      await this.updateProduce({
+        imeis: [this.form.imei],
+        version_url: this.currentVersion.version_url,
+        update_operation: this.userInfo.account,
+        md5: this.currentVersion.md5
+      })
+      this.onDialogHide()
+      this.$emit('on-refresh')
     }
   },
   components: {
@@ -150,6 +158,12 @@ $basic-ratio: 1.4;
   overflow: scroll;
 }
 
+.el-form-item {
+  .el-form-item__label {
+    width: d2r(220px)!important;
+  }
+}
+
 .form-btn-wrap {
   display: flex;
   flex-direction: row;
@@ -162,5 +176,9 @@ $basic-ratio: 1.4;
 
 .ipt-half-width {
       width: d2r(330px) !important;
+}
+
+.ipt-select-last {
+  margin-top: d2r(20px);
 }
 </style>

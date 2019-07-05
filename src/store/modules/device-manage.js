@@ -15,7 +15,8 @@ const Login = {
     productPages: [],
     productPagesTotal: 0,
     firewareList: [],
-    firewareListTotal: 0
+    firewareListTotal: 0,
+    produceLog: {}
   },
   mutations: {
     updateFirewareList(state, result) {
@@ -30,6 +31,9 @@ const Login = {
       state.productPages = result.data
       state.productPagesTotal = result.total
     },
+    updateProduceLog(state, result) {
+      state.produceLog = result.data
+    }
   },
   actions: {
     async getFirmwareList({ commit, rootState }, data) {
@@ -64,6 +68,33 @@ const Login = {
             ...data
         });
         console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async getUpdateLog({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getUpdateLog({
+            token: getToken(rootState),
+            ...data
+        });
+        commit('updateProduceLog', result)
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async updateProduce({ commit, rootState }, data) {
+      try {
+        const result = await $apis.updateProduce({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "升级成功!"
+        });
       } catch (error) {
         console.log(error)
         return Promise.reject(error)
@@ -134,7 +165,8 @@ const Login = {
     productPages: state => state.productPages,
     productPagesTotal: state => state.productPagesTotal,
     firewareList: state => state.firewareList,
-    firewareListTotal: state => state.firewareListTotal
+    firewareListTotal: state => state.firewareListTotal,
+    produceLog: state => state.produceLog
   }
 };
 

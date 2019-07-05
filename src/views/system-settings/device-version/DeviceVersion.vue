@@ -16,12 +16,19 @@
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">上传时间</span>
-            <el-input
+            <!-- <el-input
               class="menu-ipt ipt-fix"
               size="mini"
-              v-model="timePicker"
+              v-model="uploadDate"
               placeholder="请输入入库时间"
-            ></el-input>
+            ></el-input> -->
+             <el-date-picker
+              size="mini"
+              class="menu-ipt ipt-fix"
+              v-model="uploadDate"
+              type="date"
+              placeholder="请输入上传时间">
+            </el-date-picker>
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">上传操作人</span>
@@ -35,7 +42,6 @@
       </div>
     </div>
     <div class="table-container"></div>
-    <!-- {{firewareList[0]}} -->
     <el-table
       ref="userTable"
       class="table-fix table-disable-select-all"
@@ -49,7 +55,8 @@
       <el-table-column prop="version_date" label="上传时间"></el-table-column>
       <el-table-column prop="operation" label="上传操作人"></el-table-column>
       <el-table-column prop="note" label="版本说明"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="version_url" width="340" label="下载地址"></el-table-column>
+      <el-table-column width="160" label="操作">
         <template slot-scope="scope">
             <div class="btn-container">
               <device-version-delete :data="deepClone(scope.row)" @onRefresh="onSearchDeviceUpdate"></device-version-delete>
@@ -72,6 +79,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import DeviceVersionDelete from "./DeviceVersionDelete";
@@ -81,7 +89,7 @@ export default {
   data() {
     return {
       version: "",
-      timePicker: "",
+      uploadDate: "",
       operation: "",
       pageIndex: 1,
       pageSize: 10
@@ -94,18 +102,19 @@ export default {
     ...mapActions(["getFirmwareList"]),
     onClearSearchParams() {
       this.version = ''
-      this.timePicker = ''
+      this.uploadDate = ''
       this.operation = ''
     },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     },
     onSearchDeviceUpdate() {
+      const uploadDate = this.uploadDate ? dayjs(this.uploadDate).format("YYYY-MM-DD") : this.updateTime
       this.getFirmwareList({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         version: this.version,
-        date: this.timePicker,
+        date: uploadDate,
         operation: this.operation
       });
     },

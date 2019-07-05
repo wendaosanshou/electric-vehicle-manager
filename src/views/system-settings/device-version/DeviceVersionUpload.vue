@@ -26,7 +26,7 @@
                 class="ipt-fix ipt-half-width"
                 size="mini"
                 v-model="form.version_url"
-                placeholder="(*.upd)"
+                placeholder="(*.bin)"
                 disabled
               ></el-input>
               <el-upload
@@ -71,10 +71,10 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/file/firmware",
+      imageUploadUrl: "",
       form: {
         version: "",
-        version_url: "www.baidu.com",
+        version_url: "",
         operation: "",
         md5: "",
         note: ""
@@ -92,7 +92,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo"])
+    ...mapGetters(["userInfo"]),
+    allowUpload() {
+      return Object.keys(this.form).every(key => item[key])
+    }
   },
   methods: {
     ...mapActions(["importProducts", "addFirmware"]),
