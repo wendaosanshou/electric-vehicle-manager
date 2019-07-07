@@ -99,9 +99,9 @@ export default {
       });
     },
     async handleUpdateDevice() {
-      console.log(this.form);
+      console.log(this.imeis);
       await this.updateProduce({
-        imeis: [this.form.imei],
+        imeis: this.imeis,
         version_url: this.currentVersion.version_url,
         update_operation: this.userInfo.account,
         md5: this.currentVersion.md5

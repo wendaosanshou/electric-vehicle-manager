@@ -37,7 +37,7 @@
     </div>
     <div class="monitor-container">
       <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
-      <div class="map-content js-map-container" id="alarm-map-container" :style="{height: pageHeight}"></div>
+      <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
     </div>
 
     <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
@@ -66,7 +66,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['deviceIds', 'alarmLatest', 'deviceInfo', 'accountList', 'alarmTypes'])
+    ...mapGetters(['alarmLatest', 'deviceInfo', 'accountList', 'alarmTypes', 'allDeviceInfo'])
   },
   watch: {
     isAlarmDetailVisible() {
@@ -99,32 +99,37 @@ export default {
           message: "请输入正确的查询条件!"
         });
       }
-      // this.isAlarmTipsVisible = true
-      // this.isAlarmDetailVisible = true
-      // this.addAlarmMarkers()
     },
-    getAlarmMarkerContent(position) {
+    getAlarmMarkerContent(item) {
+      let {lng, lat} = item
       let markerContent = document.createElement("div");
-      let markerContent1 = document.createElement("div");
-      markerContent.className = "alarm-mark-content";
-      markerContent1.className = "alarm-mark-content-1";
-      markerContent.append(markerContent1);
+      markerContent.className = `alarm-mark-content ${item.iconClass}`;
+      console.log(markerContent.className)
+      setTimeout(() => {
+        $(markerContent).on("click", () => {
+          this.map.setZoomAndCenter(16, [lng, lat]);
+        });
+      }, 100);
       return markerContent;
     },
     addAlarmMarkers() {
       this.map.clearMap();
+      console.log('addAlarmMarkers', this.alarmLatest)
       this.alarmLatest.forEach(item => {
-        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent([item.lng, item.lat]));
+        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent(item));
       });
       this.map.setFitView();
     },
     drawAlarmMap() {
+      console.log(this.alarmLatest)
       const [{lng, lat}] = this.alarmLatest
-      this.initAMap('alarm-map-container', [lng, lat]);
+      this.initAMap('map-container', [lng, lat]);
       this.addAlarmMarkers()
     },
-    async initAlarmLatest() {
-      this.initAMap('alarm-map-container', this.positionCenter);
+    init() {
+      let [{lng, lat}] = this.allDeviceInfo
+      this.initAMap("map-container", [lng, lat]);
+      this.map.setFitView()
     }
   },
   components: {
@@ -132,7 +137,7 @@ export default {
     AlarmTipsDialog,
   },
   mounted() {
-    this.initAlarmLatest()
+    this.init()
   }
 };
 </script>

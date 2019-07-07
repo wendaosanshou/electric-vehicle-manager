@@ -47,11 +47,15 @@
         <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
-
     <div class="monitor-container">
       <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
       <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
-      <alarm-analysis-table v-model="isAlarmTableVisible"></alarm-analysis-table>
+      <alarm-analysis-table 
+        v-model="isAlarmTableVisible" 
+        :pageIndex="pageIndex" 
+        :pageSize="pageSize"
+        @current-change="handleCurrentChange"
+        ></alarm-analysis-table>
     </div>
   </div>
 </template>
@@ -72,6 +76,8 @@ export default {
       pickerTime: "",
       searchValue: "",
       alarmValue: 0,
+      pageIndex: 1,
+      pageSize: 10,
       searchType: 'account'
     };
   },
@@ -82,7 +88,8 @@ export default {
       "accountList",
       "alarmTypes",
       "deviceInfo",
-      'alarmLatest'
+      'alarmAnalyse',
+      'allDeviceInfo'
     ])
   },
   watch: {
@@ -94,6 +101,10 @@ export default {
   },
   methods: {
     ...mapActions(["getAlarmAnalyse", "getDeviceInfo"]),
+    handleCurrentChange(pageIndex) {
+      this.pageIndex = pageIndex
+      this.onSearchAlarm()
+    },
     async onSearchAlarm() {
       const [startDate, endDate] = this.pickerTime;
       console.log(startDate, endDate, this.searchValue)
@@ -106,8 +117,8 @@ export default {
           id: this.deviceInfo.id,
           start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
           end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
-          page_size: 100,
-          page_index: 2,
+          page_size: this.pageSize,
+          page_index: this.pageIndex,
           alarm: this.alarmValue
         });
         this.isAlarmTipsVisible = true;
@@ -120,27 +131,41 @@ export default {
         });
       }
     },
-    getAlarmMarkerContent(position) {
+    getAlarmMarkerContent(item) {
+      let {lng, lat} = item
       let markerContent = document.createElement("div");
-      let markerContent1 = document.createElement("div");
-      markerContent.className = "alarm-mark-content";
-      markerContent1.className = "alarm-mark-content-1";
-      markerContent.append(markerContent1);
+      markerContent.className = `alarm-mark-content ${item.iconClass}`;
+      console.log(markerContent.className)
+      setTimeout(() => {
+        $(markerContent).on("click", () => {
+          this.map.setZoomAndCenter(16, [lng, lat]);
+        });
+      }, 100);
       return markerContent;
     },
     addAlarmMarkers() {
       this.map.clearMap();
-      this.alarmLatest.forEach(item => {
-        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent([item.lng, item.lat]));
+      let seldomNumber = Math.random()
+      this.alarmAnalyse.forEach(item => {
+        console.log('alarmAnalyse', item.lng)
+        item.lng += Math.random() * 0.1
+        item.lat += Math.random() * 0.1
+        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent(item));
       });
       this.map.setFitView();
     },
     drawAlarmMap() {
-      if (this.alarmLatest && this.alarmLatest.length > 0) {
-        const [{lng, lat}] = this.alarmLatest
+      if (this.alarmAnalyse && this.alarmAnalyse.length > 0) {
+        const [{lng, lat}] = this.alarmAnalyse
         this.initAMap('map-container', [lng, lat]);
         this.addAlarmMarkers()
       }
+    },
+    init() {
+      let [{lng, lat}] = this.allDeviceInfo
+      console.log('init', this.allDeviceInfo)
+      this.initAMap("map-container", [lng, lat]);
+      this.map.setFitView()
     }
   },
   components: {
@@ -148,7 +173,7 @@ export default {
     AlarmAnalysisTable
   },
   mounted() {
-    this.initAMap('map-container', this.positionCenter);
+    this.init();
   }
 };
 </script>

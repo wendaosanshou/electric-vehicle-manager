@@ -17,6 +17,9 @@ import AppAdvisory from './views/system-settings/app-advisory/AppAdvisory.vue'
 import DeviceManage from './views/system-settings/device-manage/DeviceManage.vue'
 import DeviceUpdate from './views/system-settings/device-update/DeviceUpdate.vue'
 import DeviceVersion from './views/system-settings/device-version/DeviceVersion.vue'
+import AppUpdate from './views/system-settings/app-update/AppUpdate.vue'
+import UserFeedback from './views/system-settings/user-feedback/UserFeedback.vue'
+import UserFeedbackDetail from './views/system-settings/user-feedback/UserFeedbackDetail.vue'
 
 Vue.use(Router);
 
@@ -102,6 +105,18 @@ export default new Router({
         path: 'device-version',
         name: 'DeviceVersion',
         component: DeviceVersion
+      }, {
+        path: 'app-update',
+        name: 'AppUpdate',
+        component: AppUpdate
+      }, {
+        path: 'user-feedback',
+        name: 'UserFeedback',
+        component: UserFeedback
+      }, {
+        path: 'user-feedback-detail',
+        name: 'UserFeedbackDetail',
+        component: UserFeedbackDetail
       }]
     },
     {

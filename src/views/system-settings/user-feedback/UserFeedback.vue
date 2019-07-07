@@ -1,64 +1,83 @@
 <template>
   <div class="device-manage">
     <div class="device-manage-title">
-      <page-title>设备版本管理</page-title>
+      <page-title>客户留言管理</page-title>
       <div class="manage-title-container">
-        <device-version-upload class="device-btn" @onRefresh="onSearchDeviceUpdate"></device-version-upload>
+        <!-- <device-dialog-upload class="device-btn" @onRefresh="onSearchFeedback"></device-dialog-upload> -->
       </div>
     </div>
     <div class="user-manage-header">
       <div class="user-menu-list">
         <div class="user-menu-item">
           <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label">版本名称</span>
-            <el-input class="menu-ipt ipt-fix" size="mini" v-model="version" placeholder="请输入版本名称"></el-input>
+            <span class="menu-label">用户姓名</span>
+            <el-input class="menu-ipt ipt-fix" size="mini" v-model="name" placeholder="请输入用户姓名"></el-input>
           </div>
           <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label">上传时间</span>
-             <el-date-picker
+            <span class="menu-label">用户手机号</span>
+            <el-input class="menu-ipt ipt-fix" size="mini" v-model="account" placeholder="请输入手机号"></el-input>
+          </div>
+          <div class="menu-account menu-ipt-wraper">
+            <span class="menu-label menu-label-half">状态</span>
+            <el-select
+              class="menu-ipt ipt-fix ipt-selector"
               size="mini"
-              class="menu-ipt ipt-fix"
-              v-model="uploadDate"
-              type="date"
-              placeholder="请输入上传时间">
-            </el-date-picker>
+              v-model="process"
+              placeholder="请选择状态">
+              <el-option
+                :label="item.label"
+                :value="item.value"
+                v-for="item in processList"
+                :key="item.value"
+              ></el-option>
+            </el-select>
+            <!-- <el-input class="menu-ipt ipt-fix" size="mini" v-model="process" placeholder="请输入版本名称"></el-input> -->
           </div>
           <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label">上传操作人</span>
+            <span class="menu-label menu-label-half">操作人</span>
             <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入创建人"></el-input>
           </div>
         </div>
       </div>
       <div class="menu-btns">
-        <div class="el-btn btn-search" @click="onSearchDeviceUpdate">查询</div>
+        <div class="el-btn btn-search" @click="onSearchFeedback">查询</div>
         <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
       </div>
     </div>
-    <div class="table-container"></div>
+    <div class="table-container">
+    <!-- {{feedbackList}} -->
     <el-table
       ref="userTable"
       class="table-fix table-disable-select-all"
       size="mini"
-      :data="firewareList"
+      :data="feedbackList"
       border
       style="width: 100%"
     >
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="version" label="版本名称"></el-table-column>
-      <el-table-column prop="version_date" label="上传时间"></el-table-column>
-      <el-table-column prop="operation" label="上传操作人"></el-table-column>
-      <el-table-column prop="note" label="版本说明"></el-table-column>
-      <el-table-column prop="version_url" width="320" label="下载地址"></el-table-column>
-      <el-table-column prop="md5" width="180" label="md5特征值"></el-table-column>
+      <el-table-column prop="account" label="用户手机号"></el-table-column>
+      <el-table-column prop="name" label="用户姓名"></el-table-column>
+      <el-table-column prop="feedback_type" label="意见分类"></el-table-column>
+      <el-table-column prop="content" label="意见内容"></el-table-column>
+      <el-table-column prop="process" label="处理状态">
+        <template slot-scope="scope">
+          {{getProcessTips(scope.row.process)}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="operation" label="处理人账号">
+      </el-table-column>
+      <el-table-column prop="process_time" label="处理时间"></el-table-column>
       <el-table-column width="160" label="操作">
         <template slot-scope="scope">
+          <el-button class="button-fix" icon="el-icon-edit" type="primary" size="mini" @click="onEditDetail(scope.row)">修改</el-button>
+        </template>
+        <!-- <template slot-scope="scope">
             <div class="btn-container">
-              <device-version-delete :data="deepClone(scope.row)" @onRefresh="onSearchDeviceUpdate"></device-version-delete>
+              <app-dialog-delete :data="deepClone(scope.row)" @onRefresh="onSearchFeedback"></app-dialog-delete>
             </div>
-          </template>
+          </template> -->
       </el-table-column>
     </el-table>
-
+    </div>
     <div class="pagination-wraper">
       <el-pagination
         @size-change="handleSizeChange"
@@ -66,7 +85,7 @@
         :current-page="pageIndex"
         :page-size="pageSize"
         layout="prev, pager, next, jumper"
-        :total="firewareListTotal"
+        :total="feedbackListTotal"
       ></el-pagination>
     </div>
   </div>
@@ -76,58 +95,88 @@
 import dayjs from 'dayjs'
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
-import DeviceVersionDelete from "./DeviceVersionDelete";
-import DeviceVersionUpload from "./DeviceVersionUpload";
+// import AppDialogDelete from "./AppDialogDelete";
+// import AppDialogUpload from "./AppDialogUpload";
 
 export default {
   data() {
     return {
-      version: "",
-      uploadDate: "",
+      name: "",
+      account: "",
+      process: "",
       operation: "",
       pageIndex: 1,
-      pageSize: 10
+      pageSize: 10,
+      processList: [
+        {
+          value: '',
+          label: '全部'
+        },
+        {
+          value: 0,
+          label: '未处理'
+        },
+        {
+          value: 1,
+          label: '已处理'
+        }
+      ]
     };
   },
   computed: {
-    ...mapGetters(['firewareList', 'firewareListTotal'])
+    ...mapGetters(['feedbackList', 'feedbackListTotal'])
   },
   methods: {
-    ...mapActions(["getFirmwareList"]),
+    ...mapActions(["getFeedback", "getFeedbackDetail"]),
+    getProcessTips(process) {
+      if (process === 0) {
+        return '未处理'
+      } else if (process === 1) {
+        return '处理'
+      } else {
+        return ''
+      }
+    },
     onClearSearchParams() {
-      this.version = ''
-      this.uploadDate = ''
+      this.name = ''
+      this.account = ''
+      this.process = ''
       this.operation = ''
     },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     },
-    onSearchDeviceUpdate() {
-      const uploadDate = this.uploadDate ? dayjs(this.uploadDate).format("YYYY-MM-DD") : this.updateTime
-      this.getFirmwareList({
+    onSearchFeedback() {
+      this.getFeedback({
         page_size: this.pageSize,
         page_index: this.pageIndex,
-        version: this.version,
-        date: uploadDate,
+        name: this.name,
+        account: this.account,
+        process: this.process,
         operation: this.operation
       });
     },
+    async onEditDetail(item) {
+      await this.getFeedbackDetail({
+        id: item.id
+      })
+      this.$router.push('/user-feedback-detail')
+      // console.log('edit-detail')
+    },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
-      this.onSearchDeviceUpdate()
+      this.onSearchFeedback()
     },
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
-      this.onSearchDeviceUpdate()
+      this.onSearchFeedback()
     }
   },
   components: {
-    PageTitle,
-    DeviceVersionDelete,
-    DeviceVersionUpload
+    PageTitle
   },
   mounted() {
-    this.onSearchDeviceUpdate()
+    this.onSearchFeedback()
   }
 };
 </script>
@@ -178,6 +227,7 @@ $basic-ratio: 1.4;
   align-items: center;
   padding-right: d2r(25px);
   background: #f5f5f6ff;
+  margin-top: d2r(16px);
   .user-menu-list {
     display: flex;
     flex-direction: column;
@@ -198,7 +248,12 @@ $basic-ratio: 1.4;
         margin-left: d2r(16px);
         .menu-label {
           display: block;
-          width: d2r(124px);
+          width: d2r(144px);
+          text-align: right;
+        }
+        .menu-label-half {
+          display: block;
+          width: d2r(74px);
           text-align: right;
         }
         .menu-ipt {
@@ -212,6 +267,7 @@ $basic-ratio: 1.4;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-left: d2r(16px);
     .el-btn {
       width: d2r(160px);
       height: d2r(35px);

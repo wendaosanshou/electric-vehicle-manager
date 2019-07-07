@@ -11,7 +11,8 @@
       class="dialog-fix"
       title="单个设备升级"
       :visible.sync="dialogVisible"
-      @close="onDialogHide">
+      @close="onDialogHide"
+    >
       <div class="dialog-content">
         <el-form
           class="user-add-form device-form-fix"
@@ -24,8 +25,8 @@
               <el-input
                 class="ipt-fix ipt-half-width"
                 size="mini"
-                v-model="form.version_url"
-                placeholder="(*.bin)"
+                v-model="form.download"
+                placeholder="(*.apk)"
                 disabled
               ></el-input>
               <el-upload
@@ -39,8 +40,8 @@
               </el-upload>
             </div>
           </el-form-item>
-          <el-form-item label="md5">
-            <el-input class="ipt-fix" size="mini" v-model="form.md5" placeholder="请输入md5" disabled></el-input>
+          <el-form-item label="app名称">
+            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入app名称"></el-input>
           </el-form-item>
            <el-form-item label="版本名称">
             <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称"></el-input>
@@ -64,20 +65,20 @@
 </template>
 
 <script>
-import md5 from 'md5'
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 
 export default {
   data() {
     return {
+      loading: '',
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/file/firmware",
+      imageUploadUrl: "http://47.92.237.140/api/v1/file/apk",
       form: {
         version: "",
-        version_url: "",
+        download: "",
         operation: "",
-        md5: "",
+        name: "",
         note: ""
       }
     };
@@ -99,25 +100,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["importProducts", "addFirmware"]),
-    clearForm() {
-      this.form = {
-        version: "",
-        version_url: "",
-        operation: "",
-        md5: "",
-        note: ""
-      }
-    },
+    ...mapActions(["importProducts", "addApkFile"]),
     onBeforeUpload(file) {
       const { name } = file
-      // 格式需要类似：app.bin
-      if (/^([\s\S]+)(.bin)$/.test(name)) {
+      // 格式需要类似：app-merchant-0706.apk
+      if (/^([^\d]+)(\d+)(.apk)$/.test(name)) {
+        this.renderLoading()
         return Promise.resolve()
       } else {
         this.$message({
           type: "error",
-          message: "文件格式有误!"
+          message: "文件格式名称有误!"
         });
         return Promise.reject()
       }
@@ -126,30 +119,38 @@ export default {
       const { code, data } = res;
       const { name } = file
       if (code === "10000") {
+        this.form.version = name.replace(/([^\d]+)(\d+)(.apk)/gi, '$2')
+        this.form.name = name.replace(/(.apk)/gi, '')
         this.$message({
           type: "success",
           message: "上传成功!"
         });
-        this.form.version_url = data;
-        this.form.md5 = md5(name)
+        this.form.download = data;
       } else {
         this.$message({
           type: "error",
           message: "上传失败!"
         });
       }
-      console.log("onImageUploadSuccess", res);
+      this.loading.close()
+    },
+    renderLoading() {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
     },
     async handleAddFirmware() {
-      await this.addFirmware({
-        version: this.form.version,
-        version_url: this.form.version_url,
-        md5: this.form.md5,
+      await this.addApkFile({
+        name: this.form.name,
         operation: this.userInfo.account,
+        version: this.form.version,
+        download: this.form.download,
         note: this.form.note
       });
       this.$emit('onRefresh')
-      this.clearForm()
       this.onDialogHide()
     },
     onDialogShow() {

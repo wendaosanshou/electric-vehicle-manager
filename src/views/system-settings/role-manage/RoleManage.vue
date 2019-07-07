@@ -18,7 +18,7 @@
         <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
         <el-table-column prop="author" label="角色权限" align="center" width="350">
            <template slot-scope="scope">
-            <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂未任何权限信息</div>
+            <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
              <div v-else>
                <el-tag
                 class="role-tag"

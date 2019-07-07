@@ -9,12 +9,24 @@
         :close-on-click-modal="false"
       >
         <div class="dialog-content">
-        <el-table ref="userTable" class="table-fix table-fix-yellow table-disable-select-all" size="mini" :data="allUser" border style="width: 100%">
-            <el-table-column prop="id" label="车主姓名"></el-table-column>
-            <el-table-column prop="account" label="防盗备案号"></el-table-column>
-            <el-table-column prop="name" label="告警时间"></el-table-column>
-            <el-table-column prop="site_name" label="告警类型"></el-table-column>
+          <!-- {{alarmAnalyse[0]}} -->
+        <el-table ref="userTable" class="table-analysis table-fix table-fix-yellow table-disable-select-all" size="mini" :data="alarmAnalyse" border style="width: 100%" max-height="340">
+            <el-table-column prop="note" label="车主姓名"></el-table-column>
+            <el-table-column prop="status" label="防盗备案号"></el-table-column>
+            <el-table-column prop="signal_time" width="140" label="告警时间"></el-table-column>
+            <el-table-column prop="note" label="告警类型"></el-table-column>
         </el-table>
+
+        <el-pagination
+        class="pagination-fix"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          :current-page.sync="localPageIndex"
+          :total="alarmAnalyseTotal"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        ></el-pagination>
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
@@ -30,7 +42,8 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      localPageIndex: 0
     }
   },
   model: {
@@ -38,17 +51,38 @@ export default {
     event: 'change'
   },
   computed: {
-      ...mapGetters(['allUser', 'alarmAnalyse'])
+      ...mapGetters(['allUser', 'alarmAnalyse', 'alarmAnalyseTotal'])
   },
   props: {
-    visible: Boolean
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    pageIndex: {
+      type: Number,
+      default: 0
+    },
+    pageSize: {
+      type: Number,
+      default: 10
+    }
   },
   watch: {
     visible() {
       this.dialogVisible = this.visible
+      this.localPageIndex = this.pageIndex
+    },
+    pageIndex() {
+      this.localPageIndex = this.pageIndex
     }
   },
   methods: {
+    handleSizeChange(pageSize) {
+      this.$emit('size-change', pageSize)
+    },
+    handleCurrentChange(pageIndex){
+      this.$emit('current-change', pageIndex)
+    },
     onDialogHide() {
       this.$emit('change', false)
     }
@@ -108,4 +142,5 @@ $basic-ratio: 1.4;
     display: none !important;
   }
 }
+
 </style>

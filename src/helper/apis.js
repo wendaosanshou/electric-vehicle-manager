@@ -46,13 +46,12 @@ export default {
   setDeviceTrace(data) {
     const { token } = data
     return $ajax.post(requestUrl(`dev/trace/${data.id}/${data.second}?token=${token}`));
-    // return $ajax.post(requestUrl(`dev/trace/${data.id}/${data.second}`), { token });
   },
   getDeviceParams(data) {
     const { token } = data
     return $ajax.get(requestUrl(`param/${data.id}?token=${token}`));
   },
-  getAllDeviceInfo(data) {
+  getWebDevice(data) {
     const { token } = data
     return $ajax.get(requestUrl('dev/info/web'), { token });
   },
@@ -74,6 +73,10 @@ export default {
   },
   getSomeDeviceInfo(data) {
     return $ajax.post(requestUrl('dev/id'), data);
+  },
+  getAllDevice(data) {
+    const { token } = data
+    return $ajax.get(requestUrl(`dev/all?token=${token}`), data);
   },
   getAllUser(data) {
     return $ajax.post(requestUrl('sys/page'), data);
@@ -206,5 +209,29 @@ export default {
   deleteFirmware(data) {
     const { id, token } = data
     return $ajax.get(requestUrl(`firmware/delete/${id}?token=${token}`));
+  },
+  getApkList(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`apk/page?token=${token}`), data);
+  },
+  addApkFile(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`apk/add?token=${token}`), data);
+  },
+  deleteApkVersion(data) {
+    const { id, token } = data
+    return $ajax.post(requestUrl(`apk/delete/${id}?token=${token}`), data);
+  },
+  getFeedback(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`feedback/page?token=${token}`), data);
+  },
+  getFeedbackDetail(data) {
+    const { id, token } = data
+    return $ajax.get(requestUrl(`feedback/detail/${id}?token=${token}`));
+  },
+  processFeedback(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`feedback/ret?token=${token}`), data);
   }
 };

@@ -8,50 +8,151 @@ const getToken = (rootState) => {
 }
 
 const convertGps = list => {
-  let promiseArr = []
+  let promiseArr = [];
+  let tid = ''
   try {
-    console.log('convertGps', list)
-    for(let i = 0; i < list.length; i++) {
-        let item = list[i]
-        let { lng, lat } = item
-        let gps = [ lng / 1000000, lat / 1000000 ]
-        let promise = new Promise((resolve, reject) => {
-            AMap.convertFrom(gps, 'gps', function (status, result) {
-                if (result.info === 'ok') {
-                    const [{lng, lat}] = result.locations; // Array.<LngLat>
-                    item.lng = lng
-                    item.lat = lat
-                    resolve(item)
-                }
-            });
-        })
-        promiseArr.push(promise)
-    }
-      return Promise.all(promiseArr)
-    } catch (error) {
-      vm.$message({
-        type: "error",
-        message: "gps数据转化异常~"
+    console.log("convertGps", list);
+    for (let i = 0; i < list.length; i++) {
+      let item = list[i];
+      let { lng, lat } = item;
+      let gps = [lng / 1000000, lat / 1000000];
+      let promise = new Promise((resolve, reject) => {
+        AMap.convertFrom(gps, "gps", function(status, result) {
+          if (result.info === "ok") {
+            const [{ lng, lat }] = result.locations; // Array.<LngLat>
+            item.lng = lng;
+            item.lat = lat;
+            resolve(item);
+          }
+        });
       });
-      return Promise.resolve(promiseArr);
+      promiseArr.push(promise);
     }
-}
+
+    return new Promise((resolve, reject) => {
+      tid = setTimeout(() => {
+        vm.$message({
+          type: "error",
+          message: "gps数据转化超时~"
+        });
+        resolve(promiseArr)
+      }, 30 * 1000)
+      Promise.all(promiseArr).then(() => {
+        resolve(promiseArr)
+        clearTimeout(tid)
+      })
+    })
+  } catch (error) {
+    vm.$message({
+      type: "error",
+      message: "gps数据转化异常~"
+    });
+    clearTimeout(tid)
+    return Promise.resolve(promiseArr);
+  }
+};
+
 
 const Login = {
   state: {
-    alarmLatest: {},
+    alarmLatest: [],
     alarmAnalyse: {},
-    alarmLatestGps: []
+    alarmTypeClass: '',
+    currentAlarm: {},
+    alarmAnalyseTotal: 0,
+    alarmTypeList: [
+      {
+        icon: "weiyi",
+        content: "位移告警",
+        count: 0
+      },
+      {
+        icon: "zhendong",
+        content: "震动告警",
+        count: 0
+      },
+      {
+        icon: "gaowen",
+        content: "高温告警",
+        count: 0
+      },
+      {
+        icon: "chaosu",
+        content: "超速告警",
+        count: 0
+      },
+      {
+        icon: "diya",
+        content: "电瓶低电压告警",
+        count: 0
+      },
+      {
+        icon: "gaoya",
+        content: "充电高电压告警",
+        count: 0
+      },
+      {
+        icon: "neizhidiya",
+        content: "内置电池低电压告警",
+        count: 0
+      },
+      {
+        icon: "duandian",
+        content: "外置电源断电告警",
+        count: 0
+      }
+    ]
   },
   mutations: {
     updateAlarmLatest(state, alarmLatest) {
+      console.log('alarmLatest', alarmLatest)
       state.alarmLatest = alarmLatest;
+      // todo delete
+      // state.alarmLatest[0].note = '震动告警'
+      // 更新alarmTypeList
+      // 重置count
+      state.alarmTypeList.forEach(item => {
+        item.count = 0
+      })
+      state.alarmTypeClass = ''
+      alarmLatest.forEach(item => {
+        let { note } = item;
+        state.alarmTypeList.forEach(alarmTypeItem => {
+          let alarmTips = alarmTypeItem.content.substr(0, 2);
+          if (note.indexOf(alarmTips) > -1) {
+            alarmTypeItem.count += 1;
+            // 显示最后一个class
+            item.iconClass = `item-icon-${alarmTypeItem.icon}`
+            state.currentAlarm = item
+          }
+        });
+      });
     },
-    updateAlarmLatestGps(state, alarmLatestGps) {
-        state.alarmLatestGps = alarmLatestGps;
-    },
-    updateAlarmAnalyse(state, alarmAnalyse) {
-      state.alarmAnalyse = alarmAnalyse;
+    updateAlarmAnalyse(state, result) {
+      state.alarmAnalyse = result.data;
+      state.alarmAnalyseTotal = result.total
+      // todo delete
+      state.alarmAnalyse[1].note = '震动告警'
+      // 更新alarmTypeList
+      // 重置count
+      state.alarmTypeList.forEach(item => {
+        item.count = 0
+      })
+      state.alarmTypeClass = ''
+      result.data.forEach(item => {
+        let { note } = item;
+        state.alarmTypeList.forEach(alarmTypeItem => {
+          let alarmTips = alarmTypeItem.content.substr(0, 2);
+          if (note.indexOf(alarmTips) > -1) {
+            item.iconClass = `item-icon-${alarmTypeItem.icon}`
+            alarmTypeItem.count += 1;
+            // if (!state.alarmTypeClass) {
+            //   state.alarmTypeClass = `item-icon-${alarmTypeItem.icon}`
+            //   state.currentAlarm = item
+            // }
+          }
+        });
+      });
     }
   },
   actions: {
@@ -63,7 +164,7 @@ const Login = {
         });
         await convertGps(result.data)
         console.log('getAlarmAnalyse', result.data)
-        commit("updateAlarmAnalyse", result.data);
+        commit("updateAlarmAnalyse", result);
         console.log(result);
       } catch (error) {
         console.log(error);
@@ -76,9 +177,9 @@ const Login = {
             token: getToken(rootState),
             ...data
         });
-        const convertResult = await convertGps(result.data)
+        await convertGps(result.data)
         console.log('updateAlarmLatest', result.data)
-        commit("updateAlarmLatest", convertResult);
+        commit("updateAlarmLatest", result.data);
         console.log(result);
       } catch (error) {
         console.log(error);
@@ -89,7 +190,10 @@ const Login = {
   getters: {
     alarmLatest: state => state.alarmLatest,
     alarmAnalyse: state => state.alarmAnalyse,
-    alarmLatestGps: state => state.alarmLatestGps
+    alarmTypeList: state => state.alarmTypeList,
+    alarmTypeClass: state => state.alarmTypeClass,
+    currentAlarm: state => state.currentAlarm,
+    alarmAnalyseTotal: state => state.alarmAnalyseTotal
   }
 };
 

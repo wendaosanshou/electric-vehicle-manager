@@ -16,7 +16,12 @@ const Login = {
     productPagesTotal: 0,
     firewareList: [],
     firewareListTotal: 0,
-    produceLog: {}
+    produceLog: {},
+    apkList: [],
+    apkListTotal: 0,
+    feedbackList: [],
+    feedbackListTotal: 0,
+    feedbackDetail: {}
   },
   mutations: {
     updateFirewareList(state, result) {
@@ -33,9 +38,113 @@ const Login = {
     },
     updateProduceLog(state, result) {
       state.produceLog = result.data
+    },
+    updateApkList(state, result) {
+      state.apkList = result.data
+      state.apkListTotal = result.total
+    },
+    updateFeedbackList(state, result) {
+      state.feedbackList = result.data
+      state.feedbackListTotal = result.total
+    },
+    updateFeedbackDetail(state, result) {
+      state.feedbackDetail = {
+        contract: result.contract,
+        device: result.device,
+        feedback: result.feedback,
+        user: result.user,
+        vehicle: result.vehicle
+      }
     }
   },
   actions: {
+    async processFeedback({ commit, rootState }, data) {
+      try {
+        const result = await $apis.processFeedback({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "处理成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async getFeedbackDetail({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getFeedbackDetail({
+            token: getToken(rootState),
+            ...data
+        });
+        commit('updateFeedbackDetail', result)
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async getFeedback({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getFeedback({
+            token: getToken(rootState),
+            ...data
+        });
+        commit('updateFeedbackList', result)
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async deleteApkVersion({ commit, rootState }, data) {
+      try {
+        const result = await $apis.deleteApkVersion({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "删除成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async addApkFile({ commit, rootState }, data) {
+      try {
+        const result = await $apis.addApkFile({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "新增成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
+    async getApkList({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getApkList({
+            token: getToken(rootState),
+            ...data
+        });
+        commit('updateApkList', result)
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
     async getFirmwareList({ commit, rootState }, data) {
       try {
         const result = await $apis.getFirmwareList({
@@ -166,7 +275,12 @@ const Login = {
     productPagesTotal: state => state.productPagesTotal,
     firewareList: state => state.firewareList,
     firewareListTotal: state => state.firewareListTotal,
-    produceLog: state => state.produceLog
+    produceLog: state => state.produceLog,
+    apkList: state => state.apkList,
+    apkListTotal: state => state.apkListTotal,
+    feedbackList: state => state.feedbackList,
+    feedbackListTotal: state => state.feedbackListTotal,
+    feedbackDetail: state => state.feedbackDetail
   }
 };
 

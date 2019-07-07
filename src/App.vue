@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -130,24 +130,24 @@ $basic-ratio: 1.4;
 }
 
 .el-table__fixed .el-table__header {
-thead {
-      color: #ffffff;
+  thead {
+    color: #ffffff;
+    background: #bbbbc4;
+    tr,
+    th {
       background: #bbbbc4;
-      tr,
-      th {
-        background: #bbbbc4;
-      }
     }
+  }
 }
 
 .table-fix-yellow {
   .el-table__header-wrapper .el-table__header {
     thead {
       color: #ffffff;
-      background: #FF7525FF;
+      background: #ff7525ff;
       tr,
       th {
-        background: #FF7525FF;
+        background: #ff7525ff;
       }
     }
   }
@@ -168,13 +168,13 @@ thead {
 
 .ipt-fix {
   &.el-input__inner {
-    border-radius: 0!important;
+    border-radius: 0 !important;
   }
   .el-input__inner {
-    border-radius: 0!important;
+    border-radius: 0 !important;
   }
   .el-textarea__inner {
-    border-radius: 0!important;
+    border-radius: 0 !important;
   }
 }
 
@@ -293,20 +293,52 @@ thead {
 .alarm-mark-content {
   width: d2r(22px);
   height: d2r(27px);
-  background: url('~@/assets/icons/weiyi_icon@2x.png');
-  background-size: 100% 100%; 
+  background: url("~@/assets/icons/weiyi_icon@2x.png");
+  background-size: 100% 100%;
+  &.item-icon-weiyi {
+    background: url("~@/assets/icons/weiyi_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-zhendong {
+    background: url("~@/assets/icons/zhendong_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-gaowen {
+    background: url("~@/assets/icons/gaowen_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-chaosu {
+    background: url("~@/assets/icons/chaosu_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-diya {
+    background: url("~@/assets/icons/diya_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-gaoya {
+    background: url("~@/assets/icons/gaoya_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-neizhidiya {
+    background: url("~@/assets/icons/neizhidiya_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-duandian {
+    background: url("~@/assets/icons/duandian_icon@2x.png");
+    background-size: 100% 100%;
+  }
 }
 
 .amap-info {
   .amap-info-contentContainer {
-  .amap-info-outer {
-    border: 0;
-    box-shadow: 0 0 0 rgba(0,0,0,0.1);
+    .amap-info-outer {
+      border: 0;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
+    }
+    &:hover {
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
+    }
   }
-  &:hover {
-    box-shadow: 0 0 0 rgba(0,0,0,0.1);
-  }
-}
 }
 
 .location-marker {
@@ -369,7 +401,7 @@ thead {
 .mark-car {
   width: d2r(48px);
   height: d2r(53px);
-  background: url('~@/assets/icons/motuochefuwu-copy@2x.png');
+  background: url("~@/assets/icons/motuochefuwu-copy@2x.png");
   background-size: 100% 100%;
 }
 

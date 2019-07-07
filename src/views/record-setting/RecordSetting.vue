@@ -10,12 +10,10 @@
 </template>
 
 <script>
-import RecordSettingContent from './RecordSettingContent'
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import PageBack from "@/components/PageBack.vue";
-import RenewBtn from "./RenewBtn.vue";
-import RenewBtnLog from "./RenewBtnLog.vue";
+import RecordSettingContent from './RecordSettingContent'
 
 export default {
   data() {
@@ -52,8 +50,6 @@ export default {
   components: {
     PageTitle,
     PageBack,
-    RenewBtn,
-    RenewBtnLog,
     RecordSettingContent
   },
   mounted() {

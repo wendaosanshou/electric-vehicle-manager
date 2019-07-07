@@ -41,6 +41,7 @@
             <div class="car-marker-item" @click="pauseMove">暂停</div>
             <div class="car-marker-item" @click="startMove">开始</div>
             <div class="car-marker-item" @click="stopMove">停止</div>
+            <div class="car-marker-item" @click="backHistory">退出</div>
           </div>
           <div class="history-map-container" id="history-map-container"></div>
         </div>
@@ -110,6 +111,8 @@ export default {
         setTimeout(() => {
           this.initAMap();
         }, 10);
+      } else {
+        this.isShowHistoryTrack = false
       }
     }
   },
@@ -122,6 +125,10 @@ export default {
   },
   methods: {
     ...mapActions(["getHistoryInfo"]),
+    backHistory() {
+      this.isShowHistoryTrack = false
+      this.initAMap();
+    },
     onDialogHide() {
       this.$emit("change", false);
     },

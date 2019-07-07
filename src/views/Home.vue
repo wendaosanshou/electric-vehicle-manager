@@ -193,6 +193,20 @@ export default {
               path: "device-version",
               index: "9-8",
               role: "17"
+            },
+            {
+              name: "app升级管理",
+              logo: "el-icon-location",
+              path: "app-update",
+              index: "9-9",
+              role: "18"
+            },
+            {
+              name: "客户留言管理",
+              logo: "el-icon-location",
+              path: "user-feedback",
+              index: "9-10",
+              role: "19"
             }
           ]
         }
@@ -355,6 +369,12 @@ export default {
           break;
         case "/device-version":
           activeMenu = "系统设置 > 设备版本管理";
+          break;
+        case "/app-update":
+          activeMenu = "系统设置 > app升级管理";
+          break;
+        case "/user-feedback":
+          activeMenu = "系统设置 > 客户留言管理";
           break;
         default:
           activeMenu = "";

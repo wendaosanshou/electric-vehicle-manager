@@ -30,19 +30,31 @@
         </el-select>
       </div>
       <div class="title-right">
-        <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="onSearchFence">查询</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="handleAddFence">新增围栏</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="handleSaveFence">保存</el-button>
       </div>
     </div>
 
-    <div class="monitor-container">
+    <div class="monitor-container js-map-container" :style="{height: pageHeight}">
       <div class="map-content" id="electric-map-container"></div>
+      <div class="electric-desc-content">
+        <div class="electric-item">
+          <div class="electric-item-title">闯禁区违法情况</div>
+          <div class="electric-item-content">暂无数据</div>
+        </div>
+        <div class="electric-item">
+          <div class="electric-item-title">违章停放情况</div>
+          <div class="electric-item-content">暂无数据</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import MapMixin from '@/mixins/map-mixin'
+import MapMixin from "@/mixins/map-mixin";
 
 export default {
   mixins: [MapMixin],
@@ -50,6 +62,7 @@ export default {
     return {
       value2: "",
       positionCenter: [116.43, 39.92],
+      rectangleEditor: {},
       searchNumber: "",
       searchType: 0,
       searchTypeList: [
@@ -116,10 +129,71 @@ export default {
       aMap: {}
     };
   },
+  computed: {
+    ...mapGetters(["pickerOptions", "accountList", "allLocationInfo"])
+  },
   methods: {
+    ...mapActions(['getWebDevice']),
+    handleAddFence() {
+      this.map.clearMap()
+      let center = this.map.getCenter();
+      var southWest = new AMap.LngLat(center.lng - 0.02, center.lat - 0.01);
+      var northEast = new AMap.LngLat(center.lng + 0.02, center.lat + 0.01);
+
+      var bounds = new AMap.Bounds(southWest, northEast);
+
+      var rectangle = new AMap.Rectangle({
+        bounds: bounds,
+        strokeColor: "red",
+        strokeWeight: 6,
+        strokeOpacity: 0.5,
+        strokeDasharray: [30, 10],
+        // strokeStyle还支持 solid
+        strokeStyle: "dashed",
+        fillColor: "blue",
+        fillOpacity: 0.5,
+        cursor: "pointer",
+        zIndex: 50
+      });
+
+      rectangle.setMap(this.map);
+      // 缩放地图到合适的视野级别
+      this.map.setFitView([rectangle]);
+
+      this.rectangleEditor = new AMap.RectangleEditor(this.map, rectangle);
+
+      this.rectangleEditor.on("adjust", function(event) {
+        console.log("触发事件：adjust");
+      });
+
+      this.rectangleEditor.on("end", function(event) {
+        console.log("触发事件： end");
+      });
+
+      setTimeout(() => {
+        this.rectangleEditor.open();
+      }, 100);
+    },
+    handleOpenFence() {
+      this.rectangleEditor.close();
+    },
+    handleSaveFence() {
+      this.rectangleEditor.close();
+      this.map.clearMap()
+    },
+    onSearchFence() {},
+    drawAMap() {
+      const [{lng, lat}] = this.allLocationInfo
+      const positionCenter = [lng, lat]
+      this.initAMap("electric-map-container", positionCenter);
+    },
+    async init() {
+      await this.getWebDevice();
+      this.drawAMap()
+    }
   },
   mounted() {
-    this.initAMap('electric-map-container', this.positionCenter);
+    this.init()
   }
 };
 </script>
@@ -166,6 +240,10 @@ $basic-ratio: 1.4;
   }
   .monitor-container {
     position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     width: 100%;
     height: d2r(820px);
     margin-top: d2r(19px);
@@ -186,8 +264,46 @@ $basic-ratio: 1.4;
       cursor: pointer;
     }
     .map-content {
-      width: 100%;
+      box-sizing: border-box;
+      flex-grow: 1;
       height: 100%;
+    }
+    .electric-desc-content {
+      box-sizing: border-box;
+      width: d2r(320px);
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
+      .electric-item {
+        width: d2r(300px);
+        margin-top: d2r(10px);
+        flex-grow: 1;
+        border: 1px solid rgba(229, 233, 238, 1);
+        &:nth-child(1) {
+          margin-top: 0;
+        }
+        .electric-item-title {
+          box-sizing: border-box;
+          padding-left: d2r(10px);
+          width: 100%;
+          height: d2r(40px);
+          font-size: d2r(14px);
+          text-align: left;
+          line-height: d2r(40px);
+          background: #9e9db6ff;
+          color: #3b4859ff;
+        }
+        .electric-item-content {
+          width: 100%;
+          height: d2r(340px);
+          line-height: d2r(340px);
+          font-size: d2r(13px);
+          color: #3b4859ff;
+        }
+      }
     }
   }
 }

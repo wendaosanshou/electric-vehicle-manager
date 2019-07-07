@@ -8,10 +8,11 @@
       :modal="false"
       :close-on-click-modal="false"
     >
+      <!-- {{dialogList}} -->
       <div class="dialog-content">
-        <div class="form-item" v-for="(item, index) in dialogList" :key="index">
+        <div class="form-item" v-for="(item, index) in alarmTypeList" :key="index">
           <i class="item-icon" :class="[`item-icon-${item.icon}`]"></i>
-          <span class="item-content">{{item.content}}</span>
+          <span class="item-content">{{`${item.content}(${item.count})`}}</span>
         </div>
       </div>
     </el-dialog>
@@ -19,6 +20,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
   data() {
     return {
@@ -26,46 +29,55 @@ export default {
       dialogList: [
         {
           icon: "weiyi",
-          content: "位移告警（0）"
+          content: "位移告警",
+          count: 0
         },
         {
           icon: "zhendong",
-          content: "震动告警（0）"
+          content: "震动告警",
+          count: 0
         },
         {
           icon: "gaowen",
-          content: "高温告警（0）"
+          content: "高温告警",
+          count: 0
         },
         {
           icon: "chaosu",
-          content: "超速告警（0）"
+          content: "超速告警",
+          count: 0
         },
         {
           icon: "diya",
-          content: "电瓶低电压告警（0）"
+          content: "电瓶低电压告警",
+          count: 0
         },
         {
           icon: "gaoya",
-          content: "充电高电压告警（0）"
+          content: "充电高电压告警",
+          count: 0
         },
         {
           icon: "neizhidiya",
-          content: "内置电池低电压告警（0）"
+          content: "内置电池低电压告警",
+          count: 0
         },
         {
           icon: "duandian",
-          content: "外置电源断电告警（0）"
+          content: "外置电源断电告警",
+          count: 0
         }
       ]
     };
   },
   computed: {
-      getDialogListImage() {
-          return this.dialogList.map(item => {
-              item.icon = require(`@/assets/icons/${item.icon}_icon@2x.png`)
-              return item
-          })
-      }
+    ...mapGetters(["alarmLatest", "alarmTypeList"]),
+    getDialogListImage() {
+      return this.dialogList.map(item => {
+        item.icon = require(`@/assets/icons/${item.icon}_icon@2x.png`);
+        return item;
+      });
+    }
   },
   model: {
     prop: "visible",
@@ -80,6 +92,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateAlarmTypeList']),
     onDialogHide() {
       this.$emit("change", false);
     }
@@ -121,39 +134,39 @@ $basic-ratio: 1.4;
         width: d2r(22px);
         height: d2r(27px);
         broder: 0;
-        background: url('~@/assets/icons/weiyi_icon@2x.png');
-        background-size: 100% 100%; 
+        background: url("~@/assets/icons/weiyi_icon@2x.png");
+        background-size: 100% 100%;
         &.item-icon-weiyi {
-            background: url('~@/assets/icons/weiyi_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/weiyi_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-zhendong {
-            background: url('~@/assets/icons/zhendong_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/zhendong_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-gaowen {
-            background: url('~@/assets/icons/gaowen_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/gaowen_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-chaosu {
-            background: url('~@/assets/icons/chaosu_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/chaosu_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-diya {
-            background: url('~@/assets/icons/diya_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/diya_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-gaoya {
-            background: url('~@/assets/icons/gaoya_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/gaoya_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-neizhidiya {
-            background: url('~@/assets/icons/neizhidiya_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/neizhidiya_icon@2x.png");
+          background-size: 100% 100%;
         }
         &.item-icon-duandian {
-            background: url('~@/assets/icons/duandian_icon@2x.png');
-            background-size: 100% 100%; 
+          background: url("~@/assets/icons/duandian_icon@2x.png");
+          background-size: 100% 100%;
         }
       }
       .item-content {

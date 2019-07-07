@@ -2,7 +2,6 @@
   <div class="business-point-manage">
     <div class="point-manage-title">
       <page-title>{{pagetTitle}}</page-title>
-      {{formType}}
     </div>
     <div class="point-manange-content">
       <div class="point-manage-tree">

@@ -30,6 +30,7 @@
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
         <el-button class="button-fix" size="mini" type="primary" @click="onHistorySearch">查询</el-button>
+        <!-- <el-button class="button-fix" size="mini" type="primary" @click="onBackHistoryTrack">退出</el-button> -->
       </div>
     </div>
 
@@ -51,6 +52,7 @@
         <div class="car-marker-item" @click="pauseMove">暂停</div>
         <div class="car-marker-item" @click="startMove">开始</div>
         <div class="car-marker-item" @click="stopMove">停止</div>
+        <div class="car-marker-item" @click="onBackHistoryTrack">退出</div>
       </div>
       <div class="map-content js-map-container" id="history-map-container" :style="{height: pageHeight}"></div>
     </div>
@@ -69,6 +71,7 @@ export default {
     return {
       loading: {},
       pickerTime: [],
+      markerClusterer: [],
       isShowHistoryTrack: false,
       isPauseMove: false,
       carSpeed: 1,
@@ -114,11 +117,11 @@ export default {
   },
   methods: {
     ...mapMutations(['updateCurrentLocationInfo']),
-    ...mapActions(["getHistoryInfo", "getAllDeviceInfo", "getDeviceInfo"]),
+    ...mapActions(["getHistoryInfo", "getWebDevice", "getDeviceInfo"]),
     async onHistorySearch() {
       const [startDate, endDate] = this.pickerTime;
       try {
-         if (startDate && endDate) {
+         if (startDate && endDate && this.searchValue) {
         this.renderLoading()
         await this.getDeviceInfo({
           type: this.searchType,
@@ -210,45 +213,6 @@ export default {
       });
       this.map.setFitView();
     },
-    getCicleMarkerContent(positionInfo) {
-      let markerContent = document.createElement("div");
-      let markerContent1 = document.createElement("div");
-      let markerContent2 = document.createElement("div");
-      let markerContent3 = document.createElement("div");
-      markerContent.className = "mark-content";
-      markerContent1.className = "mark-content-1";
-      markerContent2.className = "mark-content-2";
-      markerContent3.className = "mark-content-3";
-      markerContent2.append(markerContent3);
-      markerContent1.append(markerContent2);
-      markerContent.append(markerContent1);
-      markerContent3.innerHTML = '000';
-      setTimeout(() => {
-        $(markerContent).on('click', () => {
-          this.updateCurrentLocationInfo(positionInfo)
-          const { imei } = positionInfo
-          this.searchType = 'imei'
-          this.searchValue = imei
-        })
-      }, 100)
-      return markerContent;
-    },
-    addCicleMarkers() {
-      this.map.clearMap();
-      this.allLocationInfo.forEach(item => {
-        const position = [item.lng, item.lat];
-        this.addMarker(position, this.getCicleMarkerContent(item));
-      });
-      this.map.setFitView();
-    },
-    addMarker(position, content) {
-      new AMap.Marker({
-        map: this.map,
-        position: position,
-        content: content,
-        offset: new AMap.Pixel(-13, -30)
-      });
-    },
     renderLoading() {
       this.loading = this.$loading({
         lock: true,
@@ -262,10 +226,15 @@ export default {
         return [item.lng, item.lat];
       });
     },
+    onBackHistoryTrack() {
+      this.isShowHistoryTrack = false
+      this.init()
+    },
     async init() {
-      await this.getAllDeviceInfo();
+      await this.getWebDevice();
       const locationArray = this.getLocationArray(this.allLocationInfo);
       const [positionCenter] = locationArray;
+      // alert(positionCenter)
       this.initAMap("history-map-container", positionCenter);
       this.addCicleMarkers();
     }

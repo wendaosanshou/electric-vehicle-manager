@@ -655,6 +655,7 @@ export default {
       this.procssDetailDialogVisible = false;
     },
     onMobileSetting(workItem) {
+      console.log(workItem)
       this.updateWorkItem(workItem);
       if (this.isRecordManage) {
         this.$router.push("/record-setting");
