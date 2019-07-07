@@ -233,5 +233,25 @@ export default {
   processFeedback(data) {
     const { token } = data
     return $ajax.post(requestUrl(`feedback/ret?token=${token}`), data);
+  },
+  addFence(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`fence/add?token=${token}`), data);
+  },
+  deleteFence(data) {
+    const { id, token } = data
+    return $ajax.get(requestUrl(`fence/delete/${id}?token=${token}`), data);
+  },
+  getAllFence(data) {
+    const { token } = data
+    return $ajax.get(requestUrl(`fence/all?token=${token}`), data);
+  },
+  getOneFence(data) {
+    const { id, token } = data
+    return $ajax.post(requestUrl(`fence/get/${id}?token=${token}`), data);
+  },
+  getFenceAlarm(data) {
+    const { id, token } = data
+    return $ajax.post(requestUrl(`fence/alarm?token=${token}`), data);
   }
 };

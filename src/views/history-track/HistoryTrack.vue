@@ -71,7 +71,6 @@ export default {
     return {
       loading: {},
       pickerTime: [],
-      markerClusterer: [],
       isShowHistoryTrack: false,
       isPauseMove: false,
       carSpeed: 1,

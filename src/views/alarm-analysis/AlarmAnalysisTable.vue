@@ -9,12 +9,16 @@
         :close-on-click-modal="false"
       >
         <div class="dialog-content">
-          <!-- {{alarmAnalyse[0]}} -->
-        <el-table ref="userTable" class="table-analysis table-fix table-fix-yellow table-disable-select-all" size="mini" :data="alarmAnalyse" border style="width: 100%" max-height="340">
-            <el-table-column prop="note" label="车主姓名"></el-table-column>
-            <el-table-column prop="status" label="防盗备案号"></el-table-column>
+          <!-- {{deviceInfo}} -->
+        <el-table ref="userTable" class="table-analysis table-fix table-fix-yellow table-disable-select-all" size="mini" :data="filterAlarmAnalyse" border style="width: 100%" max-height="340">
+            <el-table-column prop="vehicleAccount" label="车主姓名"></el-table-column>
+            <el-table-column prop="invoice" label="防盗备案号"></el-table-column>
             <el-table-column prop="signal_time" width="140" label="告警时间"></el-table-column>
-            <el-table-column prop="note" label="告警类型"></el-table-column>
+            <el-table-column prop="note" width="120" label="告警类型">
+              <template slot-scope="scope">
+                {{getAlarmNote(scope.row.note)}}
+              </template>
+            </el-table-column>
         </el-table>
 
         <el-pagination
@@ -51,7 +55,19 @@ export default {
     event: 'change'
   },
   computed: {
-      ...mapGetters(['allUser', 'alarmAnalyse', 'alarmAnalyseTotal'])
+      ...mapGetters(['allUser', 'alarmAnalyse', 'alarmAnalyseTotal', 'deviceInfo']),
+      user_info() {
+        const { user_info } = this.deviceInfo
+        return user_info || ''
+      },
+      filterAlarmAnalyse() {
+        const { user_info, vehicle_info } = this.deviceInfo
+        return this.alarmAnalyse.map(item => {
+          item.vehicleAccount = user_info.name
+          item.invoice = vehicle_info.invoice
+          return item
+        })
+      }
   },
   props: {
     visible: {
@@ -77,6 +93,12 @@ export default {
     }
   },
   methods: {
+    getAlarmNote(note) {
+      if (note) {
+        return note.replace(/[^\u4e00-\u9fa5|,]/gi, '')
+      }
+      return note
+    },
     handleSizeChange(pageSize) {
       this.$emit('size-change', pageSize)
     },

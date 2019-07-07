@@ -7,7 +7,8 @@ export default {
       heatMap: {},
       searchType: "account",
       searchValue: "",
-      pageHeight: '800px'
+      pageHeight: '800px',
+      markerClusterer: []
     };
   },
   methods: {

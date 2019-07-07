@@ -119,8 +119,10 @@ const Login = {
         let { note } = item;
         state.alarmTypeList.forEach(alarmTypeItem => {
           let alarmTips = alarmTypeItem.content.substr(0, 2);
+          console.log('--note--', note, alarmTips)
           if (note.indexOf(alarmTips) > -1) {
             alarmTypeItem.count += 1;
+            console.log('alarmLatest', alarmTips, alarmTypeItem)
             // 显示最后一个class
             item.iconClass = `item-icon-${alarmTypeItem.icon}`
             state.currentAlarm = item
@@ -132,7 +134,7 @@ const Login = {
       state.alarmAnalyse = result.data;
       state.alarmAnalyseTotal = result.total
       // todo delete
-      state.alarmAnalyse[1].note = '震动告警'
+      // state.alarmAnalyse[1].note = '震动告警'
       // 更新alarmTypeList
       // 重置count
       state.alarmTypeList.forEach(item => {

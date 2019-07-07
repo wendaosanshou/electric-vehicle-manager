@@ -8,6 +8,7 @@ import login from "./modules/login"
 import roleManage from './modules/role-manage'
 import userManage from './modules/user-manage'
 import deviceManage from './modules/device-manage'
+import electricFence from './modules/electric-fence'
 import work from './modules/work'
 
 Vue.use(Vuex);
@@ -25,7 +26,8 @@ export default new Vuex.Store({
     userManage: userManage,
     deviceManage: deviceManage,
     alarmMonitor: alarmMonitor,
-    work: work
+    work: work,
+    electricFence: electricFence
   },
   plugins: [vuexLocal.plugin]
 });

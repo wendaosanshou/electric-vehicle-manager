@@ -148,8 +148,8 @@ export default {
       let seldomNumber = Math.random()
       this.alarmAnalyse.forEach(item => {
         console.log('alarmAnalyse', item.lng)
-        item.lng += Math.random() * 0.1
-        item.lat += Math.random() * 0.1
+        // item.lng += Math.random() * 0.1
+        // item.lat += Math.random() * 0.1
         this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent(item));
       });
       this.map.setFitView();

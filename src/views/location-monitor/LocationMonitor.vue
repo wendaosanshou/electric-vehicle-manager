@@ -70,7 +70,6 @@ export default {
       trackModeVisible: false,
       clearHistoryDialogVisible: false,
       positionCenter: [116.43, 39.92],
-      markerClusterer: [],
       mapValue: 0,
       mapList: [
         {

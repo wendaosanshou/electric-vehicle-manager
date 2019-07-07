@@ -422,6 +422,29 @@ $basic-ratio: 1.4;
   opacity: 0;
 }
 
+.context_menu {
+  position: relative;
+  padding: 0;
+  background: #ffffff;
+  box-shadow: 0px 5px 20px 0px rgba(159, 158, 193, 1);
+}
+
+.context_menu p {
+  box-sizing: border-box;
+  width: d2r(120px);
+  height: d2r(50px);
+  line-height: d2r(50px);
+  font-size: d2r(17px);
+  padding-left: d2r(16px);
+  text-align: left;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.context_menu p:hover {
+  background: #ccc;
+}
+
 .dialog-no-header {
   .el-dialog .el-dialog__header {
     display: none !important;

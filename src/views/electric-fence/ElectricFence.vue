@@ -1,11 +1,25 @@
 <template>
   <div class="electric-fence">
     <div class="fence-title">
-      <div class="track-time">
-        <el-date-picker
-          v-model="value2"
+      <div class="search-item">
+        <el-select
+          class="ipt-fix ipt-selector"
           size="mini"
-          clss="ipt-fix"
+          v-model="fenceModelValue"
+          @change="fenceModelChange"
+          placeholder="请选择围栏模式"
+        >
+          <el-option
+            :label="item.label"
+            :value="item.value"
+            v-for="item in fenceModels"
+            :key="item.value"
+          ></el-option>
+        </el-select>
+        <el-date-picker
+          v-model="pickerTime"
+          size="mini"
+          class="ipt-fix time-picker"
           type="datetimerange"
           :picker-options="pickerOptions"
           range-separator="至"
@@ -13,187 +27,391 @@
           end-placeholder="结束日期"
           align="right"
         ></el-date-picker>
+        <div class="button-container">
+          <el-button
+            class="button-search button-fix"
+            size="mini"
+            type="primary"
+            icon="el-icon-search"
+            @click="handleSearchFenceAlarms"
+          >查询</el-button>
+          <electric-fence-delete
+            :fenceList="fenceObjList"
+            class="button-delete"
+            ref="fenceDelete"
+            @on-delete="handleDeletFench"
+          ></electric-fence-delete>
+        </div>
       </div>
-      <div class="title-right">
+      <div class="search-item">
         <el-select
-          class="ipt-fix ipt-selector"
+          class="ipt-fix ipt-selector ipt-selector-long"
           size="mini"
-          v-model="searchValue"
+          @change="handleFenceChange"
+          v-model="fenceValue"
           placeholder="请选择电子围栏"
+          multiple
+          :disabled="isModifyModel"
         >
-          <el-option
-            :label="item.label"
-            :value="item.value"
-            v-for="item in accountList"
-            :key="item.value"
-          ></el-option>
+          <el-option :label="item.name" :value="item.id" v-for="item in allFence" :key="item.id"></el-option>
         </el-select>
-      </div>
-      <div class="title-right">
-        <el-button class="button-fix" size="mini" type="primary" @click="onSearchFence">查询</el-button>
-        <el-button class="button-fix" size="mini" type="primary" @click="handleAddFence">新增围栏</el-button>
-        <el-button class="button-fix" size="mini" type="primary" @click="handleSaveFence">保存</el-button>
+        <el-button class="button-export button-fix" size="mini" @click="exportExcel">导出</el-button>
       </div>
     </div>
-
     <div class="monitor-container js-map-container" :style="{height: pageHeight}">
       <div class="map-content" id="electric-map-container"></div>
       <div class="electric-desc-content">
         <div class="electric-item">
           <div class="electric-item-title">闯禁区违法情况</div>
-          <div class="electric-item-content">暂无数据</div>
+          <div class="electric-item-content">
+            <div class="electric-alarm-list" v-if="hasFenceAlarmArea">
+              <div class="electric-alarm-item" v-for="(item, index) in fenceAlarmArea" :key="index">
+                <div class="alarm-item-title">
+                  <i class="item-icon"></i>
+                  <span class="item-text">违章{{index + 1}}</span>
+                </div>
+                <div class="alarm-item-desc">
+                  <div class="item-desc-label">时 间：</div>
+                  <div class="item-desc-content">{{item.start_time}}</div>
+                </div>
+                <div class="alarm-item-desc">
+                  <div class="item-desc-label">违法人：</div>
+                  <div class="item-desc-content">{{item.certificates_code}}</div>
+                </div>
+                <div class="alarm-item-desc">
+                  <div class="item-desc-label">车牌号：</div>
+                  <div class="item-desc-content">{{item.plate}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="empty-data" v-else>暂无数据</div>
+          </div>
         </div>
         <div class="electric-item">
           <div class="electric-item-title">违章停放情况</div>
-          <div class="electric-item-content">暂无数据</div>
+          <div class="electric-item-content">
+            <div class="electric-alarm-list" v-if="hasFenceAlarmPark">
+              <div class="electric-alarm-item" v-for="(item, index) in fenceAlarmPark" :key="index">
+                <div class="alarm-item-title">
+                  <i class="item-icon"></i>
+                  <span class="item-text">违章{{index + 1}}</span>
+                </div>
+                <div class="alarm-item-desc">
+                  <div class="item-desc-label">时 间：</div>
+                  <div class="item-desc-content">{{item.start_time}}</div>
+                </div>
+                <div class="alarm-item-desc">
+                  <div class="item-desc-label">违法人：</div>
+                  <div class="item-desc-content">{{item.certificates_code}}</div>
+                </div>
+                <div class="alarm-item-desc">
+                  <div class="item-desc-label">车牌号：</div>
+                  <div class="item-desc-content">{{item.plate}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="empty-data" v-else>暂无数据</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <el-dialog
+      class="dialog-fix"
+      title="保存电子围栏"
+      :visible.sync="dialogVisible"
+      @close="onDialogHide"
+    >
+      <div class="dialog-content">
+        <el-form
+          class="user-add-form device-form-fix"
+          label-position="right"
+          label-width="220px"
+          :model="form"
+        >
+          <el-form-item label="电子围栏命名">
+            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入电子围栏名称"></el-input>
+          </el-form-item>
+          <el-form-item label="电子围栏说明">
+            <el-input
+              type="textarea"
+              class="ipt-fix"
+              size="mini"
+              resize="none"
+              :autosize="{ minRows: 10, maxRows: 10}"
+              v-model="form.note"
+              placeholder="请输入电子围栏说明"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" type="primary" @click="handleConfirmAddFence">确 定</el-button>
+        <el-button size="mini" @click="onDialogHide">取 消</el-button>
+      </div>
+    </el-dialog>
+    
+    <!-- 导出数据使用 -->
+    <el-table
+      class="table-fix"
+      id="process-export-table"
+      size="mini"
+      :data="fenceAlarm"
+      border
+      style="width: 100%"
+      v-show="false"
+    >
+      <el-table-column prop="start_time" label="时 间" align="center"></el-table-column>
+      <el-table-column prop="certificates_code" label="违法人" width="120" align="center"></el-table-column>
+      <el-table-column prop="plate" label="车牌号" align="center"></el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
+import dayjs from "dayjs";
+import MenuContent from "./menu-context";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+import ElectricFenceDelete from "./ElectricFenceDelete";
+import { setTimeout } from "timers";
 
 export default {
   mixins: [MapMixin],
   data() {
     return {
-      value2: "",
-      positionCenter: [116.43, 39.92],
-      rectangleEditor: {},
-      searchNumber: "",
-      searchType: 0,
-      searchTypeList: [
+      pickerTime: "",
+      fenceValue: [],
+      fenceObjList: [],
+      fencePolygons: [],
+      dialogVisible: false,
+      mouseTool: "",
+      pathString: "",
+      fenceModelValue: 1,
+      fenceModels: [
         {
           value: 0,
-          label: "全部告警类型"
+          label: "编辑模式"
         },
         {
           value: 1,
-          label: "位移告警"
-        },
-        {
-          value: 2,
-          label: "震动告警"
-        },
-        {
-          value: 3,
-          label: "温度告警"
-        },
-        {
-          value: 4,
-          label: "超速告警"
-        },
-        {
-          value: 5,
-          label: "摔倒告警"
-        },
-        {
-          value: 6,
-          label: "电瓶低电压告警"
-        },
-        {
-          value: 7,
-          label: "外置电源断电告警"
-        },
-        {
-          value: 8,
-          label: "内置电池低电压告警"
+          label: "查询模式"
         }
       ],
-      searchValue: "",
-      searchList: [
-        {
-          value: 0,
-          label: "手机号"
-        },
-        {
-          value: 1,
-          label: "终端IMEI"
-        },
-        {
-          value: 2,
-          label: "防盗备案号"
-        },
-        {
-          value: 3,
-          label: "IMSI"
-        },
-        {
-          value: 4,
-          label: "身份证号"
-        }
-      ],
-      aMap: {}
+      form: {
+        name: "",
+        note: ""
+      }
     };
   },
   computed: {
-    ...mapGetters(["pickerOptions", "accountList", "allLocationInfo"])
+    ...mapGetters([
+      "pickerOptions",
+      "accountList",
+      "allLocationInfo",
+      "allFence",
+      "fenceAlarm",
+      "fenceAlarmTotal"
+    ]),
+    isModifyModel() {
+      return this.fenceModelValue === 0;
+    },
+    fenceAlarmArea() {
+      if (this.fenceAlarm && this.fenceAlarm.length > 0) {
+        return this.fenceAlarm.filter(item => item.alarm_type === 0);
+      }
+      return [];
+    },
+    hasFenceAlarmArea() {
+      return this.fenceAlarmArea && this.fenceAlarmArea.length > 0;
+    },
+    fenceAlarmPark() {
+      if (this.fenceAlarm && this.fenceAlarm.length > 0) {
+        return this.fenceAlarm.filter(item => item.alarm_type === 1);
+      }
+      return [];
+    },
+    hasFenceAlarmPark() {
+      return this.fenceAlarmPark && this.fenceAlarmPark.length > 0;
+    }
   },
   methods: {
-    ...mapActions(['getWebDevice']),
-    handleAddFence() {
-      this.map.clearMap()
-      let center = this.map.getCenter();
-      var southWest = new AMap.LngLat(center.lng - 0.02, center.lat - 0.01);
-      var northEast = new AMap.LngLat(center.lng + 0.02, center.lat + 0.01);
-
-      var bounds = new AMap.Bounds(southWest, northEast);
-
-      var rectangle = new AMap.Rectangle({
-        bounds: bounds,
-        strokeColor: "red",
-        strokeWeight: 6,
-        strokeOpacity: 0.5,
-        strokeDasharray: [30, 10],
-        // strokeStyle还支持 solid
-        strokeStyle: "dashed",
-        fillColor: "blue",
-        fillOpacity: 0.5,
-        cursor: "pointer",
-        zIndex: 50
+    ...mapMutations(["resetFenceAlarm"]),
+    ...mapActions([
+      "getWebDevice",
+      "addFence",
+      "getAllFence",
+      "deleteFence",
+      "getFenceAlarm"
+    ]),
+    exportExcel() {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(
+        document.querySelector("#process-export-table")
+      );
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "电子围栏.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    fenceModelChange(fenceModel) {
+      this.resetMap();
+      if (fenceModel === 0) {
+        this.initFenceEnv();
+      } else if (fenceModel === 1) {
+        if (this.mouseTool) {
+          this.mouseTool.close();
+        }
+      }
+    },
+    resetMap() {
+      this.map.clearMap();
+      this.fenceValue = [];
+      this.fenceObjList = [];
+      this.fencePolygons = [];
+    },
+    drawFence(data) {
+      let path = data
+        .split(";")
+        .filter(item => item)
+        .map(item => {
+          let [first, last] = item.split(",");
+          return [last, first];
+        });
+      var polygon = new AMap.Polygon({
+        path: path,
+        fillColor: "#F8755487",
+        strokeColor: "#F87554FF"
       });
 
-      rectangle.setMap(this.map);
-      // 缩放地图到合适的视野级别
-      this.map.setFitView([rectangle]);
-
-      this.rectangleEditor = new AMap.RectangleEditor(this.map, rectangle);
-
-      this.rectangleEditor.on("adjust", function(event) {
-        console.log("触发事件：adjust");
+      this.map.add(polygon);
+      this.fencePolygons.push(polygon);
+    },
+    drawAllFence() {
+      this.map.clearMap();
+      this.fencePolygons = [];
+      this.fenceObjList.forEach(item => {
+        this.drawFence(item.data);
       });
-
-      this.rectangleEditor.on("end", function(event) {
-        console.log("触发事件： end");
+      this.map.setFitView(this.fencePolygons);
+    },
+    async handleDeletFench() {
+      let promiseAll = [];
+      this.fenceValue.forEach(id => {
+        let promise = this.deleteFence({
+          id: id
+        });
+        promiseAll.push(promise);
       });
-
-      setTimeout(() => {
-        this.rectangleEditor.open();
-      }, 100);
+      await Promise.all(promiseAll);
+      this.fenceValue = [];
+      this.map.clearMap();
+      this.getAllFence();
+      this.$refs.fenceDelete.onDialogHide();
     },
-    handleOpenFence() {
-      this.rectangleEditor.close();
+    handleFenceChange(fenceId) {
+      this.fenceObjList = this.allFence.filter(item => {
+        return this.fenceValue.indexOf(item.id) > -1;
+      });
+      this.drawAllFence();
     },
-    handleSaveFence() {
-      this.rectangleEditor.close();
-      this.map.clearMap()
+    onDialogHide() {
+      this.map.clearMap();
+      this.dialogVisible = false;
     },
-    onSearchFence() {},
+    async handleConfirmAddFence() {
+      const [startDate, endDate] = this.pickerTime;
+      if (startDate && endDate) {
+        const params = {
+          start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end_time: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          data: this.pathString,
+          name: this.form.name,
+          note: this.form.note
+        };
+        await this.addFence(params);
+        this.form.name = "";
+        this.form.note = "";
+        this.getAllFence();
+      } else {
+        this.$message({
+          type: "error",
+          message: `请选择开始日期和结束日期`
+        });
+      }
+      this.onDialogHide();
+    },
+    async handleSearchFenceAlarms() {
+      const [startDate, endDate] = this.pickerTime;
+      if (startDate && endDate) {
+        const params = {
+          start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          end_time: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          arr_id: this.fenceValue,
+          page_size: 10,
+          page_index: 1
+        };
+        await this.getFenceAlarm(params);
+        this.form.name = "";
+        this.form.note = "";
+      } else {
+        this.$message({
+          type: "error",
+          message: `请选择开始日期和结束日期`
+        });
+      }
+    },
+    initFenceEnv() {
+      this.mouseTool = new AMap.MouseTool(this.map);
+      this.mouseTool.polygon({
+        fillColor: "#F8755487",
+        strokeColor: "#F87554FF"
+      });
+      this.mouseTool.on("draw", e => {
+        let paths = e.obj.getPath();
+        this.pathString = "";
+        paths.forEach((item, index) => {
+          const { lat, lng } = item;
+          this.pathString += `${lat},${lng};`;
+        });
+        this.dialogVisible = true;
+      });
+    },
     drawAMap() {
-      const [{lng, lat}] = this.allLocationInfo
-      const positionCenter = [lng, lat]
+      const [{ lng, lat }] = this.allLocationInfo;
+      const positionCenter = [lng, lat];
       this.initAMap("electric-map-container", positionCenter);
     },
     async init() {
+      this.resetFenceAlarm();
       await this.getWebDevice();
-      this.drawAMap()
+      this.getAllFence();
+      this.drawAMap();
     }
   },
+  components: {
+    ElectricFenceDelete
+  },
   mounted() {
-    this.init()
+    this.init();
   }
 };
 </script>
@@ -210,32 +428,41 @@ $basic-ratio: 1.4;
   .fence-title {
     box-sizing: border-box;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
-    height: d2r(70px);
-    padding: 0 d2r(17px) 0 d2r(20px);
+    height: auto;
+    padding: 0 d2r(17px) d2r(10px) d2r(20px);
     background: #f5f5f6;
-    .title-left {
+    .search-item {
+      box-sizing: border-box;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-      .ipt-selector {
-        width: d2r(200px);
-        margin-right: d2r(10px);
+      width: 100%;
+      margin-top: d2r(10px);
+      .time-picker {
+        margin-left: d2r(18px);
+        width: d2r(610px);
       }
-      .ipt-number {
-        width: d2r(320px);
-        margin-right: d2r(10px);
+      .button-container {
+        margin-left: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-end;
+        .button-delete {
+          margin-left: d2r(10px);
+        }
       }
-    }
-    .title-right {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: center;
+      .button-export {
+        margin-left: auto;
+      }
+      .ipt-selector-long {
+        width: d2r(870px);
+      }
     }
   }
   .monitor-container {
@@ -279,8 +506,8 @@ $basic-ratio: 1.4;
       align-items: flex-end;
       .electric-item {
         width: d2r(300px);
+        height: 50%;
         margin-top: d2r(10px);
-        flex-grow: 1;
         border: 1px solid rgba(229, 233, 238, 1);
         &:nth-child(1) {
           margin-top: 0;
@@ -298,10 +525,56 @@ $basic-ratio: 1.4;
         }
         .electric-item-content {
           width: 100%;
-          height: d2r(340px);
-          line-height: d2r(340px);
+          height: auto;
+          max-height: d2r(340px);
           font-size: d2r(13px);
           color: #3b4859ff;
+          overflow: scroll;
+        }
+        .empty-data {
+          height: d2r(340px);
+          line-height: d2r(340px);
+        }
+        .electric-alarm-item {
+          padding-top: d2r(19px);
+          .alarm-item-title {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: d2r(10px);
+            margin-bottom: d2r(10px);
+            .item-icon {
+              display: block;
+              width: 14px;
+              height: 14px;
+              background: url("~@/assets/icons/icon_weizhangchaxun_png@2x.png");
+              background-size: 100% 100%;
+            }
+            .item-text {
+              font-size: d2r(13px);
+              color: #3b4859ff;
+              text-align: left;
+              margin-left: d2r(6px);
+            }
+          }
+          .alarm-item-desc {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding-left: d2r(10px);
+            font-size: d2r(13px);
+            height: d2r(24px);
+            line-height: d2r(24px);
+            color: #3b4859ff;
+            .item-desc-label {
+              width: d2r(82px);
+              text-align: right;
+            }
+          }
         }
       }
     }
