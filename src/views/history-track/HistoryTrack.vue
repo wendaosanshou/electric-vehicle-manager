@@ -7,7 +7,6 @@
           size="mini"
           clss="ipt-fix"
           type="datetimerange"
-          :picker-options="pickerOptions"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -33,7 +32,6 @@
         <!-- <el-button class="button-fix" size="mini" type="primary" @click="onBackHistoryTrack">退出</el-button> -->
       </div>
     </div>
-
     <div class="monitor-container">
       <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
       <div class="car-marker-menu" v-if="isShowHistoryTrack">
@@ -49,12 +47,16 @@
         >1/2X</div>
         <div class="car-marker-item" :class="{active: carSpeed === 2}" @click="onSetSpeed(2)">2X</div>
         <div class="car-marker-item" :class="{active: carSpeed === 4}" @click="onSetSpeed(4)">4X</div>
-        <div class="car-marker-item" @click="pauseMove">暂停</div>
-        <div class="car-marker-item" @click="startMove">开始</div>
-        <div class="car-marker-item" @click="stopMove">停止</div>
-        <div class="car-marker-item" @click="onBackHistoryTrack">退出</div>
+        <div class="car-marker-item" :class="{active: activeType === 'pause'}" @click="pauseMove">暂停</div>
+        <div class="car-marker-item" :class="{active: activeType === 'start'}" @click="startMove">开始</div>
+        <div class="car-marker-item" :class="{active: activeType === 'stop'}" @click="stopMove" @mouseleave="leaveStopMove">停止</div>
+        <div class="car-marker-item" :class="{active: activeType === 'destory'}" @click="onBackHistoryTrack">退出</div>
       </div>
-      <div class="map-content js-map-container" id="history-map-container" :style="{height: pageHeight}"></div>
+      <div
+        class="map-content js-map-container"
+        id="history-map-container"
+        :style="{height: pageHeight}"
+      ></div>
     </div>
   </div>
 </template>
@@ -73,6 +75,7 @@ export default {
       pickerTime: [],
       isShowHistoryTrack: false,
       isPauseMove: false,
+      activeType: '',
       carSpeed: 1,
       value2: "",
       carMarker: {},
@@ -108,71 +111,99 @@ export default {
         ]
       },
       searchValue: "",
-      searchType: 'account',
+      searchType: "account",
+      graspRoadPath: []
     };
   },
   computed: {
-    ...mapGetters(["historylineArr", "deviceIds", "allLocationInfo", "currentLocationInfo", "accountList", "deviceInfo"])
+    ...mapGetters([
+      "historylineArr",
+      "historyInfo",
+      "historyLineInfo",
+      "deviceIds",
+      "allLocationInfo",
+      "currentLocationInfo",
+      "accountList",
+      "deviceInfo"
+    ])
   },
   methods: {
-    ...mapMutations(['updateCurrentLocationInfo']),
+    ...mapMutations(["updateCurrentLocationInfo"]),
     ...mapActions(["getHistoryInfo", "getWebDevice", "getDeviceInfo"]),
+    deepClone(historylineArr) {
+      return JSON.parse(JSON.stringify(historylineArr));
+    },
+    getLineArr(historyInfo) {
+      return historyInfo.map(item => [item.x, item.y]);
+    },
     async onHistorySearch() {
       const [startDate, endDate] = this.pickerTime;
       try {
-         if (startDate && endDate && this.searchValue) {
-        this.renderLoading()
-        await this.getDeviceInfo({
-          type: this.searchType,
-          value: this.searchValue
-        });
-        await this.getHistoryInfo({
-          id: this.deviceInfo.id,
-          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
-        });
-        this.drawHistoryLine();
-        this.drawCarMarker();
-        this.isShowHistoryTrack = true;
-      } else {
-        this.$message({
-          type: "error",
-          message: "请选择正确的时间段!"
-        });
-      }
+        if (startDate && endDate && this.searchValue) {
+          this.renderLoading();
+          await this.getDeviceInfo({
+            type: this.searchType,
+            value: this.searchValue
+          });
+          if (this.deviceInfo && this.deviceInfo.id) {
+            await this.getHistoryInfo({
+              id: this.deviceInfo.id,
+              start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+              end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+            });
+            this.drawHistoryLine();
+            this.isShowHistoryTrack = true;
+          }
+        } else {
+          this.$message({
+            type: "error",
+            message: "请选择正确的时间段!"
+          });
+        }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-      this.loading.close()
+      this.loading.close();
     },
     renderLoading() {
       this.loading = this.$loading({
         lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
       });
     },
     onSetSpeed(speed) {
-      this.carSpeed = speed;
+      if(this.activeType === '') {
+        this.carSpeed = speed;
+      }
     },
     pauseMove() {
+      this.activeType = 'pause'
       this.isPauseMove = true;
       this.carMarker.pauseMove();
     },
     stopMove() {
+      this.activeType = 'stop'
       this.isPauseMove = false;
       this.carSpeed = 1;
       this.carMarker.stopMove();
+      this.drawHistoryLine()
+    },
+    leaveStopMove() {
+      if (this.activeType = 'stop') {
+        this.activeType = ''
+      }
     },
     resumeMove() {
       this.carMarker.resumeMove();
     },
     startMove() {
+      this.activeType = 'start'
       if (this.isPauseMove) {
         this.resumeMove();
       } else {
-        this.carMarker.moveAlong(this.historylineArr, 200 * this.carSpeed);
+        this.carMarker.moveAlong(this.graspRoadPath, 800 * this.carSpeed);
       }
     },
     getCarMarkerContent() {
@@ -180,13 +211,14 @@ export default {
       markerContent.className = "mark-car";
       return markerContent;
     },
-    drawCarMarker() {
-      let [firstPosition] = this.historylineArr;
+    drawCarMarker(path) {
+      let [firstPosition] = path;
       this.carMarker = new AMap.Marker({
         map: this.map,
         position: firstPosition,
         content: this.getCarMarkerContent(),
-        offset: new AMap.Pixel(-26, -13)
+        anchor: "bottom-center",
+        offset: new AMap.Pixel(0, 0)
       });
 
       var passedPolyline = new AMap.Polyline({
@@ -198,26 +230,56 @@ export default {
       this.carMarker.on("moving", function(e) {
         passedPolyline.setPath(e.passedPath);
       });
-    },
-    drawHistoryLine() {
-      this.map.clearMap();
-      var polyline = new AMap.Polyline({
-        map: this.map,
-        path: this.historylineArr,
-        showDir: true,
-        strokeColor: "#28F", //线颜色
-        // strokeOpacity: 1,     //线透明度
-        strokeWeight: 6 //线宽
-        // strokeStyle: "solid"  //线样式
-      });
       this.map.setFitView();
+    },
+    drawGraspRoad(paths) {
+      let that = this;
+      var graspRoad = new AMap.GraspRoad();
+      return new Promise((resolve, reject) => {
+        graspRoad.driving(paths, (error, result) => {
+          console.log(result)
+          if (!error) {
+            let path2 = []
+            var newPath = result.data.points;
+            for (var i = 0; i < newPath.length; i += 1) {
+              path2.push([newPath[i].x, newPath[i].y]);
+            }
+            var newLine = new AMap.Polyline({
+              path: path2,
+              strokeWeight: 8,
+              strokeOpacity: 0.8,
+              strokeColor: "#0091ea",
+              showDir: true
+            });
+            this.map.add(newLine);
+            console.log('path2', path2.length)
+            this.graspRoadPath = this.graspRoadPath.concat(path2)
+            resolve();
+          }
+        });
+      });
+    },
+    async drawHistoryLine() {
+      this.map.clearMap();
+      this.graspRoadPath = [];
+      for (
+        let index = 0;
+        index < this.historyLineInfo.length;
+        index = index + 200
+      ) {
+        console.log(this.historyLineInfo)
+        let path = this.historyLineInfo.slice(index, index + 500);
+        await this.drawGraspRoad(path);
+      }
+      console.log(this.graspRoadPath.length)
+      this.drawCarMarker(this.graspRoadPath);
     },
     renderLoading() {
       this.loading = this.$loading({
         lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
       });
     },
     getLocationArray(locationInfo) {
@@ -226,16 +288,15 @@ export default {
       });
     },
     onBackHistoryTrack() {
-      this.isShowHistoryTrack = false
-      this.init()
+      this.activeType = 'destory'
+      this.isShowHistoryTrack = false;
+      this.init();
     },
     async init() {
       await this.getWebDevice();
       const locationArray = this.getLocationArray(this.allLocationInfo);
       const [positionCenter] = locationArray;
-      // alert(positionCenter)
       this.initAMap("history-map-container", positionCenter);
-      this.addCicleMarkers();
     }
   },
   mounted() {

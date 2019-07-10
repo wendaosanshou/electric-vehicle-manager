@@ -1,5 +1,6 @@
 <template>
   <div class="point-content">
+    {{businessForm}}
     <div class="point-item">
       <div class="point-item-label">父节点组织名称</div>
       <el-input
@@ -109,7 +110,18 @@ export default {
   methods: {
     ...mapActions(["addBusinessPoint"]),
     initAddBusinessForm() {
-      const { name, id, country, street } = this.currentBusinessPoint;
+      let { name, id, country, street, organization_id } = this.currentBusinessPoint;
+      // 1是市
+      if (organization_id === 1) {
+        country = this.businessForm.name
+        // 2是街道
+      } else if (organization_id === 2) {
+        country = name
+        street = this.businessForm.name
+        // 3是街道
+      } else if (organization_id === 3) {
+        street = name
+      }
       this.businessForm = {
         ...this.businessForm,
         parentName: name,
@@ -119,7 +131,7 @@ export default {
       };
     },
     async handleAddBusinessPoint() {
-      console.log(this.businessForm);
+      this.initAddBusinessForm()
       try {
         if (this.isAllowAdd) {
           await this.addBusinessPoint({

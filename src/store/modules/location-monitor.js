@@ -8,24 +8,30 @@ const getToken = rootState => {
   return userInfo.token || "";
 };
 
-const convertGps = list => {
+const convertGps = async list => {
   let promiseArr = [];
   let tid = ''
   try {
-    console.log("convertGps", list);
     for (let i = 0; i < list.length; i++) {
       let item = list[i];
       let { lng, lat } = item;
-      let gps = [lng / 1000000, lat / 1000000];
+      item.lng = lng / 1000000;
+      item.lat = lat / 1000000;
+      let gps = [item.lng, item.lat];
       let promise = new Promise((resolve, reject) => {
-        AMap.convertFrom(gps, "gps", function(status, result) {
-          if (result.info === "ok") {
-            const [{ lng, lat }] = result.locations; // Array.<LngLat>
-            item.lng = lng;
-            item.lat = lat;
-            resolve(item);
-          }
-        });
+        resolve()
+        // AMap.convertFrom(gps, "gps", function(status, result) {
+        //   if (result.info === "ok") {
+        //     const [{ lng, lat }] = result.locations; // Array.<LngLat>
+        //     item.lng = lng;
+        //     item.lat = lat;
+        //   } else {
+        //     // gps转失败了就重置为0
+        //     item.lng = 0;
+        //     item.lat = 0;
+        //   }
+        //   resolve(item);
+        // });
       });
       promiseArr.push(promise);
     }
@@ -41,15 +47,59 @@ const convertGps = list => {
       Promise.all(promiseArr).then(() => {
         resolve(promiseArr)
         clearTimeout(tid)
+      }).catch(() => {
+        resolve(promiseArr)
       })
     })
   } catch (error) {
-    vm.$message({
-      type: "error",
-      message: "gps数据转化异常~"
-    });
-    clearTimeout(tid)
     return Promise.resolve(promiseArr);
+  }
+};
+
+const convertHistoryGps = async list => {
+  let sliceList = []
+  let convertLocations = []
+  try {
+    // 先转化经纬度,都除以1000000
+    list = list.map(item => {
+      item.lng = item.lng / 1000000;
+      item.lat = item.lat / 1000000;
+      item.lngLat = [item.lng, item.lat]
+      return item
+    })
+    // 再切分数组
+    for (let i = 0; i < list.length; i = i + 40) {
+      sliceList.push(list.slice(i, i + 40))
+    }
+    console.log('sliceList', sliceList)
+    // 再通过高德来转
+    for(let i = 0; i < sliceList.length; i++) {
+      let lngLats = sliceList[i].map(item => item.lngLat)
+      console.log('lngLats', lngLats)
+      await new Promise((resolve, reject) => {
+        AMap.convertFrom(lngLats, "gps", function(status, result) {
+          if (result.info === "ok") {
+            console.log('convertFrom', result.locations)
+            let locations = result.locations.map(location => {
+              return {
+                lng: location.lng,
+                lat: location.lat
+              }
+            })
+            convertLocations = convertLocations.concat(locations)
+          }
+          resolve()
+        })
+      })
+    }
+    debugger
+    convertLocations.forEach((item, index) => {
+      list[index].lng = item.lng,
+      list[index].lat = item.lat
+    })
+    return Promise.resolve(list)
+  } catch (error) {
+    return Promise.resolve(list);
   }
 };
 
@@ -178,7 +228,9 @@ const locationMonitor = {
       state.deviceParams = deviceParams;
     },
     updateHistoryInfo(state, historyInfo) {
-      state.historyInfo = historyInfo;
+      state.historyInfo = historyInfo.filter(item => {
+        return item.lng > 0 && item.lat > 0
+      });
     },
     updateCurrentLocationInfo(state, currentLocationInfo) {
       state.currentLocationInfo = currentLocationInfo;
@@ -328,9 +380,22 @@ const locationMonitor = {
           token: getToken(rootState),
           ...data
         });
-        await convertGps(result.data);
-        console.log("convertGps", result.data);
-        commit("updateHistoryInfo", result.data);
+        let startTime = Date.now()
+        if (result.data && result.data.length > 0) {
+          if (result.data && result.data.length > 1000) {
+            vm.$message({
+              type: "warning",
+              message: "发现该设备历史轨迹数据超过1000条，转化时间较长，请耐心等待!"
+            });
+          }
+          await convertHistoryGps(result.data);
+          commit("updateHistoryInfo", result.data);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "未查到任何历史轨迹!"
+          });
+        }
       } catch (error) {
         console.log(error);
         return Promise.reject(error)
@@ -347,8 +412,30 @@ const locationMonitor = {
       });
     },
     historyInfo: state => state.historyInfo,
+    historyLineInfo: state => {
+      let firstTime = 0
+      return state.historyInfo.map((item, index) => {
+        let currentTime = new Date(`${item.signal_time}`).getTime() / 1000
+        let delayTime = 0
+        if (index == 0) {
+          delayTime = currentTime
+          firstTime = currentTime
+        } else {
+          delayTime = currentTime - firstTime
+        }
+        return {
+          x: item.lng,
+          y: item.lat,
+          sp: item.course,
+          ag: item.speed,
+          tm: delayTime
+        }
+      })
+    },
     historylineArr: state => {
-      return state.historyInfo.map(item => {
+      return state.historyInfo.filter(item => {
+        return item.lng > 0 && item.lat > 0
+      }).map(item => {
         return [item.lng, item.lat];
       });
     },

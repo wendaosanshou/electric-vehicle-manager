@@ -58,7 +58,7 @@
         <el-button class="button-export button-fix" size="mini" @click="exportExcel">导出</el-button>
       </div>
     </div>
-    <div class="monitor-container js-map-container" :style="{height: pageHeight}">
+    <div class="monitor-container js-map-container map-cursor-default" :style="{height: pageHeight}">
       <div class="map-content" id="electric-map-container"></div>
       <div class="electric-desc-content">
         <div class="electric-item">
@@ -150,7 +150,7 @@
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
-    
+
     <!-- 导出数据使用 -->
     <el-table
       class="table-fix"
@@ -276,7 +276,9 @@ export default {
       this.resetMap();
       if (fenceModel === 0) {
         this.initFenceEnv();
+        this.map.setDefaultCursor("crosshair");
       } else if (fenceModel === 1) {
+        this.map.setDefaultCursor("pointer");
         if (this.mouseTool) {
           this.mouseTool.close();
         }
@@ -474,6 +476,7 @@ $basic-ratio: 1.4;
     width: 100%;
     height: d2r(820px);
     margin-top: d2r(19px);
+    cursor: default;
     .map-tips {
       position: absolute;
       top: d2r(22px);

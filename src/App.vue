@@ -450,4 +450,11 @@ $basic-ratio: 1.4;
     display: none !important;
   }
 }
+
+// .map-cursor-default {
+//   .amap-labels {
+//     cursor: default;
+//   }
+// }
+
 </style>
