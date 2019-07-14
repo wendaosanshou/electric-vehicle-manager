@@ -1,6 +1,5 @@
 <template>
   <div class="point-content">
-    {{businessForm}}
     <div class="point-item">
       <div class="point-item-label">父节点组织名称</div>
       <el-input

@@ -1,7 +1,7 @@
 <template>
   <div class="app-advisory">
     <div class="app-advisory-title">
-      <page-title>APP咨询管理</page-title>
+      <page-title>APP资讯管理</page-title>
     </div>
     <div class="app-btn-wrap">
       <advisory-add @onRefresh="initInfoWeb"></advisory-add>

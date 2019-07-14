@@ -63,7 +63,7 @@ export default {
     },
     handleRenew() {
       const params = {
-        work: this.workItem.contract_id,
+        work: this.workItem.id,
         contract: this.contract,
         start: this.pickerTime ? dayjs(this.pickerTime).format("YYYY-MM-DD HH:mm:ss") : '',
         operation_id: this.userInfo.id,

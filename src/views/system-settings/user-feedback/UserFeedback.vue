@@ -54,19 +54,19 @@
       border
       style="width: 100%"
     >
-      <el-table-column prop="account" label="用户手机号"></el-table-column>
-      <el-table-column prop="name" label="用户姓名"></el-table-column>
-      <el-table-column prop="feedback_type" label="意见分类"></el-table-column>
-      <el-table-column prop="content" label="意见内容"></el-table-column>
-      <el-table-column prop="process" label="处理状态">
+      <el-table-column align="center" prop="account" label="用户手机号"></el-table-column>
+      <el-table-column align="center" prop="name" label="用户姓名"></el-table-column>
+      <el-table-column align="center" prop="feedback_type" label="意见分类"></el-table-column>
+      <el-table-column align="center" prop="content" label="意见内容"></el-table-column>
+      <el-table-column align="center" prop="process" label="处理状态">
         <template slot-scope="scope">
           {{getProcessTips(scope.row.process)}}
         </template>
       </el-table-column>
-      <el-table-column prop="operation" label="处理人账号">
+      <el-table-column align="center" prop="operation" label="处理人账号">
       </el-table-column>
-      <el-table-column prop="process_time" label="处理时间"></el-table-column>
-      <el-table-column width="160" label="操作">
+      <el-table-column align="center" prop="process_time" label="处理时间"></el-table-column>
+      <el-table-column align="center" width="160" label="操作">
         <template slot-scope="scope">
           <el-button class="button-fix" icon="el-icon-edit" type="primary" size="mini" @click="onEditDetail(scope.row)">修改</el-button>
         </template>

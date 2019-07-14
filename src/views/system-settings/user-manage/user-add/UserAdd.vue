@@ -6,7 +6,7 @@
     </div>
     <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
       <el-form-item label="账号">
-        <el-input class="ipt-fix" size="mini" v-model="form.account" placeholder="登录账号（手机号）" disabled></el-input>
+        <el-input class="ipt-fix" size="mini" v-model="form.account" placeholder="登录账号（手机号）" :disabled="!isUserAdd"></el-input>
       </el-form-item>
       <!-- <el-form-item label="序号" v-if="!isUserAdd">
         <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="自动填充"></el-input>

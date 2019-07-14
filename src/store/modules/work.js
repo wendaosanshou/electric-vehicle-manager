@@ -24,7 +24,7 @@ const common = {
       state.workListTotal = total
     },
     updateExportWorkList(state, workList) {
-      const { data, total } = workList
+      const { data } = workList
       state.exportWorkList = data;
     },
     updateVehicleInfo(state, vehicleInfo) {
@@ -127,6 +127,18 @@ const common = {
           ...data
         });
         commit("updateWorkList", result);
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error)
+      }
+    },
+    async getExportWorkList({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getWorkPage({
+          token: getToken(rootState),
+          ...data
+        });
+        commit("updateExportWorkList", result);
       } catch (error) {
         console.log(error);
         return Promise.reject(error)

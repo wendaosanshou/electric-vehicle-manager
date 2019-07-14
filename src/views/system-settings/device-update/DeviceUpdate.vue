@@ -78,13 +78,13 @@
       @selection-change="handleSelectionChange"
       @select="handleSelect"
     >
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="imei" label="IMEI"></el-table-column>
-      <el-table-column prop="operation" label="创建人"></el-table-column>
-      <el-table-column prop="import_time" label="入库时间"></el-table-column>
-      <el-table-column prop="version" label="版本信息"></el-table-column>
-      <el-table-column prop="update_date" label="升级时间"></el-table-column>
-      <el-table-column prop="update_operation" label="升级操作人"></el-table-column>
+      <el-table-column align="center" prop="id" label="序号"></el-table-column>
+      <el-table-column align="center" prop="imei" label="IMEI"></el-table-column>
+      <el-table-column align="center" prop="operation" label="创建人"></el-table-column>
+      <el-table-column align="center" prop="import_time" label="入库时间"></el-table-column>
+      <el-table-column align="center" prop="version" label="版本信息"></el-table-column>
+      <el-table-column align="center" prop="update_date" label="升级时间"></el-table-column>
+      <el-table-column align="center" prop="update_operation" label="升级操作人"></el-table-column>
     </el-table>
 
     <div class="pagination-wraper">

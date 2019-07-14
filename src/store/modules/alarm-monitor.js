@@ -100,6 +100,11 @@ const Login = {
         icon: "duandian",
         content: "外置电源断电告警",
         count: 0
+      },
+      {
+        icon: "duandian",
+        content: "防盗告警",
+        count: 0
       }
     ]
   },
@@ -148,6 +153,7 @@ const Login = {
           if (note.indexOf(alarmTips) > -1) {
             item.iconClass = `item-icon-${alarmTypeItem.icon}`
             alarmTypeItem.count += 1;
+            state.currentAlarm = item
             // if (!state.alarmTypeClass) {
             //   state.alarmTypeClass = `item-icon-${alarmTypeItem.icon}`
             //   state.currentAlarm = item
@@ -164,10 +170,19 @@ const Login = {
           token: getToken(rootState),
           ...data
         });
-        await convertGps(result.data)
-        console.log('getAlarmAnalyse', result.data)
-        commit("updateAlarmAnalyse", result);
-        console.log(result);
+        if (result.data && result.data.length > 0) {
+          await convertGps(result.data)
+          console.log('getAlarmAnalyse', result.data)
+          commit("updateAlarmAnalyse", result);
+          console.log(result);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "未查到任何报警信息~"
+          });
+          return Promise.reject();
+        }
+        
       } catch (error) {
         console.log(error);
         return Promise.reject(error);
@@ -179,10 +194,18 @@ const Login = {
             token: getToken(rootState),
             ...data
         });
-        await convertGps(result.data)
-        console.log('updateAlarmLatest', result.data)
-        commit("updateAlarmLatest", result.data);
-        console.log(result);
+        if (result.data && result.data.length > 0) {
+          await convertGps(result.data)
+          console.log('updateAlarmLatest', result.data)
+          commit("updateAlarmLatest", result.data);
+          console.log(result);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "未查到任何报警信息~"
+          });
+          return Promise.reject();
+        }
       } catch (error) {
         console.log(error);
         return Promise.reject(error);

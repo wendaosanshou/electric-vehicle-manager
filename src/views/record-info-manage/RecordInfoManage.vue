@@ -207,7 +207,6 @@
       <div class="btn-right-container">
         <div class="btn-right-label color-primary" v-if="isRecordManage">请点击手机号码进行修改</div>
         <div class="btn-right-button" v-else-if="isProcessManage">
-          <!-- <el-checkbox size="mini" class="checkbox-select-all" v-model="checked">全选</el-checkbox> -->
           <el-button
             class="btn-export button-fix"
             size="mini"
@@ -224,7 +223,6 @@
       class="table-fix"
       :data="workList"
       size="mini"
-      id="record-export-table"
       border
       stripe
       style="width: 100%"
@@ -310,7 +308,7 @@
 
 
     <!-- 导数据用的table,不需要显示出来 -->
-    <!-- <el-table
+    <el-table
       class="table-fix export-table"
       id="record-export-table"
       :data="exportWorkList"
@@ -319,7 +317,7 @@
       stripe
       style="width: 100%"
       v-show="false">
-      <el-table-column fixed prop="own_name" label="车主姓名" align="center"></el-table-column>
+      <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="120" align="center">
         <template slot-scope="scope">
           <div v-if="isProcessSearch">{{scope.row.own_phone}}</div>
@@ -370,7 +368,7 @@
       <el-table-column prop="contract_active" width="120"  label="激活状态" align="center">
         <template slot-scope="scope">{{getActiveTips(scope.row.contract_active)}}</template>
       </el-table-column>
-    </el-table> -->
+    </el-table>
   </div>
 </template>
 
@@ -465,7 +463,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal"]),
+    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList"]),
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManage";
     },
@@ -478,7 +476,7 @@ export default {
   },
   methods: {
     ...mapMutations(["updateWorkItem"]),
-    ...mapActions(["getWorkList", "setWorkDistribute"]),
+    ...mapActions(["getWorkList", "setWorkDistribute", "getExportWorkList"]),
     getInstallTime(installTime) {
       if (installTime.indexOf('2000-01-01') > -1) {
         return ''
@@ -507,15 +505,15 @@ export default {
     },
     async handleExportExcel() {
       await this.getWorkList({
-        page_size: 10000,
-        page_index: 1,
+        page_size: 100,
+        page_index: this.pageIndex,
         business: "",
         install: "",
         client_account: "",
         install_account: "",
         business_account: "",
         audit_account: "",
-        install_status: "",
+        install_status: 2, // 安装状态为已审核
         audit_time: "",
         distribute_time: "",
         install_time: "",
@@ -639,7 +637,7 @@ export default {
         await this.setWorkDistribute({
           distribute_id: this.selectList
         });
-        this.getAllWorkList();
+        this.handleSearchWrokList()
       } else {
         this.$message({
           type: "error",
@@ -694,19 +692,33 @@ export default {
       console.log(searchParam);
     },
     handleQuickSearchOneButton() {
-      this.pageSize = 10000;
-      this.handleClearSearch();
-      this.handleSearchWrokList();
+      this.handleQuickSearchOrder()
     },
-    handleQuickSearchOrder() {
-      this.pageSize = 10000;
-      this.installStatus = 3;
-      this.handleSearchWrokList();
-    },
-    async getAllWorkList() {
+    async handleQuickSearchOrder() {
+      let auditTime = dayjs().set('hour', 18).format('YYYY-MM-DD HH:mm:ss')
       await this.getWorkList({
         page_size: this.pageSize,
         page_index: this.pageIndex,
+        business: "",
+        install: "",
+        client_account: "",
+        install_account: "",
+        business_account: "",
+        audit_account: "",
+        install_status: 2, // 安装状态为已审核
+        audit_time: auditTime,
+        distribute_time: "",
+        install_time: "",
+        contract_content: "",
+        contract_active: "",
+        imei: "",
+        iccid: ""
+      });
+    },
+    async handleGetExportWorkList() {
+      await this.getExportWorkList({
+        page_size: 100,
+        page_index: 1,
         business: "",
         install: "",
         client_account: "",
@@ -731,6 +743,7 @@ export default {
   },
   mounted() {
     this.handleSearchWrokList();
+    this.handleGetExportWorkList()
   }
 };
 </script>

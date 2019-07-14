@@ -1,5 +1,6 @@
 <template>
   <div class="record-setting-container" :class="rootClass">
+    <!-- {{workItem}} -->
     <div class="setting-time setting-part-container">
       <page-title class="setting-title" :hasDot="false">预约时间</page-title>
       <div class="setting-content" v-if="isRecordSetting">
@@ -300,6 +301,7 @@
           list-type="picture-card"
           :show-file-list="false"
           :action="imageUploadUrl"
+          :before-upload="onBeforeUpload"
           :on-success="onImageUploadSuccess"
           v-if="isRecordSetting"
         >
@@ -387,7 +389,7 @@ export default {
       } else {
         images = [imgs]
       }
-      return [...this.defaultImages, ...images];
+      return [...this.defaultImages, ...images].filter(item => item);
     },
     getAllImages() {
       const { imgs } = this.form;
@@ -410,6 +412,16 @@ export default {
   },
   methods: {
     ...mapActions(["modifyWorkItem", "getVehicleInfo"]),
+    onBeforeUpload(file) {
+      if (this.imagelist && this.imagelist.length > 0) {
+        this.$message({
+          type: "error",
+          message: "照片数量已存在4张，不能再新增照片!"
+        });
+        return Promise.reject()
+      }
+      return Promise.resolve()
+    },
     getTimeLabel(time) {
       return time ? time : "暂无";
     },

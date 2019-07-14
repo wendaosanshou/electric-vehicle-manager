@@ -32,6 +32,7 @@ function getErrorTips(code) {
     '10021': "业务点已经绑定",
     '10022': "指定账户不存在",
     '10023': "角色不能删除",
+    '10024': "名称重复",
   };
   return errorMap[code] || '服务器开小差了'
 }
@@ -46,7 +47,11 @@ function requestHandle(params) {
           defer.resolve(res.data);
         } else {
           defer.reject(res.data);
-          vm.$message.error(`${getErrorTips(res.data.code)}！错误码：${res.data.code}`);
+          if (res.data.code === '10007') {
+            vm.$message.error(`${getErrorTips(res.data.code)}！`);
+          } else {
+            vm.$message.error(`${getErrorTips(res.data.code)}！错误码：${res.data.code}`);
+          }
         }
       } else {
         defer.reject();
@@ -90,7 +95,7 @@ export default {
     });
   },
   get: function(url, params, op) {
-    console.log("method: get, params: ", params);
+    // console.log("method: get, params: ", params);
     return requestHandle({
       method: "get",
       url: $util.queryString(url, params)

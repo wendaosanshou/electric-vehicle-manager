@@ -7,7 +7,7 @@
       type="danger"
       @click="onDialogShow"
     >删除</el-button>
-    <el-dialog class="dialog-fix" title="添加角色" :visible.sync="dialogVisible" @close="onDialogHide">
+    <el-dialog class="dialog-fix" title="删除资讯" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="app-advisory-title">
         <page-title>选择你要删除的APP咨询</page-title>
       </div>
@@ -19,7 +19,7 @@
           <el-table-column prop="time" label="创建时间" align="center"></el-table-column>
           <el-table-column prop="active_time" label="生效时间" align="center"></el-table-column>
           <el-table-column prop="expire_time" label="截止时间" align="center"></el-table-column>
-          <el-table-column prop="address" label="备注信息"></el-table-column>
+          <el-table-column prop="content" label="备注信息"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

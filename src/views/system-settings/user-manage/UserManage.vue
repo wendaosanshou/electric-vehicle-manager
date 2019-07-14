@@ -27,34 +27,39 @@
         </div>
       </div>
       <div class="user-manage-crud ly-flex-row">
-        <div class="el-btn crud-btn-add crud-btn ly-flex-row" @click="handleUserAdd">
+        <el-button class="button-fix" icon="el-icon-folder-add" type="primary" size="mini" @click="handleUserAdd">添加用户</el-button>
+        <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
+        <!-- <div class="el-btn crud-btn-add crud-btn ly-flex-row" @click="handleUserAdd">
           <i class="el-icon-folder-add icon-btn-add"></i>
           <span class="btn-content">添加用户</span>
-        </div>
-        <user-delete @onRefresh="handelRefresh"/>
-        <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEdit">
+        </div> -->
+        <!-- <user-delete @onRefresh="handelRefresh"/> -->
+        <!-- <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEdit">
           <i class="el-icon-edit-outline icon-btn-add"></i>
           <span class="btn-content">编辑用户</span>
-        </div>
+        </div> -->
       </div>
     </div>
-    <dir class="user-manage-export">
-      <!-- <el-checkbox size="mini" class="checkbox-select-all" v-model="isCheckedAll">全选</el-checkbox> -->
-      <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
-    </dir>
-    <!-- {{allUser}} -->
     <el-table id="user-export-table" ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
       @selection-change="handleSelectionChange"
       @select="handleSelect">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="account" label="账号（手机号）"></el-table-column>
-      <el-table-column prop="name" label="账号姓名"></el-table-column>
-      <el-table-column prop="site_name" label="所属组织（业务办理点）"></el-table-column>
-      <el-table-column prop="role_name" label="角色名称"></el-table-column>
-      <el-table-column prop="phone" label="手机号码"></el-table-column>
-      <el-table-column prop="email" label="邮箱"></el-table-column>
-      <el-table-column prop="note" label="备注"></el-table-column>
+      <el-table-column prop="id" align="center" label="序号"></el-table-column>
+      <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
+      <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
+      <el-table-column prop="site_name" align="center" label="所属组织（业务办理点）"></el-table-column>
+      <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
+      <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
+      <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
+      <el-table-column prop="note" align="center" label="备注"></el-table-column>
+      <el-table-column width="280" align="center" label="操作">
+         <template slot-scope="scope">
+            <div class="btn-container">
+              <el-button class="button-fix" icon="el-icon-edit" type="primary" size="mini" @click="handleUserEdit(scope.row)">编辑</el-button>
+              <div class="part-line"></div>
+              <user-delete @onRefresh="handelRefresh" :selectUser="scope.row"/>
+            </div>
+          </template>
+      </el-table-column>
     </el-table>
     <div class="pagination-wraper">
       <el-pagination
@@ -169,7 +174,11 @@ export default {
         path: "user-add"
       });
     },
-    handleUserEdit() {
+    handleUserDelete(selectUser) {
+      this.udpateSelectUser(selectUser)
+    },
+    handleUserEdit(selectUser) {
+      this.udpateSelectUser(selectUser)
       if(this.selectUser && this.selectUser.account) {
         this.$router.push({
           path: "user-edit"
@@ -246,6 +255,7 @@ $basic-ratio: 1.4;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: d2r(16px);
   .user-manage-menu {
     box-sizing: border-box;
     display: flex;
@@ -351,5 +361,15 @@ $basic-ratio: 1.4;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+}
+
+.btn-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  .part-line {
+    width: d2r(10px);
+  }
 }
 </style>

@@ -25,7 +25,7 @@
           size="mini"
           type="primary"
           @click="onDialogConfirm"
-        >立案</el-button>
+        >确认</el-button>
       </div>
     </el-dialog>
   </div>

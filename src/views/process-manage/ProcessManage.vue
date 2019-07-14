@@ -89,7 +89,7 @@
       <div class="btn-left-container">
         <el-button class="button-fix" size="mini" type="primary" @click="handleSearchWrokList">查询</el-button>
         <el-button class="button-fix" size="mini" type="primary" @click="handleClearSearch">清空</el-button>
-        <el-button class="button-fix" size="mini" type="primary" @click="getAllWorkList">一键快查</el-button>
+        <el-button class="button-fix" size="mini" type="primary" @click="getWorkListOne">一键快查</el-button>
         <el-button class="button-fix" size="mini" @click="exportExcel">导出</el-button>
       </div>
     </div>
@@ -143,6 +143,8 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
+      pageIndex: 1,
+      pageSize: 10,
       businessPoint: {
         id: "",
         name: ""
@@ -283,8 +285,8 @@ export default {
       }
       console.log(this.auditTime);
       const searchParam = {
-        page_size: 100,
-        page_index: 1,
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
         business: this.businessPoint.id,
         install: this.installPoint.id,
         client_account: this.clientAccount,
@@ -303,17 +305,17 @@ export default {
       await this.getWorkList(searchParam);
       console.log(searchParam);
     },
-    async getAllWorkList() {
+    async getWorkListOne() {
       await this.getWorkList({
-        page_size: 100,
-        page_index: 1,
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
         business: "",
         install: "",
         client_account: "",
         install_account: "",
         business_account: "",
         audit_account: "",
-        install_status: 1,
+        install_status: 2, // 安装状态为已审核
         audit_time: "",
         distribute_time: "",
         install_time: "",

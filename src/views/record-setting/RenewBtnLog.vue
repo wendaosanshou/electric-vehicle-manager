@@ -4,9 +4,10 @@
     <el-dialog class="dialog-fix" title="续费信息" :visible.sync="dialogFormVisible">
       <div class="renew-table-container">
         <el-table
-          class="table-fix"
+          class="renew-log-table table-fix"
           :data="contractHistory"
           size="mini"
+          max-height="400"
           border
           stripe
           style="width: 100%"
@@ -35,24 +36,7 @@ export default {
       form: {
         data1: "",
         data2: ""
-      },
-      tableData: [
-        {
-          data1: "某某某",
-          data2: "18710923477",
-          data3: "男"
-        },
-        {
-          data1: "某某某",
-          data2: "18710923477",
-          data3: "男"
-        },
-        {
-          data1: "某某某",
-          data2: "18710923477",
-          data3: "男"
-        }
-      ]
+      }
     };
   },
   computed: {
@@ -75,7 +59,7 @@ export default {
     },
     initContractHistory() {
       this.getContractHistory({
-        id: this.workItem.contract_id
+        id: this.workItem.id
       });
     }
   },
@@ -107,4 +91,5 @@ $basic-ratio: 1.4;
 .renew-table-container {
   padding: d2r(22px) d2r(21px);
 }
+
 </style>

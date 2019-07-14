@@ -111,7 +111,7 @@ export default {
       })
     },
     initUserStorageForm() {
-      let { account, password} = this.$util.getStorage('user_login')
+      let { account, password} = this.$util.getStorage('user_login') || {}
       if (account && password) {
         this.account = account
         this.password = password
@@ -137,7 +137,7 @@ export default {
             this.clearUserLoginForm()
           }
           this.$router.push({
-            path: "/location-monitor"
+            path: "/"
           });
         }
       } catch (error) {

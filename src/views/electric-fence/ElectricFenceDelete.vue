@@ -9,7 +9,7 @@
     >删除</el-button>
     <el-dialog
       class="dialog-fix"
-      title="保存电子围栏"
+      title="删除电子围栏"
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
@@ -50,7 +50,14 @@ export default {
       this.dialogVisible = false;
     },
     handleDeletFench() {
-      this.dialogVisible = true;
+      if (this.fenceList && this.fenceList.length > 0) {
+        this.dialogVisible = true;
+      } else {
+        this.$message({
+          type: "warning",
+          message: `请在查询模式下选中对应电子围栏后再进行删除操作`
+        })
+      }
     },
     handleConfirmAddFence() {
       this.$emit('on-delete')

@@ -142,6 +142,15 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       });
     },
+    clearForm() {
+      this.form = {
+        version: "",
+        download: "",
+        operation: "",
+        name: "",
+        note: ""
+      }
+    },
     async handleAddFirmware() {
       await this.addApkFile({
         name: this.form.name,
@@ -150,6 +159,7 @@ export default {
         download: this.form.download,
         note: this.form.note
       });
+      this.clearForm()
       this.$emit('onRefresh')
       this.onDialogHide()
     },

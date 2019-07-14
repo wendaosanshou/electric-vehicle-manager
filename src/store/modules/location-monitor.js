@@ -313,8 +313,16 @@ const locationMonitor = {
           token: getToken(rootState),
           ...data
         });
-        await convertGps([result.data]);
-        commit("updateDeviceInfo", result.data);
+        if (result.data && result.data.id) {
+          await convertGps([result.data]);
+          commit("updateDeviceInfo", result.data);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "未查到关联设备信息!"
+          });
+          return Promise.reject()
+        }
         // commit("updateWebDeviceInfo", [result.data]);
       } catch (error) {
         console.log(error);
@@ -327,9 +335,17 @@ const locationMonitor = {
           token: getToken(rootState),
           ...data
         });
-        await convertGps([result.data]);
-        commit("updateDeviceInfo", result.data);
-        commit("updateWebDeviceInfo", [result.data]);
+        if (result.data) {
+          await convertGps([result.data]);
+          commit("updateDeviceInfo", result.data);
+          commit("updateWebDeviceInfo", [result.data]);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "未查到当前设备信息!"
+          });
+          return Promise.reject(error)
+        }
       } catch (error) {
         console.log(error);
         return Promise.reject(error)
@@ -391,6 +407,7 @@ const locationMonitor = {
           await convertHistoryGps(result.data);
           commit("updateHistoryInfo", result.data);
         } else {
+          commit("updateHistoryInfo", []);
           vm.$message({
             type: "error",
             message: "未查到任何历史轨迹!"

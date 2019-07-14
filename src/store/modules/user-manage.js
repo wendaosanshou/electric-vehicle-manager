@@ -67,7 +67,7 @@ const Login = {
           uniqueBusinessHandle.push(currentHandle)
         }
       }
-      console.log('businessHandle---', JSON.parse(JSON.stringify(uniqueBusinessHandle)))
+      // console.log('businessHandle---', JSON.parse(JSON.stringify(uniqueBusinessHandle)))
       state.businessHandleTree = construct(uniqueBusinessHandle, {
         id: 'id',
         pid: 'parent_id',
@@ -75,7 +75,7 @@ const Login = {
       })
       // 业务类型，新增业务的时候需要
       state.businessType = 1
-      console.log('businessHandleTree', JSON.parse(JSON.stringify(state.businessHandleTree)))
+      // console.log('businessHandleTree', JSON.parse(JSON.stringify(state.businessHandleTree)))
     },
     updateBusinessInstall(state, businessInstall) {
       // 过滤掉非市，区，街道

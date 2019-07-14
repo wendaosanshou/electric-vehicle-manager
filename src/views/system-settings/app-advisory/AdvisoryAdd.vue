@@ -15,7 +15,7 @@
       icon="el-icon-plus"
       @click="onDialogShow"
       v-else
-    >添加咨询</el-button>
+    >添加资讯</el-button>
     <el-dialog
       class="dialog-fix dialog-container"
       :title="dialogTitle"

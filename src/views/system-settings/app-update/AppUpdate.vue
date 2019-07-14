@@ -3,13 +3,13 @@
     <div class="device-manage-title">
       <page-title>APP升级管理</page-title>
       <div class="manage-title-container">
-        <el-button
+        <!-- <el-button
           class="button-fix"
           icon="el-icon-search"
           type="primary"
           size="mini"
           @click="onSearchApkList"
-        >查询</el-button>
+        >查询</el-button> -->
         <app-dialog-upload class="device-btn" @onRefresh="onSearchApkList"></app-dialog-upload>
       </div>
     </div>
@@ -22,14 +22,14 @@
         border
         style="width: 100%"
       >
-        <el-table-column prop="id" label="序号"></el-table-column>
-        <el-table-column prop="name" label="APP名称"></el-table-column>
-        <el-table-column prop="version" label="版本名称"></el-table-column>
-        <el-table-column prop="update_time" width="160" label="更新时间"></el-table-column>
-        <el-table-column prop="operation" label="操作人"></el-table-column>
-        <el-table-column prop="note" width="160" label="版本说明"></el-table-column>
-        <el-table-column prop="download" width="320" label="下载地址"></el-table-column>
-        <el-table-column width="160" label="操作">
+        <el-table-column align="center" prop="id" label="序号"></el-table-column>
+        <el-table-column align="center" prop="name" label="APP名称"></el-table-column>
+        <el-table-column align="center" prop="version" label="版本名称"></el-table-column>
+        <el-table-column align="center" prop="update_time" width="160" label="更新时间"></el-table-column>
+        <el-table-column align="center" prop="operation" label="操作人"></el-table-column>
+        <el-table-column align="center" prop="note" width="160" label="版本说明"></el-table-column>
+        <el-table-column align="center" prop="download" width="320" label="下载地址"></el-table-column>
+        <el-table-column align="center" width="160" label="操作">
           <template slot-scope="scope">
             <div class="btn-container">
               <app-dialog-delete :data="deepClone(scope.row)" @onRefresh="onSearchApkList"></app-dialog-delete>

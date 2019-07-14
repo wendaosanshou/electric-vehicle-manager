@@ -62,11 +62,15 @@ export default {
       },
       filterAlarmAnalyse() {
         const { user_info, vehicle_info } = this.deviceInfo
-        return this.alarmAnalyse.map(item => {
-          item.vehicleAccount = user_info.name
-          item.invoice = vehicle_info.invoice
-          return item
-        })
+        if (this.alarmAnalyse && this.alarmAnalyse.length > 0) {
+           return this.alarmAnalyse.map(item => {
+            item.vehicleAccount = user_info.name
+            item.invoice = vehicle_info.invoice
+            return item
+          })
+        } else {
+          return []
+        }
       }
   },
   props: {

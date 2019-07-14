@@ -133,6 +133,11 @@ const Login = {
     ]
   },
   mutations: {
+    loginout(state) {
+      state.userInfo = []
+      state.business = []
+      state.role = []
+    },
     updateUserInfo(state, data) {
       console.log('updateUserInfo', data)
       state.userInfo = data.info
@@ -144,12 +149,22 @@ const Login = {
     async userLogin({ commit }, data) {
       try {
         const result = await $apis.login(data);
-        commit('updateUserInfo', result)
-        vm.$message({
-          type: "success",
-          message: "登录成功!"
-        });
-        console.log(result);
+        const { role } = result
+        if (role && role.author.length > 0) {
+          commit('updateUserInfo', result)
+          vm.$message({
+            type: "success",
+            message: "登录成功!"
+          });
+          console.log(result);
+        } else {
+          vm.$message({
+            type: "error",
+            message: "当前用户无权限访问!"
+          });
+          return Promise.reject(result)
+        }
+        return result
       } catch (error) {
         console.log(error)
         return Promise.reject(error)

@@ -1,9 +1,10 @@
 <template>
   <div class="dialog">
-    <div class="el-btn crud-btn-delete crud-btn ly-flex-row" @click="onDialogShow">
+    <!-- <div class="el-btn crud-btn-delete crud-btn ly-flex-row" @click="onDialogShow">
       <i class="el-icon-folder-remove icon-btn-delete"></i>
       <span class="btn-content">删除用户</span>
-    </div>
+    </div> -->
+    <el-button class="button-fix" icon="el-icon-delete" type="danger" size="mini" @click="onDialogShow">删除</el-button>
     <el-dialog
       class="dialog-fix"
       title="选择需要删除的用户"
@@ -52,8 +53,14 @@ export default {
       deleteUsers: []
     };
   },
+  props: {
+    selectUser: {
+      type: Object,
+      default: () => {}
+    }
+  },
   computed: {
-    ...mapGetters(["allUser", "selectUser"])
+    ...mapGetters(["allUser"])
   },
   methods: {
     ...mapActions(['deleteSysUser']),

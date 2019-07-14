@@ -46,18 +46,20 @@
         </div>
       </div>
     </div>
-    <div class="home-content">
-      <div class="home-content-title">
-        <div class="home-title-label">欢迎您，登录电动车智慧管理平台！</div>
-        <div class="home-title-menu">
-          <i class="home-title-logo"></i>
-          <span class="home-title-desc">用户名：{{userInfo.name}}</span>
-          <div class="home-title-login-out" @click="onLoginOut"></div>
+    <div class="home-content-container">
+      <div class="home-content">
+        <div class="home-content-title">
+          <div class="home-title-label">欢迎您，登录电动车智慧管理平台！</div>
+          <div class="home-title-menu">
+            <i class="home-title-logo"></i>
+            <span class="home-title-desc">用户名：{{userInfo.name}}</span>
+            <div class="home-title-login-out" @click="onLoginOut"></div>
+          </div>
         </div>
-      </div>
-      <div class="home-title-crumbs">所在位置：{{activePageName}}</div>
-      <div class="home-body">
-        <router-view/>
+        <div class="home-title-crumbs">所在位置：{{activePageName}}</div>
+        <div class="home-body">
+          <router-view/>
+        </div>
       </div>
     </div>
   </div>
@@ -231,7 +233,7 @@ export default {
       "getBusinessHandle",
       "getBusinessInstall"
     ]),
-    ...mapMutations(["updateActivePageName", "updateDefaultActiveMenu"]),
+    ...mapMutations(["updateActivePageName", "updateDefaultActiveMenu", "loginout"]),
     getSidebarMenu(sidebarMenus) {
       const { author } = this.role
       let authorList = []
@@ -266,21 +268,8 @@ export default {
     getItemLogo(logo) {
       return require(`@/assets/icons/${logo}`);
     },
-    onMenuItemClick(item, index) {
-      // 高亮选中item
-      this.sidbarMenus.forEach((menuItem, menuIndex) => {
-        if (menuIndex === index) {
-          menuItem.isActive = true;
-        } else {
-          menuItem.isActive = false;
-        }
-      });
-      // 跳转页面
-      this.$router.push({
-        path: item.path
-      });
-    },
     onLoginOut() {
+      this.loginout()
       this.$router.push({
         path: "/login"
       });
@@ -380,22 +369,40 @@ export default {
           activeMenu = "";
           break;
       }
-      console.log(path, activeMenu);
-      if (activeMenu) {
-        this.updateActivePageName(activeMenu);
-      }
+      console.log('initActiveMenu', path, activeMenu);
+      this.updateActivePageName(activeMenu);
     },
     async initAllBusinessPoint() {
       //  进页面初始化角色权限数据
       await this.getAllBusinessPoint();
       await this.getBusinessHandle();
       await this.getBusinessInstall();
+    },
+    initCurrentPage() {
+      const { path } = this.$route
+      console.log(path)
+      if (this.filterSidebarMenus && this.filterSidebarMenus.length > 0 && path === '/') {
+        let [firstItem] = this.filterSidebarMenus
+        if (firstItem && firstItem.children && firstItem.children.length > 0) {
+          let currentItem = firstItem.children[0]
+          this.$router.push(currentItem.path)
+          this.updateDefaultActiveMenu(currentItem.index)
+        } else {
+          let currentItem = this.filterSidebarMenus[0]
+          this.$router.push(currentItem.path)
+          this.updateDefaultActiveMenu(currentItem.index)
+        }
+      } else {
+        // 如果没有更新权限，更新面包屑文案
+        this.initActiveMenu();
+      }
     }
   },
   mounted() {
     this.checkIsLogin();
     this.initAllBusinessPoint();
     this.getSidebarMenu(this.sidebarMenus)
+    this.initCurrentPage()
   }
 };
 </script>
@@ -419,6 +426,12 @@ $basic-ratio: 1.4;
   .el-menu-item span {
     opacity: 0;
   }
+}
+
+.home-content-container {
+  flex: 1;
+  width: auto;
+  overflow: scroll;
 }
 
 .home {

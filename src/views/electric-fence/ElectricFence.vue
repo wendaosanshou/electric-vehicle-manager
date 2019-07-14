@@ -341,6 +341,12 @@ export default {
     },
     async handleConfirmAddFence() {
       const [startDate, endDate] = this.pickerTime;
+      if (this.form.name && this.form.name.length > 10) {
+        return this.$message({
+          type: "error",
+          message: `名称较长无法保存`
+        });
+      }
       if (startDate && endDate) {
         const params = {
           start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),

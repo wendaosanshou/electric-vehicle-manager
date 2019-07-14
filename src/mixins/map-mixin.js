@@ -140,7 +140,7 @@ export default {
       markerContent2.append(markerContent3);
       markerContent1.append(markerContent2);
       markerContent.append(markerContent1);
-      markerContent3.innerHTML = "000";
+      markerContent3.innerHTML = "1";
       setTimeout(() => {
         $(markerContent).on("click", () => {
           if (path === '/location-monitor') {

@@ -43,14 +43,14 @@
       border
       style="width: 100%"
     >
-      <el-table-column prop="id" label="序号"></el-table-column>
-      <el-table-column prop="version" label="版本名称"></el-table-column>
-      <el-table-column prop="version_date" label="上传时间"></el-table-column>
-      <el-table-column prop="operation" label="上传操作人"></el-table-column>
-      <el-table-column prop="note" label="版本说明"></el-table-column>
-      <el-table-column prop="version_url" width="320" label="下载地址"></el-table-column>
-      <el-table-column prop="md5" width="180" label="md5特征值"></el-table-column>
-      <el-table-column width="160" label="操作">
+      <el-table-column align="center" prop="id" label="序号"></el-table-column>
+      <el-table-column align="center" prop="version" label="版本名称"></el-table-column>
+      <el-table-column align="center" prop="version_date" label="上传时间"></el-table-column>
+      <el-table-column align="center" prop="operation" label="上传操作人"></el-table-column>
+      <el-table-column align="center" prop="note" label="版本说明"></el-table-column>
+      <el-table-column align="center" prop="version_url" width="320" label="下载地址"></el-table-column>
+      <el-table-column align="center" prop="md5" width="180" label="md5特征值"></el-table-column>
+      <el-table-column align="center" width="160" label="操作">
         <template slot-scope="scope">
             <div class="btn-container">
               <device-version-delete :data="deepClone(scope.row)" @onRefresh="onSearchDeviceUpdate"></device-version-delete>
