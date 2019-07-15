@@ -8,8 +8,8 @@
         :modal="false"
         :close-on-click-modal="false"
       >
+      <!-- {{deviceInfo}} -->
         <div class="dialog-content">
-          <!-- {{currentAlarm}} -->
           <div class="form-title">车主信息</div>
           <div class="form-item-wrap">
             <div class="form-item">购车人：{{userInfo.name}}</div>
@@ -20,14 +20,14 @@
           </div>
           <div class="form-title">车辆信息</div>
           <div class="form-item-wrap">
-            <div class="form-item">车编号：{{vehicleInfo.frame}}</div>
-            <div class="form-item">车架号：{{vehicleInfo.frame}}</div>
-            <div class="form-item">IMEI：{{vehicleInfo.imei}}</div>
+            <!-- <div class="form-item">车编号：{{vehicleInfo.frame}}</div> -->
+            <div class="form-item">车牌号：{{vehicleInfo.frame}}</div>
+            <div class="form-item">IMEI：{{deviceInfo.imei}}</div>
             <div class="form-item">电机编号：{{vehicleInfo.power}}</div>
             <div class="form-item">制造商：{{vehicleInfo.brand}}</div>
             <div class="form-item">产品型号：{{vehicleInfo.model}}</div>
             <div class="form-item">颜色：{{vehicleInfo.color}}</div>
-            <div class="form-item">获得方式：购买</div>
+            <div class="form-item">获得方式：{{vehicleInfo.obtain === 0 ? '购买' : '获取'}}</div>
             <div class="form-item">车辆温度：{{deviceInfo.temperature}}℃</div>
           </div>
           <div class="form-title">告警信息</div>
@@ -88,7 +88,10 @@ export default {
   },
   methods: {
     getAlarmLabel(alarm) {
-      return alarm
+      if (alarm && alarm.length > 0) {
+        return alarm.replace(/[^\u4e00-\u9fa5]/g, '')
+      }
+      return ''
     },
     onDialogHide() {
       this.$emit('change', false)

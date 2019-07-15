@@ -13,6 +13,7 @@
         <app-dialog-upload class="device-btn" @onRefresh="onSearchApkList"></app-dialog-upload>
       </div>
     </div>
+    <!-- {{apkList}} -->
     <div class="table-container">
       <el-table
         ref="userTable"
@@ -29,6 +30,11 @@
         <el-table-column align="center" prop="operation" label="操作人"></el-table-column>
         <el-table-column align="center" prop="note" width="160" label="版本说明"></el-table-column>
         <el-table-column align="center" prop="download" width="320" label="下载地址"></el-table-column>
+        <el-table-column align="center" prop="operation" width="160" label="是否强制升级">
+          <template slot-scope="scope">
+            {{getUpgradeLable(scope.row.upgrade)}}
+          </template>
+        </el-table-column>
         <el-table-column align="center" width="160" label="操作">
           <template slot-scope="scope">
             <div class="btn-container">
@@ -78,6 +84,9 @@ export default {
       this.version = "";
       this.uploadDate = "";
       this.operation = "";
+    },
+    getUpgradeLable(upgrade) {
+      return upgrade === 1 ? '强制升级' : '非强制升级'
     },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data));

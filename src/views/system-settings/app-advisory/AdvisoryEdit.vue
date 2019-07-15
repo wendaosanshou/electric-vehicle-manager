@@ -3,7 +3,7 @@
     <el-button class="button-fix" icon="el-icon-edit" size="mini" type="primary" @click="onDialogShow">修改</el-button>
       <el-dialog
         class="dialog-fix dialog-container"
-        title="修改APP咨询"
+        title="修改APP资讯"
         width="630px"
         :visible.sync="dialogVisible"
         @close="onDialogHide"
@@ -62,6 +62,7 @@
               class="ipt-fix"
               size="mini"
               resize="none"
+              maxlength="50"
               :autosize="{ minRows: 10, maxRows: 10}"
               v-model="form.content"
               placeholder="请输入备注信息（50字内）"

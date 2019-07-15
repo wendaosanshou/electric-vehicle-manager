@@ -117,20 +117,20 @@ const alarmTypes = [
     label: "温度告警"
   },
   {
-    value: 3,
-    label: "内置电池低电压告警"
+    value: 4,
+    label: "电池低电压报警"
   },
   {
-    value: 4,
-    label: "电瓶低电压告警"
+    value: 8,
+    label: "电瓶低电压报警"
   },
   {
     value: 16,
-    label: "外置电源断电告警"
+    label: "断电报警(剪线报警)"
   },
   {
     value: 32,
-    label: "震动告警"
+    label: "震动报警"
   },
   {
     value: 64,
@@ -313,9 +313,10 @@ const locationMonitor = {
           token: getToken(rootState),
           ...data
         });
-        if (result.data && result.data.id) {
-          await convertGps([result.data]);
-          commit("updateDeviceInfo", result.data);
+        if (result.data) {
+          let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
+          await convertGps(deviceInfos);
+          commit("updateDeviceInfo", deviceInfos[0]);
         } else {
           vm.$message({
             type: "error",

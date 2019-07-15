@@ -202,7 +202,8 @@
           @click="handleQuickSearchOrder"
           v-if="isProcessManage"
         >派单快查</el-button>
-        <el-button class="button-fix" size="mini" @click="exportExcel">导出</el-button>
+        <el-button class="button-fix" size="mini" @click="exportExcelCurrent">导出当前</el-button>
+        <el-button class="button-fix" size="mini" @click="exportExcelAll">导出全部</el-button>
       </div>
       <div class="btn-right-container">
         <div class="btn-right-label color-primary" v-if="isRecordManage">请点击手机号码进行修改</div>
@@ -220,12 +221,13 @@
 
     <!-- 显示用的table -->
     <el-table
-      class="table-fix"
+      class="table-fix table-disable-select-all"
       :data="workList"
       size="mini"
       border
       stripe
       style="width: 100%"
+      id="record-export-page"
       @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" v-if="isProcessManage"></el-table-column>
       <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
@@ -310,7 +312,7 @@
     <!-- 导数据用的table,不需要显示出来 -->
     <el-table
       class="table-fix export-table"
-      id="record-export-table"
+      id="record-export-all"
       :data="exportWorkList"
       size="mini"
       border
@@ -525,10 +527,15 @@ export default {
       console.log(this.exportWorkList)
       this.exportExcel()
     },
-    exportExcel() {
-      console.log(document.querySelector("#record-export-table"))
+    exportExcelCurrent() {
+      this.exportExcel('#record-export-page')
+    },
+    exportExcelAll() {
+      this.exportExcel('#record-export-all')
+    },
+    exportExcel(id) {
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#record-export-table"));
+      var wb = XLSX.utils.table_to_book(document.querySelector(id));
       console.log(wb)
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
@@ -706,7 +713,7 @@ export default {
         business_account: "",
         audit_account: "",
         install_status: 2, // 安装状态为已审核
-        audit_time: auditTime,
+        audit_time: `2018-01-01 00:00:00_${auditTime}`,
         distribute_time: "",
         install_time: "",
         contract_content: "",
@@ -741,8 +748,16 @@ export default {
     ProcssDetailDialog,
     OrgAddDialog
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+    // 通过 `vm` 访问组件实例
+      vm.handleClearSearch()
+      vm.handleSearchWrokList();
+    })
+  },
   mounted() {
-    this.handleSearchWrokList();
+    // this.handleClearSearch()
+    // this.handleSearchWrokList();
     this.handleGetExportWorkList()
   }
 };

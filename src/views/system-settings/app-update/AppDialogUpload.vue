@@ -9,7 +9,7 @@
     >上传版本</el-button>
     <el-dialog
       class="dialog-fix"
-      title="单个设备升级"
+      title="上传版本"
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
@@ -41,10 +41,10 @@
             </div>
           </el-form-item>
           <el-form-item label="app名称">
-            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入app名称"></el-input>
+            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入app名称" disabled></el-input>
           </el-form-item>
            <el-form-item label="版本名称">
-            <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称"></el-input>
+            <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称" disabled></el-input>
           </el-form-item>
           <el-form-item label="版本说明">
             <el-input type="textarea"
@@ -53,6 +53,20 @@
             resize="none"
             :autosize="{ minRows: 10, maxRows: 10}"
             v-model="form.note" placeholder="请输入版本说明"></el-input>
+          </el-form-item>
+          <el-form-item label="是否强制升级">
+            <el-select 
+              class="ipt-fix"
+              size="mini"
+              width="120"
+              v-model="form.upgrade" placeholder="请选择">
+              <el-option
+                v-for="item in upgradeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -79,8 +93,19 @@ export default {
         download: "",
         operation: "",
         name: "",
-        note: ""
-      }
+        note: "",
+        upgrade: 1
+      },
+      upgradeList: [
+        {
+          label: '强制升级',
+          value: 1
+        },
+        {
+          label: '非强制升级',
+          value: 0
+        }
+      ]
     };
   },
   props: {
@@ -103,8 +128,9 @@ export default {
     ...mapActions(["importProducts", "addApkFile"]),
     onBeforeUpload(file) {
       const { name } = file
+      console.log(name)
       // 格式需要类似：app-merchant-0706.apk
-      if (/^([^\d]+)(\d+)(.apk)$/.test(name)) {
+      if (/^([^\d]+)(\d+_?\d+)(.apk)$/.test(name)) {
         this.renderLoading()
         return Promise.resolve()
       } else {
@@ -115,12 +141,21 @@ export default {
         return Promise.reject()
       }
     },
+    getApkName(name) {
+      let apkName = ''
+      if (name.indexOf('merchant') > -1) {
+        apkName = '易骑商家'
+      } else if (name.indexOf('eriding') > -1) {
+        apkName = '易骑无忧'
+      }
+      return apkName
+    },
     onImageUploadSuccess(res, file) {
       const { code, data } = res;
       const { name } = file
       if (code === "10000") {
-        this.form.version = name.replace(/([^\d]+)(\d+)(.apk)/gi, '$2')
-        this.form.name = name.replace(/(.apk)/gi, '')
+        this.form.version = name.replace(/([^\d]+)(\d+)(_?)(\d+)(.apk)/gi, '$2')
+        this.form.name = this.getApkName(name)
         this.$message({
           type: "success",
           message: "上传成功!"
@@ -148,7 +183,8 @@ export default {
         download: "",
         operation: "",
         name: "",
-        note: ""
+        note: "",
+        upgrade: 1
       }
     },
     async handleAddFirmware() {
@@ -157,7 +193,8 @@ export default {
         operation: this.userInfo.account,
         version: this.form.version,
         download: this.form.download,
-        note: this.form.note
+        note: this.form.note,
+        upgrade: this.form.upgrade
       });
       this.clearForm()
       this.$emit('onRefresh')

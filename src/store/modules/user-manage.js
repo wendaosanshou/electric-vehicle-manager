@@ -51,7 +51,7 @@ const Login = {
       // 过滤掉非市，区，街道
       let allBusinessHandle = state.businessAll.filter(item => {
          // 办理点类型是市，区，街道才返回
-        if ([1, 2, 3].indexOf(item.organization_id) > -1) {
+        if ([1, 2, 3, 4].indexOf(item.organization_id) > -1) {
           return true
         }
         return false
@@ -243,6 +243,7 @@ const Login = {
     async getBusinessHandle({ commit, rootState }, data) {
       try {
         const result = await $apis.getBusinessHandle();
+        result.data = result.data || []
         commit('updateBusinessHandle', result.data)
       } catch (error) {
         console.log(error);
@@ -252,6 +253,7 @@ const Login = {
     async getBusinessInstall({ commit, rootState }, data) {
       try {
         const result = await $apis.getBusinessInstall();
+        result.data = result.data || []
         commit('updateBusinessInstall', result.data)
       } catch (error) {
         console.log(error);

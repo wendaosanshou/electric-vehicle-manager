@@ -63,7 +63,27 @@ const Login = {
     alarmTypeList: [
       {
         icon: "weiyi",
-        content: "位移告警",
+        content: "位移报警",
+        count: 0
+      },
+      {
+        icon: "gaowen",
+        content: "温度报警",
+        count: 0
+      },
+      {
+        icon: "neizhidiya",
+        content: "电池低电压报警",
+        count: 0
+      },
+      {
+        icon: "duandian",
+        content: "电瓶低电压报警",
+        count: 0
+      },
+      {
+        icon: "duandian2",
+        content: "断电报警(剪线报警)",
         count: 0
       },
       {
@@ -72,8 +92,8 @@ const Login = {
         count: 0
       },
       {
-        icon: "gaowen",
-        content: "高温告警",
+        icon: "suaidao",
+        content: "摔倒报警",
         count: 0
       },
       {
@@ -82,27 +102,17 @@ const Login = {
         count: 0
       },
       {
-        icon: "diya",
-        content: "电瓶低电压告警",
+        icon: "jinjigaojing",
+        content: "紧急报警",
         count: 0
       },
       {
-        icon: "gaoya",
-        content: "充电高电压告警",
+        icon: "feifaxingshi",
+        content: "非法行驶报警",
         count: 0
       },
       {
-        icon: "neizhidiya",
-        content: "内置电池低电压告警",
-        count: 0
-      },
-      {
-        icon: "duandian",
-        content: "外置电源断电告警",
-        count: 0
-      },
-      {
-        icon: "duandian",
+        icon: "fangdao",
         content: "防盗告警",
         count: 0
       }

@@ -1,7 +1,9 @@
 <template>
   <div class="dialog">
     <el-dialog custom-class="process-dialog" class="process-detail-dialog dialog-fix" title="办理状态详细信息查看" :visible="dialogVisible" width="960px" @close="onDialogHide">
-      <record-setting-content ref="recordSetting"></record-setting-content>
+      <div class="record-setting-container">
+        <record-setting-content ref="recordSetting"></record-setting-content>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="onDialogConfirm">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>

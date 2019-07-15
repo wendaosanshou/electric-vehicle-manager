@@ -9,7 +9,7 @@
     >删除</el-button>
     <el-dialog class="dialog-fix" title="删除资讯" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="app-advisory-title">
-        <page-title>选择你要删除的APP咨询</page-title>
+        <page-title>选择你要删除的APP资讯</page-title>
       </div>
       <div class="dialog-content">
         <el-table class="table-fix" size="mini" :data="tableData" border style="width: 100%">

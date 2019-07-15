@@ -146,7 +146,7 @@ $basic-ratio: 1.4;
 
 .dialog-add-org {
   .add-org-body {
-    padding: 0 d2r(18px) 0 d2r(23px);
+    padding: d2r(18px) d2r(18px) 0 d2r(23px);
   }
   .dialog-title {
   text-align: left;

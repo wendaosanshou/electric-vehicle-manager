@@ -26,6 +26,7 @@
         class="item-ipt-textarea ipt-fix"
         size="mini"
         resize="none"
+        maxlength="50"
         :autosize="{ minRows: 10, maxRows: 10}"
         v-model="businessForm.note"
         placeholder="请输入备注信息（50字内）"
@@ -140,10 +141,8 @@ export default {
           this.$emit("onRefresh");
         }
       } catch (error) {
-        this.$message({
-          type: "info",
-          message: "添加失败!"
-        });
+        console.log(error)
+        return Promise.reject(error)
       }
     }
   },

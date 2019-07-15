@@ -5,7 +5,7 @@
     </div>
     <div class="point-manange-content">
       <div class="point-manage-tree">
-        <div class="city-header">深圳市</div>
+        <div class="city-header">{{cityname}}</div>
         <el-tree
           :data="businessTree"
           :expand-on-click-node="false"
@@ -59,6 +59,10 @@ export default {
   },
   computed: {
     ...mapGetters(["allBusinessPoint", "businessHandleTree", "businessInstallTree"]),
+    cityname() {
+      const [city] = this.businessTree
+      return city ? city.name : '深圳市'
+    },
     isBusinessHandle() {
       const { path } = this.$route
       return path && path === '/business-manage'

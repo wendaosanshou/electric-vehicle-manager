@@ -8,7 +8,7 @@
       :modal="false"
       :close-on-click-modal="false"
     >
-      <!-- {{dialogList}} -->
+      <!-- {{alarmTypeList}} -->
       <div class="dialog-content">
         <div class="form-item" v-for="(item, index) in alarmTypeList" :key="index">
           <i class="item-icon" :class="[`item-icon-${item.icon}`]"></i>
@@ -25,59 +25,11 @@ import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      dialogVisible: false,
-      dialogList: [
-        {
-          icon: "weiyi",
-          content: "位移告警",
-          count: 0
-        },
-        {
-          icon: "zhendong",
-          content: "震动告警",
-          count: 0
-        },
-        {
-          icon: "gaowen",
-          content: "高温告警",
-          count: 0
-        },
-        {
-          icon: "chaosu",
-          content: "超速告警",
-          count: 0
-        },
-        {
-          icon: "diya",
-          content: "电瓶低电压告警",
-          count: 0
-        },
-        {
-          icon: "gaoya",
-          content: "充电高电压告警",
-          count: 0
-        },
-        {
-          icon: "neizhidiya",
-          content: "内置电池低电压告警",
-          count: 0
-        },
-        {
-          icon: "duandian",
-          content: "外置电源断电告警",
-          count: 0
-        }
-      ]
+      dialogVisible: false
     };
   },
   computed: {
     ...mapGetters(["alarmLatest", "alarmTypeList"]),
-    getDialogListImage() {
-      return this.dialogList.map(item => {
-        item.icon = require(`@/assets/icons/${item.icon}_icon@2x.png`);
-        return item;
-      });
-    }
   },
   model: {
     prop: "visible",
@@ -166,6 +118,30 @@ $basic-ratio: 1.4;
         }
         &.item-icon-duandian {
           background: url("~@/assets/icons/duandian_icon@2x.png");
+          background-size: 100% 100%;
+        }
+        &.item-icon-duandian2 {
+          background: url("~@/assets/icons/duandian2_icons@2x.png");
+          background-size: 100% 100%;
+        }
+        &.item-icon-suaidao {
+          background: url("~@/assets/icons/suaidao_icons@2x.png");
+          background-size: 100% 100%;
+        }
+        &.item-icon-chaosu {
+          background: url("~@/assets/icons/chaosu_icon@2x.png");
+          background-size: 100% 100%;
+        }
+        &.item-icon-jinjigaojing {
+          background: url("~@/assets/icons/jinjigaojing_icon@2x.png");
+          background-size: 100% 100%;
+        }
+        &.item-icon-feifaxingshi {
+          background: url("~@/assets/icons/duandian_icon@2x.png");
+          background-size: 100% 100%;
+        }
+        &.item-icon-fangdao {
+          background: url("~@/assets/icons/fangdao_icon@2x.png");
           background-size: 100% 100%;
         }
       }

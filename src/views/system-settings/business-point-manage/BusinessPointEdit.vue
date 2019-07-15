@@ -17,6 +17,7 @@
         class="item-ipt-textarea ipt-fix"
         size="mini"
         resize="none"
+        maxlength="50"
         :autosize="{ minRows: 10, maxRows: 10}"
         placeholder="请输入备注信息（50字内）"
       ></el-input>
@@ -72,7 +73,8 @@ export default {
         if (
           ["name", "note", "parent_id", "organization_id"].indexOf(key) > -1
         ) {
-          return this.businessForm[key];
+          // 不限制为0的情况
+          return this.businessForm[key] || this.businessForm[key] === 0;
         } else {
           return true;
         }
@@ -83,6 +85,9 @@ export default {
     ...mapActions(["editBusinessPoint"]),
     initBusinessForm() {
       this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
+      if (this.businessForm && this.businessForm.children) {
+        delete this.businessForm.children
+      }
     },
     async handleEditBusinessPoint() {
       try {

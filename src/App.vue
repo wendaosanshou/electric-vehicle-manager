@@ -327,6 +327,30 @@ $basic-ratio: 1.4;
     background: url("~@/assets/icons/duandian_icon@2x.png");
     background-size: 100% 100%;
   }
+  &.item-icon-duandian2 {
+    background: url("~@/assets/icons/duandian2_icons@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-suaidao {
+    background: url("~@/assets/icons/suaidao_icons@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-chaosu {
+    background: url("~@/assets/icons/chaosu_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-jinjigaojing {
+    background: url("~@/assets/icons/jinjigaojing_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-feifaxingshi {
+    background: url("~@/assets/icons/duandian_icon@2x.png");
+    background-size: 100% 100%;
+  }
+  &.item-icon-fangdao {
+    background: url("~@/assets/icons/fangdao_icon@2x.png");
+    background-size: 100% 100%;
+  }
 }
 
 .amap-info {
@@ -457,4 +481,46 @@ $basic-ratio: 1.4;
 //   }
 // }
 
+// 修改滚动条样式
+// ::-webkit-scrollbar {
+//   /*滚动条整体样式*/
+//   width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+//   height: 1px;
+// }
+
+// ::-webkit-scrollbar-thumb {
+//   /*滚动条里面小方块*/
+//   border-radius: 10px;
+//   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+//   background: #535353;
+// }
+
+// ::-webkit-scrollbar-track {
+//   /*滚动条里面轨道*/
+//   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+//   border-radius: 10px;
+//   background: #ededed;
+// }
+
+.hide-overflow-scrollbar {
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: none;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: none;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background-color: none;
+  }
+}
 </style>

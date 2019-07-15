@@ -21,8 +21,8 @@
               <el-input
                 class="item-selector item-selector-timer ipt-fix"
                 size="mini"
-                v-model="form.pre_time"
-                placeholder="请输入预约时间"
+                v-model="form.contract_content"
+                placeholder="请输入当前合约期"
                 disabled
               ></el-input>
             </div>
@@ -43,8 +43,8 @@
               <el-input
                 class="item-selector item-selector-timer ipt-fix"
                 size="mini"
-                v-model="form.pre_time"
-                placeholder="请输入预约时间"
+                v-model="form.contract_expire"
+                placeholder="请输入合约到期时间"
                 disabled
               ></el-input>
             </div>
@@ -128,11 +128,11 @@
       <page-title class="setting-title" :hasDot="false">车主信息</page-title>
       <div class="setting-content">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">车主姓名</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.own_name"
                 placeholder="请输入车主姓名"
@@ -142,7 +142,7 @@
             <div class="item-selector-wraper">
               <div class="item-label">家庭住址</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.address"
                 placeholder="请输入家庭住址"
@@ -171,11 +171,11 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">手机号</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.own_phone"
                 placeholder="请输入手机号"
@@ -185,7 +185,7 @@
             <div class="item-selector-wraper">
               <div class="item-label">证件号码</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.certificates_code"
                 placeholder="请输入证件号码"
@@ -301,10 +301,8 @@
           list-type="picture-card"
           :show-file-list="false"
           :action="imageUploadUrl"
-          :before-upload="onBeforeUpload"
           :on-success="onImageUploadSuccess"
-          v-if="isRecordSetting"
-        >
+          v-if="isRecordSetting && isAllowUpload">
           <i class="el-icon-plus"></i>
         </el-upload>
       </div>
@@ -391,6 +389,9 @@ export default {
       }
       return [...this.defaultImages, ...images].filter(item => item);
     },
+    isAllowUpload() {
+      return this.imagelist && this.imagelist.length < 4
+    },
     getAllImages() {
       const { imgs } = this.form;
       if (imgs && imgs.split(SPLIT_IMAGE_SYMBOL).length > 0) {
@@ -412,8 +413,14 @@ export default {
   },
   methods: {
     ...mapActions(["modifyWorkItem", "getVehicleInfo"]),
+    getFilterTime(time) {
+      if (time.indexOf('2000-01-01') > -1) {
+        return ''
+      }
+      return time
+    },
     onBeforeUpload(file) {
-      if (this.imagelist && this.imagelist.length > 0) {
+      if (this.imagelist && this.imagelist.length > 4) {
         this.$message({
           type: "error",
           message: "照片数量已存在4张，不能再新增照片!"
@@ -452,9 +459,9 @@ export default {
           type: "success",
           message: "上传成功!"
         });
-        // this.form.imgs = this.form.imgs ? `${this.form.imgs}${SPLIT_IMAGE_SYMBOL}${data}` : data
-        this.form.imgs = data;
-        console.log(this.form);
+        this.form.imgs = this.form.imgs ? `${this.form.imgs}${SPLIT_IMAGE_SYMBOL}${data}` : data
+        // this.form.imgs = data;
+        // console.log(this.form);
       } else {
         this.$message({
           type: "error",
@@ -484,6 +491,7 @@ export default {
         pre_time: this.workItem.pre_time,
         business_name: this.workItem.business_name,
         install_name: this.workItem.install_name,
+        contract_expire: this.getFilterTime(this.workItem.contract_expire),
         contract_content: this.getContractContent(
           this.workItem.contract_content
         ),
@@ -590,6 +598,9 @@ $basic-ratio: 1.4;
         .item-selector {
           margin-left: d2r(6px);
           width: d2r(180px);
+        }
+        .item-selector-long {
+          width: d2r(260px);
         }
         .item-selector-timer {
           margin-left: d2r(6px);

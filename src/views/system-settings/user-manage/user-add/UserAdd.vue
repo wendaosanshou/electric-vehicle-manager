@@ -4,6 +4,7 @@
       <page-title>{{isUserAdd ? '添加用户' : '编辑用户'}}</page-title>
       <page-back></page-back>
     </div>
+    <!-- {{form}} -->
     <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
       <el-form-item label="账号">
         <el-input class="ipt-fix" size="mini" v-model="form.account" placeholder="登录账号（手机号）" :disabled="!isUserAdd"></el-input>
@@ -38,7 +39,7 @@
             disabled
             placeholder="请选择所属角色"
           ></el-input>
-          <user-add-dialog @onSelectRole="handleSelectRole"/>
+          <user-add-dialog :defaultRoleId="form.role_id" @onSelectRole="handleSelectRole"/>
         </div>
       </el-form-item>
       <el-form-item label="手机">

@@ -4,10 +4,10 @@
     <el-dialog class="dialog-fix" title="选择角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-title">
         <span class="dialog-title-content">当前角色</span>
-        <span class="refresh-link">刷新</span>
+        <span class="refresh-link" @click="onRefresh">刷新</span>
       </div>
       <div class="table-container">
-        <el-table ref="roleTable" class="table-fix table-disable-select-all" :data="allRoles" size="mini" border stripe style="width: 100%"
+        <el-table ref="roleTable" class="table-fix table-disable-select-all" :data="allRoles" size="mini" border stripe max-height="450" style="width: 100%"
           @selection-change="handleSelectionChange"
           @select="handleSelect">
           <el-table-column type="selection" width="55"></el-table-column>
@@ -38,6 +38,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import PageTitle from "@/components/PageTitle.vue";
+import { setTimeout } from 'timers';
 
 export default {
   data() {
@@ -45,6 +46,12 @@ export default {
       dialogVisible: false,
       selectValue: ''
     };
+  },
+  props: {
+    defaultRoleId: {
+      type: Number | String,
+      default: ''
+    }
   },
   computed: {
     ...mapGetters(['allRoles'])
@@ -70,6 +77,13 @@ export default {
     handleDialogConfirm() {
       this.$emit('onSelectRole', this.selectValue)
       this.onDialogHide()
+    },
+    onRefresh() {
+      this.getAllRoles()
+      this.$message({
+        type: "success",
+        message: "刷新角色信息成功!"
+      })
     }
   },
   components: {
@@ -113,6 +127,7 @@ $basic-ratio: 1.4;
   .refresh-link {
     font-size: 14px;
     color: #7aa9ec;
+    cursor: pointer;
   }
 }
 

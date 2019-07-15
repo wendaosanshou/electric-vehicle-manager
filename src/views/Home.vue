@@ -299,9 +299,7 @@ export default {
           type: "error",
           message: "请先登陆后再进行操作!"
         });
-        setTimeout(() => {
-          this.$router.replace("/login");
-        }, 500);
+        this.$router.replace("/login");
       }
     },
     initActiveMenu() {
@@ -398,8 +396,10 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.checkIsLogin();
+  },
+  mounted() {
     this.initAllBusinessPoint();
     this.getSidebarMenu(this.sidebarMenus)
     this.initCurrentPage()
@@ -597,8 +597,10 @@ $basic-ratio: 1.4;
       background: rgba(245, 245, 246, 1);
     }
     .home-body {
+      box-sizing: border-box;
       width: 100%;
       flex-grow: 1;
+      padding-right: d2r(6px);
     }
   }
 }
