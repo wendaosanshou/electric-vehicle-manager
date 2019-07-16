@@ -1,5 +1,6 @@
 <template>
   <div class="point-content">
+    <!-- {{businessForm}}--{{defaultForm}}--{{allOrg}} -->
     <div class="point-item">
       <div class="point-item-label">父节点组织名称</div>
       <el-input
@@ -40,7 +41,7 @@
         v-model="businessForm.organization_id"
         placeholder="请选择活动区域"
       >
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in allOrg" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
@@ -51,7 +52,7 @@
         type="primary"
         @click="handleAddBusinessPoint"
       >保存</el-button>
-      <el-button class="point-btn button-fix" size="mini">取消</el-button>
+      <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button>
     </div>
   </div>
 </template>
@@ -76,18 +77,25 @@ export default {
     };
   },
   props: {
-    currentBusinessPoint: {
+    defaultForm: {
       type: Object,
       default: () => {}
     }
   },
   watch: {
-    currentBusinessPoint() {
-      this.initAddBusinessForm(this.currentBusinessPoint);
+    defaultForm() {
+      this.initAddBusinessForm(this.defaultForm);
     }
   },
   computed: {
     ...mapGetters(["allOrg", 'businessType']),
+    filterAllOrg() {
+      const { organization_id } = this.defaultForm
+      if (organization_id && organization_id > 0) {
+        return this.allOrg.filter(item => item.id > organization_id)
+      }
+      return this.allOrg
+    },
     addBusinessType() {
       if ([1, 2, 3].indexOf(this.businessForm.organization_id) > -1) {
         return 0
@@ -109,8 +117,11 @@ export default {
   },
   methods: {
     ...mapActions(["addBusinessPoint"]),
+    onCancleForm() {
+      this.$emit('on-cancle-form')
+    },
     initAddBusinessForm() {
-      let { name, id, country, street, organization_id } = this.currentBusinessPoint;
+      let { name, id, country, street, organization_id } = this.defaultForm;
       // 1是市
       if (organization_id === 1) {
         country = this.businessForm.name

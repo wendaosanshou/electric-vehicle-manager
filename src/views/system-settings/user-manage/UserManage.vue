@@ -40,7 +40,7 @@
         </div> -->
       </div>
     </div>
-    <el-table id="user-export-table" ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
+    <el-table ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
       @selection-change="handleSelectionChange"
       @select="handleSelect">
       <el-table-column prop="id" align="center" label="序号"></el-table-column>
@@ -61,6 +61,19 @@
           </template>
       </el-table-column>
     </el-table>
+
+    <!-- 导数据用的table -->
+    <el-table id="user-export-table" ref="userTable" class="table-fix table-disable-select-all table-hide" size="mini" :data="allUser" v-show="false">
+      <el-table-column prop="id" align="center" label="序号"></el-table-column>
+      <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
+      <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
+      <el-table-column prop="site_name" align="center" label="所属组织（业务办理点）"></el-table-column>
+      <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
+      <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
+      <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
+      <el-table-column prop="note" align="center" label="备注"></el-table-column>
+    </el-table>
+
     <div class="pagination-wraper">
       <el-pagination
         @size-change="handleSizeChange"
@@ -128,7 +141,7 @@ export default {
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
-          "sheetjs.xlsx"
+          "用户管理.xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
@@ -144,6 +157,14 @@ export default {
       console.log(pageIndex)
       this.pageIndex = pageIndex
       this.handleSearchAllUser()
+    },
+    initSearchAllUser() {
+      this.getAllUser({
+        page_size: 1000,
+        page_index: 1,
+        account: '',
+        role: ''
+      });
     },
     handleSearchAllUser() {
       this.getAllUser({

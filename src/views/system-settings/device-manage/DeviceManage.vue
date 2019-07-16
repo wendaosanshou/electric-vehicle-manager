@@ -14,6 +14,7 @@
         </div>
         <div class="menu-btn-wraper">
           <div class="el-btn btn-search" @click="onSearchProducts">查询</div>
+          <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
         </div>
       </div>
     </div>
@@ -31,7 +32,7 @@
         <el-table-column prop="imei" align="center" label="IMEI"></el-table-column>
         <el-table-column prop="operation" align="center" label="创建人"></el-table-column>
         <el-table-column prop="import_time" align="center" label="入库时间"></el-table-column>
-        <el-table-column label="操作" width="180">
+        <el-table-column label="操作" align="center" width="180">
           <template slot-scope="scope">
             <div class="btn-container">
               <!-- <device-edit :data="deepClone(scope.row)"></device-edit> -->
@@ -79,6 +80,9 @@ export default {
     ...mapActions(["searchProducts"]),
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
+    },
+    onClearSearchParams() {
+      this.imei = ''
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
@@ -182,6 +186,10 @@ $basic-ratio: 1.4;
         font-family: PingFangSC-Semibold;
         font-weight: 600;
         color: #ffffff;
+      }
+      .btn-clear {
+        margin-left: d2r(9px);
+        background: #a7b0bbff;
       }
     }
   }

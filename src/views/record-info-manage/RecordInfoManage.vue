@@ -417,11 +417,11 @@ export default {
         },
         {
           value: 1,
-          label: "一年合约期"
+          label: "一年"
         },
         {
           value: 2,
-          label: "两年合约期"
+          label: "两年"
         }
       ],
       contractActive: 0,
@@ -479,6 +479,15 @@ export default {
   methods: {
     ...mapMutations(["updateWorkItem"]),
     ...mapActions(["getWorkList", "setWorkDistribute", "getExportWorkList"]),
+    getMenuName() {
+      if (this.isProcessManage) {
+        return '办理状态管理'
+      } else if (this.isProcessSearch) {
+        return '办理状态查询'
+      } else if (this.isRecordManage) {
+        return '备案信息管理'
+      }
+    },
     getInstallTime(installTime) {
       if (installTime.indexOf('2000-01-01') > -1) {
         return ''
@@ -535,6 +544,7 @@ export default {
     },
     exportExcel(id) {
       /* 从表生成工作簿对象 */
+      let excelName = this.getMenuName()
       var wb = XLSX.utils.table_to_book(document.querySelector(id));
       console.log(wb)
       /* 获取二进制字符串作为输出 */
@@ -551,7 +561,7 @@ export default {
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
-          "sheetjs.xlsx"
+          `${excelName}.xlsx`
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
@@ -589,10 +599,10 @@ export default {
           contractContent = "全部";
           break;
         case 1:
-          contractContent = "一年合约期";
+          contractContent = "一年";
           break;
         case 2:
-          contractContent = "两年合约期";
+          contractContent = "两年";
           break;
         default:
           break;

@@ -30,13 +30,22 @@
           <el-button class="point-btn button-fix" size="mini" @click="handleDelete">删除节点</el-button>
           <el-button class="point-btn button-fix" size="mini" @click="handleEdit">修改节点</el-button>
         </div>
-        <business-point-add :currentBusinessPoint="currentBusinessPoint" @onRefresh="onRefreshBusinessPoint" v-if="isAddForm"></business-point-add>
+        <business-point-add 
+          :defaultForm="currentBusinessPoint" 
+          @onRefresh="onRefreshBusinessPoint" 
+          @on-cancle-form="onCancleForm" 
+          v-if="isAddForm"></business-point-add>
         <business-point-delete
           :defaultForm="currentBusinessPoint"
           @onRefresh="onRefreshBusinessPoint"
+          @on-cancle-form="onCancleForm"
           v-if="isDeleteForm"
         ></business-point-delete>
-        <business-point-edit :defaultForm="currentBusinessPoint" v-else-if="isEditForm" @onRefresh="onRefreshBusinessPoint"></business-point-edit>
+        <business-point-edit 
+          :defaultForm="currentBusinessPoint" 
+          v-else-if="isEditForm"
+          @on-cancle-form="onCancleForm" 
+          @onRefresh="onRefreshBusinessPoint"></business-point-edit>
       </div>
     </div>
   </div>
@@ -95,6 +104,9 @@ export default {
   },
   methods: {
     ...mapActions(["getAllOrg", "getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall']),
+    onCancleForm() {
+      this.formType = ''
+    },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     },
@@ -183,6 +195,10 @@ $basic-ratio: 1.4;
       height: d2r(53px);
       padding-left: d2r(23px);
       border-bottom: 1px solid #dddddd;
+    }
+    .role-tree {
+      max-height: d2r(772px);
+      overflow: scroll;
     }
   }
   .point-content-right {

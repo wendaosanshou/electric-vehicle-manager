@@ -16,7 +16,7 @@
         <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="输入姓名"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input class="ipt-fix" size="mini" v-model="form.pwd" placeholder="请输入密码"></el-input>
+        <el-input class="ipt-fix" type="password" size="mini" v-model="form.pwd" placeholder="请输入密码"></el-input>
       </el-form-item>
       <el-form-item label="所属组织">
         <div class="form-btn-wrap">

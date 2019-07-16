@@ -21,6 +21,7 @@
           size="mini"
           border
           stripe
+          max-height="450"
           style="width: 100%"
         >
           <el-table-column prop="id" label="序号"></el-table-column>

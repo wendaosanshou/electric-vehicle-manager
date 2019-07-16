@@ -246,7 +246,7 @@ const Login = {
         });
         vm.$message({
           type: "success",
-          message: "编辑成功!"
+          message: "添加成功!"
         });
         console.log(result);
       } catch (error) {

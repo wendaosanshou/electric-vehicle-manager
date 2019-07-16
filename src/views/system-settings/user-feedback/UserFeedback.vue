@@ -132,7 +132,7 @@ export default {
       if (process === 0) {
         return '未处理'
       } else if (process === 1) {
-        return '处理'
+        return '已处理'
       } else {
         return ''
       }

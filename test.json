@@ -1,9 +1,11 @@
 {
-  "download": "http://47.92.237.140:80/app/app-eriding-0706_1122_2246.apk",
-  "name": "易骑无忧",
-  "note": "测试一下",
-  "operation": "admin",
-  "token": "YWRtaW5fMTZfMTU2MzIwMTA1Mzc5OQ==",
-  "upgrade": 0,
-  "version": "app-eriding-07061122"
+  "imei": "",
+  "import_operation": "",
+  "import_time": "2019-06-29 00:00:00",
+  "page_index": 1,
+  "page_size": 10,
+  "token": "YWRtaW5fMTZfMTU2MzI4Njc1MTM3MA==",
+  "update_operation": "",
+  "update_time": "",
+  "version": ""
 }

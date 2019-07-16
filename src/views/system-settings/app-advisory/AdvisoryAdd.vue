@@ -184,6 +184,16 @@ export default {
       }
       console.log('onFileUploadSuccess', res)
     },
+    resetFormParams() {
+      this.form = {
+        title: "",
+        content: "",
+        img_url: "",
+        html_url: "",
+        active_time: "",
+        expire_time: ""
+      }
+    },
     async handleAddInfoWeb() {
       const data = {
         title: this.form.title,
@@ -215,6 +225,7 @@ export default {
           await this.handleAddInfoWeb();
         }
         this.onDialogHide();
+        this.resetFormParams()
         this.$emit("onRefresh");
       }
     }

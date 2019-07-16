@@ -17,7 +17,7 @@
               <el-input
                     size="mini"
                     class="ipt-fix"
-                    v-model="scope.row.code"
+                    v-model.number="scope.row.code"
                     placeholder="填写角色编号"
                   ></el-input>
             </template>
@@ -115,6 +115,17 @@ export default {
       }
       console.log("onRoleChange", this.authorList.join(","));
     },
+    resetRoleTable() {
+      this.roleTable = [
+        {
+          name: "",
+          note: "",
+          author: "",
+          code: "",
+          id: ""
+        }
+      ]
+    },
     async onAddRole() {
       const [role] = this.roleTable;
       if (role.name && role.code && this.authorList.length > 0 && role.note) {
@@ -125,6 +136,7 @@ export default {
           note: role.note
         });
         this.onDialogHide();
+        this.resetRoleTable()
         this.$emit('onRefreshRoleInfo')
       } else {
         this.$message("输入信息不完整");

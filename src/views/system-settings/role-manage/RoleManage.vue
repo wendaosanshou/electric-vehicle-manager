@@ -121,7 +121,7 @@ $basic-ratio: 1.4;
   box-sizing: border-box;
   width: 100%;
   height: auto;
-  padding: 0 d2r(58px) 0 d2r(65px);
+  padding: 0 d2r(58px) d2r(58px) d2r(65px);
   .role-manage-subtitle {
     text-align: left;
     color: #3b4859;

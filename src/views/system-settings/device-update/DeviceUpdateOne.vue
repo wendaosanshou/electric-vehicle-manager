@@ -83,6 +83,12 @@ export default {
     onDialogHide() {
       this.dialogVisible = false;
     },
+    resetDevice() {
+      this.form = {
+        imei: "",
+        version: ""
+      }
+    },
     async handleUpdateDevice() {
       console.log(this.form);
       await this.updateProduce({
@@ -93,6 +99,7 @@ export default {
       })
       this.onDialogHide()
       this.$emit('on-refresh')
+      this.resetDevice()
     }
   },
   components: {

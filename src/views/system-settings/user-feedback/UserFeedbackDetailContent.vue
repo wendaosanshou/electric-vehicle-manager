@@ -415,9 +415,9 @@ export default {
       if (contract_content === 0) {
         return "全部";
       } else if (contract_content === 1) {
-        return "一年合约期";
+        return "一年";
       } else if (contract_content === 2) {
-        return "两年合约期";
+        return "两年";
       }
     }
   },

@@ -104,6 +104,13 @@ export default {
     onDialogHide() {
       this.dialogVisible = false;
     },
+    resetDeviceParams() {
+      this.form = {
+        imei: "",
+        id: "",
+        note: ""
+      }
+    },
     async handleEditDevice() {
       console.log(this.form);
       const params = {
@@ -113,6 +120,7 @@ export default {
       };
       console.log(params)
       await this.importProducts(params);
+      this.resetDeviceParams()
       this.onDialogHide()
     }
   },

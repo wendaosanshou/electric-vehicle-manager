@@ -26,7 +26,7 @@
     </div>
     <div class="btn-confirm-wrap">
       <el-button class="point-btn button-fix" size="mini" type="primary" @click="handleDeleteBusinessPoint">删除</el-button>
-      <el-button class="point-btn button-fix" size="mini">取消</el-button>
+      <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button>
     </div>
   </div>
 </template>
@@ -51,6 +51,9 @@ export default {
   },
   methods: {
     ...mapActions(['deleteBusinessPoint']),
+    onCancleForm() {
+      this.$emit('on-cancle-form')
+    },
     async handleDeleteBusinessPoint() {
       try {
         await this.$confirm(`此操作将永久删除当前节点, 是否继续?`, '提示', {

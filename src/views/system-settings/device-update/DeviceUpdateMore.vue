@@ -98,6 +98,13 @@ export default {
         version: '' //版本
       });
     },
+    resetDeviceDialog() {
+      this.form = {
+        imei: "",
+        version: ""
+      }
+      this.imeis = ""
+    },
     async handleUpdateDevice() {
       console.log(this.imeis);
       await this.updateProduce({
@@ -108,6 +115,7 @@ export default {
       })
       this.onDialogHide()
       this.$emit('on-refresh')
+      this.resetDeviceDialog()
     }
   },
   components: {

@@ -30,7 +30,7 @@
         size="small"
         placeholder="请选择活动区域"
       >
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in allOrg" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
@@ -41,7 +41,7 @@
         type="primary"
         @click="handleEditBusinessPoint"
       >修改</el-button>
-      <el-button class="point-btn button-fix" size="mini">取消</el-button>
+      <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button>
     </div>
   </div>
 </template>
@@ -79,10 +79,20 @@ export default {
           return true;
         }
       });
-    }
+    },
+    filterAllOrg() {
+      const { organization_id } = this.defaultForm
+      if (organization_id && organization_id > 0) {
+        return this.allOrg.filter(item => item.id === organization_id)
+      }
+      return this.allOrg
+    },
   },
   methods: {
     ...mapActions(["editBusinessPoint"]),
+    onCancleForm() {
+      this.$emit('on-cancle-form')
+    },
     initBusinessForm() {
       this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
       if (this.businessForm && this.businessForm.children) {
