@@ -337,9 +337,10 @@ const locationMonitor = {
           ...data
         });
         if (result.data) {
-          await convertGps([result.data]);
-          commit("updateDeviceInfo", result.data);
-          commit("updateWebDeviceInfo", [result.data]);
+          let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
+          await convertGps(deviceInfos);
+          commit("updateDeviceInfo", deviceInfos[0]);
+          commit("updateWebDeviceInfo", deviceInfos);
         } else {
           vm.$message({
             type: "error",
