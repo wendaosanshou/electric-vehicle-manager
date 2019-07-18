@@ -40,13 +40,13 @@ export default {
       contract: 1,
       contractList: [
         {
-        label: '一年',
-        value: 1
-      },
-      {
-        label: '两年',
-        value: 2
-      }
+          label: '一年',
+          value: 1
+        }
+      // {
+      //   label: '两年',
+      //   value: 2
+      // }
       ]
     }
   },

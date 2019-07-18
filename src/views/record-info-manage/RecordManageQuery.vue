@@ -1,6 +1,6 @@
 <template>
   <div class="record-manage-query">
-    <el-button type="primary" @click="onDialogShow">查询</el-button>
+    <el-button type="primary" icon="el-icon-search" @click="onDialogShow">查询</el-button>
     <el-dialog title="查询" :visible.sync="queryFromVisible" width="600px" lock-scroll>
       <el-form class="form-content" :model="form" label-width="130px">
         <el-form-item label="区县">

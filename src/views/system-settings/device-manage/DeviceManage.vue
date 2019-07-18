@@ -13,7 +13,7 @@
           <el-input class="menu-ipt ipt-fix" size="mini" v-model="imei" placeholder="请输入imei号"></el-input>
         </div>
         <div class="menu-btn-wraper">
-          <div class="el-btn btn-search" @click="onSearchProducts">查询</div>
+          <div icon="el-icon-search" class="el-btn btn-search" @click="onSearchProducts">查询</div>
           <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
         </div>
       </div>

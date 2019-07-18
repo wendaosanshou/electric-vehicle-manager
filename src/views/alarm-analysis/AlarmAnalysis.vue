@@ -44,7 +44,7 @@
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
       </div>
       <div class="title-right">
-        <el-button class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
+        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
     <div class="monitor-container">

@@ -16,7 +16,7 @@ const Login = {
     productPagesTotal: 0,
     firewareList: [],
     firewareListTotal: 0,
-    produceLog: {},
+    produceLog: [],
     apkList: [],
     apkListTotal: 0,
     feedbackList: [],

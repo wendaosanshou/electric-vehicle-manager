@@ -33,14 +33,14 @@
             </el-select>
             <!-- <el-input class="menu-ipt ipt-fix" size="mini" v-model="process" placeholder="请输入版本名称"></el-input> -->
           </div>
-          <div class="menu-account menu-ipt-wraper">
+          <!-- <div class="menu-account menu-ipt-wraper">
             <span class="menu-label menu-label-half">操作人</span>
             <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入创建人"></el-input>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="menu-btns">
-        <div class="el-btn btn-search" @click="onSearchFeedback">查询</div>
+        <div icon="el-icon-search" class="el-btn btn-search" @click="onSearchFeedback">查询</div>
         <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
       </div>
     </div>
@@ -237,7 +237,7 @@ $basic-ratio: 1.4;
     .user-menu-item {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
       margin-top: d2r(20px);
       .menu-ipt-wraper {

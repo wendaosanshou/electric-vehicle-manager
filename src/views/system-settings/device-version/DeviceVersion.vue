@@ -25,12 +25,12 @@
           </div>
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">上传操作人</span>
-            <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入创建人"></el-input>
+            <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入上传操作人"></el-input>
           </div>
         </div>
       </div>
       <div class="menu-btns">
-        <div class="el-btn btn-search" @click="onSearchDeviceUpdate">查询</div>
+        <div icon="el-icon-search" class="el-btn btn-search" @click="onSearchDeviceUpdate">查询</div>
         <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
       </div>
     </div>

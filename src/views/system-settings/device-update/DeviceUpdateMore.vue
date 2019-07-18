@@ -85,6 +85,7 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+      this.resetDeviceDialog()
     },
     async getAllProductPage() {
       await this.getProductPage({
@@ -115,7 +116,6 @@ export default {
       })
       this.onDialogHide()
       this.$emit('on-refresh')
-      this.resetDeviceDialog()
     }
   },
   components: {

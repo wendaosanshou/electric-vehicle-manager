@@ -103,6 +103,7 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+      this.resetDeviceParams()
     },
     resetDeviceParams() {
       this.form = {
@@ -120,7 +121,6 @@ export default {
       };
       console.log(params)
       await this.importProducts(params);
-      this.resetDeviceParams()
       this.onDialogHide()
     }
   },

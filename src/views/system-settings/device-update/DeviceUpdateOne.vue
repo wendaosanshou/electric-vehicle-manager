@@ -82,6 +82,7 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+      this.resetDevice()
     },
     resetDevice() {
       this.form = {
@@ -99,7 +100,6 @@ export default {
       })
       this.onDialogHide()
       this.$emit('on-refresh')
-      this.resetDevice()
     }
   },
   components: {

@@ -97,6 +97,7 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+      this.resetRoleTable()
     },
     removeNode(item, array) {
       for (let index = 0; index < array.length; index++) {
@@ -136,7 +137,6 @@ export default {
           note: role.note
         });
         this.onDialogHide();
-        this.resetRoleTable()
         this.$emit('onRefreshRoleInfo')
       } else {
         this.$message("输入信息不完整");

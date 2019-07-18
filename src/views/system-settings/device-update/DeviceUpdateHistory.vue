@@ -36,7 +36,7 @@
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="handleDelete">删 除</el-button>
+        <el-button size="mini" type="primary" @click="handleConfirm">确认</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -54,14 +54,6 @@ export default {
       tableData: []
     };
   },
-  props: {
-    data: {
-      type: Object,
-      default: () => {
-        return {};
-      }
-    }
-  },
   computed: {
     ...mapGetters(['produceLog'])
   },
@@ -72,26 +64,24 @@ export default {
     },
     onDialogShow() {
       this.initUpdateLog()
-      if (this.data && Object.keys(this.data).length > 0) {
-        this.tableData = [this.data];
-      }
       this.dialogVisible = true;
     },
     onDialogHide() {
       this.dialogVisible = false;
     },
-    initUpdateLog() {
-      this.getUpdateLog()
+    async initUpdateLog() {
+      await this.getUpdateLog()
+      this.tableData = [this.produceLog]
     },
-    handleDelete() {
-      const [device] = this.tableData;
-      const { imei } = device;
-      console.log(device);
+    handleConfirm() {
       this.onDialogHide();
     }
   },
   components: {
     PageTitle
+  },
+  mounted() {
+    this.initUpdateLog()
   }
 };
 </script>

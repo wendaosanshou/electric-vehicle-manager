@@ -22,7 +22,7 @@
           </el-select>
         </div>
         <div class="menu-btn-wraper">
-          <div class="el-btn btn-search" @click="handleSearchAllUser">查询</div>
+          <div icon="el-icon-search" class="el-btn btn-search" @click="handleSearchAllUser">查询</div>
           <div class="el-btn btn-clear" @click="handleClearSearchParams">清空</div>
         </div>
       </div>

@@ -151,6 +151,7 @@ export default {
     },
     onDialogHide() {
       this.dialogVisible = false;
+      this.resetFormParams()
     },
     onImageUploadSuccess(res) {
       const { code, data} = res
@@ -225,7 +226,6 @@ export default {
           await this.handleAddInfoWeb();
         }
         this.onDialogHide();
-        this.resetFormParams()
         this.$emit("onRefresh");
       }
     }

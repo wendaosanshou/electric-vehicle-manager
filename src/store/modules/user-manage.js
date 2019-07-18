@@ -233,7 +233,7 @@ const Login = {
         });
         vm.$message({
           type: "success",
-          message: "编辑成功!"
+          message: "修改成功!"
         });
       } catch (error) {
         console.log(error);

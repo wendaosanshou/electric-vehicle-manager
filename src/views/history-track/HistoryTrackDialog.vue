@@ -21,7 +21,7 @@
             end-placeholder="结束日期"
             align="right"
           ></el-date-picker>
-          <el-button class="button-fix" size="mini" type="primary" @click="onSearchHistory">查询</el-button>
+          <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchHistory">查询</el-button>
         </div>
         <div class="map-container">
           <div class="car-marker-menu" v-if="isShowHistoryTrack">

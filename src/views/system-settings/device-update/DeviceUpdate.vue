@@ -47,7 +47,7 @@
               type="date"
               size="mini"
               class="menu-ipt ipt-fix"
-              placeholder="请输入升级信息">
+              placeholder="请输入升级时间">
             </el-date-picker>
           </div>
           <div class="menu-account menu-ipt-wraper">
@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="menu-btns">
-        <div class="el-btn btn-search" @click="handleGetProductPage">查询</div>
+        <div icon="el-icon-search" class="el-btn btn-search" @click="handleGetProductPage">查询</div>
         <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
       </div>
     </div>

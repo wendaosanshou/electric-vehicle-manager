@@ -28,7 +28,7 @@
           ></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
-        <el-button class="button-fix" size="mini" type="primary" @click="onHistorySearch">查询</el-button>
+        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onHistorySearch">查询</el-button>
         <!-- <el-button class="button-fix" size="mini" type="primary" @click="onBackHistoryTrack">退出</el-button> -->
       </div>
     </div>

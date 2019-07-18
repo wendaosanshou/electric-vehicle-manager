@@ -130,7 +130,7 @@ export default {
       const { name } = file
       console.log(name)
       // 格式需要类似：app-merchant-0706.apk
-      if (/^([^\d]+)(\d+_?\d+)(.apk)$/.test(name)) {
+      if (/^([^\d]+)(\d+_*\d*)(.apk)$/.test(name)) {
         this.renderLoading()
         return Promise.resolve()
       } else {
@@ -154,7 +154,7 @@ export default {
       const { code, data } = res;
       const { name } = file
       if (code === "10000") {
-        this.form.version = name.replace(/([^\d]+)(\d+)(_?)(\d+)(.apk)/gi, '$2')
+        this.form.version = name.replace(/([^\d]+)(\d+)(_*)(\d*)(.apk)/gi, '$2')
         this.form.name = this.getApkName(name)
         this.$message({
           type: "success",

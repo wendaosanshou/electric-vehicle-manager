@@ -32,8 +32,8 @@
           ></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
-        <el-button class="button-fix" size="mini" type="primary" @click="onSearchLocation">查询</el-button>
-        <el-button class="button-fix" size="mini" type="primary" @click="onSearchAllDevice">查询全部</el-button>
+        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchLocation">查询</el-button>
+        <el-button icon="el-icon-refresh" class="button-fix" size="mini" type="primary" @click="onSearchAllDevice">查询全部</el-button>
       </div>
     </div>
     <!-- {{getLocation(allLocationInfo)}}--{{getLocation(allDeviceInfo)}} -->
