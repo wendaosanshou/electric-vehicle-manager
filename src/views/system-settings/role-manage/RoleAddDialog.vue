@@ -1,6 +1,6 @@
 <template>
   <div class="role-add">
-    <el-button class="button-fix" icon="el-icon-edit" size="mini" @click="onDialogShow">添加角色</el-button>
+    <el-button class="button-fix" icon="el-icon-folder-add" size="mini" @click="onDialogShow">添加角色</el-button>
     <el-dialog class="dialog-fix" title="添加角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-title">添加角色</div>
       <div class="dialog-content">

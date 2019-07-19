@@ -1,6 +1,6 @@
 <template>
   <div class="point-content">
-    <!-- {{businessForm}}--{{defaultForm}}--{{allOrg}} -->
+    <!-- {{useOrg}} -->
     <div class="point-item">
       <div class="point-item-label">父节点组织名称</div>
       <el-input
@@ -33,14 +33,24 @@
         placeholder="请输入备注信息（50字内）"
       ></el-input>
     </div>
-    <div class="point-item">
+     <div class="point-item">
       <div class="point-item-label">组织类型</div>
       <el-select
         class="item-ipt ipt-fix"
         size="small"
+        v-model="businessType"
+        placeholder="请选择组织类型" disabled>
+        <el-option :label="item.label" :value="item.value" v-for="(item, index) in channelTypes" :key="index"></el-option>
+      </el-select>
+    </div>
+    <div class="point-item">
+      <div class="point-item-label">渠道属性</div>
+      <el-select
+        class="item-ipt ipt-fix"
+        size="small"
         v-model="businessForm.organization_id"
-        placeholder="请选择活动区域"
-      >
+        @change="handleAttributeChange"
+        placeholder="请选择渠道属性">
         <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
@@ -72,7 +82,9 @@ export default {
         parentName: "",
         parent_id: "",
         type: 0,
-        organization_id: ""
+        organization_id: "",
+        attribute_id: "",
+        attribute_name: ""
       }
     };
   },
@@ -88,13 +100,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["allOrg", 'businessType']),
+    ...mapGetters(["allOrg", 'businessType', "channelTypes", "orgAttribute"]),
+    useOrg() {
+      let useOrg = this.allOrg.filter(item => {
+        return [1, 2, 3].indexOf(item.id) > -1
+      })
+      return useOrg.concat(this.orgAttribute)
+    },
     filterAllOrg() {
       const { organization_id } = this.defaultForm
       if (organization_id && organization_id > 0) {
-        return this.allOrg.filter(item => item.id > organization_id)
+        return this.useOrg.filter(item => item.id > organization_id)
       }
-      return this.allOrg
+      return this.useOrg
     },
     addBusinessType() {
       if ([1, 2, 3].indexOf(this.businessForm.organization_id) > -1) {
@@ -116,9 +134,22 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["addBusinessPoint"]),
+    ...mapActions(["addBusinessPoint", "getOrgAttribute"]),
     onCancleForm() {
       this.$emit('on-cancle-form')
+    },
+    handleAttributeChange(id) {
+      let [currentItem] = this.filterAllOrg.filter(item => item.id === id)
+      this.businessForm.attribute_id = currentItem.id
+      this.businessForm.attribute_name = currentItem.name
+      console.log(currentItem)
+    },
+    async handleGetAttributeList() {
+      await this.getOrgAttribute({
+        pageSize: 100,
+        pageIndex: 1,
+        type: this.businessType
+      })
     },
     initAddBusinessForm() {
       let { name, id, country, street, organization_id } = this.defaultForm;
@@ -145,6 +176,10 @@ export default {
       this.initAddBusinessForm()
       try {
         if (this.isAllowAdd) {
+          console.log({
+            ...this.businessForm,
+            type: this.addBusinessType
+          })
           await this.addBusinessPoint({
             ...this.businessForm,
             type: this.addBusinessType
@@ -159,6 +194,7 @@ export default {
   },
   mounted() {
     this.initAddBusinessForm();
+    this.handleGetAttributeList()
   }
 };
 </script>

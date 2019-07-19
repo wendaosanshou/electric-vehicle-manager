@@ -10,6 +10,7 @@ import userManage from './modules/user-manage'
 import deviceManage from './modules/device-manage'
 import electricFence from './modules/electric-fence'
 import work from './modules/work'
+import attributeManage from './modules/attribute-manage'
 
 Vue.use(Vuex);
 
@@ -27,7 +28,8 @@ export default new Vuex.Store({
     deviceManage: deviceManage,
     alarmMonitor: alarmMonitor,
     work: work,
-    electricFence: electricFence
+    electricFence: electricFence,
+    attributeManage: attributeManage
   },
   plugins: [vuexLocal.plugin]
 });

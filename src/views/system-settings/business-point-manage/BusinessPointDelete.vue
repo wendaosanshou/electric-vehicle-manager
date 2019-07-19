@@ -21,7 +21,7 @@
     <div class="point-item">
       <div class="point-item-label">组织类型</div>
       <el-select v-model="defaultForm.organization_id" class="item-ipt ipt-fix" size="small" placeholder="请选择活动区域" disabled>
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in allOrg" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
@@ -47,7 +47,26 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['allOrg'])
+    ...mapGetters(["allOrg", "orgAttribute"]),
+    useOrg() {
+      let useOrg = this.allOrg.filter(item => {
+        return [1, 2, 3].indexOf(item.id) > -1
+      })
+      return useOrg.concat(this.orgAttribute)
+    },
+    filterAllOrg() {
+      const { organization_id } = this.defaultForm
+      if (organization_id && organization_id > 0) {
+        return this.useOrg.filter(item => {
+          if (organization_id > 3) {
+            return item.id > 3
+          } else {
+            return item.id === organization_id
+          }
+        })
+      }
+      return this.useOrg
+    },
   },
   methods: {
     ...mapActions(['deleteBusinessPoint']),
@@ -67,10 +86,6 @@ export default {
         this.$emit('onRefresh')
       } catch (error) {
         console.log(error)
-        // this.$message({
-        //   type: 'info',
-        //   message: '删除失败!'
-        // });
       }
     }
   }

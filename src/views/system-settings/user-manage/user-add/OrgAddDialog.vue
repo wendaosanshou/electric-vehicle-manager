@@ -153,4 +153,9 @@ $basic-ratio: 1.4;
   font-size: d2r(16px);
 }
 }
+
+.role-tree {
+  max-height: 450px;
+  overflow: scroll;
+}
 </style>

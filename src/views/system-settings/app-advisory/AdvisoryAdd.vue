@@ -12,7 +12,7 @@
       class="button-fix"
       size="mini"
       type="primary"
-      icon="el-icon-plus"
+      icon="el-icon-folder-add"
       @click="onDialogShow"
       v-else
     >添加资讯</el-button>

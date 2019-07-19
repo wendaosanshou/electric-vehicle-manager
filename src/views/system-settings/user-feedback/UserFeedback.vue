@@ -40,8 +40,8 @@
         </div>
       </div>
       <div class="menu-btns">
-        <div icon="el-icon-search" class="el-btn btn-search" @click="onSearchFeedback">查询</div>
-        <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
+        <el-button icon="el-icon-search" class="button-fix" type="primary" size="mini" @click="onSearchFeedback">查询</el-button>
+        <el-button class="btn-clear button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
       </div>
     </div>
     <div class="table-container">
@@ -269,8 +269,6 @@ $basic-ratio: 1.4;
     align-items: center;
     margin-left: d2r(16px);
     .el-btn {
-      width: d2r(160px);
-      height: d2r(35px);
       &.btn-search {
         background: #ff7525ff;
       }

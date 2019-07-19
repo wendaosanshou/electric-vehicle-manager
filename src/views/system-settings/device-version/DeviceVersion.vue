@@ -8,7 +8,6 @@
     </div>
     <div class="user-manage-header">
       <div class="user-menu-list">
-        <div class="user-menu-item">
           <div class="menu-account menu-ipt-wraper">
             <span class="menu-label">版本名称</span>
             <el-input class="menu-ipt ipt-fix" size="mini" v-model="version" placeholder="请输入版本名称"></el-input>
@@ -24,14 +23,13 @@
             </el-date-picker>
           </div>
           <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label">上传操作人</span>
+            <span class="menu-label menu-label-long">上传操作人</span>
             <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入上传操作人"></el-input>
           </div>
-        </div>
       </div>
       <div class="menu-btns">
-        <div icon="el-icon-search" class="el-btn btn-search" @click="onSearchDeviceUpdate">查询</div>
-        <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
+        <el-button icon="el-icon-search" class="button-fix" type="primary" size="mini" @click="onSearchDeviceUpdate">查询</el-button>
+        <el-button class="btn-clear button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
       </div>
     </div>
     <div class="table-container"></div>
@@ -178,32 +176,30 @@ $basic-ratio: 1.4;
   align-items: center;
   padding-right: d2r(25px);
   background: #f5f5f6ff;
+  padding-bottom: d2r(23px);
+  padding-top: d2r(23px);
   .user-menu-list {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: flex-start;
     align-items: center;
-    padding-bottom: d2r(23px);
-    .user-menu-item {
+    .menu-ipt-wraper {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
-      margin-top: d2r(20px);
-      .menu-ipt-wraper {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
+      margin-left: d2r(16px);
+      .menu-label {
+        display: block;
+        width: d2r(100px);
+        text-align: right;
+        &.menu-label-long {
+          width: d2r(120px);
+        }
+      }
+      .menu-ipt {
+        width: d2r(200px);
         margin-left: d2r(16px);
-        .menu-label {
-          display: block;
-          width: d2r(124px);
-          text-align: right;
-        }
-        .menu-ipt {
-          margin-left: d2r(16px);
-        }
       }
     }
   }

@@ -209,6 +209,13 @@ export default {
               path: "user-feedback",
               index: "9-10",
               role: "19"
+            },
+            {
+              name: "渠道属性管理",
+              logo: "el-icon-location",
+              path: "channel-manage",
+              index: "9-11",
+              role: "20"
             }
           ]
         }
@@ -362,6 +369,9 @@ export default {
           break;
         case "/user-feedback":
           activeMenu = "系统设置 > 客户留言管理";
+          break;
+        case "/channel-manage":
+          activeMenu = "系统设置 > 渠道属性管理";
           break;
         default:
           activeMenu = "";

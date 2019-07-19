@@ -20,6 +20,7 @@ import DeviceVersion from './views/system-settings/device-version/DeviceVersion.
 import AppUpdate from './views/system-settings/app-update/AppUpdate.vue'
 import UserFeedback from './views/system-settings/user-feedback/UserFeedback.vue'
 import UserFeedbackDetail from './views/system-settings/user-feedback/UserFeedbackDetail.vue'
+import ChannelManage from './views/system-settings/channel-manage/ChannelManage.vue'
 
 Vue.use(Router);
 
@@ -117,6 +118,10 @@ export default new Router({
         path: 'user-feedback-detail',
         name: 'UserFeedbackDetail',
         component: UserFeedbackDetail
+      }, {
+        path: 'channel-manage',
+        name: 'ChannelManage',
+        component: ChannelManage
       }]
     },
     {

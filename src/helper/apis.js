@@ -251,7 +251,19 @@ export default {
     return $ajax.post(requestUrl(`fence/get/${id}?token=${token}`), data);
   },
   getFenceAlarm(data) {
-    const { id, token } = data
+    const { token } = data
     return $ajax.post(requestUrl(`fence/alarm?token=${token}`), data);
+  },
+  addAttribute(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`attribute/add?token=${token}`), data);
+  },
+  deleteAttribute(data) {
+    const { id, token } = data
+    return $ajax.post(requestUrl(`attribute/delete/${id}?token=${token}`), data);
+  },
+  getAttribute(data) {
+    const { type, token, pageSize, pageIndex } = data
+    return $ajax.post(requestUrl(`attribute/query/${pageSize}/${pageIndex}/${type}?token=${token}`), data);
   }
 };

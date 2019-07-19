@@ -418,10 +418,6 @@ export default {
         {
           value: 1,
           label: "一年"
-        },
-        {
-          value: 2,
-          label: "两年"
         }
       ],
       contractActive: 0,
