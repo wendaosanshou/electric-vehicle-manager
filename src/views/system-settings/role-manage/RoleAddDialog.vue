@@ -96,8 +96,8 @@ export default {
       this.dialogVisible = true;
     },
     onDialogHide() {
-      this.dialogVisible = false;
       this.resetRoleTable()
+      this.dialogVisible = false;
     },
     removeNode(item, array) {
       for (let index = 0; index < array.length; index++) {

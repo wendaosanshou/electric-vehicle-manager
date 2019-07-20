@@ -103,13 +103,13 @@ export default {
     return {
       name: "",
       account: "",
-      process: "",
+      process: -1,
       operation: "",
       pageIndex: 1,
       pageSize: 10,
       processList: [
         {
-          value: '',
+          value: -1,
           label: '全部'
         },
         {

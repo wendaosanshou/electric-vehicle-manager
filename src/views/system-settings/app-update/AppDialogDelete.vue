@@ -7,7 +7,7 @@
       size="mini"
       @click="onDialogShow"
     >删除</el-button>
-    <el-dialog class="dialog-fix" title="删除角色" :visible.sync="dialogVisible" @close="onDialogHide">
+    <el-dialog class="dialog-fix" title="删除APP版本信息" :visible.sync="dialogVisible" @close="onDialogHide">
       <page-title class="dialog-title">选择要删除的APP版本信息</page-title>
       <div class="dialog-content">
         <el-table
@@ -23,8 +23,8 @@
         <el-table-column prop="version" label="版本名称"></el-table-column>
         <el-table-column prop="update_time" width="160" label="更新时间"></el-table-column>
         <el-table-column prop="operation" label="操作人"></el-table-column>
-        <el-table-column prop="note" label="版本说明"></el-table-column>
-        <el-table-column prop="download" width="340" label="下载地址"></el-table-column>
+        <el-table-column prop="note" width="240" label="版本说明"></el-table-column>
+        <el-table-column prop="download" width="120" label="下载地址"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

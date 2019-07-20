@@ -84,6 +84,7 @@ export default {
           id: this.defaultForm.id
         })
         this.$emit('onRefresh')
+        this.onCancleForm()
       } catch (error) {
         console.log(error)
       }

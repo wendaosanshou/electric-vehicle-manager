@@ -267,21 +267,21 @@ export default {
               logo: "el-icon-location",
               path: "app-update",
               index: "9-9",
-              role: "18"
+              role: "21"
             },
             {
               name: "客户留言管理",
               logo: "el-icon-location",
               path: "user-feedback",
               index: "9-10",
-              role: "19"
+              role: "22"
             },
             {
               name: "渠道属性管理",
               logo: "el-icon-location",
               path: "channel-manage",
               index: "9-11",
-              role: "20"
+              role: "23"
             }
           ]
         }
@@ -372,7 +372,7 @@ export default {
       sidebarMenus.forEach(item => {
         const { role } = item
         // 如果有子节点，先遍历一遍子节点
-        if (role === '9' && item.children && item.length > 0) {
+        if (role === '9' && item.children && item.children.length > 0) {
           const { children } = item
           let parentItem = {
             ...item,

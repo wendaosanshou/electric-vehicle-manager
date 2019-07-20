@@ -337,7 +337,14 @@ export default {
     },
     onDialogHide() {
       this.map.clearMap();
+      this.resetFormData()
       this.dialogVisible = false;
+    },
+    resetFormData() {
+      this.form = {
+        name: "",
+        note: ""
+      }
     },
     async handleConfirmAddFence() {
       const [startDate, endDate] = this.pickerTime;
@@ -345,6 +352,12 @@ export default {
         return this.$message({
           type: "error",
           message: `名称较长无法保存`
+        });
+      }
+      if (!this.form.name || !this.form.note) {
+        return this.$message({
+          type: "error",
+          message: `输入信息不完整`
         });
       }
       if (startDate && endDate) {

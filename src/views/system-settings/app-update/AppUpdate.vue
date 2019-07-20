@@ -21,8 +21,8 @@
         <el-table-column align="center" prop="version" label="版本名称"></el-table-column>
         <el-table-column align="center" prop="update_time" width="160" label="更新时间"></el-table-column>
         <el-table-column align="center" prop="operation" label="操作人"></el-table-column>
-        <el-table-column align="center" prop="note" width="160" label="版本说明"></el-table-column>
-        <el-table-column align="center" prop="download" width="320" label="下载地址"></el-table-column>
+        <el-table-column align="center" prop="note" width="240" label="版本说明"></el-table-column>
+        <el-table-column align="center" prop="download" width="120" label="下载地址"></el-table-column>
         <el-table-column align="center" prop="operation" width="160" label="是否强制升级">
           <template slot-scope="scope">
             {{getUpgradeLable(scope.row.upgrade)}}

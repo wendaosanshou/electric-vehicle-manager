@@ -1,11 +1,10 @@
 {
-  "imei": "",
-  "import_operation": "",
-  "import_time": "2019-06-29 00:00:00",
-  "page_index": 1,
-  "page_size": 10,
-  "token": "YWRtaW5fMTZfMTU2MzI4Njc1MTM3MA==",
-  "update_operation": "",
-  "update_time": "",
-  "version": ""
+  data: {
+    author: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23",
+    code: 1,
+    id: 1,
+    name: "超级管理员",
+    note: "超级管理员",
+  },
+  token: "MTg2NjUzODY4MzZfODRfMTU2MzYxMDI3MDE0MA=="
 }

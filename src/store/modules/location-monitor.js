@@ -92,7 +92,6 @@ const convertHistoryGps = async list => {
         })
       })
     }
-    debugger
     convertLocations.forEach((item, index) => {
       list[index].lng = item.lng,
       list[index].lat = item.lat

@@ -89,9 +89,14 @@ export default {
       }
     },
     async handleAddAttribute() {
+      if (!this.form.name || !this.form.note) {
+        return this.$message({
+          type: "error",
+          message: `请输入名称和说明信息！`
+        })
+      }
       await this.addAttribute(this.form);
       this.$emit('onRefresh')
-      this.clearForm()
       this.onDialogHide()
     },
     onDialogShow() {
@@ -101,6 +106,7 @@ export default {
       this.dialogVisible = true;
     },
     onDialogHide() {
+      this.clearForm()
       this.dialogVisible = false;
     }
   },

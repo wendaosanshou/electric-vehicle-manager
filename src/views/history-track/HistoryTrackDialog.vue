@@ -222,7 +222,6 @@ export default {
     async onSearchHistory() {
       console.log(this.pickerTime);
       this.renderLoading()
-      debugger
       try {
          const [startDate, endDate] = this.pickerTime;
         if (startDate && endDate) {

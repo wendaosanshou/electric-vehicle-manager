@@ -4,6 +4,7 @@
       <page-title>角色权限管理</page-title>
       <role-add-dialog @onRefreshRoleInfo="getAllRoles"></role-add-dialog>
     </div>
+    <!-- {{sortAllRoles}} -->
     <div class="role-manage-content">
       <div class="role-manage-subtitle">当前角色</div>
       <el-table
@@ -23,7 +24,7 @@
                <el-tag
                 class="role-tag"
                 type="success"
-                v-for="(item, index) in scope.row.roleNames"
+                v-for="(item, index) in getFilterRoleNames(scope.row.roleNames)"
                 :key="index"
                 size="mini"
                 disable-transitions>{{item}}</el-tag>
@@ -68,8 +69,10 @@ export default {
     ...mapActions(['getAllRoles', 'deleteRole']),
     handleEdit() {},
     handleDelete() {},
-    handleDeleteRole() {
-
+    getFilterRoleNames(roleNames) {
+      return roleNames.filter(item => {
+        return item.indexOf('商户APP') === -1
+      })
     },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))

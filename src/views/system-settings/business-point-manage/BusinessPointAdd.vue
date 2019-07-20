@@ -289,12 +289,13 @@ export default {
         return Promise.reject(error)
       }
     },
-    handleConfirm() {
+    async handleConfirm() {
       if (this.isAddForm) {
-        this.handleAddBusinessPoint()
+        await this.handleAddBusinessPoint()
       } else {
-        this.handleEditBusinessPoint()
+        await this.handleEditBusinessPoint()
       }
+      this.onCancleForm()
     },
     async init() {
       // await this.handleGetAttributeList()

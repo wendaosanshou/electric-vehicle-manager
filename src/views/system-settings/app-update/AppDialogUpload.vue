@@ -51,8 +51,9 @@
             class="ipt-fix"
             size="mini"
             resize="none"
+            maxlength="200"
             :autosize="{ minRows: 10, maxRows: 10}"
-            v-model="form.note" placeholder="请输入版本说明"></el-input>
+            v-model="form.note" placeholder="请输入版本说明（200字内）"></el-input>
           </el-form-item>
           <el-form-item label="是否强制升级">
             <el-select 

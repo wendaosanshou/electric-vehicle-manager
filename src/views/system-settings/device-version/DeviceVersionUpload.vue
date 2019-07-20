@@ -17,8 +17,7 @@
           class="user-add-form device-form-fix"
           label-position="right"
           label-width="220px"
-          :model="form"
-        >
+          :model="form">
           <el-form-item label="选择需要上传的设备升级版本文件">
             <div class="form-btn-wrap">
               <el-input
@@ -50,13 +49,14 @@
             class="ipt-fix"
             size="mini"
             resize="none"
+            maxlength="50"
             :autosize="{ minRows: 10, maxRows: 10}"
-            v-model="form.note" placeholder="请输入版本说明"></el-input>
+            v-model="form.note" placeholder="请输入版本说明（50字内）"></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="handleAddFirmware">确 定</el-button>
+        <el-button size="mini" type="primary" class="btn-confirm" :class="{'active': allowUpload}" @click="handleAddFirmware">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -95,7 +95,13 @@ export default {
   computed: {
     ...mapGetters(["userInfo"]),
     allowUpload() {
-      return Object.keys(this.form).every(key => item[key])
+      return Object.keys(this.form).every(key => {
+        if (['version', 'version_url', 'md5', 'note'].indexOf(key) > -1) {
+          return this.form[key]
+        } else {
+          return true
+        }
+      })
     }
   },
   methods: {
@@ -141,6 +147,9 @@ export default {
       console.log("onImageUploadSuccess", res);
     },
     async handleAddFirmware() {
+      if (!this.allowUpload) {
+        return false
+      }
       await this.addFirmware({
         version: this.form.version,
         version_url: this.form.version_url,
@@ -231,5 +240,12 @@ $basic-ratio: 1.4;
 
 .ipt-half-width {
   width: d2r(330px) !important;
+}
+
+.btn-confirm {
+  opacity: 0.6;
+  &.active {
+    opacity: 1;
+  }
 }
 </style>

@@ -15,7 +15,7 @@
               class="ipt-fix"
               size="mini"
               v-model="form.imei"
-              placeholder="设备号"
+              placeholder="请输入IMEI号"
             ></el-input>
           </el-form-item>
           <el-form-item label="设备升级文件">

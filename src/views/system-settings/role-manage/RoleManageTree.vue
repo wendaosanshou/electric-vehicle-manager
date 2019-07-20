@@ -1,6 +1,7 @@
 <template>
   <div class="role-manage-tree">
     <div class="role-tree-title">选择角色权限</div>
+    {{checkKeys}}--{{defaultCheckKeys}}
     <div class="role-tree-content">
       <el-tree
         :data="roleManageData"
@@ -8,6 +9,7 @@
         show-checkbox
         default-expand-all
         node-key="id"
+        :current-node-key="checkKeys"
         :default-checked-keys="defaultCheckKeys"
         highlight-current
         @check-change="handleCheckChange"
@@ -21,6 +23,7 @@
 export default {
   data() {
     return {
+      checkKeys: '',
       roleManageData: [
         {
           id: 0,
@@ -96,18 +99,18 @@ export default {
               id: 17,
               label: "设备版本管理"
             },
-            {
-              id: 18,
-              label: "商户APP代客预约"
-            },
-            {
-              id: 19,
-              label: "商户APP预约审核"
-            },
-            {
-              id: 20,
-              label: "商户APP现场安装"
-            },
+            // {
+            //   id: 18,
+            //   label: "商户APP代客预约"
+            // },
+            // {
+            //   id: 19,
+            //   label: "商户APP预约审核"
+            // },
+            // {
+            //   id: 20,
+            //   label: "商户APP现场安装"
+            // },
             {
               id: 21,
               label: "APP升级管理"
@@ -133,7 +136,7 @@ export default {
   },
   computed: {
     defaultCheckKeys() {
-      return this.defaultCheck.split(',')
+      return this.defaultCheck.split(',').filter(item => item !== '9' && item !== '0')
     }
   },
   methods: {

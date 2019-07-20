@@ -80,7 +80,7 @@ export default {
     async onSearchAlarm() {
       console.log(this.alarmType && this.searchType)
       if (this.searchValue) {
-         await this.getDeviceInfo({
+        await this.getDeviceInfo({
           type: this.searchType,
           value: this.searchValue
         });

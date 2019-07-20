@@ -7,6 +7,7 @@
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
+    <!-- {{tableData}} -->
       <div class="dialog-title">修改角色</div>
       <div class="dialog-content">
         <el-table
@@ -109,7 +110,11 @@ export default {
       } else {
         this.authorList = this.removeNode(role.id, this.authorList)
       }
-      this.authorList = this.authorList.sort((a, b) => a - b)
+      let hasChildren = this.authorList.some(author => author > 9)
+      if (hasChildren) {
+        this.authorList.push(9)
+      }
+      this.authorList = Array.from(new Set(this.authorList)).sort((a, b) => a - b)
       console.log('result', this.authorList)
     },
     initTableData() {

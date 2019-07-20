@@ -29,9 +29,10 @@
             class="ipt-fix"
             size="mini"
             resize="none"
+            maxlength="50"
             v-model="form.feedback_process"
             :autosize="{ minRows: 10, maxRows: 10}"
-            placeholder="请输入版本说明"></el-input>
+            placeholder="请输入版本说明（50字内）"></el-input>
           </el-form-item>
         </el-form>
       </div>

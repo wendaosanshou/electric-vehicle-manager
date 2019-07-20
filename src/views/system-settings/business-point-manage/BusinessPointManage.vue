@@ -35,23 +35,12 @@
           :type="formType"
           @onRefresh="onRefreshBusinessPoint" 
           @on-cancle-form="onCancleForm" 
-          v-if="!isDeleteForm"></business-point-add>
+          v-if="isAddForm || isEditForm"></business-point-add>
         <business-point-delete
           :defaultForm="currentBusinessPoint"
           @onRefresh="onRefreshBusinessPoint"
           @on-cancle-form="onCancleForm"
-          v-else></business-point-delete>
-        <!-- <business-point-add 
-          :defaultForm="currentBusinessPoint" 
-          type="edit"
-          @onRefresh="onRefreshBusinessPoint" 
-          @on-cancle-form="onCancleForm" 
-          v-else></business-point-add> -->
-        <!-- <business-point-edit 
-          :defaultForm="currentBusinessPoint" 
-          v-else-if="isEditForm"
-          @on-cancle-form="onCancleForm" 
-          @onRefresh="onRefreshBusinessPoint"></business-point-edit> -->
+          v-else-if="isDeleteForm"></business-point-delete>
       </div>
     </div>
   </div>

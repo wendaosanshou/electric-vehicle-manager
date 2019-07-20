@@ -119,10 +119,10 @@ export default {
           pageIndex: this.pageIndex,
           type: this.searchType
         })
-        this.$message({
-          type: "success",
-          message: "刷新当前列表成功!"
-        });
+        // this.$message({
+        //   type: "success",
+        //   message: "刷新当前列表成功!"
+        // });
       },
       initAttributeList() {
         this.getAttributeList({

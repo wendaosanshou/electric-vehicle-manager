@@ -3,7 +3,7 @@
     <div class="device-manage-title">
       <page-title>设备在线升级</page-title>
       <div class="manage-title-container">
-        <device-update-one class="device-btn" @on-refresh="handleGetProductPage"></device-update-one>
+        <device-update-one class="device-btn" @on-refresh="handleSearchProducts"></device-update-one>
         <device-update-more class="device-btn"></device-update-more>
         <device-update-history class="device-btn"></device-update-history>
       </div>
@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="menu-btns">
-        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="handleGetProductPage">查询</el-button>
+        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="handleSearchProducts">查询</el-button>
         <el-button class="button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
       </div>
     </div>
@@ -146,6 +146,10 @@ export default {
       this.pageIndex = pageIndex
       this.handleGetProductPage()
     },
+    handleSearchProducts() {
+      this.pageIndex = 1
+      this.handleGetProductPage()
+    },
     async handleGetProductPage() {
       const updateTime = this.updateTime ? dayjs(this.updateTime).format("YYYY-MM-DD HH:mm:ss") : this.updateTime
       const importTime = this.importTime ? dayjs(this.importTime).format("YYYY-MM-DD HH:mm:ss") : this.importTime
@@ -168,7 +172,7 @@ export default {
     DeviceUpdateMore
   },
   mounted() {
-    this.handleGetProductPage()
+    this.handleSearchProducts()
   }
 };
 </script>

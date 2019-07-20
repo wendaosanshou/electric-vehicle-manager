@@ -109,7 +109,7 @@ export default {
       } else {
         this.$message({
           type: "error",
-          message: "请填写丢失时间与丢失地点!"
+          message: "请填写丢失地点!"
         });
       }
     }

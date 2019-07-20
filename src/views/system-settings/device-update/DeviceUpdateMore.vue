@@ -11,7 +11,7 @@
       <div class="dialog-content">
         <el-form class="user-add-form device-form-fix" label-position="right" label-width="140px" :model="form">
           <el-form-item label="IMEI">
-            <el-select multiple filterable class="ipt-fix" size="mini" v-model="imeis" placeholder="请选择">
+            <el-select multiple filterable class="ipt-fix" size="mini" v-model="imeis" placeholder="请选择IMEI号">
                 <el-option
                   v-for="item in productPages"
                   :key="item.imei"
@@ -21,7 +21,7 @@
               </el-select>
           </el-form-item>
           <el-form-item label="设备升级文件" class="ipt-select-last">
-              <el-select class="ipt-fix" @change="onVersionChange" v-model="form.version" placeholder="请选择">
+              <el-select class="ipt-fix" @change="onVersionChange" v-model="form.version" placeholder="请选择升级文件">
                 <el-option
                   v-for="item in firewareList"
                   :key="item.id"

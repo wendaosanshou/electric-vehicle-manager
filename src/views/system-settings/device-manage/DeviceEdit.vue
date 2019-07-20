@@ -28,9 +28,10 @@
               class="ipt-fix"
               size="mini"
               resize="none"
+              maxlength="50"
               :autosize="{ minRows: 10, maxRows: 10}"
               v-model="form.note"
-              placeholder="请输入备注信息"
+              placeholder="请输入备注信息（50字内）"
             ></el-input>
           </el-form-item>
         </el-form>

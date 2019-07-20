@@ -44,6 +44,7 @@
                 size="mini"
                 v-model="form.img_url"
                 placeholder="选择页面缩略图上传"
+                disabled
               ></el-input>
               <el-upload :show-file-list="false" class="page-upload" :action="imageUploadUrl" :on-success="onImageUploadSuccess">
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
@@ -57,6 +58,7 @@
                 size="mini"
                 v-model="form.html_url"
                 placeholder="选择页面上传"
+                disabled
               ></el-input>
               <el-upload :show-file-list="false" class="page-upload" :action="htmlUploadUrl" :on-success="onFileUploadSuccess">
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
