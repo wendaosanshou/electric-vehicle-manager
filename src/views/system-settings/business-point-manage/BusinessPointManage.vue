@@ -32,20 +32,26 @@
         </div>
         <business-point-add 
           :defaultForm="currentBusinessPoint" 
+          :type="formType"
           @onRefresh="onRefreshBusinessPoint" 
           @on-cancle-form="onCancleForm" 
-          v-if="isAddForm"></business-point-add>
+          v-if="!isDeleteForm"></business-point-add>
         <business-point-delete
           :defaultForm="currentBusinessPoint"
           @onRefresh="onRefreshBusinessPoint"
           @on-cancle-form="onCancleForm"
-          v-if="isDeleteForm"
-        ></business-point-delete>
-        <business-point-edit 
+          v-else></business-point-delete>
+        <!-- <business-point-add 
+          :defaultForm="currentBusinessPoint" 
+          type="edit"
+          @onRefresh="onRefreshBusinessPoint" 
+          @on-cancle-form="onCancleForm" 
+          v-else></business-point-add> -->
+        <!-- <business-point-edit 
           :defaultForm="currentBusinessPoint" 
           v-else-if="isEditForm"
           @on-cancle-form="onCancleForm" 
-          @onRefresh="onRefreshBusinessPoint"></business-point-edit>
+          @onRefresh="onRefreshBusinessPoint"></business-point-edit> -->
       </div>
     </div>
   </div>
@@ -67,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["allBusinessPoint", "businessHandleTree", "businessInstallTree"]),
+    ...mapGetters(["allBusinessPoint", "businessHandleTree", "businessInstallTree", "businessType"]),
     cityname() {
       const [city] = this.businessTree
       return city ? city.name : '深圳市'
@@ -103,7 +109,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getAllOrg", "getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall']),
+    ...mapActions(["getAllOrg", "getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall', 'getOrgAttribute']),
+    async handleGetAttributeList() {
+      await this.getOrgAttribute({
+        pageSize: 100,
+        pageIndex: 1,
+        type: this.businessType
+      })
+    },
     onCancleForm() {
       this.formType = ''
     },
@@ -143,6 +156,7 @@ export default {
       } else {
         await this.getBusinessInstall()
       }
+      this.handleGetAttributeList()
     },
     async onRefreshBusinessPoint() {
       this.initAllBusinessPoint()

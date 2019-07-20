@@ -1,14 +1,24 @@
 <template>
   <div class="point-content">
-    <!-- {{useOrg}} -->
+    <!-- {{filterAllOrg}}<br/>
+    {{businessForm}}<br/> -->
+    <!-- {{defaultForm}} -->
     <div class="point-item">
       <div class="point-item-label">父节点组织名称</div>
       <el-input
         class="item-ipt ipt-fix"
         v-model="businessForm.parentName"
         size="mini"
-        placeholder="【所选节点名称】不可编辑"
+        placeholder="请填写当前组织名称"
         disabled
+        v-if="isAddForm"
+      ></el-input>
+       <el-input
+        class="item-ipt ipt-fix"
+        v-model="businessForm.name"
+        size="mini"
+        placeholder="请填写当前组织名称"
+        v-else
       ></el-input>
     </div>
     <div class="point-item">
@@ -33,14 +43,16 @@
         placeholder="请输入备注信息（50字内）"
       ></el-input>
     </div>
-     <div class="point-item">
+    <div class="point-item">
       <div class="point-item-label">组织类型</div>
       <el-select
         class="item-ipt ipt-fix"
         size="small"
-        v-model="businessType"
-        placeholder="请选择组织类型" disabled>
-        <el-option :label="item.label" :value="item.value" v-for="(item, index) in channelTypes" :key="index"></el-option>
+        @change="handleOrgChange"
+        v-model="businessForm.organization_id"
+        :disabled="!hasOrgSelector"
+        placeholder="请选择组织类型">
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="point-item">
@@ -48,10 +60,11 @@
       <el-select
         class="item-ipt ipt-fix"
         size="small"
-        v-model="businessForm.organization_id"
+        v-model="businessForm.attribute_id"
         @change="handleAttributeChange"
+        :disabled="attributeDisable || !hasOrgSelector"
         placeholder="请选择渠道属性">
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in orgAttribute" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
@@ -60,7 +73,7 @@
         :class="{active: isAllowAdd}"
         size="mini"
         type="primary"
-        @click="handleAddBusinessPoint"
+        @click="handleConfirm"
       >保存</el-button>
       <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button>
     </div>
@@ -74,6 +87,7 @@ export default {
   data() {
     return {
       organization: [],
+      attributeDisable: false,
       businessForm: {
         name: "",
         note: "",
@@ -92,27 +106,47 @@ export default {
     defaultForm: {
       type: Object,
       default: () => {}
+    },
+    type: {
+      type: String,
+      default: 'add'
     }
   },
   watch: {
     defaultForm() {
-      this.initAddBusinessForm(this.defaultForm);
+      this.initBusinessForm(this.defaultForm);
+    },
+    type() {
+      this.initBusinessForm(this.defaultForm);
     }
   },
   computed: {
     ...mapGetters(["allOrg", 'businessType', "channelTypes", "orgAttribute"]),
+    isAddForm() {
+      return this.type && this.type === 'form-add'
+    },
     useOrg() {
       let useOrg = this.allOrg.filter(item => {
         return [1, 2, 3].indexOf(item.id) > -1
       })
-      return useOrg.concat(this.orgAttribute)
+      let businessPoint = this.businessType === 1 ? { "id": 4, "name": "业务办理点", "note": "" } : { "id": 4, "name": "设备安装点", "note": "" }
+      return useOrg.concat([businessPoint])
     },
     filterAllOrg() {
-      const { organization_id } = this.defaultForm
+      let { organization_id } = this.defaultForm
+      // 处理organization_id出现异常的情况
+      organization_id = organization_id > 4 ? 4 : organization_id
       if (organization_id && organization_id > 0) {
-        return this.useOrg.filter(item => item.id > organization_id)
+        if (this.isAddForm) {
+          return this.useOrg.filter(item => item.id > organization_id)
+        } else {
+          return this.useOrg.filter(item => item.id >= organization_id)
+        }
       }
       return this.useOrg
+    },
+    hasOrgSelector() {
+      return this.filterAllOrg && this.filterAllOrg.length > 0
     },
     addBusinessType() {
       if ([1, 2, 3].indexOf(this.businessForm.organization_id) > -1) {
@@ -122,11 +156,18 @@ export default {
       }
     },
     isAllowAdd() {
+      const organization_id = this.businessForm['organization_id']
+      console.log('organization_id', organization_id)
       return Object.keys(this.businessForm).every(key => {
         if (
-          ["name", "note", "parent_id", "organization_id"].indexOf(key) > -1
+          ["name", "note", "parent_id", "organization_id", "attribute_id"].indexOf(key) > -1
         ) {
-          return this.businessForm[key];
+          // 如果organization_id小于4则不用判断attribute_id
+          if (key === 'attribute_id' && organization_id < 4) {
+            return true
+          } else {
+            return this.businessForm[key];
+          }
         } else {
           return true;
         }
@@ -134,15 +175,23 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["addBusinessPoint", "getOrgAttribute"]),
+    ...mapActions(["addBusinessPoint", "editBusinessPoint", "getOrgAttribute"]),
     onCancleForm() {
       this.$emit('on-cancle-form')
     },
-    handleAttributeChange(id) {
+    handleOrgChange(id) {
       let [currentItem] = this.filterAllOrg.filter(item => item.id === id)
+      if (id !== 4) {
+        this.attributeDisable = true
+        this.businessForm.attribute_id = ''
+      } else {
+        this.attributeDisable = false
+      }
+    },
+    handleAttributeChange(id) {
+      let [currentItem] = this.orgAttribute.filter(item => item.id === id)
       this.businessForm.attribute_id = currentItem.id
       this.businessForm.attribute_name = currentItem.name
-      console.log(currentItem)
     },
     async handleGetAttributeList() {
       await this.getOrgAttribute({
@@ -150,6 +199,40 @@ export default {
         pageIndex: 1,
         type: this.businessType
       })
+    },
+    initBusinessForm() {
+      this.resetBusinessForm()
+      if (this.isAddForm) {
+        this.initAddBusinessForm()
+      } else {
+        this.initEditBusinessForm()
+      }
+    },
+    initEditBusinessForm() {
+      this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
+      if (this.businessForm && this.businessForm.organization_id > 4) {
+        // 处理organization_id异常的情况
+        this.businessForm.organization_id = 4
+      }
+      const { attribute_id, organization_id } = this.businessForm
+      this.handleOrgChange(organization_id)
+      if (this.businessForm && this.businessForm.children) {
+        delete this.businessForm.children
+      }
+    },
+    resetBusinessForm() {
+      this.businessForm = {
+        name: "",
+        note: "",
+        country: "",
+        street: "",
+        parentName: "",
+        parent_id: "",
+        type: 0,
+        organization_id: "",
+        attribute_id: "",
+        attribute_name: ""
+      }
     },
     initAddBusinessForm() {
       let { name, id, country, street, organization_id } = this.defaultForm;
@@ -163,7 +246,11 @@ export default {
         // 3是街道
       } else if (organization_id === 3) {
         street = name
+      } else {
+        // 处理organization_id异常的情况
+        this.businessForm.organization_id = ''
       }
+
       this.businessForm = {
         ...this.businessForm,
         parentName: name,
@@ -171,6 +258,17 @@ export default {
         country,
         street
       };
+    },
+    async handleEditBusinessPoint() {
+      try {
+        if (this.isAllowAdd) {
+          console.log("handleEditBusinessPoint", this.businessForm);
+          await this.editBusinessPoint(this.businessForm);
+          this.$emit("onRefresh");
+        }
+      } catch (error) {
+        console.log(error)
+      }
     },
     async handleAddBusinessPoint() {
       this.initAddBusinessForm()
@@ -190,11 +288,21 @@ export default {
         console.log(error)
         return Promise.reject(error)
       }
+    },
+    handleConfirm() {
+      if (this.isAddForm) {
+        this.handleAddBusinessPoint()
+      } else {
+        this.handleEditBusinessPoint()
+      }
+    },
+    async init() {
+      // await this.handleGetAttributeList()
+      this.initBusinessForm();
     }
   },
   mounted() {
-    this.initAddBusinessForm();
-    this.handleGetAttributeList()
+     this.init()
   }
 };
 </script>

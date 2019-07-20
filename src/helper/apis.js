@@ -265,5 +265,9 @@ export default {
   getAttribute(data) {
     const { type, token, pageSize, pageIndex } = data
     return $ajax.post(requestUrl(`attribute/query/${pageSize}/${pageIndex}/${type}?token=${token}`), data);
+  },
+  resetPassword(data) {
+    const { account, password } = data
+    return $ajax.get(requestUrl(`sys/reset/${account}/${password}`), data);
   }
 };

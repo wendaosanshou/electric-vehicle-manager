@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <el-button class="button-fix btn-select" :class="[dialogConfig.buttonClass]" size="mini" type="primary" @click="onDialogShow">{{dialogConfig.buttonTxt}}</el-button>
+    <el-button class="button-fix btn-select" :class="[dialogConfig.buttonClass]" :disabled="disabled" size="mini" type="primary" @click="onDialogShow" v-if="!isSearch">{{dialogConfig.buttonTxt}}</el-button>
     <el-dialog
       class="dialog-add-org dialog-small-org dialog-fix"
       :title="dialogConfig.title"
@@ -42,9 +42,17 @@ export default {
     };
   },
   props: {
+    isSearch: {
+      type: Boolean,
+      default: false
+    },
     selectType: {
       type: String,
       default: 'all-tree'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -80,11 +88,6 @@ export default {
           buttonClass: 'btn-small'
         }
       }
-    }
-  },
-  watch: {
-    treeData() {
-      console.log(JSON.parse(JSON.stringify(this.treeData)))
     }
   },
   methods: {

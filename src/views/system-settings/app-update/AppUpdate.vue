@@ -3,13 +3,6 @@
     <div class="device-manage-title">
       <page-title>APP升级管理</page-title>
       <div class="manage-title-container">
-        <!-- <el-button
-          class="button-fix"
-          icon="el-icon-search"
-          type="primary"
-          size="mini"
-          @click="onSearchApkList"
-        >查询</el-button> -->
         <app-dialog-upload class="device-btn" @onRefresh="onSearchApkList"></app-dialog-upload>
       </div>
     </div>

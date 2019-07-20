@@ -7,6 +7,7 @@ const Login = {
     userInfo: {},
     business: {},
     role: {},
+    loginForm: {},
     roleSidebarMenus: [],
     sidbarMenus: [
       {
@@ -133,6 +134,9 @@ const Login = {
     ]
   },
   mutations: {
+    updateLoginForm(state, loginForm) {
+      state.loginForm = loginForm
+    },
     loginout(state) {
       state.userInfo = []
       state.business = []
@@ -146,6 +150,23 @@ const Login = {
     }
   },
   actions: {
+    async resetPassword({ commit }, data) {
+      try {
+        const result = await $apis.resetPassword(data);
+        vm.$message({
+          type: "success",
+          message: "重置密码成功,请重新登录!"
+        });
+        return result
+      } catch (error) {
+        vm.$message({
+          type: "error",
+          message: "重置密码失败!"
+        });
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
     async userLogin({ commit }, data) {
       try {
         const result = await $apis.login(data);
@@ -174,7 +195,8 @@ const Login = {
   getters: {
     userInfo: state => state.userInfo,
     role: state => state.role,
-    business: state => state.business
+    business: state => state.business,
+    loginForm: state => state.loginForm
   }
 };
 

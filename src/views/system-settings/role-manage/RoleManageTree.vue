@@ -107,6 +107,18 @@ export default {
             {
               id: 20,
               label: "商户APP现场安装"
+            },
+            {
+              id: 21,
+              label: "APP升级管理"
+            },
+            {
+              id: 22,
+              label: "客户留言管理"
+            },
+            {
+              id: 23,
+              label: "渠道属性管理"
             }
           ]
         }

@@ -4,32 +4,18 @@
       <page-title>{{isUserAdd ? '添加用户' : '编辑用户'}}</page-title>
       <page-back></page-back>
     </div>
-    <!-- {{form}} -->
+    <!-- {{form}}--{{this.form.role_name.length}}--{{this.form.role_name && this.form.role_name.length > 0}} -->
     <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
       <el-form-item label="账号">
         <el-input class="ipt-fix" size="mini" v-model="form.account" placeholder="登录账号（手机号）" :disabled="!isUserAdd"></el-input>
       </el-form-item>
-      <!-- <el-form-item label="序号" v-if="!isUserAdd">
-        <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="自动填充"></el-input>
-      </el-form-item> -->
       <el-form-item label="姓名">
         <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="输入姓名"></el-input>
       </el-form-item>
       <el-form-item label="密码">
         <el-input class="ipt-fix" type="password" size="mini" v-model="form.pwd" placeholder="请输入密码"></el-input>
       </el-form-item>
-      <el-form-item label="所属组织">
-        <div class="form-btn-wrap">
-          <el-input
-            class="ipt-fix ipt-select"
-            size="mini"
-            v-model="form.site_name"
-            placeholder="请选择所属组织"
-            disabled
-          ></el-input>
-          <org-add-dialog @onConfirm="onSelectOrg"/>
-        </div>
-      </el-form-item>
+      
       <el-form-item label="角色定义">
         <div class="form-btn-wrap">
           <el-input
@@ -40,6 +26,21 @@
             placeholder="请选择所属角色"
           ></el-input>
           <user-add-dialog :defaultRoleId="form.role_id" @onSelectRole="handleSelectRole"/>
+        </div>
+      </el-form-item>
+      <el-form-item label="所属组织">
+        <div class="form-btn-wrap">
+          <el-input
+            class="ipt-fix ipt-select"
+            size="mini"
+            v-model="form.site_name"
+            placeholder="请选择所属组织"
+            disabled
+          ></el-input>
+          <org-add-dialog
+            :disabled="!form.role_name" 
+            :selectType="selectTreeType"
+           @onConfirm="onSelectOrg"/>
         </div>
       </el-form-item>
       <el-form-item label="手机">
@@ -83,6 +84,7 @@ export default {
   data() {
     return {
       isUserEdit: this.$route && this.$route.path === "/user-edit",
+      selectTreeType: 'all-tree',
       form: {
         account: "",
         name: "",
@@ -100,6 +102,9 @@ export default {
   },
   computed: {
     ...mapGetters(["selectUser"]),
+    role_name() {
+      return this.form && this.form.role_name !== ""
+    },
     isUserAdd() {
       return this.$route && this.$route.name === "UserAdd";
     },
@@ -120,10 +125,21 @@ export default {
   },
   methods: {
     ...mapActions(["addSysUser", "editSysUser"]),
+    initSelectTreeType(roleName) {
+      if (roleName.indexOf('办理') > -1) {
+        this.selectTreeType = 'handle-tree'
+      } else if (roleName.indexOf('安装') > -1) {
+        this.selectTreeType = 'install-tree'
+      } else {
+        this.selectTreeType = 'all-tree'
+      }
+    },
     handleSelectRole(value) {
+      debugger
       const [role] = value;
       this.form.role_id = role.id;
       this.form.role_name = role.name;
+      this.initSelectTreeType(role.name)
     },
     onSelectOrg(value) {
       this.form.site_id = value.id;

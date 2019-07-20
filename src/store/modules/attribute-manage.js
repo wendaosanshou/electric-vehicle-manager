@@ -10,6 +10,8 @@ const getToken = (rootState) => {
 const attributeManage = {
     state: {
       attributeList: [],
+      businessAttributeList: [],
+      installAttributeList: [],
       orgAttribute: [],
       attributeListCount: 0,
       channelTypes: [{
@@ -28,11 +30,47 @@ const attributeManage = {
         state.attributeList = result.data
         state.attributeListCount = result.total
       },
+      updateBusinessAttributeList(state, businessAttributeList) {
+        state.businessAttributeList = businessAttributeList
+      },
+      updateInstallAttributeList(state, installAttributeList) {
+        state.installAttributeList = installAttributeList
+      },
       updateOrgAttribute(state, orgAttribute) {
         state.orgAttribute = orgAttribute
       }
     },
     actions: {
+      async getBusinessAttributeList({ commit, rootState }, data) {
+        try {
+          const result = await $apis.getAttribute({
+            token: getToken(rootState),
+            pageSize: 100,
+            pageIndex: 1,
+            type: 1
+          });
+          console.log('updateBusinessAttributeList', result.data)
+          commit("updateBusinessAttributeList", result.data);
+        } catch (error) {
+          console.log(error);
+          return Promise.reject(error);
+        }
+      },
+      async getInstallAttributeList({ commit, rootState }, data) {
+        try {
+          const result = await $apis.getAttribute({
+            token: getToken(rootState),
+            pageSize: 100,
+            pageIndex: 1,
+            type: 2
+          });
+          console.log('updateInstallAttributeList', result.data)
+          commit("updateInstallAttributeList", result.data);
+        } catch (error) {
+          console.log(error);
+          return Promise.reject(error);
+        }
+      },
       async getAttributeList({ commit, rootState }, data) {
         try {
           const result = await $apis.getAttribute({
@@ -94,7 +132,9 @@ const attributeManage = {
       attributeList: state => state.attributeList,
       attributeListCount: state => state.attributeListCount,
       channelTypes: state => state.channelTypes,
-      orgAttribute:  state => state.orgAttribute
+      orgAttribute:  state => state.orgAttribute,
+      businessAttributeList: state => state.businessAttributeList,
+      installAttributeList: state => state.installAttributeList
     }
   };
   

@@ -1,28 +1,59 @@
 <template>
   <div class="page-record">
+    <!-- {{businessAttributeList}} -->
     <div class="record-menu-container">
-      <div class="menu-item menu-item-point menu-col-less">
+      <div class="menu-item menu-item-point menu-col-more">
         <div class="item-selector-wraper">
           <div class="item-label">业务办理点</div>
           <el-input
-            class="item-selector"
+            class="item-selector ipt-fix item-selector-long"
             size="mini"
             v-model="businessPoint.name"
             placeholder="请选择业务办理点"
-            disabled
-          ></el-input>
-          <org-add-dialog selectType="handle-tree" @onConfirm="onSelectBusinessPoint"></org-add-dialog>
+            disabled>
+            <el-button slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgBusiness"></el-button>
+          </el-input>
+          <org-add-dialog selectType="handle-tree" :isSearch="true" @onConfirm="onSelectBusinessPoint" ref="orgBusiness"></org-add-dialog>
         </div>
         <div class="item-selector-wraper">
+          <div class="item-label">业务办理渠道</div>
+          <el-select
+            class="item-selector ipt-fix item-selector-long"
+            size="mini"
+            v-model="businessAttribute"
+            placeholder="请选择">
+            <el-option
+              v-for="item in businessAttributeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"></el-option>
+          </el-select>
+        </div>
+          <div class="item-selector-wraper">
           <div class="item-label">设备安装点</div>
           <el-input
-            class="item-selector ipt-fix"
+            class="item-selector ipt-fix item-selector-long"
             size="mini"
             v-model="installPoint.name"
             placeholder="请选择设备安装点"
-            disabled
-          ></el-input>
-          <org-add-dialog selectType="install-tree" @onConfirm="onSelectInstallPoint"></org-add-dialog>
+            disabled>
+              <el-button slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgInstall"></el-button>
+            </el-input>
+          <org-add-dialog selectType="install-tree" :isSearch="true" @onConfirm="onSelectInstallPoint" ref="orgInstall"></org-add-dialog>
+        </div>
+        <div class="item-selector-wraper">
+          <div class="item-label">设备安装渠道</div>
+          <el-select
+            class="item-selector ipt-fix item-selector-long"
+            size="mini"
+            v-model="installAttribute"
+            placeholder="请选择">
+            <el-option
+              v-for="item in installAttributeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"></el-option>
+          </el-select>
         </div>
       </div>
       <div class="menu-item menu-col-less menu-item-long-label">
@@ -399,6 +430,8 @@ export default {
         name: ""
       },
       installAccount: "",
+      businessAttribute: "",
+      installAttribute: "",
       clientAccount: "",
       businessAccount: "",
       auditAccount: "",
@@ -461,7 +494,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList"]),
+    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList", "businessAttributeList", "installAttributeList"]),
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManage";
     },
@@ -474,7 +507,13 @@ export default {
   },
   methods: {
     ...mapMutations(["updateWorkItem"]),
-    ...mapActions(["getWorkList", "setWorkDistribute", "getExportWorkList"]),
+    ...mapActions(["getWorkList", "setWorkDistribute", "getExportWorkList", "getBusinessAttributeList", "getInstallAttributeList"]),
+    handleRenderOrgBusiness() {
+      this.$refs.orgBusiness.onDialogShow()
+    },
+    handleRenderOrgInstall() {
+      this.$refs.orgInstall.onDialogShow()
+    },
     getMenuName() {
       if (this.isProcessManage) {
         return '办理状态管理'
@@ -687,7 +726,9 @@ export default {
         page_size: this.pageSize,
         page_index: this.pageIndex,
         business: this.businessPoint.id,
+        business_attribute: this.businessAttribute,
         install: this.installPoint.id,
+        install_attribute: this.installAttribute,
         client_account: this.clientAccount,
         install_account: this.installAccount,
         business_account: this.businessAccount,
@@ -747,6 +788,9 @@ export default {
         imei: "",
         iccid: ""
       });
+      // 更新业务办理渠道和业务安装渠道
+      this.getBusinessAttributeList()
+      this.getInstallAttributeList()
     }
   },
   components: {
@@ -841,6 +885,9 @@ $basic-ratio: 1.4;
   .item-selector-datapicker {
     margin-left: d2r(6px);
     width: d2r(320px) !important;
+  }
+  .item-selector-long {
+    width: d2r(320px);
   }
 }
 

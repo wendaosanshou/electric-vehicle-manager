@@ -7,7 +7,7 @@
       size="mini"
       @click="onDialogShow"
     >删除</el-button>
-    <el-dialog class="dialog-fix" title="修改角色" :visible.sync="dialogVisible" @close="onDialogHide">
+    <el-dialog class="dialog-fix" title="删除角色" :visible.sync="dialogVisible" @close="onDialogHide">
       <page-title class="dialog-title">选择要删除的APP版本信息</page-title>
       <div class="dialog-content">
         <el-table

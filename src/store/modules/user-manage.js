@@ -36,8 +36,16 @@ const Login = {
       state.allOrg = allOrg
     },
     updateBusinessAll(state, businessAll) {
+      console.log('businessAll', businessAll)
       let mapBusinessAll = businessAll.map(item => {
-        item.label = item.name
+        const { type, name } = item
+        let label = name
+        if (type === 1) {
+          label = `${name} (业务办理点)`
+        } else if (type === 2) {
+          label = `${name} (设备安装点)`
+        }
+        item.label = label
         return item
       })
       state.businessAll = mapBusinessAll
@@ -49,63 +57,80 @@ const Login = {
     },
     updateBusinessHandle(state, businessHandle) {
       // 过滤掉非市，区，街道
-      let allBusinessHandle = state.businessAll.filter(item => {
-         // 办理点类型是市，区，街道才返回
-        if ([1, 2, 3, 4].indexOf(item.organization_id) > -1) {
-          return true
-        }
-        return false
-      }).concat(businessHandle)
+      // let allBusinessHandle = state.businessAll.filter(item => {
+      //    // 办理点类型是市，区，街道才返回
+      //   if ([1, 2, 3].indexOf(item.organization_id) > -1) {
+      //     return true
+      //   }
+      //   return false
+      // }).concat(businessHandle)
       
-      // 去重
-      let uniqueBusinessHandle = []
-      for (let index = 0; index < allBusinessHandle.length; index++) {
-        const currentHandle = allBusinessHandle[index]
-        const allKeys = uniqueBusinessHandle.map(item => item.id)
-        if (allKeys.indexOf(currentHandle.id) === -1) {
-          currentHandle.label = currentHandle.name
-          uniqueBusinessHandle.push(currentHandle)
-        }
-      }
-      // console.log('businessHandle---', JSON.parse(JSON.stringify(uniqueBusinessHandle)))
-      state.businessHandleTree = construct(uniqueBusinessHandle, {
+      // // 去重
+      // let uniqueBusinessHandle = []
+      // for (let index = 0; index < allBusinessHandle.length; index++) {
+      //   const currentHandle = allBusinessHandle[index]
+      //   const allKeys = uniqueBusinessHandle.map(item => item.id)
+      //   if (allKeys.indexOf(currentHandle.id) === -1) {
+      //     const { type, name } = currentHandle
+      //     let label = name
+      //     if (type === 1) {
+      //       label = `${name} (业务办理点)`
+      //     } else if (type === 2) {
+      //       label = `${name} (设备安装点)`
+      //     }
+      //     currentHandle.label = label
+      //     uniqueBusinessHandle.push(currentHandle)
+      //   }
+      // }
+
+      let allBusinessHandle = state.businessAll.filter(item => {
+        return item.type === 1 || item.type === 0
+      })
+      state.businessHandleTree = construct(allBusinessHandle, {
         id: 'id',
         pid: 'parent_id',
         children: 'children'
       })
       // 业务类型，新增业务的时候需要
       state.businessType = 1
-      // console.log('businessHandleTree', JSON.parse(JSON.stringify(state.businessHandleTree)))
     },
     updateBusinessInstall(state, businessInstall) {
       // 过滤掉非市，区，街道
-      let allBusinessInstall = state.businessAll.filter(item => {
-        // 办理点类型是市，区，街道才返回
-       if ([1, 2, 3].indexOf(item.organization_id) > -1) {
-         return true
-       }
-       return false
-     }).concat(businessInstall)
-     
-     // 去重
-     let uniqueBusinessInstall = []
-     for (let index = 0; index < allBusinessInstall.length; index++) {
-       const currentInstall = allBusinessInstall[index]
-       const allKeys = uniqueBusinessInstall.map(item => item.id)
-       if (allKeys.indexOf(currentInstall.id) === -1) {
-          currentInstall.label = currentInstall.name
-         uniqueBusinessInstall.push(currentInstall)
-       }
-     }
-     console.log('businessInstall---', JSON.parse(JSON.stringify(uniqueBusinessInstall)))
-     state.businessInstallTree = construct(uniqueBusinessInstall, {
+      //   let allBusinessInstall = state.businessAll.filter(item => {
+      //     // 办理点类型是市，区，街道才返回
+      //    if ([1, 2, 3].indexOf(item.organization_id) > -1) {
+      //      return true
+      //    }
+      //    return false
+      //  }).concat(businessInstall)
+      
+      //  // 去重
+      //  let uniqueBusinessInstall = []
+      //  for (let index = 0; index < allBusinessInstall.length; index++) {
+      //    const currentInstall = allBusinessInstall[index]
+      //    const allKeys = uniqueBusinessInstall.map(item => item.id)
+      //    if (allKeys.indexOf(currentInstall.id) === -1) {
+      //       const { type, name } = currentInstall
+      //       let label = name
+      //       if (type === 1) {
+      //         label = `${name} (业务办理点)`
+      //       } else if (type === 2) {
+      //         label = `${name} (设备安装点)`
+      //       }
+      //       currentInstall.label = label
+      //      uniqueBusinessInstall.push(currentInstall)
+      //    }
+      //  }
+     let allBusinessHandle = state.businessAll.filter(item => {
+        return item.type === 2 || item.type === 0
+      })
+     state.businessInstallTree = construct(allBusinessHandle, {
         id: 'id',
         pid: 'parent_id',
         children: 'children'
       })
      // 业务类型，新增业务的时候需要
      state.businessType = 2
-     console.log('businessInstallTree--', JSON.parse(JSON.stringify(state.businessInstallTree)))
     },
     updateInfoWeb(state, infoWeb) {
       state.infoWeb = infoWeb

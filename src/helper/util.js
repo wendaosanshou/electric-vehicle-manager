@@ -142,6 +142,15 @@ export default {
       case 20:
         roleName = "商户APP现场安装";
         break;
+      case 21:
+        roleName = "APP升级管理";
+        break;
+      case 22:
+        roleName = "客户留言管理";
+        break;
+      case 23:
+        roleName = "渠道属性管理";
+        break;
     }
     return roleName;
   },
@@ -163,11 +172,11 @@ export default {
    */
   getStorage(name) {
     if (!name) return;
-    let value = window.localStorage.getItem(name)
+    let value = window.localStorage.getItem(name);
     try {
-      return JSON.parse(value)
+      return JSON.parse(value);
     } catch (error) {
-      return value
+      return value;
     }
   },
 

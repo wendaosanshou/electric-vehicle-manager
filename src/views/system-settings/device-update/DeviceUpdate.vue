@@ -62,8 +62,8 @@
         </div>
       </div>
       <div class="menu-btns">
-        <div icon="el-icon-search" class="el-btn btn-search" @click="handleGetProductPage">查询</div>
-        <div class="el-btn btn-clear" @click="onClearSearchParams">清空</div>
+        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="handleGetProductPage">查询</el-button>
+        <el-button class="button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
       </div>
     </div>
     <!-- {{productPages}} -->

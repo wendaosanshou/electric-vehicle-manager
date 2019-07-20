@@ -54,7 +54,7 @@
 
 <script>
 // @ is an alias to /src
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import VerifyCode from "@/components/VerifyCode.vue";
 
 export default {
@@ -79,6 +79,7 @@ export default {
   },
   methods: {
     ...mapActions(["userLogin"]),
+    ...mapMutations(['updateLoginForm']),
     onSelectRemainPassword() {
       this.selectRemainPassword = !this.selectRemainPassword;
     },
@@ -106,6 +107,11 @@ export default {
     },
     saveUserLoginForm() {
       this.$util.setStorage('user_login', {
+        account: this.account,
+        password: this.password
+      })
+      // 存储账号密码，用于修改密码时校验
+      this.updateLoginForm({
         account: this.account,
         password: this.password
       })

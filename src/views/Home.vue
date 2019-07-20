@@ -13,8 +13,7 @@
           background-color="#303030"
           text-color="#CBCBCB"
           active-text-color="#FF5E00"
-          :collapse="isCollapse"
-        >
+          :collapse="isCollapse">
           <template v-for="(item, index) in filterSidebarMenus">
             <el-menu-item :key="index" :index="item.index" v-if="!item.children">
               <i :class="item.logo"></i>
@@ -23,8 +22,7 @@
             <el-submenu
               :index="item.index"
               v-else-if="item.children && item.children.length > 0"
-              :key="index"
-            >
+              :key="index">
               <template slot="title">
                 <i :class="item.logo"></i>
                 <span>{{item.name}}</span>
@@ -32,9 +30,7 @@
               <el-menu-item
                 :index="childrenItem.index"
                 v-for="(childrenItem, childrenIndex) in item.children"
-                :key="childrenIndex"
-              >
-                <!-- <i :class="childrenItem.logo"></i> -->
+                :key="childrenIndex">
                 <span>{{childrenItem.name}}</span>
               </el-menu-item>
             </el-submenu>
@@ -52,7 +48,12 @@
           <div class="home-title-label">欢迎您，登录电动车智慧管理平台！</div>
           <div class="home-title-menu">
             <i class="home-title-logo"></i>
-            <span class="home-title-desc">用户名：{{userInfo.name}}</span>
+            <el-dropdown size="small" @command="onDropdownClick">
+              <span class="home-title-desc">用户名：{{userInfo.name}}</span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item icon="el-icon-edit-outline" command="password">修改密码</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <div class="home-title-login-out" @click="onLoginOut"></div>
           </div>
         </div>
@@ -62,6 +63,64 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      class="dialog-fix dialog-container"
+      title="修改密码"
+      width="700px"
+      :visible.sync="passwordDialogVisible"
+      @close="onPasswordDialogHide">
+      <div class="filing-dialog-content">
+       <el-steps :active="passwordStep" finish-status="success" simple>
+        <el-step title="1.修改原密码" ></el-step>
+        <el-step title="2.设置新密码"></el-step>
+        <el-step title="3.修改完成"></el-step>
+      </el-steps>
+      <!-- {{loginForm}}--{{passwordForm}} -->
+      <div class="step-1 step-content" v-if="passwordStep === 1">
+        <el-form class="password-form" label-position="right" label-width="80px" :model="passwordForm">
+          <el-form-item label="原密码">
+            <el-input
+              class="ipt-fix ipt-passowrd"
+              size="mini"
+              type="password"
+              v-model="passwordForm.oldPassword"
+              placeholder="请输入原密码"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="step-2 step-content" v-else-if="passwordStep === 2">
+        <el-form class="password-form" label-position="right" label-width="80px" :model="passwordForm">
+          <el-form-item label="新密码">
+            <el-input
+              class="ipt-fix ipt-passowrd"
+              size="mini"
+              type="password"
+              v-model="passwordForm.newPassword"
+              placeholder="请输入新密码"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码">
+            <el-input
+              class="ipt-fix ipt-passowrd"
+              size="mini"
+              type="password"
+              v-model="passwordForm.newPasswordConfirm"
+              placeholder="请再次输入新密码"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="step-3 step-content" v-else-if="passwordStep === 3">
+        <i class="modify-success-logo"></i>
+        <div class="modify-success-tips">恭喜您：修改密码成功，请使用新的登录密码进行登录!</div>
+      </div>
+      </div>
+      <div slot="footer" class="dialog-footer dialog-passoword-footer" v-if="passwordStep !== 3">
+        <el-button class="btn-passowrd" size="mini" type="primary" @click="onPasswrodDialogConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -73,6 +132,13 @@ export default {
   name: "home",
   data() {
     return {
+      passwordStep: 1,
+      passwordDialogVisible: false,
+      passwordForm: {
+        oldPassword: '',
+        newPassword: '',
+        newPasswordConfirm: ''
+      },
       isCollapse: false,
       pathName: "",
       filterSidebarMenus: [],
@@ -223,7 +289,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["activePageName", "userInfo", "role", "defaultActiveMenu"]),
+    ...mapGetters(["activePageName", "userInfo", "role", "defaultActiveMenu", "loginForm"]),
     collapseIconClass() {
       return this.isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'
     }
@@ -238,9 +304,65 @@ export default {
       "getAllOrg",
       "getAllBusinessPoint",
       "getBusinessHandle",
-      "getBusinessInstall"
+      "getBusinessInstall",
+      "resetPassword"
     ]),
     ...mapMutations(["updateActivePageName", "updateDefaultActiveMenu", "loginout"]),
+    onDropdownClick(command) {
+      if (command === 'password') {
+        this.passwordStep = 1
+        this.passwordDialogVisible = true
+      }
+    },
+    handleOldPassword() {
+      if (this.passwordForm.oldPassword === this.loginForm.password) {
+        this.passwordStep = 2
+      } else {
+        this.$message({
+          type: "error",
+          message: `原密码输入有误！`
+        })
+      }
+    },
+    async handleConfirmModifyPassword() {
+      const { newPassword, newPasswordConfirm } = this.passwordForm
+      if (newPassword !== newPasswordConfirm) {
+        this.$message({
+          type: "error",
+          message: `两次密码输入不一致输入有误！`
+        })
+      } else if (!newPassword || newPassword && newPassword.length < 6 || newPassword && newPassword.length > 20) {
+        this.$message({
+          type: "error",
+          message: `密码长度需要在6~20位以内！`
+        })
+      } else {
+        await this.resetPassword(
+          {
+            account: this.loginForm.account,
+            password: this.passwordForm.newPassword
+          }
+        )
+        this.passwordStep = 3
+        setTimeout(() => {
+          this.onLoginOut()
+        }, 3000)
+      }
+    },
+    onPasswrodDialogConfirm() {
+      if (this.passwordStep < 3) {
+        if (this.passwordStep === 1) {
+          this.handleOldPassword()
+        } else if (this.passwordStep === 2) {
+          this.handleConfirmModifyPassword()
+        }
+      } else {
+        this.passwordDialogVisible = false
+      }
+    },
+    onPasswordDialogHide() {
+      this.passwordDialogVisible = false
+    },
     getSidebarMenu(sidebarMenus) {
       const { author } = this.role
       let authorList = []
@@ -264,7 +386,6 @@ export default {
           }
           this.filterSidebarMenus.push(parentItem)
         } else if (authorList.indexOf(item.role) > -1) {
-          console.log(item.role)
           this.filterSidebarMenus.push(item)
         }
       })
@@ -337,8 +458,20 @@ export default {
         case "/record-manage":
           activeMenu = "备案信息管理";
           break;
+        case "/record-setting":
+          activeMenu = "备案信息管理 > 修改信息";
+          break;
         case "/user-manage":
           activeMenu = "系统设置 > 用户管理";
+          break;
+        case "/user-add":
+          activeMenu = "系统设置 > 用户管理 > 添加用户";
+          break;
+        case "/user-edit":
+          activeMenu = "系统设置 > 用户管理 > 编辑用户";
+          break;
+        case "/channel-manage":
+          activeMenu = "系统设置 > 渠道属性管理";
           break;
         case "/role-manage":
           activeMenu = "系统设置 > 角色权限管理";
@@ -566,10 +699,18 @@ $basic-ratio: 1.4;
         color: rgba(59, 72, 89, 1);
       }
       .home-title-menu {
+        position: relative;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
         align-items: center;
+        .home-title-dropdown {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          align-items: center;
+          cursor: pointer;
+        }
         .home-title-logo {
           display: block;
           width: d2r(33px);
@@ -583,6 +724,7 @@ $basic-ratio: 1.4;
           font-family: PingFangSC-Regular;
           font-weight: 400;
           color: rgba(59, 72, 89, 1);
+          cursor: pointer;
         }
         .home-title-login-out {
           display: block;
@@ -656,5 +798,40 @@ $basic-ratio: 1.4;
       }
     }
   }
+}
+
+.step-content {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: d2r(58px);
+  &.step-3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: d2r(60px);
+    .modify-success-logo {
+      width: d2r(144px);
+      height: d2r(100px);
+      background: url('~@/assets/icons/password-success.png');
+      background-size: 100% 100%;
+    }
+    .modify-success-tips {
+      font-size:d2r(20px);
+      margin-top: d2r(30px);
+      text-align: center;
+    }
+  }
+  .password-form {
+    width: d2r(600px);
+  }
+}
+
+
+.btn-passowrd {
+  width: d2r(320px)!important;
 }
 </style>

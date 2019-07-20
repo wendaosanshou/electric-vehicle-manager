@@ -1,6 +1,6 @@
 <template>
   <div class="point-content">
-      <!-- {{filterAllOrg}}--{{orgAttribute}} -->
+    <!-- {{filterOrgAttribute}}<br/>{{businessForm}} -->
     <div class="point-item">
       <div class="point-item-label">当前组织名称</div>
       <el-input
@@ -28,9 +28,10 @@
       <el-select
         class="item-ipt ipt-fix"
         size="small"
-        v-model="businessType"
-        placeholder="请选择组织类型" disabled>
-        <el-option :label="item.label" :value="item.value" v-for="(item, index) in channelTypes" :key="index"></el-option>
+        @change="handleOrgChange"
+        v-model="businessForm.organization_id"
+        placeholder="请选择组织类型">
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="point-item">
@@ -38,10 +39,11 @@
       <el-select
         class="item-ipt ipt-fix"
         size="small"
-        v-model="businessForm.organization_id"
+        v-model="businessForm.attribute_id"
         @change="handleAttributeChange"
+        :disabled="attributeDisable"
         placeholder="请选择渠道属性">
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterOrgAttribute" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
@@ -63,6 +65,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
+      attributeDisable: true,
       businessForm: {}
     };
   },
@@ -83,7 +86,8 @@ export default {
       let useOrg = this.allOrg.filter(item => {
         return [1, 2, 3].indexOf(item.id) > -1
       })
-      return useOrg.concat(this.orgAttribute)
+      let businessPoint = this.businessType === 1 ? { "id": 4, "name": "业务办理点", "note": "" } : { "id": 4, "name": "设备安装点", "note": "" }
+      return useOrg.concat([businessPoint])
     },
     filterAllOrg() {
       const { organization_id } = this.defaultForm
@@ -92,11 +96,19 @@ export default {
           if (organization_id > 3) {
             return item.id > 3
           } else {
-            return item.id === organization_id
+            return item.id >= organization_id
           }
         })
       }
       return this.useOrg
+    },
+    filterOrgAttribute() {
+      const { organization_id } = this.defaultForm
+      if ([1, 2, 3].indexOf(organization_id) > -1) {
+        return [{ "id": 0, "name": "无相关渠道属性", "note": "", "type": 2 }]
+      } else {
+        return this.orgAttribute
+      }
     },
     isAllowAdd() {
       return Object.keys(this.businessForm).every(key => {
@@ -116,8 +128,17 @@ export default {
     onCancleForm() {
       this.$emit('on-cancle-form')
     },
-    handleAttributeChange(id) {
+    handleOrgChange(id) {
       let [currentItem] = this.filterAllOrg.filter(item => item.id === id)
+      if (id !== 4) {
+        this.attributeDisable = true
+        this.businessForm.attribute_id = ''
+      } else {
+        this.attributeDisable = false
+      }
+    },
+    handleAttributeChange(id) {
+      let [currentItem] = this.filterOrgAttribute.filter(item => item.id === id)
       this.businessForm.attribute_id = currentItem.id
       this.businessForm.attribute_name = currentItem.name
     },
@@ -130,6 +151,8 @@ export default {
     },
     initBusinessForm() {
       this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
+      const { attribute_id, organization_id } = this.businessForm
+      this.handleOrgChange(organization_id)
       if (this.businessForm && this.businessForm.children) {
         delete this.businessForm.children
       }
@@ -147,11 +170,14 @@ export default {
           message: "编辑失败!"
         });
       }
+    },
+    async init() {
+      await this.handleGetAttributeList()
+      this.initBusinessForm();
     }
   },
   mounted() {
-    this.initBusinessForm();
-    this.handleGetAttributeList()
+    this.init()
   }
 };
 </script>
