@@ -1,6 +1,5 @@
 <template>
   <div class="point-content">
-    <!-- {{filterOrgAttribute}}<br/>{{businessForm}} -->
     <div class="point-item">
       <div class="point-item-label">当前组织名称</div>
       <el-input

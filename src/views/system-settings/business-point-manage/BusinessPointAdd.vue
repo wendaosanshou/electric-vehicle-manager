@@ -1,25 +1,13 @@
 <template>
   <div class="point-content">
-    <!-- {{filterAllOrg}}<br/>
-    {{businessForm}}<br/> -->
-    <!-- {{defaultForm}} -->
-    <div class="point-item">
+    <div class="point-item" v-if="isAddForm">
       <div class="point-item-label">父节点组织名称</div>
       <el-input
         class="item-ipt ipt-fix"
         v-model="businessForm.parentName"
         size="mini"
         placeholder="请填写当前组织名称"
-        disabled
-        v-if="isAddForm"
-      ></el-input>
-       <el-input
-        class="item-ipt ipt-fix"
-        v-model="businessForm.name"
-        size="mini"
-        placeholder="请填写当前组织名称"
-        v-else
-      ></el-input>
+        disabled></el-input>
     </div>
     <div class="point-item">
       <div class="point-item-label">当前组织名称</div>
@@ -264,6 +252,7 @@ export default {
         if (this.isAllowAdd) {
           console.log("handleEditBusinessPoint", this.businessForm);
           await this.editBusinessPoint(this.businessForm);
+          this.onCancleForm()
           this.$emit("onRefresh");
         }
       } catch (error) {
@@ -282,6 +271,7 @@ export default {
             ...this.businessForm,
             type: this.addBusinessType
           });
+          this.onCancleForm()
           this.$emit("onRefresh");
         }
       } catch (error) {
@@ -295,7 +285,6 @@ export default {
       } else {
         await this.handleEditBusinessPoint()
       }
-      this.onCancleForm()
     },
     async init() {
       // await this.handleGetAttributeList()
