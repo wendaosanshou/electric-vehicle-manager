@@ -1,7 +1,6 @@
 <template>
   <div class="role-manage-tree">
     <div class="role-tree-title">选择角色权限</div>
-    {{checkKeys}}--{{defaultCheckKeys}}
     <div class="role-tree-content">
       <el-tree
         :data="roleManageData"

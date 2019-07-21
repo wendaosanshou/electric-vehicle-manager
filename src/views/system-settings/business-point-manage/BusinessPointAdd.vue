@@ -128,7 +128,7 @@ export default {
         if (this.isAddForm) {
           return this.useOrg.filter(item => item.id > organization_id)
         } else {
-          return this.useOrg.filter(item => item.id >= organization_id)
+          return this.useOrg.filter(item => item.id === organization_id)
         }
       }
       return this.useOrg
@@ -148,7 +148,7 @@ export default {
       console.log('organization_id', organization_id)
       return Object.keys(this.businessForm).every(key => {
         if (
-          ["name", "note", "parent_id", "organization_id", "attribute_id"].indexOf(key) > -1
+          ["name", "parent_id", "organization_id", "attribute_id"].indexOf(key) > -1
         ) {
           // 如果organization_id小于4则不用判断attribute_id
           if (key === 'attribute_id' && organization_id < 4) {

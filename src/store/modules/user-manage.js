@@ -38,12 +38,12 @@ const Login = {
     updateBusinessAll(state, businessAll) {
       console.log('businessAll', businessAll)
       let mapBusinessAll = businessAll.map(item => {
-        const { type, name } = item
+        const { type, name, attribute_name } = item
         let label = name
         if (type === 1) {
-          label = `${name} (业务办理点)`
+          label = `${name} (${attribute_name}-办理点)`
         } else if (type === 2) {
-          label = `${name} (设备安装点)`
+          label = `${name} (${attribute_name}-安装点)`
         }
         item.label = label
         return item

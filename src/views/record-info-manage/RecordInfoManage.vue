@@ -618,6 +618,8 @@ export default {
       this.contractActive = 0;
       this.imei = "";
       this.iccid = "";
+      this.businessAttribute = ""
+      this.installAttribute = ""
     },
     onSelectBusinessPoint(data) {
       console.log("onSelectBusinessPoint", data);
@@ -757,6 +759,8 @@ export default {
         install: "",
         client_account: "",
         install_account: "",
+        business_attribute: "",
+        install_attribute: "",
         business_account: "",
         audit_account: "",
         install_status: 2, // 安装状态为已审核
@@ -776,8 +780,10 @@ export default {
         business: "",
         install: "",
         client_account: "",
-        install_account: "",
         business_account: "",
+        install_account: "",
+        business_attribute: "",
+        install_attribute: "",
         audit_account: "",
         install_status: "",
         audit_time: "",
