@@ -207,7 +207,8 @@
                 class="item-selector ipt-fix"
                 size="mini"
                 v-model="form.brand"
-                placeholder="请输入平台"
+                placeholder="请输入品牌"
+                :disabled="forbidModify"
               ></el-input>
             </div>
             <div class="item-selector-wraper">
@@ -217,6 +218,7 @@
                 size="mini"
                 v-model="form.battery"
                 placeholder="请输入电池号"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>
@@ -228,6 +230,7 @@
                 size="mini"
                 v-model="form.model"
                 placeholder="请输入规格"
+                :disabled="forbidModify"
               ></el-input>
             </div>
             <div class="item-selector-wraper">
@@ -237,26 +240,29 @@
                 size="mini"
                 v-model="form.power"
                 placeholder="请输入电机号"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="6">
-            <div class="item-selector-wraper">
+          <el-col :span="7">
+            <div class="item-selector-wraper item-selector-wraper-long">
               <div class="item-label">车架号</div>
               <el-input
                 class="item-selector ipt-fix"
                 size="mini"
                 v-model="form.frame"
                 placeholder="请输入车架号"
+                :disabled="forbidModify"
               ></el-input>
             </div>
-            <div class="item-selector-wraper">
-              <div class="item-label">防盗备案号</div>
+            <div class="item-selector-wraper item-selector-wraper-long">
+              <div class="item-label">防火防盗备案号</div>
               <el-input
                 class="item-selector ipt-fix"
                 size="mini"
                 v-model="form.theft"
-                placeholder="请输入防盗备案号"
+                placeholder="请输入防火防盗备案号"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>
@@ -275,6 +281,7 @@
                 size="mini"
                 v-model="form.imei"
                 placeholder="请输入IMEI"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>
@@ -286,6 +293,7 @@
                 size="mini"
                 v-model="form.iccid"
                 placeholder="请输入ICCID"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>
@@ -377,6 +385,12 @@ export default {
       value: ""
     };
   },
+  props: {
+    forbidModify: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     ...mapGetters(["workItem", "vehicleInfo"]),
     imagelist() {
@@ -430,7 +444,10 @@ export default {
       return Promise.resolve()
     },
     getTimeLabel(time) {
-      return time ? time : "暂无";
+      if (time.indexOf('2000-01-01') > -1 || !time) {
+        return '暂无'
+      }
+      return time
     },
     handleModifyWorkItem() {
       let params = {
@@ -575,7 +592,7 @@ $basic-ratio: 1.4;
     }
     .setting-content {
       box-sizing: border-box;
-      width: d2r(1232px);
+      width: d2r(1300px);
       min-height: d2r(70px);
       margin-left: d2r(25px);
       padding: d2r(18px) 0 d2r(22px) 0;
@@ -587,13 +604,19 @@ $basic-ratio: 1.4;
         justify-content: flex-start;
         align-items: center;
         margin-top: d2r(20px);
+        &.item-selector-wraper-long {
+          .item-label {
+            width: d2r(140px);
+          }
+        }
         &:nth-child(1) {
           margin-top: 0;
         }
         .item-label {
-          width: d2r(110px);
+          width: d2r(120px);
           height: d2r(22px);
           text-align: right;
+          white-space: nowrap;
         }
         .item-selector {
           margin-left: d2r(6px);

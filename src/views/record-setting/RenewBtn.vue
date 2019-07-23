@@ -22,7 +22,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="onDialogConfirm">确 定</el-button>
-        <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
+        <el-button size="mini" @click="onDialogCancle">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -55,11 +55,19 @@ export default {
   },
   methods: {
     ...mapActions(['renewContract']),
+    resetForm() {
+      this.contract = 1
+      this.pickerTime = ''
+    },
     onDialogShow() {
+      this.resetForm()
       this.dialogFormVisible = true
     },
     onDialogConfirm() {
       this.handleRenew()
+    },
+    onDialogCancle() {
+      this.dialogFormVisible = false
     },
     handleRenew() {
       const params = {

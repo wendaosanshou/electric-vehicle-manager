@@ -1,6 +1,6 @@
 <template>
   <div class="page-record">
-    <!-- {{businessAttributeList}} -->
+    <!-- forbidModify:{{forbidModify}} -->
     <div class="record-menu-container">
       <div class="menu-item menu-item-point menu-col-more">
         <div class="item-selector-wraper">
@@ -8,7 +8,7 @@
           <el-input
             class="item-selector ipt-fix item-selector-long"
             size="mini"
-            v-model="businessPoint.name"
+            v-model="businessPoint.label"
             placeholder="请选择业务办理点"
             disabled>
             <el-button slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgBusiness"></el-button>
@@ -29,12 +29,12 @@
               :value="item.id"></el-option>
           </el-select>
         </div>
-          <div class="item-selector-wraper">
+        <div class="item-selector-wraper">
           <div class="item-label">设备安装点</div>
           <el-input
             class="item-selector ipt-fix item-selector-long"
             size="mini"
-            v-model="installPoint.name"
+            v-model="installPoint.label"
             placeholder="请选择设备安装点"
             disabled>
               <el-button slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgInstall"></el-button>
@@ -67,8 +67,9 @@
             <el-input
               class="item-selector ipt-fix"
               size="mini"
-              v-model="installAccount"
+              v-model="businessAccount"
               placeholder="请输入手机号"
+              :disabled="isHandleUser"
             ></el-input>
           </div>
           <div class="item-selector-wraper">
@@ -76,7 +77,7 @@
             <el-input
               class="item-selector ipt-fix"
               size="mini"
-              v-model="installAccount"
+              v-model="auditAccount"
               placeholder="请输入手机号"
             ></el-input>
           </div>
@@ -139,6 +140,21 @@
               ></el-option>
             </el-select>
           </div>
+          <div class="item-selector-wraper">
+          <div class="item-label">合约期</div>
+            <el-select
+              class="item-selector item-selector-datapicker ipt-fix"
+              size="mini"
+              v-model="contractContent"
+              placeholder="请选择">
+              <el-option
+                v-for="item in contractContentList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </div>
         </template>
         <template v-if="!isProcessSearch">
           <div class="item-selector-wraper">
@@ -174,8 +190,7 @@
             class="item-selector ipt-fix"
             size="mini"
             v-model="contractContent"
-            placeholder="请选择"
-          >
+            placeholder="请选择">
             <el-option
               v-for="item in contractContentList"
               :key="item.value"
@@ -215,9 +230,10 @@
         </div>
       </div>
     </div>
+
     <div class="record-btn-contanier">
       <div class="btn-left-container">
-        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="handleSearchWrokList">查询</el-button>
+        <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchWorkList">查询</el-button>
         <el-button class="button-fix" size="mini" type="primary" @click="handleClearSearch">清空</el-button>
         <el-button
           class="button-fix"
@@ -243,16 +259,16 @@
             class="btn-export button-fix"
             size="mini"
             type="primary"
+            :class="{'active': hasSelectList}"
             @click="onDistributeWork"
           >派单</el-button>
         </div>
       </div>
     </div>
     
-
     <!-- 显示用的table -->
     <el-table
-      class="table-fix table-disable-select-all"
+      class="table-fix"
       :data="workList"
       size="mini"
       border
@@ -260,7 +276,7 @@
       style="width: 100%"
       id="record-export-page"
       @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" v-if="isProcessManage"></el-table-column>
+      <el-table-column type="selection" width="55" v-if="hasAuditOrder && isProcessManage"></el-table-column>
       <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="120" align="center">
         <template slot-scope="scope">
@@ -292,26 +308,28 @@
         <template slot-scope="scope">{{scope.row.own_sex === 0 ? "男" : "女"}}</template>
       </el-table-column>
       <el-table-column prop="business_name" width="120" label="业务办理点" align="center"></el-table-column>
+      <el-table-column prop="business_attribute_name" width="120" label="业务办理渠道" align="center"></el-table-column>
       <el-table-column prop="install_name" width="120" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="install_attribute_name" width="120" label="设备安装渠道" align="center"></el-table-column>
       <el-table-column prop="sys_business_account" width="100" label="业务办理员手机" align="center"></el-table-column>
       <el-table-column prop="sys_audit_account" width="100" label="审核人手机" align="center"></el-table-column>
       <el-table-column prop="audit_time" width="100" label="审核时间" align="center">
         <template slot-scope="scope">{{getInstallTime(scope.row.audit_time)}}</template>
       </el-table-column>
-      <el-table-column prop="sys_distribute_account" width="80" label="派单员手机" align="center"></el-table-column>
+      <el-table-column prop="sys_distribute_account" width="80" label="派单员手机" align="center" v-if="!isProcessSearch"></el-table-column>
       <el-table-column prop="distribute_time" label="派单时间" align="center">
         <template slot-scope="scope">{{getInstallTime(scope.row.distribute_time)}}</template>
       </el-table-column>
       <el-table-column label="安装状态" align="center">
         <template slot-scope="scope">{{getProcessTips(scope.row.process)}}</template>
       </el-table-column>
-      <el-table-column prop="sys_install_account" width="80"  label="安装工手机" align="center"></el-table-column>
+      <el-table-column prop="sys_install_account" width="80"  label="安装工手机" align="center" v-if="!isProcessSearch"></el-table-column>
       <el-table-column prop="install_time" width="100"  label="安装时间" align="center">
         <template slot-scope="scope">{{getInstallTime(scope.row.install_time)}}</template>
       </el-table-column>
       <el-table-column prop="install_position" width="80"  label="安装地理位置" align="center"></el-table-column>
-      <el-table-column prop="imei" label="IMEI" width="80"  align="center"></el-table-column>
-      <el-table-column prop="iccid" label="iccid" width="80"  align="center"></el-table-column>
+      <el-table-column prop="imei" label="IMEI" width="80"  align="center" v-if="!isProcessSearch"></el-table-column>
+      <el-table-column prop="iccid" label="ICCID" width="80"  align="center" v-if="!isProcessSearch"></el-table-column>
       <el-table-column prop="contract_content" width="80"  label="合约期" align="center">
         <template slot-scope="scope">{{getContractContent(scope.row.contract_content)}}</template>
       </el-table-column>
@@ -332,11 +350,12 @@
         @current-change="handleCurrentChange"
       ></el-pagination>
     </div>
+
     <procss-detail-dialog
       v-model="procssDetailDialogVisible"
+      :forbidModify="forbidModify"
       @change="onChangeDialog"
-      @on-refresh="handleSearchWrokList"
-    ></procss-detail-dialog>
+      @on-refresh="handleSearchWrokList"></procss-detail-dialog>
 
 
 
@@ -359,8 +378,7 @@
             effect="dark"
             content="点击查看详细信息"
             placement="top"
-            v-else-if="isProcessManage"
-          >
+            v-else-if="isProcessManage">
             <div
               class="table-mobile"
               @click="onProcessDilaogChange(scope.row)"
@@ -380,21 +398,23 @@
       <el-table-column prop="own_sex" label="性别" align="center">
         <template slot-scope="scope">{{scope.row.own_sex === 0 ? "男" : "女"}}</template>
       </el-table-column>
-      <el-table-column prop="business_name" width="60" label="业务办理点" align="center"></el-table-column>
-      <el-table-column prop="install_name" width="60" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="business_name" width="120" label="业务办理点" align="center"></el-table-column>
+      <el-table-column prop="business_attribute_name" width="120" label="业务办理渠道" align="center"></el-table-column>
+      <el-table-column prop="install_name" width="120" label="设备安装点" align="center"></el-table-column>
+      <el-table-column prop="install_attribute_name" width="120" label="设备安装渠道" align="center"></el-table-column>
       <el-table-column prop="sys_business_account" width="60" label="业务办理员手机" align="center"></el-table-column>
       <el-table-column prop="sys_audit_account" width="60" label="审核人手机" align="center"></el-table-column>
       <el-table-column prop="audit_time" width="100" label="审核时间" align="center"></el-table-column>
-      <el-table-column prop="sys_distribute_account" width="100" label="派单员手机" align="center"></el-table-column>
+      <el-table-column prop="sys_distribute_account" width="100" label="派单员手机" align="center" v-if="!isProcessSearch"></el-table-column>
       <el-table-column prop="distribute_time" label="派单时间" align="center"></el-table-column>
       <el-table-column label="安装状态" align="center">
         <template slot-scope="scope">{{getProcessTips(scope.row.process)}}</template>
       </el-table-column>
-      <el-table-column prop="sys_install_account" width="100"  label="安装工手机" align="center"></el-table-column>
+      <el-table-column prop="sys_install_account" width="100"  label="安装工手机" align="center" v-if="!isProcessSearch"></el-table-column>
       <el-table-column prop="install_time" width="100"  label="安装时间" align="center"></el-table-column>
       <el-table-column prop="install_position" width="100"  label="安装地理位置" align="center"></el-table-column>
-      <el-table-column prop="imei" label="IMEI" width="100"  align="center"></el-table-column>
-      <el-table-column prop="iccid" label="iccid" width="100"  align="center"></el-table-column>
+      <el-table-column prop="imei" label="IMEI" width="100"  align="center" v-if="!isProcessSearch"></el-table-column>
+      <el-table-column prop="iccid" label="ICCID" width="100"  align="center" v-if="!isProcessSearch"></el-table-column>
       <el-table-column prop="contract_content" width="100"  label="合约期" align="center">
         <template slot-scope="scope">{{getContractContent(scope.row.contract_content)}}</template>
       </el-table-column>
@@ -402,6 +422,7 @@
         <template slot-scope="scope">{{getActiveTips(scope.row.contract_active)}}</template>
       </el-table-column>
     </el-table>
+    
   </div>
 </template>
 
@@ -421,6 +442,7 @@ export default {
       pageSize: 10,
       pageIndex: 1,
       procssDetailDialogVisible: false,
+      forbidModify: false,
       businessPoint: {
         id: "",
         name: ""
@@ -494,7 +516,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList", "businessAttributeList", "installAttributeList"]),
+    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList", "businessAttributeList", "installAttributeList", "isHandleUser", "userInfo"]),
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManage";
     },
@@ -503,6 +525,12 @@ export default {
     },
     isRecordManage() {
       return this.$route && this.$route.name === "RecordManage";
+    },
+    hasAuditOrder() {
+      return this.workList.every(item => item.process === 2)
+    },
+    hasSelectList() {
+      return this.selectList && this.selectList.length > 0
     }
   },
   methods: {
@@ -686,25 +714,26 @@ export default {
       }
       return processTips;
     },
-    async onDistributeWork() {
-      if (this.selectList && this.selectList.length > 0) {
+    async onDistributeWork(data) {
+      if (this.hasSelectList) {
         await this.setWorkDistribute({
           distribute_id: this.selectList
         });
         this.handleSearchWrokList()
-      } else {
-        this.$message({
-          type: "error",
-          message: "未选中审核通过的订单!"
-        });
       }
     },
+    getForbidModify(process) {
+      return process === 1 || process === 2
+    },
     onProcessDilaogChange(workItem) {
+      console.log(workItem)
+      this.forbidModify = this.getForbidModify(workItem.process)
       this.updateWorkItem(workItem);
       this.procssDetailDialogVisible = true;
     },
     onChangeDialog() {
       this.procssDetailDialogVisible = false;
+      this.forbidModify = false
     },
     onMobileSetting(workItem) {
       console.log(workItem)
@@ -723,7 +752,12 @@ export default {
       }
       return formatTime;
     },
+    onSearchWorkList() {
+      this.pageIndex = 1
+      this.handleSearchWrokList()
+    },
     async handleSearchWrokList() {
+      this.initIsHandleUser()
       const searchParam = {
         page_size: this.pageSize,
         page_index: this.pageIndex,
@@ -797,6 +831,11 @@ export default {
       // 更新业务办理渠道和业务安装渠道
       this.getBusinessAttributeList()
       this.getInstallAttributeList()
+    },
+    initIsHandleUser() {
+      if (this.isHandleUser) {
+        this.businessAccount = this.userInfo.phone
+      }
     }
   },
   components: {
@@ -920,5 +959,12 @@ $basic-ratio: 1.4;
 
 .export-table {
   display: none;
+}
+
+.btn-export {
+  opacity: 0.6;
+  &.active {
+    opacity: 1;
+  }
 }
 </style>

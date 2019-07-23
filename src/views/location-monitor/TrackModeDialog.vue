@@ -32,7 +32,7 @@ import { setTimeout } from "timers";
 export default {
   data() {
     return {
-        selectValue: '',
+      selectValue: '',
       dialogVisible: false
     };
   },
@@ -56,7 +56,11 @@ export default {
   },
   methods: {
     ...mapActions(["getHistoryInfo", "setDeviceTrace", "getDeviceParams"]),
+    resetForm() {
+      this.selectValue = ""
+    },
     onDialogHide() {
+      this.resetForm()
       this.$emit("change", false);
     },
     async initDeviceParams() {

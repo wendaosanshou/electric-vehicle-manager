@@ -8,13 +8,14 @@
       @click="onDialogShow"
     >单个升级</el-button>
     <el-dialog class="dialog-fix" title="单个设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
+      <!-- {{this.form.imei}}--{{`${this.form.imei}`.length}}--{{this.form.version}} -->
       <div class="dialog-content">
         <el-form class="user-add-form device-form-fix" label-position="right" label-width="140px" :model="form">
           <el-form-item label="IMEI">
             <el-input
               class="ipt-fix"
               size="mini"
-              v-model="form.imei"
+              v-model.number="form.imei"
               placeholder="请输入IMEI号"
             ></el-input>
           </el-form-item>
@@ -65,6 +66,9 @@ export default {
   },
   computed: {
     ...mapGetters(["userInfo", "firewareList"]),
+    isAllowConfirm() {
+      return this.form.imei && `${this.form.imei}`.length >= 11 && this.form.version
+    }
   },
   methods: {
     ...mapActions(["updateProduce"]),
@@ -92,14 +96,21 @@ export default {
     },
     async handleUpdateDevice() {
       console.log(this.form);
-      await this.updateProduce({
-        imeis: [this.form.imei],
-        version_url: this.currentVersion.version_url,
-        update_operation: this.userInfo.account,
-        md5: this.currentVersion.md5
-      })
-      this.onDialogHide()
-      this.$emit('on-refresh')
+      if (this.isAllowConfirm) {
+        await this.updateProduce({
+          imeis: [this.form.imei],
+          version_url: this.currentVersion.version_url,
+          update_operation: this.userInfo.account,
+          md5: this.currentVersion.md5
+        })
+        this.onDialogHide()
+        this.$emit('on-refresh')
+      } else {
+        this.$message({
+          type: "error",
+          message: `请输入正确的信息（IMEI号需要11位以上）`
+        })
+      }
     }
   },
   components: {

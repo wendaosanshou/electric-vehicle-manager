@@ -83,7 +83,11 @@
       <el-table-column align="center" prop="operation" label="创建人"></el-table-column>
       <el-table-column align="center" prop="import_time" label="入库时间"></el-table-column>
       <el-table-column align="center" prop="version" label="版本信息"></el-table-column>
-      <el-table-column align="center" prop="update_date" label="升级时间"></el-table-column>
+      <el-table-column align="center" prop="update_date" label="升级时间">
+         <template slot-scope="scope">
+            {{$util.getFilterDefaultTime(scope.row.update_date)}}
+          </template>
+      </el-table-column>
       <el-table-column align="center" prop="update_operation" label="升级操作人"></el-table-column>
     </el-table>
 
@@ -128,6 +132,10 @@ export default {
   },
   methods: {
     ...mapActions(["getProductPage"]),
+    getFilterDefaultTime(time) {
+      console.log(time)
+      return this.$util.getFilterDefaultTime(time)
+    },
     onClearSearchParams() {
       this.imei = ""
       this.importOperation = ""

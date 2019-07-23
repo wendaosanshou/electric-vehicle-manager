@@ -1,6 +1,6 @@
 <template>
-  <div class="process-manage">
-    <RecordInfoManage/>
+  <div class="process-search">
+      <RecordInfoManage/>
   </div>
 </template>
 

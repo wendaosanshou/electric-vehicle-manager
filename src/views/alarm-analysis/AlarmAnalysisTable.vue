@@ -12,7 +12,7 @@
           <!-- {{deviceInfo}} -->
         <el-table ref="userTable" class="table-analysis table-fix table-fix-yellow table-disable-select-all" size="mini" :data="filterAlarmAnalyse" border style="width: 100%" max-height="340">
             <el-table-column prop="vehicleAccount" label="车主姓名"></el-table-column>
-            <el-table-column prop="invoice" label="防盗备案号"></el-table-column>
+            <el-table-column prop="invoice" label="防火防盗备案号"></el-table-column>
             <el-table-column prop="signal_time" width="140" label="告警时间"></el-table-column>
             <el-table-column prop="note" width="120" label="告警类型">
               <template slot-scope="scope">

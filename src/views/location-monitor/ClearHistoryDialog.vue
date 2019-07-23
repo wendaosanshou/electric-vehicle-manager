@@ -62,7 +62,11 @@ export default {
   },
   methods: {
     ...mapActions(["clearHistoryInfo"]),
+    resetForm() {
+      this.pickerTime = []
+    },
     onDialogHide() {
+      this.resetForm()
       this.$emit("change", false);
     },
     async onDialogConfirm() {

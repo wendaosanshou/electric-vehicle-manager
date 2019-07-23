@@ -110,7 +110,7 @@ export default {
         roleName = "系统设置";
         break;
       case 10:
-        roleName = "用户管理";
+        roleName = "工作人员管理";
         break;
       case 11:
         roleName = "角色权限管理";
@@ -154,7 +154,12 @@ export default {
     }
     return roleName;
   },
-
+  getFilterDefaultTime(time) {
+    if (time.indexOf('2000-01-01') > -1) {
+      return ''
+    }
+    return time
+  },
   /* -----------------------------localStorage------------------------------------ */
   /*
    * set localStorage

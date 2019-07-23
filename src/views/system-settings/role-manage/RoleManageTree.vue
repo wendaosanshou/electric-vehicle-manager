@@ -68,7 +68,7 @@ export default {
           children: [
             {
               id: 10,
-              label: "用户管理"
+              label: "工作人员管理"
             },
             {
               id: 11,

@@ -65,7 +65,11 @@
       </el-table-column>
       <el-table-column align="center" prop="operation" label="处理人账号">
       </el-table-column>
-      <el-table-column align="center" prop="process_time" label="处理时间"></el-table-column>
+      <el-table-column align="center" prop="process_time" label="处理时间">
+        <template slot-scope="scope">
+          {{$util.getFilterDefaultTime(scope.row.process_time)}}
+        </template>
+      </el-table-column>
       <el-table-column align="center" width="160" label="操作">
         <template slot-scope="scope">
           <el-button class="button-fix" icon="el-icon-edit" type="primary" size="mini" @click="onEditDetail(scope.row)">修改</el-button>

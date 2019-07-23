@@ -16,7 +16,7 @@
         size="mini"
         v-model="businessForm.name"
         placeholder="请填写当前组织名称"
-      ></el-input>
+        :disabled="isDeleteForm"></el-input>
     </div>
     <div class="point-item point-item-textarea">
       <div class="point-item-label">备注</div>
@@ -29,7 +29,7 @@
         :autosize="{ minRows: 10, maxRows: 10}"
         v-model="businessForm.note"
         placeholder="请输入备注信息（50字内）"
-      ></el-input>
+        :disabled="isDeleteForm"></el-input>
     </div>
     <div class="point-item">
       <div class="point-item-label">组织类型</div>
@@ -38,7 +38,7 @@
         size="small"
         @change="handleOrgChange"
         v-model="businessForm.organization_id"
-        :disabled="!hasOrgSelector"
+        :disabled="!hasOrgSelector || isDeleteForm"
         placeholder="请选择组织类型">
         <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
@@ -50,20 +50,21 @@
         size="small"
         v-model="businessForm.attribute_id"
         @change="handleAttributeChange"
-        :disabled="attributeDisable || !hasOrgSelector"
+        :disabled="disabledAttribute"
         placeholder="请选择渠道属性">
         <el-option :label="item.name" :value="item.id" v-for="(item, index) in orgAttribute" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
-      <el-button
+      <div class="btn-wrap">
+        <el-button
         class="point-btn point-btn-add button-fix"
         :class="{active: isAllowAdd}"
         size="mini"
         type="primary"
-        @click="handleConfirm"
-      >保存</el-button>
-      <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button>
+        @click="handleConfirm">{{isDeleteForm ? '删除' : '保存'}}</el-button>
+      </div>
+      <!-- <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button> -->
     </div>
   </div>
 </template>
@@ -106,12 +107,24 @@ export default {
     },
     type() {
       this.initBusinessForm(this.defaultForm);
+    },
+    $route() {
+      this.resetBusinessForm()
     }
   },
   computed: {
     ...mapGetters(["allOrg", 'businessType', "channelTypes", "orgAttribute"]),
+    disabledAttribute() {
+      return this.attributeDisable || !this.hasOrgSelector || this.isDeleteForm
+    },
     isAddForm() {
       return this.type && this.type === 'form-add'
+    },
+    isEditForm() {
+      return this.type && this.type === 'form-edit'
+    },
+    isDeleteForm() {
+      return this.type && this.type === 'form-delete'
     },
     useOrg() {
       let useOrg = this.allOrg.filter(item => {
@@ -163,7 +176,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["addBusinessPoint", "editBusinessPoint", "getOrgAttribute"]),
+    ...mapActions(["addBusinessPoint", "editBusinessPoint", "getOrgAttribute", "deleteBusinessPoint"]),
     onCancleForm() {
       this.$emit('on-cancle-form')
     },
@@ -279,15 +292,32 @@ export default {
         return Promise.reject(error)
       }
     },
+    async handleDeleteBusinessPoint() {
+      try {
+        await this.$confirm(`此操作将永久删除当前节点, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        await this.deleteBusinessPoint({
+          id: this.defaultForm.id
+        })
+        this.$emit('onRefresh')
+        this.onCancleForm()
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async handleConfirm() {
       if (this.isAddForm) {
         await this.handleAddBusinessPoint()
+      } else if (this.isDeleteForm) {
+        await this.handleDeleteBusinessPoint()
       } else {
         await this.handleEditBusinessPoint()
       }
     },
     async init() {
-      // await this.handleGetAttributeList()
       this.initBusinessForm();
     }
   },
@@ -308,7 +338,6 @@ $basic-ratio: 1.4;
   box-sizing: border-box;
   width: d2r(985px);
   height: d2r(747px);
-  margin-top: d2r(22px);
   padding-top: d2r(60px);
   background: #f7f7f7;
   .point-item {
@@ -340,12 +369,20 @@ $basic-ratio: 1.4;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    padding: d2r(60px) 0 0 d2r(164px);
+    padding: d2r(60px) 0 0 d2r(160px);
+    .btn-wrap {
+      width: d2r(500px);
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 
 .point-btn-add {
   opacity: 0.4;
+  width: d2r(320px)!important;
   &.active {
     opacity: 1;
   }

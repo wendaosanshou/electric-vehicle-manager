@@ -22,15 +22,18 @@
           <el-table-column prop="name" label="角色名称" align="center">
           </el-table-column>
           <el-table-column prop="processPoint" label="角色权限" align="center" width="350">
-                <template slot-scope="scope">
-            <el-tag
-              class="role-tag role-tag-fix"
-              type="success"
-              v-for="(item, index) in scope.row.roleNames"
-              :key="index"
-              size="mini"
-              disable-transitions>{{item}}</el-tag>
-          </template>
+            <template slot-scope="scope">
+              <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
+              <div v-else>
+                <el-tag
+                  class="role-tag"
+                  type="success"
+                  v-for="(item, index) in getFilterRoleNames(scope.row.roleNames)"
+                  :key="index"
+                  size="mini"
+                  disable-transitions>{{item}}</el-tag>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column prop="note" label="角色说明" align="center">
           </el-table-column>
@@ -67,6 +70,11 @@ export default {
   },
   methods: {
     ...mapActions(['deleteRole']),
+    getFilterRoleNames(roleNames) {
+      return roleNames.filter(item => {
+        return item.indexOf('商户APP') === -1
+      })
+    },
     onDialogShow() {
       this.dialogVisible = true;
     },
@@ -126,5 +134,8 @@ $basic-ratio: 1.4;
   padding: 0;
 }
 
-
+.role-tag {
+  margin-left: d2r(6px);
+  cursor: pointer;
+}
 </style>

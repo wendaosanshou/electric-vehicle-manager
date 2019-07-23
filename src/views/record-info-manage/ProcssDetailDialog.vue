@@ -2,7 +2,7 @@
   <div class="dialog">
     <el-dialog custom-class="process-dialog" class="process-detail-dialog dialog-fix" title="办理状态详细信息查看" :visible="dialogVisible" width="960px" @close="onDialogHide">
       <div class="record-setting-container">
-        <record-setting-content ref="recordSetting"></record-setting-content>
+        <record-setting-content :forbidModify="forbidModify" ref="recordSetting"></record-setting-content>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="onDialogConfirm">确 定</el-button>
@@ -27,7 +27,8 @@ export default {
     event: "change"
   },
   props: {
-    dialogVisible: Boolean
+    dialogVisible: Boolean,
+    forbidModify: Boolean
   },
   watch: {
     dialogVisible() {

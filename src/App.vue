@@ -86,6 +86,13 @@ $basic-ratio: 1.4;
   padding-top: d2r(15px);
   .el-form-item {
     margin-bottom: d2r(5px);
+    &.is-error {
+      margin-bottom: d2r(20px);
+    }
+    &.el-form-item-last .el-textarea {
+      margin-top: d2r(5px);
+      padding-bottom: d2r(10px);
+    }
     .el-form-item__label {
       width: d2r(163px);
       text-align: right;
@@ -96,6 +103,12 @@ $basic-ratio: 1.4;
       .el-select {
         width: d2r(500px);
       }
+    }
+    .el-textare {
+      margin-top: d2r(6px);
+    }
+    .el-form-item__error {
+      padding-top: 0;
     }
   }
 }
@@ -129,7 +142,7 @@ $basic-ratio: 1.4;
   }
 }
 
-.el-table__fixed .el-table__header {
+.el-table__fixed .el-table__header, .el-table__fixed-right .el-table__header{
   thead {
     color: #ffffff;
     background: #bbbbc4;

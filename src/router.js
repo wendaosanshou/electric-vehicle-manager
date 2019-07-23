@@ -8,6 +8,8 @@ import AlarmMonitor from './views/alarm-monitor/AlarmMonitor.vue'
 import AlarmAnalysis from './views/alarm-analysis/AlarmAnalysis.vue'
 import ElectricFence from './views/electric-fence/ElectricFence.vue'
 import RecordInfoManage from './views/record-info-manage/RecordInfoManage.vue'
+import ProcessManage from './views/process-manage/ProcessManage.vue'
+import ProcessSearch from './views/process-search/ProcessSearch.vue'
 import RecordSetting from './views/record-setting/RecordSetting.vue'
 import UserManage from './views/system-settings/user-manage/UserManage.vue';
 import UserAdd from './views/system-settings/user-manage/user-add/UserAdd.vue';
@@ -69,11 +71,11 @@ export default new Router({
       }, {
         path: 'process-manage',
         name: 'ProcessManage',
-        component: RecordInfoManage
+        component: ProcessManage
       }, {
         path: 'process-search',
         name: 'ProcessSearch',
-        component: RecordInfoManage
+        component: ProcessSearch
       }, {
         path: 'record-setting',
         name: 'RecordSetting',

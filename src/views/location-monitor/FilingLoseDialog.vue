@@ -91,7 +91,15 @@ export default {
   },
   methods: {
     ...mapActions(["loseDeviceFile"]),
+    resetForm() {
+      this.form = {
+        address: "",
+        time: "",
+        note: ""
+      }
+    },
     onDialogHide() {
+      this.resetForm()
       this.$emit("change", false);
     },
     onSearchHistory() {},
@@ -106,11 +114,6 @@ export default {
         console.log(params)
         await this.loseDeviceFile(params)
         this.onDialogHide();
-      } else {
-        this.$message({
-          type: "error",
-          message: "请填写丢失地点!"
-        });
       }
     }
   },
@@ -156,5 +159,12 @@ $basic-ratio: 1.4;
 .history-map-container {
   width: 100%;
   height: d2r(500px);
+}
+
+.btn-confirm {
+  opacity: 0.4;
+  &.active {
+    opacity: 1;
+  }
 }
 </style>

@@ -62,7 +62,7 @@ export default {
       isPauseMove: false,
       activeType: '',
       carSpeed: 1,
-      pickerTime: "",
+      pickerTime: [],
       dialogVisible: false,
       graspRoadPath: []
     };
@@ -95,12 +95,16 @@ export default {
   },
   methods: {
     ...mapActions(["getHistoryInfo"]),
+    resetForm() {
+      this.pickerTime = []
+    },
     onBackHistoryTrack() {
       this.activeType = 'destory'
       this.isShowHistoryTrack = false
       this.initAMap();
     },
     onDialogHide() {
+      this.resetForm()
       this.$emit("change", false);
     },
     onSetSpeed(speed) {

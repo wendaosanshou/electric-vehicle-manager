@@ -148,7 +148,7 @@
                 class="item-selector ipt-fix"
                 size="mini"
                 v-model="form.brand"
-                placeholder="请输入平台"
+                placeholder="请输入品牌"
                 disabled
               ></el-input>
             </div>
@@ -197,12 +197,12 @@
               ></el-input>
             </div>
             <div class="item-selector-wraper">
-              <div class="item-label">防盗备案号</div>
+              <div class="item-label">防火防盗备案号</div>
               <el-input
                 class="item-selector ipt-fix"
                 size="mini"
                 v-model="form.theft"
-                placeholder="请输入防盗备案号"
+                placeholder="请输入防火防盗备案号"
                 disabled
               ></el-input>
             </div>

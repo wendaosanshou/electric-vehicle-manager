@@ -74,7 +74,7 @@ const Login = {
         role: "9",
         children: [
           {
-            name: "用户管理",
+            name: "工作人员管理",
             logo: "el-icon-location",
             path: "user-manage",
             index: "9-1",
@@ -196,7 +196,12 @@ const Login = {
     userInfo: state => state.userInfo,
     role: state => state.role,
     business: state => state.business,
-    loginForm: state => state.loginForm
+    loginForm: state => state.loginForm,
+    isHandleUser: state => {
+      let { author } = state.role
+      // 如果author为7则是业务办理员
+      return author && author === '7'
+    }
   }
 };
 

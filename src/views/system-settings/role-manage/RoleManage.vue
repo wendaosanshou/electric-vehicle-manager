@@ -13,8 +13,7 @@
         size="mini"
         border
         stripe
-        style="width: 100%"
-      >
+        style="width: 100%">
         <el-table-column prop="code" label="角色编号" width="180" align="center"></el-table-column>
         <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
         <el-table-column prop="author" label="角色权限" align="center" width="350">

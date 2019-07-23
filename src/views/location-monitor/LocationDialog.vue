@@ -12,23 +12,26 @@
           <div class="form-item-wrap">
             <div class="form-item">购车人：{{userInfo.name}}</div>
             <div class="form-item">身份证号：{{userInfo.certificates_code}}</div>
-            <div class="form-item">性别：{{userInfo.sex === 0 ? "男" : "女"}}</div>
+            <div class="form-item">性别：{{getUserSex(userInfo.sex)}}</div>
             <div class="form-item">联系电话：{{userInfo.phone}}</div>
             <div class="form-item">家庭住址：{{userInfo.address}}</div>
           </div>
           <div class="form-title">车辆信息</div>
           <div class="form-item-wrap">
-            <div class="form-item">车编号：{{vehicleInfo.id}}</div>
-            <div class="form-item">车牌号：{{vehicleInfo.id}}</div>
+            <div class="form-item">车辆ID：{{vehicleInfo.id}}</div>
+            <div class="form-item">车架编号：{{vehicleInfo.frame}}</div>
             <div class="form-item">IMEI：{{deviceInfo.imei}}</div>
             <div class="form-item">电机编号：{{deviceInfo.power}}</div>
+            <!-- <div class="form-item">电池编号：{{deviceInfo.battery}}</div> -->
+            <!-- <div class="form-item">防盗编号：{{deviceInfo.theft}}</div> -->
             <div class="form-item">制造商：{{deviceInfo.brand}}</div>
+            <!-- <div class="form-item">设备品牌类型：{{deviceInfo.brand_type}}</div> -->
             <div class="form-item">产品型号：{{deviceInfo.model}}</div>
             <div class="form-item">颜色：{{deviceInfo.color}}</div>
-            <div class="form-item">获得方式：购买</div>
+            <div class="form-item">获得方式：{{getObtain(vehicleInfo.obtain)}}</div>
             <div class="form-item">车辆温度：{{deviceInfo.temperature}}℃</div>
           </div>
-          <div class="form-title">网络信息</div>
+          <!-- <div class="form-title">网络信息</div>
           <div class="form-item-wrap">
             <div class="form-item">位置区域码：23783</div>
             <div class="form-item">基站小区编码：97428822</div>
@@ -36,10 +39,10 @@
             <div class="form-item">信号强度：5</div>
             <div class="form-item">信号接收功率：-122dBm</div>
             <div class="form-item">信噪比：246</div>
-          </div>
+          </div> -->
           <div class="form-title">数据时间</div>
           <div class="form-item-wrap">
-            <div class="form-item">更新时间：2019-05-28 17:10:26</div>
+            <div class="form-item">更新时间：{{deviceInfo.recv_time}}</div>
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
@@ -87,6 +90,24 @@ export default {
     }
   },
   methods: {
+    getObtain(obtain) {
+      let obtainLable = ''
+      if (obtain === 0) {
+        obtainLable = '购买'
+      } else if (obtain === 1) {
+        obtainLable = '获取'
+      }
+      return obtainLable
+    },
+    getUserSex(sex) {
+      let userSex = ''
+      if (sex === 0) {
+        userSex = '男'
+      } else if (sex === 1) {
+        userSex = '女'
+      }
+      return userSex
+    },
     onDialogHide() {
       this.$emit('change', false)
     }
@@ -121,7 +142,7 @@ $basic-ratio: 1.4;
       .form-item {
         box-sizing: border-box;
         width: 100%;
-        height: d2r(34px);
+        min-height: d2r(34px);
         line-height: d2r(34px);
         font-size: d2r(13px);
         color: #9b9b9b;

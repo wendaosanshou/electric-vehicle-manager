@@ -2,72 +2,206 @@
   <div class="user-manage">
     <h3 class="user-manage-title">
       <i class="icon-dot"></i>
-      <span class="title-label">用户管理</span>
+      <span class="title-label">工作人员管理</span>
     </h3>
+    <!-- {{JSON.stringify({
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
+        account: this.searchAccount,
+        role: this.searchRole,
+        business: this.businessPoint.id,
+        install: this.installPoint.id,
+        attribute_business: this.businessAttribute,
+        attribute_install: this.installAttribute
+      })}} -->
     <div class="user-manage-header">
       <div class="user-manage-menu">
-        <div class="menu-account menu-ipt-wraper">
-          <span class="menu-label">账号</span>
-          <el-input class="menu-ipt ipt-fix" size="mini" v-model="searchAccount" placeholder="请输入手机号"></el-input>
+        <div class="menu-item">
+          <div class="item-selector-wraper">
+            <div class="item-label">业务办理点</div>
+            <el-input
+              class="item-selector ipt-fix item-selector-long"
+              size="mini"
+              v-model="businessPoint.label"
+              placeholder="请选择业务办理点"
+              disabled
+            >
+              <el-button slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgBusiness"></el-button>
+            </el-input>
+            <org-add-dialog
+              selectType="handle-tree"
+              :isSearch="true"
+              @onConfirm="onSelectBusinessPoint"
+              ref="orgBusiness"
+            ></org-add-dialog>
+          </div>
+          <div class="item-selector-wraper">
+            <div class="item-label">业务办理渠道</div>
+            <el-select
+              class="item-selector ipt-fix item-selector-long"
+              size="mini"
+              v-model="businessAttribute"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in businessAttributeList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </div>
         </div>
-        <div class="menu-user-name menu-ipt-wraper">
-          <span class="menu-label">角色名称</span>
-          <el-select class="menu-ipt ipt-fix" size="mini" v-model="searchRole" placeholder="请选择">
-            <el-option
-              v-for="item in roles"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+
+        <div class="menu-item">
+          <div class="item-selector-wraper">
+            <div class="item-label">设备安装点</div>
+            <el-input
+              class="item-selector ipt-fix item-selector-long"
+              size="mini"
+              v-model="installPoint.label"
+              placeholder="请选择设备安装点"
+              disabled
+            >
+              <el-button slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgInstall"></el-button>
+            </el-input>
+            <org-add-dialog
+              selectType="install-tree"
+              :isSearch="true"
+              @onConfirm="onSelectInstallPoint"
+              ref="orgInstall"
+            ></org-add-dialog>
+          </div>
+          <div class="item-selector-wraper">
+            <div class="item-label">设备安装渠道</div>
+            <el-select
+              class="item-selector ipt-fix item-selector-long"
+              size="mini"
+              v-model="installAttribute"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in installAttributeList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </div>
         </div>
-        <div class="menu-btn-wraper">
-          <div icon="el-icon-search" class="el-btn btn-search" @click="handleSearchAllUser">查询</div>
-          <div class="el-btn btn-clear" @click="handleClearSearchParams">清空</div>
+
+        <div class="menu-item">
+          <div class="item-selector-wraper">
+            <span class="item-label">账号</span>
+            <el-input
+              class="item-selector ipt-fix"
+              size="mini"
+              v-model="searchAccount"
+              placeholder="请输入手机号"
+            ></el-input>
+          </div>
+          <div class="item-selector-wraper">
+            <span class="item-label">角色名称</span>
+            <el-select
+              class="item-selector ipt-fix"
+              size="mini"
+              v-model="searchRole"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in roles"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </div>
         </div>
-      </div>
-      <div class="user-manage-crud ly-flex-row">
-        <el-button class="button-fix" icon="el-icon-folder-add" type="primary" size="mini" @click="handleUserAdd">添加用户</el-button>
-        <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
-        <!-- <div class="el-btn crud-btn-add crud-btn ly-flex-row" @click="handleUserAdd">
-          <i class="el-icon-folder-add icon-btn-add"></i>
-          <span class="btn-content">添加用户</span>
-        </div> -->
-        <!-- <user-delete @onRefresh="handelRefresh"/> -->
-        <!-- <div class="el-btn crud-btn-edit crud-btn ly-flex-row" @click="handleUserEdit">
-          <i class="el-icon-edit-outline icon-btn-add"></i>
-          <span class="btn-content">编辑用户</span>
-        </div> -->
       </div>
     </div>
-    <el-table ref="userTable" class="table-fix table-disable-select-all" size="mini" :data="allUser" border style="width: 100%"
+
+    <div class="btn-wraper">
+      <el-button
+        icon="el-icon-search"
+        class="button-fix"
+        size="mini"
+        type="primary"
+        @click="onSearchAllUser"
+      >查询</el-button>
+      <el-button class="button-fix" size="mini" type="primary" @click="handleClearSearchParams">清空</el-button>
+      <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
+      <div class="btn-right">
+        <el-button
+        class="button-fix"
+        icon="el-icon-folder-add"
+        type="primary"
+        size="mini"
+        @click="handleUserAdd"
+        >添加用户</el-button>
+      </div>
+    </div>
+
+    <!-- {{allUser[0]}} -->
+    <el-table
+      ref="userTable"
+      class="table-fix table-disable-select-all"
+      size="mini"
+      :data="filterUserList"
+      border
+      style="width: 100%"
       @selection-change="handleSelectionChange"
-      @select="handleSelect">
-      <el-table-column prop="id" align="center" label="序号"></el-table-column>
+      @select="handleSelect"
+    >
+      <el-table-column prop="index" align="center" label="序号"></el-table-column>
       <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
       <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
-      <el-table-column prop="site_name" align="center" label="所属组织（业务办理点）"></el-table-column>
+      <el-table-column prop="site_name" align="center" label="所属组织"></el-table-column>
+      <el-table-column prop="site_type" align="center" label="组织类型">
+        <template slot-scope="scope">
+          {{getAttributeTypeLable(scope.row.site_type)}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="attribute" align="center" label="渠道属性"></el-table-column>
       <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
       <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
       <el-table-column prop="note" align="center" label="备注"></el-table-column>
       <el-table-column width="280" align="center" label="操作">
-         <template slot-scope="scope">
-            <div class="btn-container">
-              <el-button class="button-fix" icon="el-icon-edit" type="primary" size="mini" @click="handleUserEdit(scope.row)">编辑</el-button>
-              <div class="part-line"></div>
-              <user-delete @onRefresh="handelRefresh" :selectUser="scope.row"/>
-            </div>
-          </template>
+        <template slot-scope="scope">
+          <div class="btn-container">
+            <el-button
+              class="button-fix"
+              icon="el-icon-edit"
+              type="primary"
+              size="mini"
+              @click="handleUserEdit(scope.row)"
+            >编辑</el-button>
+            <div class="part-line"></div>
+            <user-delete @onRefresh="handelRefresh" :selectUser="scope.row" />
+          </div>
+        </template>
       </el-table-column>
     </el-table>
 
     <!-- 导数据用的table -->
-    <el-table id="user-export-table" ref="userTable" class="table-fix table-disable-select-all table-hide" size="mini" :data="allUser" v-show="false">
+    <el-table
+      id="user-export-table"
+      ref="userTable"
+      class="table-fix table-disable-select-all table-hide"
+      size="mini"
+      :data="allUser"
+      v-show="false"
+    >
       <el-table-column prop="id" align="center" label="序号"></el-table-column>
       <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
       <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
-      <el-table-column prop="site_name" align="center" label="所属组织（业务办理点）"></el-table-column>
+      <el-table-column prop="site_name" align="center" label="所属组织"></el-table-column>
+      <el-table-column prop="site_type" align="center" label="组织类型">
+        <template slot-scope="scope">
+          {{getAttributeTypeLable(scope.row.site_type)}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="attribute" align="center" label="渠道属性"></el-table-column>
       <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
       <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
@@ -90,6 +224,7 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
+import OrgAddDialog from "./user-add/OrgAddDialog";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import UserDelete from "./UserDelete";
 
@@ -101,32 +236,78 @@ export default {
       searchAccount: "",
       searchRole: "",
       isCheckedAll: false,
-      selectItem: '',
-      tableData: []
+      selectItem: "",
+      tableData: [],
+      businessAttribute: "",
+      installAttribute: "",
+      businessPoint: {},
+      installPoint: {}
     };
   },
   computed: {
-    ...mapGetters(['allUser', 'allRoles', 'selectUser', 'allUserTotal']),
+    ...mapGetters([
+      "allUser",
+      "allRoles",
+      "selectUser",
+      "allUserTotal",
+      "businessAttributeList",
+      "installAttributeList"
+    ]),
+    filterUserList() {
+      return this.allUser.map((item, index) => {
+        return {
+          index: this.pageIndex + index,
+          ...item
+        }
+      })
+    },
     roles() {
-      let roles = [{
-        value: '',
-        label: "全部"
-      }]
+      let roles = [
+        {
+          value: "",
+          label: "全部"
+        }
+      ];
       this.allRoles.forEach(item => {
         roles.push({
           value: item.name,
           label: item.name
-        })
+        });
       });
-      return roles
+      return roles;
     }
   },
   methods: {
-    ...mapMutations(['udpateSelectUser']),
-    ...mapActions(["getAllUser", "getAllRoles"]),
-     exportExcel() {
+    ...mapMutations(["udpateSelectUser"]),
+    ...mapActions(["getAllUser", "getAllRoles", "getBusinessAttributeList", "getInstallAttributeList"]),
+    getAttributeTypeLable(type) {
+      let attributeLable = ''
+      if (type === 1) {
+        attributeLable = '业务办理点'
+      } else if (type === 2) {
+        attributeLable = '设备安装点'
+      }
+      return attributeLable
+    },
+    handleRenderOrgBusiness() {
+      this.$refs.orgBusiness.onDialogShow();
+    },
+    handleRenderOrgInstall() {
+      this.$refs.orgInstall.onDialogShow();
+    },
+    onSelectBusinessPoint(data) {
+      console.log("onSelectBusinessPoint", data);
+      this.businessPoint = data;
+    },
+    onSelectInstallPoint(data) {
+      console.log("onSelectInstallPoint", data);
+      this.installPoint = data;
+    },
+    exportExcel() {
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#user-export-table"));
+      var wb = XLSX.utils.table_to_book(
+        document.querySelector("#user-export-table")
+      );
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -141,7 +322,7 @@ export default {
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
-          "用户管理.xlsx"
+          "工作人员管理.xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
@@ -149,46 +330,62 @@ export default {
       return wbout;
     },
     handleSizeChange(pageSize) {
-      console.log(pageSize)
-      this.pageSize = pageSize
-      this.handleSearchAllUser()
+      console.log(pageSize);
+      this.pageSize = pageSize;
+      this.handleSearchAllUser();
     },
     handleCurrentChange(pageIndex) {
-      console.log(pageIndex)
-      this.pageIndex = pageIndex
-      this.handleSearchAllUser()
+      console.log(pageIndex);
+      this.pageIndex = pageIndex;
+      this.handleSearchAllUser();
     },
     initSearchAllUser() {
       this.getAllUser({
         page_size: 1000,
         page_index: 1,
-        account: '',
-        role: ''
+        account: "",
+        role: "",
+        business: "",
+        install: "",
+        attribute_business: "",
+        attribute_install: ""
       });
+    },
+    onSearchAllUser() {
+      this.pageIndex = 1
+      this.handleSearchAllUser()
     },
     handleSearchAllUser() {
       this.getAllUser({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         account: this.searchAccount,
-        role: this.searchRole
+        role: this.searchRole,
+        business: this.businessPoint.id,
+        install: this.installPoint.id,
+        attribute_business: this.businessAttribute,
+        attribute_install: this.installAttribute
       });
     },
     handleClearSearchParams() {
-      this.searchAccount = ''
-      this.searchRole = ''
+      this.searchAccount = "";
+      this.searchRole = "";
+      this.businessPoint = {}
+      this.installPoint = {}
+      this.businessAttribute = ""
+      this.installAttribute = ""
     },
     handleSelectionChange(val) {
-      console.log('handleSelectionChange')
+      console.log("handleSelectionChange");
       if (val.length > 1) {
-        this.$refs.userTable.clearSelection()
-        this.$refs.userTable.toggleRowSelection(val.pop())
+        this.$refs.userTable.clearSelection();
+        this.$refs.userTable.toggleRowSelection(val.pop());
       }
     },
     handleSelect(val) {
-      console.log('handleSelect', val)
-      const [selectItem] = val
-      this.udpateSelectUser(selectItem)
+      console.log("handleSelect", val);
+      const [selectItem] = val;
+      this.udpateSelectUser(selectItem);
     },
     handleUserAdd() {
       this.$router.push({
@@ -196,11 +393,11 @@ export default {
       });
     },
     handleUserDelete(selectUser) {
-      this.udpateSelectUser(selectUser)
+      this.udpateSelectUser(selectUser);
     },
     handleUserEdit(selectUser) {
-      this.udpateSelectUser(selectUser)
-      if(this.selectUser && this.selectUser.account) {
+      this.udpateSelectUser(selectUser);
+      if (this.selectUser && this.selectUser.account) {
         this.$router.push({
           path: "user-edit"
         });
@@ -216,16 +413,23 @@ export default {
         page_size: this.pageSize,
         page_index: this.pageIndex,
         account: this.searchAccount,
-        role: ""
+        role: this.searchRole,
+        business: this.businessPoint.id,
+        install: this.installPoint.id,
+        attribute_business: this.businessAttribute,
+        attribute_install: this.installAttribute
       });
-      this.getAllRoles()
+      this.getAllRoles();
+      this.getBusinessAttributeList()
+      this.getInstallAttributeList()
     },
     handelRefresh() {
-      this.initAllUser()
+      this.initAllUser();
     }
   },
   components: {
-    UserDelete
+    UserDelete,
+    OrgAddDialog
   },
   mounted() {
     this.initAllUser();
@@ -283,10 +487,36 @@ $basic-ratio: 1.4;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    width: auto;
-    height: d2r(80px);
-    padding: 0 d2r(37px) 0 d2r(23px);
+    width: 100%;
+    height: auto;
     background: #f5f5f6;
+    padding: 10px 10px 10px 0;
+    .menu-item {
+      width: auto;
+      height: auto;
+      margin-left: 10px;
+      &:nth-child(1) {
+        margin-left: 0;
+      }
+      .item-selector-wraper {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+        &:nth-child(1) {
+          margin-top: 0;
+        }
+        .item-label {
+          width: d2r(120px);
+          text-align: right;
+        }
+        .item-selector {
+          width: d2r(280px);
+          margin-left: 10px;
+        }
+      }
+    }
     .menu-ipt-wraper {
       display: flex;
       flex-direction: row;
@@ -391,6 +621,17 @@ $basic-ratio: 1.4;
   align-items: center;
   .part-line {
     width: d2r(10px);
+  }
+}
+
+.btn-wraper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+  .btn-right {
+    margin-left: auto;
   }
 }
 </style>

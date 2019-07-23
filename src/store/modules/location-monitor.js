@@ -8,53 +8,52 @@ const getToken = rootState => {
   return userInfo.token || "";
 };
 
-const convertGps = async list => {
-  let promiseArr = [];
-  let tid = ''
-  try {
-    for (let i = 0; i < list.length; i++) {
-      let item = list[i];
-      let { lng, lat } = item;
-      item.lng = lng / 1000000;
-      item.lat = lat / 1000000;
-      let gps = [item.lng, item.lat];
-      let promise = new Promise((resolve, reject) => {
-        resolve()
-        // AMap.convertFrom(gps, "gps", function(status, result) {
-        //   if (result.info === "ok") {
-        //     const [{ lng, lat }] = result.locations; // Array.<LngLat>
-        //     item.lng = lng;
-        //     item.lat = lat;
-        //   } else {
-        //     // gps转失败了就重置为0
-        //     item.lng = 0;
-        //     item.lat = 0;
-        //   }
-        //   resolve(item);
-        // });
-      });
-      promiseArr.push(promise);
-    }
+// const convertHistoryGps = async list => {
+//   let promiseArr = [];
+//   let tid = ''
+//   try {
+//     for (let i = 0; i < list.length; i++) {
+//       let item = list[i];
+//       let { lng, lat } = item;
+//       item.lng = lng / 1000000;
+//       item.lat = lat / 1000000;
+//       let gps = [item.lng, item.lat];
+//       let promise = new Promise((resolve, reject) => {
+//         AMap.convertFrom(gps, "gps", function(status, result) {
+//           if (result.info === "ok") {
+//             const [{ lng, lat }] = result.locations; // Array.<LngLat>
+//             item.lng = lng;
+//             item.lat = lat;
+//           } else {
+//             // gps转失败了就重置为0
+//             item.lng = 0;
+//             item.lat = 0;
+//           }
+//           resolve(item);
+//         });
+//       });
+//       promiseArr.push(promise);
+//     }
 
-    return new Promise((resolve, reject) => {
-      tid = setTimeout(() => {
-        vm.$message({
-          type: "error",
-          message: "gps数据转化超时~"
-        });
-        resolve(promiseArr)
-      }, 30 * 1000)
-      Promise.all(promiseArr).then(() => {
-        resolve(promiseArr)
-        clearTimeout(tid)
-      }).catch(() => {
-        resolve(promiseArr)
-      })
-    })
-  } catch (error) {
-    return Promise.resolve(promiseArr);
-  }
-};
+//     return new Promise((resolve, reject) => {
+//       tid = setTimeout(() => {
+//         vm.$message({
+//           type: "error",
+//           message: "gps数据转化超时~"
+//         });
+//         resolve(promiseArr)
+//       }, 30 * 1000)
+//       Promise.all(promiseArr).then(() => {
+//         resolve(promiseArr)
+//         clearTimeout(tid)
+//       }).catch(() => {
+//         resolve(promiseArr)
+//       })
+//     })
+//   } catch (error) {
+//     return Promise.resolve(promiseArr);
+//   }
+// };
 
 const convertHistoryGps = async list => {
   let sliceList = []
@@ -164,7 +163,7 @@ const accountList = [
   },
   {
     value: "record",
-    label: "防盗备案号"
+    label: "防火防盗备案号"
   },
   {
     value: "iccid",
@@ -314,7 +313,7 @@ const locationMonitor = {
         });
         if (result.data) {
           let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
-          await convertGps(deviceInfos);
+          await convertHistoryGps(deviceInfos);
           commit("updateDeviceInfo", deviceInfos[0]);
         } else {
           vm.$message({
@@ -337,7 +336,7 @@ const locationMonitor = {
         });
         if (result.data) {
           let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
-          await convertGps(deviceInfos);
+          await convertHistoryGps(deviceInfos);
           commit("updateDeviceInfo", deviceInfos[0]);
           commit("updateWebDeviceInfo", deviceInfos);
         } else {
@@ -359,7 +358,7 @@ const locationMonitor = {
           data
         });
         console.log('getAllDevice', result)
-        await convertGps(result.data);
+        await convertHistoryGps(result.data);
         commit("updateAllDeviceInfo", result.data);
       } catch (error) {
         console.log(error);
@@ -372,7 +371,7 @@ const locationMonitor = {
           token: getToken(rootState),
           data
         });
-        await convertGps(result.data);
+        await convertHistoryGps(result.data);
         commit("updateWebDeviceInfo", result.data);
       } catch (error) {
         console.log(error);

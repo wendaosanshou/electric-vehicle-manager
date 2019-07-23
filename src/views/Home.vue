@@ -58,6 +58,8 @@
           </div>
         </div>
         <div class="home-title-crumbs">所在位置：{{activePageName}}</div>
+        <!-- {{role}}<br/>
+        {{userInfo}} -->
         <div class="home-body">
           <router-view/>
         </div>
@@ -76,7 +78,6 @@
         <el-step title="2.设置新密码"></el-step>
         <el-step title="3.修改完成"></el-step>
       </el-steps>
-      <!-- {{loginForm}}--{{passwordForm}} -->
       <div class="step-1 step-content" v-if="passwordStep === 1">
         <el-form class="password-form" label-position="right" label-width="80px" :model="passwordForm">
           <el-form-item label="原密码">
@@ -179,16 +180,16 @@ export default {
           role: "5"
         },
         {
-          name: "办理状态查询",
-          logo: "el-icon-search",
-          path: "process-search",
+          name: "办理状态管理",
+          logo: "el-icon-set-up",
+          path: "process-manage",
           index: "6",
           role: "6"
         },
         {
-          name: "办理状态管理",
-          logo: "el-icon-set-up",
-          path: "process-manage",
+          name: "办理状态查询",
+          logo: "el-icon-search",
+          path: "process-search",
           index: "7",
           role: "7"
         },
@@ -207,7 +208,7 @@ export default {
           role: "9",
           children: [
             {
-              name: "用户管理",
+              name: "工作人员管理",
               logo: "el-icon-location",
               path: "user-manage",
               index: "9-1",
@@ -263,7 +264,7 @@ export default {
               role: "17"
             },
             {
-              name: "app升级管理",
+              name: "APP升级管理",
               logo: "el-icon-location",
               path: "app-update",
               index: "9-9",
@@ -310,8 +311,16 @@ export default {
     ...mapMutations(["updateActivePageName", "updateDefaultActiveMenu", "loginout"]),
     onDropdownClick(command) {
       if (command === 'password') {
+        this.resetPasswordParams()
         this.passwordStep = 1
         this.passwordDialogVisible = true
+      }
+    },
+    resetPasswordParams() {
+      this.passwordForm = {
+        oldPassword: '',
+        newPassword: '',
+        newPasswordConfirm: ''
       }
     },
     handleOldPassword() {
@@ -462,13 +471,13 @@ export default {
           activeMenu = "备案信息管理 > 修改信息";
           break;
         case "/user-manage":
-          activeMenu = "系统设置 > 用户管理";
+          activeMenu = "系统设置 > 工作人员管理";
           break;
         case "/user-add":
-          activeMenu = "系统设置 > 用户管理 > 添加用户";
+          activeMenu = "系统设置 > 工作人员管理 > 添加用户";
           break;
         case "/user-edit":
-          activeMenu = "系统设置 > 用户管理 > 编辑用户";
+          activeMenu = "系统设置 > 工作人员管理 > 编辑用户";
           break;
         case "/channel-manage":
           activeMenu = "系统设置 > 渠道属性管理";
@@ -498,7 +507,7 @@ export default {
           activeMenu = "系统设置 > 设备版本管理";
           break;
         case "/app-update":
-          activeMenu = "系统设置 > app升级管理";
+          activeMenu = "系统设置 > APP升级管理";
           break;
         case "/user-feedback":
           activeMenu = "系统设置 > 客户留言管理";

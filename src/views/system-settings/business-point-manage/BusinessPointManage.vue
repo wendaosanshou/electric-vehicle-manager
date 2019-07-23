@@ -16,31 +16,35 @@
           highlight-current
           @node-click="handleNodeClick"
           @check="onTreeCheck"
-          @check-change="onCheckChange"
-        ></el-tree>
+          @check-change="onCheckChange"></el-tree>
       </div>
       <div class="point-content-right">
-        <div class="point-btn-wrap">
-          <el-button
-            class="point-btn button-fix"
-            size="mini"
-            type="primary"
-            @click="handleAdd"
-          >添加子节点</el-button>
-          <el-button class="point-btn button-fix" size="mini" @click="handleDelete">删除节点</el-button>
-          <el-button class="point-btn button-fix" size="mini" @click="handleEdit">修改节点</el-button>
-        </div>
-        <business-point-add 
-          :defaultForm="currentBusinessPoint" 
-          :type="formType"
-          @onRefresh="onRefreshBusinessPoint" 
-          @on-cancle-form="onCancleForm" 
-          v-if="isAddForm || isEditForm"></business-point-add>
-        <business-point-delete
-          :defaultForm="currentBusinessPoint"
-          @onRefresh="onRefreshBusinessPoint"
-          @on-cancle-form="onCancleForm"
-          v-else-if="isDeleteForm"></business-point-delete>
+        <el-tabs type="border-card">
+          <el-tab-pane label="添加子节点">
+            <span slot="label"><i class="el-icon-folder-add"></i> 添加子节点</span>
+            <business-point-add 
+              :defaultForm="currentBusinessPoint" 
+              type="form-add"
+              @onRefresh="onRefreshBusinessPoint" 
+              @on-cancle-form="onCancleForm"></business-point-add>
+          </el-tab-pane>
+          <el-tab-pane label="删除节点">
+            <span slot="label"><i class="el-icon-delete"></i> 删除节点</span>
+            <business-point-add 
+              :defaultForm="currentBusinessPoint" 
+              type="form-delete"
+              @onRefresh="onRefreshBusinessPoint" 
+              @on-cancle-form="onCancleForm"></business-point-add>
+          </el-tab-pane>
+          <el-tab-pane label="修改节点">
+            <span slot="label"><i class="el-icon-edit"></i> 修改节点</span>
+            <business-point-add 
+              :defaultForm="currentBusinessPoint" 
+              type="form-edit"
+              @onRefresh="onRefreshBusinessPoint" 
+              @on-cancle-form="onCancleForm"></business-point-add>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
   </div>
@@ -82,6 +86,9 @@ export default {
     },
     isDeleteForm() {
       return this.formType && this.formType === "form-delete";
+    },
+    hasForm() {
+      return this.formType && this.formType.length > 0
     },
     pagetTitle() {
       const { name } = this.$route;
@@ -186,7 +193,7 @@ $basic-ratio: 1.4;
   padding: 0 d2r(38px) 0 d2r(65px);
   .point-manage-tree {
     width: d2r(460px);
-    height: d2r(825px);
+    height: d2r(840px);
     border: 1px solid #dddddd;
     .city-header {
       box-sizing: border-box;
@@ -200,7 +207,7 @@ $basic-ratio: 1.4;
       border-bottom: 1px solid #dddddd;
     }
     .role-tree {
-      max-height: d2r(772px);
+      max-height: d2r(787px);
       overflow: scroll;
     }
   }
@@ -212,45 +219,6 @@ $basic-ratio: 1.4;
       align-items: center;
       .point-btn {
         height: d2r(60px);
-      }
-    }
-    .point-content {
-      box-sizing: border-box;
-      width: d2r(985px);
-      height: d2r(747px);
-      margin-top: d2r(22px);
-      padding-top: d2r(60px);
-      background: #f7f7f7;
-      .point-item {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        width: 100%;
-        height: auto;
-        margin-top: d2r(20px);
-        .point-item-label {
-          width: d2r(154px);
-          height: auto;
-          text-align: right;
-        }
-        .item-ipt {
-          margin-left: d2r(10px);
-          width: d2r(500px);
-          height: d2r(40px);
-        }
-        .item-ipt-textarea {
-          margin-left: d2r(10px);
-          width: d2r(500px);
-          min-height: d2r(40px);
-        }
-      }
-      .btn-confirm-wrap {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        padding: d2r(60px) 0 0 d2r(164px);
       }
     }
   }
