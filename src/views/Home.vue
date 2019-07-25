@@ -58,8 +58,6 @@
           </div>
         </div>
         <div class="home-title-crumbs">所在位置：{{activePageName}}</div>
-        <!-- {{role}}<br/>
-        {{userInfo}} -->
         <div class="home-body">
           <router-view/>
         </div>

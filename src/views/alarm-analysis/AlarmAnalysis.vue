@@ -125,10 +125,17 @@ export default {
         this.isAlarmTableVisible = true;
         this.addAlarmMarkers()
       } else {
-        this.$message({
-          type: "error",
-          message: "请输入正确的查询条件!"
-        });
+        if (!startDate || !endDate) {
+           this.$message({
+            type: "error",
+            message: "请选择开始日期和结束日期!"
+          });
+        } else {
+          this.$message({
+            type: "error",
+            message: "请输入正确的查询条件!"
+          });
+        }
       }
     },
     getAlarmMarkerContent(item) {

@@ -7,7 +7,7 @@
     <!-- {{form}}--{{this.form.role_name.length}}--{{this.form.role_name && this.form.role_name.length > 0}} -->
     <el-form
       :model="form"
-      :rules="rules"
+      :rules="filterRules"
       ref="ruleForm"
       class="user-add-form"
       label-position="right"
@@ -53,7 +53,7 @@
           <el-input
             class="ipt-fix ipt-select"
             size="mini"
-            v-model="form.site_label"
+            v-model="form.site_name"
             placeholder="请选择所属组织"
             disabled
           ></el-input>
@@ -151,7 +151,7 @@ export default {
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
           {
-            min: 10,
+            min: 11,
             max: 11,
             message: "请输入正确的手机号格式",
             trigger: "blur"
@@ -162,6 +162,14 @@ export default {
   },
   computed: {
     ...mapGetters(["selectUser"]),
+    filterRules() {
+      if (!this.isUserAdd) {
+        this.rules.account = [
+          { required: true, message: "请输入账号", trigger: "blur" }
+        ]
+      }
+      return this.rules
+    },
     role_name() {
       return this.form && this.form.role_name !== "";
     },
@@ -201,6 +209,7 @@ export default {
       this.initSelectTreeType(role.name);
     },
     onSelectOrg(value) {
+      console.log('onSelectOrg', value)
       this.form.site_id = value.id;
       this.form.site_name = value.name;
       this.form.site_label = value.label

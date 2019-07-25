@@ -71,11 +71,11 @@ export default new Router({
       }, {
         path: 'process-manage',
         name: 'ProcessManage',
-        component: ProcessManage
+        component: RecordInfoManage
       }, {
         path: 'process-search',
         name: 'ProcessSearch',
-        component: ProcessSearch
+        component: RecordInfoManage
       }, {
         path: 'record-setting',
         name: 'RecordSetting',

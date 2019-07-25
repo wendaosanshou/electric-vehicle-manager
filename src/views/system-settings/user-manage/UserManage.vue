@@ -153,7 +153,7 @@
       @select="handleSelect"
     >
       <el-table-column prop="index" align="center" label="序号"></el-table-column>
-      <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
+      <el-table-column prop="account" align="center" width="100" label="账号（手机号）"></el-table-column>
       <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
       <el-table-column prop="site_name" align="center" label="所属组织"></el-table-column>
       <el-table-column prop="site_type" align="center" label="组织类型">
@@ -163,7 +163,7 @@
       </el-table-column>
       <el-table-column prop="attribute" align="center" label="渠道属性"></el-table-column>
       <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
-      <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
+      <el-table-column prop="phone" align="center" width="100" label="手机号码"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
       <el-table-column prop="note" align="center" label="备注"></el-table-column>
       <el-table-column width="280" align="center" label="操作">

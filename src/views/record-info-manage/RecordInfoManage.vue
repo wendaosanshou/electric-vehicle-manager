@@ -265,7 +265,6 @@
         </div>
       </div>
     </div>
-    
     <!-- 显示用的table -->
     <el-table
       class="table-fix"
@@ -274,9 +273,11 @@
       border
       stripe
       style="width: 100%"
+      :cell-class-name="cellcb"
       id="record-export-page"
+      v-if="reloadTable"
       @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" v-if="hasAuditOrder && isProcessManage"></el-table-column>
+      <el-table-column type="selection" width="55" v-if="isSelectionActive"></el-table-column>
       <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="120" align="center">
         <template slot-scope="scope">
@@ -441,6 +442,7 @@ export default {
     return {
       pageSize: 10,
       pageIndex: 1,
+      reloadTable: true,
       procssDetailDialogVisible: false,
       forbidModify: false,
       businessPoint: {
@@ -516,7 +518,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList", "businessAttributeList", "installAttributeList", "isHandleUser", "userInfo"]),
+    ...mapGetters(["exportWorkList", "workList", "workItem", "workListTotal", "exportWorkList", "businessAttributeList", "installAttributeList", "isHandleUser", "isStoreManager", "userInfo"]),
+    isSelectionActive() {
+      return this.hasAuditOrder && this.isProcessManage
+    },
     isProcessManage() {
       return this.$route && this.$route.name === "ProcessManage";
     },
@@ -536,6 +541,11 @@ export default {
   methods: {
     ...mapMutations(["updateWorkItem"]),
     ...mapActions(["getWorkList", "setWorkDistribute", "getExportWorkList", "getBusinessAttributeList", "getInstallAttributeList"]),
+    cellcb(row){
+      if(row.columnIndex === 0 && !this.isSelectionActive){
+        return "not-active"
+      }
+    },
     handleRenderOrgBusiness() {
       this.$refs.orgBusiness.onDialogShow()
     },
@@ -632,6 +642,7 @@ export default {
       return wbout;
     },
     handleClearSearch() {
+      this.pageIndex = 1
       this.businessPoint = {};
       this.installPoint = {};
       this.clientAccount = "";
@@ -756,6 +767,12 @@ export default {
       this.pageIndex = 1
       this.handleSearchWrokList()
     },
+    forceUpdateTable() {
+      this.reloadTable = false
+      this.$nextTick(() => {
+        this.reloadTable = true
+      })
+    },
     async handleSearchWrokList() {
       this.initIsHandleUser()
       const searchParam = {
@@ -779,6 +796,7 @@ export default {
         iccid: this.iccid
       };
       await this.getWorkList(searchParam);
+      this.forceUpdateTable()
       console.log(searchParam);
     },
     handleQuickSearchOneButton() {
@@ -786,6 +804,7 @@ export default {
     },
     async handleQuickSearchOrder() {
       let auditTime = dayjs().set('hour', 18).format('YYYY-MM-DD HH:mm:ss')
+      this.installStatus = 2
       await this.getWorkList({
         page_size: this.pageSize,
         page_index: this.pageIndex,
@@ -797,7 +816,7 @@ export default {
         install_attribute: "",
         business_account: "",
         audit_account: "",
-        install_status: 2, // 安装状态为已审核
+        install_status: this.installStatus, // 安装状态为已审核
         audit_time: `2018-01-01 00:00:00_${auditTime}`,
         distribute_time: "",
         install_time: "",
@@ -836,6 +855,15 @@ export default {
       if (this.isHandleUser) {
         this.businessAccount = this.userInfo.phone
       }
+    },
+    initIsStoreManager() {
+      if (this.isStoreManager) {
+        this.businessAccount = this.userInfo.phone
+      }
+    },
+    initSearchWrokList() {
+      this.resetSearchParams()
+      this.handleSearchWrokList();
     }
   },
   components: {
@@ -848,6 +876,7 @@ export default {
     // 通过 `vm` 访问组件实例
       vm.handleClearSearch()
       vm.handleSearchWrokList();
+      vm.forceUpdateTable()
     })
   },
   mounted() {
@@ -966,5 +995,9 @@ $basic-ratio: 1.4;
   &.active {
     opacity: 1;
   }
+}
+
+.not-active {
+  display: none;
 }
 </style>

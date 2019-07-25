@@ -198,9 +198,13 @@ const Login = {
     business: state => state.business,
     loginForm: state => state.loginForm,
     isHandleUser: state => {
-      let { author } = state.role
-      // 如果author为7则是业务办理员
-      return author && author === '7'
+      let { name } = state.userInfo
+      // 如果name为7则是业务办理员
+      return name && name.indexOf('业务办理员') > -1
+    },
+    isStoreManager: state => {
+      let { name } = state.userInfo
+      return name && name.indexOf('门店主管') > -1
     }
   }
 };

@@ -95,6 +95,12 @@ const electricFence = {
           token: getToken(rootState),
           ...data
         });
+        if (result.data && result.data.length === 0) {
+          vm.$message({
+            type: "error",
+            message: "未查到违法情况或违章记录!"
+          });
+        }
         commit('updateFenceAlarm', result)
         console.log(result);
       } catch (error) {
