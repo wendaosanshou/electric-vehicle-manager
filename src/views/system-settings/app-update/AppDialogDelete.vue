@@ -18,13 +18,13 @@
           stripe
           style="width: 100%"
         >
-         <el-table-column prop="id" label="序号"></el-table-column>
-        <el-table-column prop="name" label="APP名称"></el-table-column>
-        <el-table-column prop="version" label="版本名称"></el-table-column>
-        <el-table-column prop="update_time" width="160" label="更新时间"></el-table-column>
-        <el-table-column prop="operation" label="操作人"></el-table-column>
-        <el-table-column prop="note" width="240" label="版本说明"></el-table-column>
-        <el-table-column prop="download" width="120" label="下载地址"></el-table-column>
+         <el-table-column prop="id" align="center" label="序号"></el-table-column>
+        <el-table-column prop="name" align="center" label="APP名称"></el-table-column>
+        <el-table-column prop="version" align="center" label="版本名称"></el-table-column>
+        <el-table-column prop="update_time" align="center" width="160" label="更新时间"></el-table-column>
+        <el-table-column prop="operation" align="center" label="操作人"></el-table-column>
+        <el-table-column prop="note" width="240" align="center" label="版本说明"></el-table-column>
+        <el-table-column prop="download" width="120" align="center" label="下载地址"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

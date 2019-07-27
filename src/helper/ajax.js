@@ -53,7 +53,7 @@ function requestHandle(params) {
           if (res.data.code === '10007') {
             vm.$message.error(`${getErrorTips(res.data.code)}！`);
           } else {
-            vm.$message.error(`${getErrorTips(res.data.code)}！错误码：${res.data.code}`);
+            vm.$message.error(`${getErrorTips(res.data.code)}！`);
           }
         }
       } else {

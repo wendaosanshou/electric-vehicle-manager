@@ -1,9 +1,9 @@
 <template>
   <div class="dialog">
-    <el-button class="button-fix btn-select" size="mini" type="primary" @click="onDialogShow">选择角色</el-button>
-    <el-dialog class="dialog-fix" title="选择角色" :visible.sync="dialogVisible" @close="onDialogHide">
+    <el-button class="button-fix btn-select" size="mini" type="primary" @click="onDialogShow">选择角色模板</el-button>
+    <el-dialog class="dialog-fix" title="选择角色模板" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-title">
-        <span class="dialog-title-content">当前角色</span>
+        <span class="dialog-title-content">当前角色模板</span>
         <span class="refresh-link" @click="onRefresh">刷新</span>
       </div>
       <div class="table-container">
@@ -11,20 +11,23 @@
           @selection-change="handleSelectionChange"
           @select="handleSelect">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="code" label="角色编号" align="center"></el-table-column>
+          <el-table-column prop="code" label="角色模板编号" align="center"></el-table-column>
           <el-table-column prop="name" label="角色姓名" align="center"></el-table-column>
-          <el-table-column prop="author" label="角色权限" align="center" width="380">
+          <el-table-column prop="author" label="角色模板" align="center" width="380">
             <template slot-scope="scope">
-            <el-tag
-              class="role-tag role-tag-fix"
-              type="success"
-              v-for="(item, index) in scope.row.roleNames"
-              :key="index"
-              size="mini"
-              disable-transitions>{{item}}</el-tag>
-          </template>
+              <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
+              <div v-else>
+                <el-tag
+                  class="role-tag"
+                  type="success"
+                  v-for="(item, index) in getFilterRoleNames(scope.row.roleNames)"
+                  :key="index"
+                  size="mini"
+                  disable-transitions>{{item}}</el-tag>
+              </div>
+            </template>
           </el-table-column>
-          <el-table-column prop="note" label="角色说明" align="center"></el-table-column>
+          <el-table-column prop="note" label="角色说明" width="220" align="center"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

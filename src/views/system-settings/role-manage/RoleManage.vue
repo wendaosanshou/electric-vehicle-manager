@@ -1,12 +1,11 @@
 <template>
   <div class="role-manage">
     <div class="role-manage-title">
-      <page-title>角色权限管理</page-title>
+      <page-title>角色模板管理</page-title>
       <role-add-dialog @onRefreshRoleInfo="getAllRoles"></role-add-dialog>
     </div>
-    <!-- {{sortAllRoles}} -->
     <div class="role-manage-content">
-      <div class="role-manage-subtitle">当前角色</div>
+      <div class="role-manage-subtitle">当前角色模板</div>
       <el-table
         class="role-manage-table table-fix"
         :data="sortAllRoles"
@@ -14,30 +13,31 @@
         border
         stripe
         style="width: 100%">
-        <el-table-column prop="code" label="角色编号" width="180" align="center"></el-table-column>
+        <el-table-column prop="code" label="角色模板编号" width="180" align="center"></el-table-column>
         <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
-        <el-table-column prop="author" label="角色权限" align="center" width="350">
+        <el-table-column prop="author" label="角色模板" align="center" width="300">
            <template slot-scope="scope">
-            <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
-             <div v-else>
-               <el-tag
-                class="role-tag"
-                type="success"
-                v-for="(item, index) in getFilterRoleNames(scope.row.roleNames)"
-                :key="index"
-                size="mini"
-                disable-transitions>{{item}}</el-tag>
-             </div>
+             <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
+              <div v-else>
+                <el-tag
+                  class="role-tag"
+                  type="success"
+                  v-for="(item, index) in getFilterRoleNames(scope.row.roleNames)"
+                  :key="index"
+                  size="mini"
+                  disable-transitions>{{item}}</el-tag>
+              </div>
           </template>
         </el-table-column>
         <el-table-column prop="note" label="角色说明" align="center"></el-table-column>
         <el-table-column label="操作" align="center" width="280">
           <template slot-scope="scope">
-            <div class="btn-container">
+            <div class="btn-container" v-if="isAllowModify(scope.row.name)">
               <role-edit-dialog :data="deepClone(scope.row)" @onRefreshRoleInfo="getAllRoles"></role-edit-dialog>
               <div class="part-line"></div>
-              <role-delete-dialog :data="deepClone(scope.row)" @onRefreshRoleInfo="getAllRoles"></role-delete-dialog>
+              <role-delete-dialog :data="deepClone(scope.row)" @onRefreshRoleInfo="getAllRoles" :isDeleteDisabled="isNoteAllowDelete(scope.row.name)"></role-delete-dialog>
             </div>
+            <div v-else>该角色模板不允许编辑或删除</div>
           </template>
         </el-table-column>
       </el-table>
@@ -59,18 +59,24 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['allRoles']),
+    ...mapGetters(['allRoles', 'isRootAdmin', 'isSuperAdmin']),
     sortAllRoles() {
       return this.allRoles.sort((a, b) => a.code - b.code)
     }
   },
   methods: {
     ...mapActions(['getAllRoles', 'deleteRole']),
+    isNoteAllowDelete(name) {
+      return ['超级管理员', '业务办理员', '安装员'].indexOf(name) > -1 && this.isSuperAdmin && !this.isRootAdmin
+    },
+    isAllowModify(name) {
+      return ['超级管理员', '业务办理员', '安装员'].indexOf(name) === -1 || this.isRootAdmin || this.isSuperAdmin
+    },
     handleEdit() {},
     handleDelete() {},
     getFilterRoleNames(roleNames) {
       return roleNames.filter(item => {
-        return item.indexOf('商户APP') === -1
+        return item.indexOf('商户APP') === -1 || item.indexOf('系统设置') === -1
       })
     },
     deepClone(data) {

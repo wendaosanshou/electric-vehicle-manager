@@ -4,16 +4,6 @@
       <i class="icon-dot"></i>
       <span class="title-label">工作人员管理</span>
     </h3>
-    <!-- {{JSON.stringify({
-        page_size: this.pageSize,
-        page_index: this.pageIndex,
-        account: this.searchAccount,
-        role: this.searchRole,
-        business: this.businessPoint.id,
-        install: this.installPoint.id,
-        attribute_business: this.businessAttribute,
-        attribute_install: this.installAttribute
-      })}} -->
     <div class="user-manage-header">
       <div class="user-manage-menu">
         <div class="menu-item">
@@ -44,7 +34,7 @@
               placeholder="请选择"
             >
               <el-option
-                v-for="item in businessAttributeList"
+                v-for="item in mergeBusinessAttributeList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
@@ -81,7 +71,7 @@
               placeholder="请选择"
             >
               <el-option
-                v-for="item in installAttributeList"
+                v-for="item in mergeInstallAttributeList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
@@ -152,17 +142,17 @@
       @selection-change="handleSelectionChange"
       @select="handleSelect"
     >
-      <el-table-column prop="index" align="center" label="序号"></el-table-column>
+      <el-table-column prop="index" align="center" width="50" label="序号"></el-table-column>
       <el-table-column prop="account" align="center" width="100" label="账号（手机号）"></el-table-column>
-      <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
-      <el-table-column prop="site_name" align="center" label="所属组织"></el-table-column>
-      <el-table-column prop="site_type" align="center" label="组织类型">
+      <el-table-column prop="name" align="center" width="100" label="账号姓名"></el-table-column>
+      <el-table-column prop="site_name" align="center" width="120" label="所属组织"></el-table-column>
+      <el-table-column prop="site_type" align="center" width="100" label="组织类型">
         <template slot-scope="scope">
           {{getAttributeTypeLable(scope.row.site_type)}}
         </template>
       </el-table-column>
-      <el-table-column prop="attribute" align="center" label="渠道属性"></el-table-column>
-      <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
+      <el-table-column prop="attribute" align="center" width="100" label="渠道属性"></el-table-column>
+      <el-table-column prop="role_name" align="center" width="100" label="角色名称"></el-table-column>
       <el-table-column prop="phone" align="center" width="100" label="手机号码"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
       <el-table-column prop="note" align="center" label="备注"></el-table-column>
@@ -256,7 +246,7 @@ export default {
     filterUserList() {
       return this.allUser.map((item, index) => {
         return {
-          index: this.pageIndex + index,
+          index: (this.pageIndex - 1) * this.pageSize + index + 1,
           ...item
         }
       })

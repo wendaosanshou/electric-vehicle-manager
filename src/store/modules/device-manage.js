@@ -58,6 +58,22 @@ const Login = {
     }
   },
   actions: {
+    async rebotDevice({ commit, rootState }, data) {
+      try {
+        const result = await $apis.rebotDevice({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "发送重启命令成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
     async processFeedback({ commit, rootState }, data) {
       try {
         const result = await $apis.processFeedback({

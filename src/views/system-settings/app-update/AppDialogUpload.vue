@@ -208,6 +208,7 @@ export default {
       this.dialogVisible = true;
     },
     onDialogHide() {
+      this.clearForm()
       this.dialogVisible = false;
     },
     handleUpdateDevice() {

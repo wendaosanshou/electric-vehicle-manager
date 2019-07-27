@@ -18,11 +18,11 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="id" label="序号"></el-table-column>
-          <el-table-column prop="imei" label="IMEI"></el-table-column>
-          <el-table-column prop="operation" label="创建人"></el-table-column>
-          <el-table-column prop="import_time" label="入库时间"></el-table-column>
-          <el-table-column prop="note" label="备注信息"></el-table-column>
+          <el-table-column prop="id" align="center" label="序号"></el-table-column>
+          <el-table-column prop="imei" align="center" label="IMEI"></el-table-column>
+          <el-table-column prop="operation" align="center" label="创建人"></el-table-column>
+          <el-table-column prop="import_time" align="center" label="入库时间"></el-table-column>
+          <el-table-column prop="note" align="center" label="备注信息"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

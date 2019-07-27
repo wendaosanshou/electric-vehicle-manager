@@ -32,7 +32,7 @@ export const getRoleName = (roleType) => {
         roleName = "工作人员管理";
         break;
       case 11:
-        roleName = "角色权限管理";
+        roleName = "角色模板管理";
         break;
       case 12:
         roleName = "业务办理点管理";

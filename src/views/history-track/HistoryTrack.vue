@@ -11,6 +11,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           align="right"
+          :picker-options="pickerOptions"
         ></el-date-picker>
       </div>
       <div class="title-right">
@@ -32,6 +33,8 @@
         <!-- <el-button class="button-fix" size="mini" type="primary" @click="onBackHistoryTrack">退出</el-button> -->
       </div>
     </div>
+
+    <!-- pickerTime:{{pickerTime}} -->
     <div class="monitor-container">
       <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
       <div class="car-marker-menu" v-if="isShowHistoryTrack">
@@ -65,10 +68,11 @@
 import dayjs from "dayjs";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
+import HistoryMixin from '@/mixins/history-mixin'
 import { setTimeout } from "timers";
 
 export default {
-  mixins: [MapMixin],
+  mixins: [MapMixin, HistoryMixin],
   data() {
     return {
       loading: {},
@@ -82,29 +86,19 @@ export default {
       pickerOptions: {
         shortcuts: [
           {
+            text: "今天",
+            onClick(picker) {
+              const end = dayjs().toDate();
+              const start = dayjs().set('h', 0).set('m', 0).set('s', 0).toDate();
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
             text: "最近一周",
             onClick(picker) {
               const end = new Date();
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
               picker.$emit("pick", [start, end]);
             }
           }
@@ -130,6 +124,11 @@ export default {
   methods: {
     ...mapMutations(["updateCurrentLocationInfo"]),
     ...mapActions(["getHistoryInfo", "getWebDevice", "getDeviceInfo"]),
+    initPickerTime() {
+      const end = dayjs().toDate();
+      const start = dayjs().set('h', 0).set('m', 0).set('s', 0).toDate();
+      this.pickerTime = [start, end]
+    },
     deepClone(historylineArr) {
       return JSON.parse(JSON.stringify(historylineArr));
     },
@@ -148,8 +147,8 @@ export default {
           if (this.deviceInfo && this.deviceInfo.id) {
             await this.getHistoryInfo({
               id: this.deviceInfo.id,
-              start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-              end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+              start: dayjs(startDate).subtract(8, 'hour').format("YYYY-MM-DD HH:mm:ss"),
+              end: dayjs(endDate).subtract(8, 'hour').format("YYYY-MM-DD HH:mm:ss")
             });
             this.drawHistoryLine();
             this.isShowHistoryTrack = true;
@@ -157,130 +156,13 @@ export default {
         } else {
           this.$message({
             type: "error",
-            message: "请选择正确的时间段!"
+            message: "请输入正确的时间段和查询条件!"
           });
         }
       } catch (error) {
         console.log(error);
       }
       this.loading.close();
-    },
-    renderLoading() {
-      this.loading = this.$loading({
-        lock: true,
-        text: "Loading",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-    },
-    onSetSpeed(speed) {
-      if(this.activeType === '') {
-        this.carSpeed = speed;
-      }
-    },
-    pauseMove() {
-      this.activeType = 'pause'
-      this.isPauseMove = true;
-      this.carMarker.pauseMove();
-    },
-    stopMove() {
-      this.activeType = 'stop'
-      this.isPauseMove = false;
-      this.carSpeed = 1;
-      this.carMarker.stopMove();
-      this.drawHistoryLine()
-    },
-    leaveStopMove() {
-      if (this.activeType = 'stop') {
-        this.activeType = ''
-      }
-    },
-    resumeMove() {
-      this.carMarker.resumeMove();
-    },
-    startMove() {
-      this.activeType = 'start'
-      if (this.isPauseMove) {
-        this.resumeMove();
-      } else {
-        this.carMarker.moveAlong(this.graspRoadPath, 800 * this.carSpeed);
-      }
-    },
-    getCarMarkerContent() {
-      let markerContent = document.createElement("div");
-      markerContent.className = "mark-car";
-      return markerContent;
-    },
-    drawCarMarker(path) {
-      let [firstPosition] = path;
-      this.carMarker = new AMap.Marker({
-        map: this.map,
-        position: firstPosition,
-        content: this.getCarMarkerContent(),
-        anchor: "bottom-center",
-        offset: new AMap.Pixel(0, 0)
-      });
-
-      var passedPolyline = new AMap.Polyline({
-        map: this.map,
-        strokeColor: "#AF5", //线颜色
-        strokeWeight: 6 //线宽
-      });
-
-      this.carMarker.on("moving", function(e) {
-        passedPolyline.setPath(e.passedPath);
-      });
-      this.map.setFitView();
-    },
-    drawGraspRoad(paths) {
-      let that = this;
-      var graspRoad = new AMap.GraspRoad();
-      return new Promise((resolve, reject) => {
-        graspRoad.driving(paths, (error, result) => {
-          console.log(result)
-          if (!error) {
-            let path2 = []
-            var newPath = result.data.points;
-            for (var i = 0; i < newPath.length; i += 1) {
-              path2.push([newPath[i].x, newPath[i].y]);
-            }
-            var newLine = new AMap.Polyline({
-              path: path2,
-              strokeWeight: 8,
-              strokeOpacity: 0.8,
-              strokeColor: "#0091ea",
-              showDir: true
-            });
-            this.map.add(newLine);
-            console.log('path2', path2.length)
-            this.graspRoadPath = this.graspRoadPath.concat(path2)
-            resolve();
-          }
-        });
-      });
-    },
-    async drawHistoryLine() {
-      this.map.clearMap();
-      this.graspRoadPath = [];
-      for (
-        let index = 0;
-        index < this.historyLineInfo.length;
-        index = index + 200
-      ) {
-        console.log(this.historyLineInfo)
-        let path = this.historyLineInfo.slice(index, index + 500);
-        await this.drawGraspRoad(path);
-      }
-      console.log(this.graspRoadPath.length)
-      this.drawCarMarker(this.graspRoadPath);
-    },
-    renderLoading() {
-      this.loading = this.$loading({
-        lock: true,
-        text: "Loading",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
     },
     getLocationArray(locationInfo) {
       return locationInfo.map(item => {
@@ -293,6 +175,7 @@ export default {
       this.init();
     },
     async init() {
+      this.initPickerTime()
       await this.getWebDevice();
       const locationArray = this.getLocationArray(this.allLocationInfo);
       const [positionCenter] = locationArray;

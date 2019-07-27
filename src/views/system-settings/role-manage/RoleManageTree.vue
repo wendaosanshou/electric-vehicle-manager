@@ -1,6 +1,6 @@
 <template>
   <div class="role-manage-tree">
-    <div class="role-tree-title">选择角色权限</div>
+    <div class="role-tree-title">选择角色模板</div>
     <div class="role-tree-content">
       <el-tree
         :data="roleManageData"
@@ -72,7 +72,7 @@ export default {
             },
             {
               id: 11,
-              label: "角色权限管理"
+              label: "角色模板管理"
             },
             {
               id: 12,

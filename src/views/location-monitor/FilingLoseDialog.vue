@@ -2,7 +2,7 @@
   <div class="filing-lose-dialog">
     <el-dialog
       class="dialog-fix dialog-container"
-      title="立案丢失"
+      title="丢失立案"
       width="430px"
       :visible.sync="dialogVisible"
       @close="onDialogHide"

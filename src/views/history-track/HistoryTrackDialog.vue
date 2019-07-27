@@ -53,7 +53,10 @@
 import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
 import { setTimeout } from "timers";
+import HistoryMixin from '@/mixins/history-mixin'
+
 export default {
+  mixins: [HistoryMixin],
   data() {
     return {
       loading: {},
@@ -80,6 +83,7 @@ export default {
       if (this.visible) {
         setTimeout(() => {
           this.initAMap();
+          this.initPickerTime()
         }, 10);
       } else {
         this.isShowHistoryTrack = false
@@ -106,106 +110,6 @@ export default {
     onDialogHide() {
       this.resetForm()
       this.$emit("change", false);
-    },
-    onSetSpeed(speed) {
-      if(this.activeType === '') {
-        this.carSpeed = speed;
-      }
-    },
-    pauseMove() {
-      this.activeType = 'pause'
-      this.isPauseMove = true;
-      this.carMarker.pauseMove();
-    },
-    stopMove() {
-      this.activeType = 'stop'
-      this.isPauseMove = false;
-      this.carSpeed = 1;
-      this.carMarker.stopMove();
-      this.drawHistoryLine()
-    },
-    leaveStopMove() {
-      if (this.activeType = 'stop') {
-        this.activeType = ''
-      }
-    },
-    resumeMove() {
-      this.carMarker.resumeMove();
-    },
-    startMove() {
-      this.activeType = 'start'
-      if (this.isPauseMove) {
-        this.resumeMove();
-      } else {
-        this.carMarker.moveAlong(this.graspRoadPath, 800 * this.carSpeed);
-      }
-    },
-    getCarMarkerContent() {
-      let markerContent = document.createElement("div");
-      markerContent.className = "mark-car";
-      return markerContent;
-    },
-    drawCarMarker(path) {
-      let [firstPosition] = path;
-      console.log('firstPosition', firstPosition)
-      this.carMarker = new AMap.Marker({
-        map: this.map,
-        position: firstPosition,
-        content: this.getCarMarkerContent(),
-        anchor: "bottom-center",
-        offset: new AMap.Pixel(0, 0)
-      });
-
-      var passedPolyline = new AMap.Polyline({
-        map: this.map,
-        strokeColor: "#AF5", //线颜色
-        strokeWeight: 6 //线宽
-      });
-
-      this.carMarker.on("moving", function(e) {
-        passedPolyline.setPath(e.passedPath);
-      });
-    },
-    drawGraspRoad(paths) {
-      let that = this;
-      var graspRoad = new AMap.GraspRoad();
-      return new Promise((resolve, reject) => {
-        graspRoad.driving(paths, (error, result) => {
-          console.log(result)
-          if (!error) {
-            let path2 = []
-            var newPath = result.data.points;
-            for (var i = 0; i < newPath.length; i += 1) {
-              path2.push([newPath[i].x, newPath[i].y]);
-            }
-            var newLine = new AMap.Polyline({
-              path: path2,
-              strokeWeight: 8,
-              strokeOpacity: 0.8,
-              strokeColor: "#0091ea",
-              showDir: true
-            });
-            this.map.add(newLine);
-            console.log('path2', path2.length)
-            this.graspRoadPath = this.graspRoadPath.concat(path2)
-            resolve();
-          }
-        });
-      });
-    },
-    async drawHistoryLine() {
-      this.map.clearMap();
-      this.graspRoadPath = [];
-      for (
-        let index = 0;
-        index < this.historyLineInfo.length;
-        index = index + 200
-      ) {
-        let path = this.historyLineInfo.slice(index, index + 500);
-        await this.drawGraspRoad(path);
-      }
-      this.drawCarMarker(this.graspRoadPath);
-      this.map.setFitView();
     },
     initAMap() {
       // 初始化地图
@@ -239,7 +143,7 @@ export default {
         } else {
           this.$message({
             type: "error",
-            message: "请选择正确的时间段!"
+            message: "请输入正确的时间段和查询条件!"
           });
         }
       } catch (error) {

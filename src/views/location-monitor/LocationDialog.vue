@@ -42,7 +42,7 @@
           </div> -->
           <div class="form-title">数据时间</div>
           <div class="form-item-wrap">
-            <div class="form-item">更新时间：{{deviceInfo.recv_time}}</div>
+            <div class="form-item">更新时间：{{formatTime(deviceInfo.recv_time)}}</div>
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
@@ -55,6 +55,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import dayjs from 'dayjs'
 
 export default {
   data() {
@@ -90,6 +91,11 @@ export default {
     }
   },
   methods: {
+    formatTime(time) {
+      if (time) {
+        return dayjs(time).add(8, 'hour').format('YYYY-MM-DD HH:mm')
+      }
+    },
     getObtain(obtain) {
       let obtainLable = ''
       if (obtain === 0) {

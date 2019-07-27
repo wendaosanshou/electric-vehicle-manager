@@ -23,14 +23,20 @@
           border
           style="width: 100%"
         >
-          <el-table-column prop="id" label="序号" width="55"></el-table-column>
-          <el-table-column prop="account" label="账号（手机号）"></el-table-column>
-          <el-table-column prop="name" label="账号姓名"></el-table-column>
-          <el-table-column prop="site_name" label="所属组织（业务办理点）" width="130"></el-table-column>
-          <el-table-column prop="role_name" label="角色名称" width="100"></el-table-column>
-          <el-table-column prop="phone" label="手机号码"></el-table-column>
-          <el-table-column prop="email" label="邮箱"></el-table-column>
-          <el-table-column prop="note" label="备注"></el-table-column>
+          <el-table-column prop="index" align="center" label="序号" width="55"></el-table-column>
+          <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
+          <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
+          <el-table-column prop="site_name" align="center" label="所属组织"></el-table-column>
+          <el-table-column prop="site_type" align="center" label="组织类型">
+            <template slot-scope="scope">
+              {{getAttributeTypeLable(scope.row.site_type)}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="attribute" align="center" label="渠道属性"></el-table-column>
+          <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
+          <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
+          <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
+          <el-table-column prop="note" align="center" label="备注"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

@@ -185,8 +185,8 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="6">
-            <div class="item-selector-wraper">
+          <el-col :span="7">
+            <div class="item-selector-wraper item-selector-wraper-long">
               <div class="item-label">车架号</div>
               <el-input
                 class="item-selector ipt-fix"
@@ -196,7 +196,7 @@
                 disabled
               ></el-input>
             </div>
-            <div class="item-selector-wraper">
+            <div class="item-selector-wraper item-selector-wraper-long">
               <div class="item-label">防火防盗备案号</div>
               <el-input
                 class="item-selector ipt-fix"
@@ -468,6 +468,11 @@ $basic-ratio: 1.4;
         justify-content: flex-start;
         align-items: center;
         margin-top: d2r(20px);
+        &.item-selector-wraper-long {
+          .item-label {
+            width: d2r(140px);
+          }
+        }
         &:nth-child(1) {
           margin-top: 0;
         }

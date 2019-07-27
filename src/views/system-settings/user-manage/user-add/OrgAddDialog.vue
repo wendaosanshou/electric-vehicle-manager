@@ -78,13 +78,13 @@ export default {
       } else if (this.selectType === 'handle-tree') {
         return {
           title: '请选择业务办理点',
-          buttonTxt: '请选择',
+          buttonTxt: '选择所属组织',
           buttonClass: 'btn-small'
         }
       } else if (this.selectType === 'install-tree') {
         return {
           title: '请选择设备安装点',
-          buttonTxt: '请选择',
+          buttonTxt: '选择所属组织',
           buttonClass: 'btn-small'
         }
       }

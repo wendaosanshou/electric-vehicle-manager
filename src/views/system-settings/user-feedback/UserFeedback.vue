@@ -57,7 +57,7 @@
       <el-table-column align="center" prop="account" label="用户手机号"></el-table-column>
       <el-table-column align="center" prop="name" label="用户姓名"></el-table-column>
       <el-table-column align="center" prop="feedback_type" label="意见分类"></el-table-column>
-      <el-table-column align="center" prop="content" label="意见内容"></el-table-column>
+      <el-table-column align="center" width="260" prop="content" label="意见内容"></el-table-column>
       <el-table-column align="center" prop="process" label="处理状态">
         <template slot-scope="scope">
           {{getProcessTips(scope.row.process)}}
@@ -144,7 +144,7 @@ export default {
     onClearSearchParams() {
       this.name = ''
       this.account = ''
-      this.process = ''
+      this.process = -1
       this.operation = ''
     },
     deepClone(data) {

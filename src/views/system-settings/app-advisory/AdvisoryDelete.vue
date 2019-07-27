@@ -15,11 +15,11 @@
         <el-table class="table-fix" size="mini" :data="tableData" border style="width: 100%">
           <el-table-column prop="id" label="序号" align="center"></el-table-column>
           <el-table-column prop="title" label="资讯标题" width="120" align="center"></el-table-column>
-          <el-table-column label="创建人" align="center"></el-table-column>
+          <!-- <el-table-column label="创建人" align="center"></el-table-column> -->
           <el-table-column prop="time" label="创建时间" align="center"></el-table-column>
           <el-table-column prop="active_time" label="生效时间" align="center"></el-table-column>
           <el-table-column prop="expire_time" label="截止时间" align="center"></el-table-column>
-          <el-table-column prop="content" label="备注信息"></el-table-column>
+          <el-table-column prop="content" label="备注信息" align="center"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

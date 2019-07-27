@@ -1,8 +1,8 @@
 <template>
   <div class="role-add">
-    <el-button class="button-fix" icon="el-icon-folder-add" size="mini" type="primary" @click="onDialogShow">添加角色</el-button>
-    <el-dialog class="dialog-fix" title="添加角色" :visible.sync="dialogVisible" @close="onDialogHide">
-      <div class="dialog-title">添加角色</div>
+    <el-button class="button-fix" icon="el-icon-folder-add" size="mini" type="primary" @click="onDialogShow">添加角色模板</el-button>
+    <el-dialog class="dialog-fix" title="添加角色模板" :visible.sync="dialogVisible" @close="onDialogHide">
+      <div class="dialog-title">添加角色模板</div>
       <div class="dialog-content">
         <el-table
           class="role-manage-table table-fix table-disable-hover"
@@ -12,13 +12,13 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="id" label="角色编号" align="center">
+          <el-table-column prop="id" label="角色模板编号" align="center">
             <template slot-scope="scope">
               <el-input
                     size="mini"
                     class="ipt-fix"
                     v-model.number="scope.row.code"
-                    placeholder="填写角色编号"
+                    placeholder="填写角色模板编号"
                   ></el-input>
             </template>
           </el-table-column>
@@ -36,7 +36,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="author" label="角色权限" width="230" align="center">
+          <el-table-column prop="author" label="角色模板" width="230" align="center">
             <template>
               <div class="role-manage-tree-wrap">
                 <role-manage-tree @onChange="onRoleChange"></role-manage-tree>
@@ -129,7 +129,7 @@ export default {
     },
     async onAddRole() {
       const [role] = this.roleTable;
-      if (role.name && role.code && this.authorList.length > 0 && role.note) {
+      if (role.name && role.code && role.note) {
         await this.addRole({
           name: role.name,
           code: role.code,

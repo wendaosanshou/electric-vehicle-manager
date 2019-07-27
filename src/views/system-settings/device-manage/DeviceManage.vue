@@ -4,6 +4,12 @@
       <page-title>设备管理</page-title>
       <div class="manage-title-container">
         <device-edit type="is-add"></device-edit>
+        <el-button
+          class="button-fix btn-refresh"
+          :class="{active: hasRebotImeis}"
+          icon="el-icon-refresh"
+          type="primary"
+          size="mini" @click="rebotDeivce">重启</el-button>
       </div>
     </div>
     <div class="device-manage-header">
@@ -22,12 +28,14 @@
       <el-table
         id="device-out-table"
         ref="userTable"
-        class="table-fix table-disable-select-all"
+        class="table-fix"
         size="mini"
         :data="productList"
         border
+        @selection-change="handleSelectionChange"
         style="width: 100%"
       >
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" align="center" label="序号"></el-table-column>
         <el-table-column prop="imei" align="center" label="IMEI"></el-table-column>
         <el-table-column prop="operation" align="center" label="创建人"></el-table-column>
@@ -70,14 +78,38 @@ export default {
       allUser: [],
       pageSize: 10,
       pageIndex: 1,
-      imei: ""
+      imei: "",
+      rebotImeis: []
     };
   },
   computed: {
-    ...mapGetters(["productList", "productListTotal"])
+    ...mapGetters(["productList", "productListTotal"]),
+    hasRebotImeis() {
+      return this.rebotImeis && this.rebotImeis.length > 0
+    }
   },
   methods: {
-    ...mapActions(["searchProducts"]),
+    ...mapActions(["searchProducts", "rebotDevice"]),
+    async rebotDeivce() {
+      if (this.hasRebotImeis) {
+        await this.rebotDevice({
+          imeis: this.rebotImeis
+        })
+        this.rebotImeis = []
+        this.onSearchProducts()
+      } else {
+        this.$message({
+          type: "error",
+          message: "请选中需要重启的设备!"
+        });
+      }
+    },
+    handleSelectionChange(selectList) {
+      console.log(selectList)
+      if (selectList && selectList.length > 0) {
+        this.rebotImeis = selectList.map(item => item.imei)
+      }
+    },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     },
@@ -129,7 +161,14 @@ $basic-ratio: 1.4;
   align-items: flex-start;
   padding-top: d2r(30px);
   .manage-title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-start;
     padding: 0 0 d2r(20px) 0;
+    .btn-refresh {
+      margin-left: 10px;
+    }
   }
 }
 

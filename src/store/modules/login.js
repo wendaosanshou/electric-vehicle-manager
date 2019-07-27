@@ -81,7 +81,7 @@ const Login = {
             role: "10"
           },
           {
-            name: "角色权限管理",
+            name: "角色模板管理",
             logo: "el-icon-location",
             path: "role-manage",
             index: "9-2",
@@ -198,13 +198,21 @@ const Login = {
     business: state => state.business,
     loginForm: state => state.loginForm,
     isHandleUser: state => {
-      let { name } = state.userInfo
+      let { name } = state.role
       // 如果name为7则是业务办理员
       return name && name.indexOf('业务办理员') > -1
     },
     isStoreManager: state => {
-      let { name } = state.userInfo
+      let { name } = state.role
       return name && name.indexOf('门店主管') > -1
+    },
+    isRootAdmin: state => {
+      let { account } = state.userInfo
+      return account && account === 'admin'
+    },
+    isSuperAdmin: state => {
+      let { code } = state.role
+      return code && code === 1
     }
   }
 };

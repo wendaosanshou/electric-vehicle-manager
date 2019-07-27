@@ -4,7 +4,7 @@
       <page-title>办理状态详细信息修改</page-title>
       <page-back></page-back>
     </div>
-    <record-setting-content ref="recordSetting"></record-setting-content>
+    <record-setting-content :forbidModify="forbidModify" ref="recordSetting"></record-setting-content>
     <div class="btn-save" type="primary" @click="handleSave">保存</div>
   </div>
 </template>
@@ -21,6 +21,9 @@ export default {
     };
   },
   computed: {
+    forbidModify() {
+      return this.modifyWorkItem && this.modifyWorkItem.process === 4
+    }
   },
   methods: {
     ...mapActions(['modifyWorkItem']),

@@ -4,6 +4,7 @@
       <page-title>{{isUserAdd ? '添加用户' : '编辑用户'}}</page-title>
       <page-back></page-back>
     </div>
+    <!-- {{selectUser}} -->
     <!-- {{form}}--{{this.form.role_name.length}}--{{this.form.role_name && this.form.role_name.length > 0}} -->
     <el-form
       :model="form"
@@ -19,8 +20,8 @@
           size="mini"
           v-model="form.account"
           placeholder="登录账号（手机号）"
-          :disabled="!isUserAdd"
-        ></el-input>
+          :disabled="!isUserAdd">
+        </el-input>
       </el-form-item>
       <el-form-item prop="name" label="姓名">
         <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="输入姓名"></el-input>
@@ -29,21 +30,33 @@
       <el-form-item prop="pwd" label="密码">
         <el-input
           class="ipt-fix"
-          type="password"
+          :type="isPwdSecurity ? 'password' : 'text'"
           size="mini"
           v-model="form.pwd"
-          placeholder="请输入密码"
-        ></el-input>
+          placeholder="请输入密码">
+        <i class="el-input__icon" :class="isPwdSecurity ? 'el-icon-lock' : 'el-icon-unlock'" slot="suffix" @click="handlePwdIconClick"></i>
+        </el-input>
       </el-form-item>
 
-      <el-form-item prop="role_name" label="角色定义">
+      <el-form-item prop="confirm_pwd" label="确认密码">
+        <el-input
+          class="ipt-fix"
+          :type="isConfirmPwdSecurity ? 'password' : 'text'"
+          size="mini"
+          v-model="form.confirm_pwd"
+          placeholder="请输入密码">
+          <i class="el-input__icon" :class="isConfirmPwdSecurity ? 'el-icon-lock' : 'el-icon-unlock'" slot="suffix" @click="handleConfirmPwdIconClick"></i>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item prop="role_name" label="角色模板">
         <div class="form-btn-wrap">
           <el-input
             class="ipt-fix ipt-select"
             size="mini"
             v-model="form.role_name"
             disabled
-            placeholder="请选择所属角色"
+            placeholder="请选择角色模板"
           ></el-input>
           <user-add-dialog :defaultRoleId="form.role_id" @onSelectRole="handleSelectRole" />
         </div>
@@ -53,7 +66,7 @@
           <el-input
             class="ipt-fix ipt-select"
             size="mini"
-            v-model="form.site_name"
+            v-model="form.site_label"
             placeholder="请选择所属组织"
             disabled
           ></el-input>
@@ -103,13 +116,26 @@ import UserAddDialog from "./UserAddDialog";
 
 export default {
   data() {
+     var checkPassword = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('请输入密码'));
+        } else if (value.length < 6 || value.length > 30) {
+          return callback(new Error('密码长度不能小于6位'));
+        } else if (value !== this.form.pwd) {
+          return callback(new Error('两次密码输入需要保持一致'));
+        }
+        callback();
+      };
     return {
       isUserEdit: this.$route && this.$route.path === "/user-edit",
       selectTreeType: "all-tree",
+      isPwdSecurity: true,
+      isConfirmPwdSecurity: true,
       form: {
         account: "",
         name: "",
         pwd: "",
+        confirm_pwd: "",
         site_id: "",
         site_name: "",
         site_label: "",
@@ -141,6 +167,13 @@ export default {
             min: 6,
             max: 30,
             message: "密码长度不能小于6位",
+            trigger: "blur"
+          }
+        ],
+        confirm_pwd: [
+          {
+            required: true,
+            validator: checkPassword,
             trigger: "blur"
           }
         ],
@@ -193,6 +226,13 @@ export default {
   },
   methods: {
     ...mapActions(["addSysUser", "editSysUser"]),
+    handlePwdIconClick() {
+      this.isPwdSecurity = !this.isPwdSecurity
+      console.log(this.form.pwdLock)
+    },
+    handleConfirmPwdIconClick() {
+      this.isConfirmPwdSecurity = !this.isConfirmPwdSecurity
+    },
     initSelectTreeType(roleName) {
       if (roleName.indexOf("办理") > -1) {
         this.selectTreeType = "handle-tree";
@@ -201,6 +241,7 @@ export default {
       } else {
         this.selectTreeType = "all-tree";
       }
+      console.log('initSelectTreeType', this.selectTreeType)
     },
     handleSelectRole(value) {
       const [role] = value;
@@ -227,7 +268,9 @@ export default {
     },
     async handleConfirm(formName) {
       this.$refs[formName].validate(valid => {
+        console.log(0)
         if (valid) {
+          console.log(1)
           if (this.isUserAdd) {
             this.handleAddSysUser();
           } else {
@@ -237,16 +280,21 @@ export default {
           console.log("error submit!!");
           return false;
         }
-      });
+      })
     },
     initFormData() {
       if (!this.isUserAdd) {
+        let site_type = this.selectUser.site_type === 1 ? '办理点' : '安装点'
+        let attribute_label = this.selectUser.attribute ? `(${this.selectUser.attribute}-${site_type})` : ''
+        let site_label = `${this.selectUser.site_name}${attribute_label}`
         this.form = {
           account: this.selectUser.account,
           name: this.selectUser.name,
           pwd: this.selectUser.pwd,
+          confirm_pwd: this.selectUser.pwd,
           site_id: this.selectUser.site_id,
           site_name: this.selectUser.site_name,
+          site_label: site_label,
           role_id: this.selectUser.role_id,
           role_name: this.selectUser.role_name,
           phone: this.selectUser.phone,
@@ -255,6 +303,7 @@ export default {
           note: this.selectUser.note
         };
         console.log("initFormData", this.form);
+        this.initSelectTreeType(this.selectUser.role_name);
       }
     },
     onCancelEdit() {
@@ -321,5 +370,9 @@ $basic-ratio: 1.4;
   &.active {
     opacity: 1;
   }
+}
+
+.el-input__icon {
+  cursor: pointer;
 }
 </style>

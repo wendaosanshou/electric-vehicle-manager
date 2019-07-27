@@ -126,18 +126,6 @@ const common = {
           token: getToken(rootState),
           ...data
         });
-        commit("updateWorkList", result);
-      } catch (error) {
-        console.log(error);
-        return Promise.reject(error)
-      }
-    },
-    async getExportWorkList({ commit, rootState }, data) {
-      try {
-        const result = await $apis.getWorkPage({
-          token: getToken(rootState),
-          ...data
-        });
         commit("updateExportWorkList", result);
       } catch (error) {
         console.log(error);

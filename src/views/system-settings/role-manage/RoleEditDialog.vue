@@ -18,18 +18,18 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="code" label="角色编号" width="180" align="center">
+          <el-table-column prop="code" label="角色模板编号" width="180" align="center">
           </el-table-column>
           <el-table-column prop="name" label="角色名称" align="center">
             <template slot-scope="scope">
               <div class="table-col-item">
                 <div class="user-name">
-                  <el-input size="mini" class="ipt-fix" v-model="scope.row.name"  placeholder="填写角色名称"></el-input>
+                  <el-input size="mini" class="ipt-fix" v-model="scope.row.name"  placeholder="填写角色名称" disabled></el-input>
                 </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="author" label="角色权限" width="230" align="center">
+          <el-table-column prop="author" label="角色模板" width="230" align="center">
             <template slot-scope="scope">
               <div class="role-manage-tree-wrap">
                 <role-manage-tree :defaultCheck="scope.row.author" @onChange="onRoleChange"></role-manage-tree>
@@ -113,8 +113,11 @@ export default {
       let hasChildren = this.authorList.some(author => author > 9)
       if (hasChildren) {
         this.authorList.push(9)
+      } else {
+        this.authorList = this.removeNode(9, this.authorList)
       }
       this.authorList = Array.from(new Set(this.authorList)).sort((a, b) => a - b)
+      console.log(role.id)
       console.log('result', this.authorList)
     },
     initTableData() {

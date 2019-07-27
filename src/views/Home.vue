@@ -90,17 +90,20 @@
         </el-form>
       </div>
       <div class="step-2 step-content" v-else-if="passwordStep === 2">
-        <el-form class="password-form" label-position="right" label-width="80px" :model="passwordForm">
-          <el-form-item label="新密码">
+        <el-form :rules="passwordRule" ref="ruleForm" class="password-form" label-position="right" label-width="80px" :model="passwordForm">
+          <!-- 新增一栏，防止规则校验一次 -->
+          <el-form-item prop="newPassword" label="新密码" v-show="false">
+          </el-form-item>
+          <el-form-item prop="newPassword" label="新密码">
             <el-input
               class="ipt-fix ipt-passowrd"
               size="mini"
               type="password"
               v-model="passwordForm.newPassword"
-              placeholder="请输入新密码"
+              placeholder="请再次输入新密码"
             ></el-input>
           </el-form-item>
-          <el-form-item label="确认密码">
+          <el-form-item prop="newPasswordConfirm" label="确认密码">
             <el-input
               class="ipt-fix ipt-passowrd"
               size="mini"
@@ -130,6 +133,26 @@ import { setTimeout, setImmediate } from "timers";
 export default {
   name: "home",
   data() {
+    var checkNewPassword = (rule, value, callback) => {
+      console.log('checkNewPassword', value)
+      if (!value) {
+        return callback(new Error('请输入密码'));
+      } else if (value.length < 6 || value.length > 30) {
+        return callback(new Error('密码长度不能小于6位'));
+      }
+      callback();
+    };
+    var checkConfirmPassword = (rule, value, callback) => {
+      console.log('checkConfirmPassword', value)
+      if (!value) {
+        return callback(new Error('请二次确认密码'));
+      } else if (value.length < 6 || value.length > 30) {
+        return callback(new Error('密码长度不能小于6位'));
+      } else if (value !== this.passwordForm.newPassword) {
+        return callback(new Error('两次密码输入需要保持一致'));
+      }
+      callback();
+    };
     return {
       passwordStep: 1,
       passwordDialogVisible: false,
@@ -137,6 +160,28 @@ export default {
         oldPassword: '',
         newPassword: '',
         newPasswordConfirm: ''
+      },
+      passwordRule: {
+        newPassword: [
+          {
+            required: true,
+            message: "请输入密码",
+            trigger: "blur"
+          },
+          {
+            min: 6,
+            max: 30,
+            message: "密码长度不能小于6位",
+            trigger: "blur"
+          }
+        ],
+        newPasswordConfirm: [
+          {
+            required: true,
+            validator: checkConfirmPassword,
+            trigger: "blur"
+          }
+        ]
       },
       isCollapse: false,
       pathName: "",
@@ -213,7 +258,7 @@ export default {
               role: "10"
             },
             {
-              name: "角色权限管理",
+              name: "角色模板管理",
               logo: "el-icon-location",
               path: "role-manage",
               index: "9-2",
@@ -232,6 +277,13 @@ export default {
               path: "equipment-manage",
               index: "9-4",
               role: "13",
+            },
+            {
+              name: "渠道属性管理",
+              logo: "el-icon-location",
+              path: "channel-manage",
+              index: "9-11",
+              role: "23"
             },
             {
               name: "APP资讯管理",
@@ -274,13 +326,6 @@ export default {
               path: "user-feedback",
               index: "9-10",
               role: "22"
-            },
-            {
-              name: "渠道属性管理",
-              logo: "el-icon-location",
-              path: "channel-manage",
-              index: "9-11",
-              role: "23"
             }
           ]
         }
@@ -288,7 +333,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["activePageName", "userInfo", "role", "defaultActiveMenu", "loginForm"]),
+    ...mapGetters(["activePageName", "userInfo", "role", "business", "defaultActiveMenu", "loginForm"]),
     collapseIconClass() {
       return this.isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'
     }
@@ -353,7 +398,7 @@ export default {
         this.passwordStep = 3
         setTimeout(() => {
           this.onLoginOut()
-        }, 3000)
+        }, 1000)
       }
     },
     onPasswrodDialogConfirm() {
@@ -361,7 +406,14 @@ export default {
         if (this.passwordStep === 1) {
           this.handleOldPassword()
         } else if (this.passwordStep === 2) {
-          this.handleConfirmModifyPassword()
+          this.$refs.ruleForm.validate(valid => {
+            if (valid) {
+              this.handleConfirmModifyPassword()
+            } else {
+              console.log("error submit!!");
+              return false;
+            }
+          })
         }
       } else {
         this.passwordDialogVisible = false
@@ -481,7 +533,7 @@ export default {
           activeMenu = "系统设置 > 渠道属性管理";
           break;
         case "/role-manage":
-          activeMenu = "系统设置 > 角色权限管理";
+          activeMenu = "系统设置 > 角色模板管理";
           break;
         case "/business-manage":
           activeMenu = "系统设置 > 业务办理点管理";
@@ -510,6 +562,9 @@ export default {
         case "/user-feedback":
           activeMenu = "系统设置 > 客户留言管理";
           break;
+        case "/user-feedback-detail":
+          activeMenu = "系统设置 > 客户留言管理 > 留言详情信息修改";
+          break;
         case "/channel-manage":
           activeMenu = "系统设置 > 渠道属性管理";
           break;
@@ -521,7 +576,7 @@ export default {
       this.updateActivePageName(activeMenu);
     },
     async initAllBusinessPoint() {
-      //  进页面初始化角色权限数据
+      //  进页面初始化角色模板数据
       await this.getAllBusinessPoint();
       await this.getBusinessHandle();
       await this.getBusinessInstall();

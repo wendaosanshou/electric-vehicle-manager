@@ -114,15 +114,20 @@ export default {
       }
     },
     async handleEditDevice() {
-      console.log(this.form);
-      const params = {
-        operation: this.userInfo.account,
-        note: this.form.note,
-        imeis: [this.form.imei]
-      };
-      console.log(params)
-      await this.importProducts(params);
-      this.onDialogHide()
+      if (!this.form.imei || this.form.imei.length !== 15) {
+        this.$message({
+          type: 'error',
+          message: 'IMEI号格式不正确'
+        })
+      } else {
+        const params = {
+          operation: this.userInfo.account,
+          note: this.form.note,
+          imeis: [this.form.imei]
+        };
+        await this.importProducts(params);
+        this.onDialogHide()
+      }
     }
   },
   components: {

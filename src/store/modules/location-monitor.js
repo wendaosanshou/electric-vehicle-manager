@@ -74,11 +74,11 @@ const convertHistoryGps = async list => {
     // 再通过高德来转
     for(let i = 0; i < sliceList.length; i++) {
       let lngLats = sliceList[i].map(item => item.lngLat)
-      console.log('lngLats', lngLats)
+      // console.log('lngLats', lngLats)
       await new Promise((resolve, reject) => {
         AMap.convertFrom(lngLats, "gps", function(status, result) {
           if (result.info === "ok") {
-            console.log('convertFrom', result.locations)
+            // console.log('convertFrom', result.locations)
             let locations = result.locations.map(location => {
               return {
                 lng: location.lng,
@@ -396,7 +396,6 @@ const locationMonitor = {
           token: getToken(rootState),
           ...data
         });
-        let startTime = Date.now()
         if (result.data && result.data.length > 0) {
           if (result.data && result.data.length > 1000) {
             vm.$message({
@@ -410,8 +409,9 @@ const locationMonitor = {
           commit("updateHistoryInfo", []);
           vm.$message({
             type: "error",
-            message: "未查到任何历史轨迹!"
+            message: "未查到历史轨迹信息!"
           });
+          return Promise.reject()
         }
       } catch (error) {
         console.log(error);
@@ -429,6 +429,7 @@ const locationMonitor = {
       });
     },
     historyInfo: state => state.historyInfo,
+    // historyLineInfo: state => state.historyInfo,
     historyLineInfo: state => {
       let firstTime = 0
       return state.historyInfo.map((item, index) => {

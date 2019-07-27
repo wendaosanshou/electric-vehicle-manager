@@ -269,5 +269,9 @@ export default {
   resetPassword(data) {
     const { account, password } = data
     return $ajax.get(requestUrl(`sys/reset/${account}/${password}`), data);
+  },
+  rebotDevice(data) {
+    const { imeis, token } = data
+    return $ajax.post(requestUrl(`dev/reboot?token=${token}`), imeis);
   }
 };

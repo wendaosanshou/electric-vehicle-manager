@@ -1,6 +1,6 @@
 <template>
   <div class="role-add">
-    <el-button class="button-fix" icon="el-icon-delete" type="danger" size="mini" @click="onDialogShow">删除</el-button>
+    <el-button class="button-fix" icon="el-icon-delete" type="danger" size="mini" @click="onDialogShow" :disabled="isDeleteDisabled">删除</el-button>
     <el-dialog
       class="dialog-fix"
       title="删除角色"
@@ -17,11 +17,11 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="code" label="角色编号" align="center">
+          <el-table-column prop="code" label="角色模板编号" align="center">
           </el-table-column>
           <el-table-column prop="name" label="角色名称" align="center">
           </el-table-column>
-          <el-table-column prop="processPoint" label="角色权限" align="center" width="350">
+          <el-table-column prop="processPoint" label="角色模板" align="center" width="350">
             <template slot-scope="scope">
               <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
               <div v-else>
@@ -61,6 +61,10 @@ export default {
     data: {
       type: Object,
       default: () => {}
+    },
+    isDeleteDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

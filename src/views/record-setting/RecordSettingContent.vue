@@ -273,11 +273,11 @@
       <page-title class="setting-title" :hasDot="false">设备信息</page-title>
       <div class="setting-content">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">IMEI</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.imei"
                 placeholder="请输入IMEI"
@@ -285,15 +285,15 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">ICCID</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.iccid"
                 placeholder="请输入ICCID"
-                :disabled="forbidModify"
+                :disabled="true"
               ></el-input>
             </div>
           </el-col>
@@ -367,6 +367,7 @@ export default {
     return {
       imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
       form: {
+        user: "",
         address: "",
         vehicle: "",
         brand: "",
@@ -385,14 +386,11 @@ export default {
       value: ""
     };
   },
-  props: {
-    forbidModify: {
-      type: Boolean,
-      default: false
-    }
-  },
   computed: {
     ...mapGetters(["workItem", "vehicleInfo"]),
+    forbidModify() {
+      return this.workItem && this.workItem.process !== 4
+    },
     imagelist() {
       const { imgs } = this.form;
       let images = []
