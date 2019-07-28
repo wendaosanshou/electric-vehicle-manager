@@ -202,7 +202,7 @@ export default {
       this.map = new AMap.Map(id, {
         expandZoomRange:true,
         zoom: 13,
-        zooms:[3,20],
+        zooms:[3, 20],
         center: position,
         resizeEnable: true
       });

@@ -779,7 +779,7 @@ export default {
       this.forbidModify = false
     },
     onMobileSetting(workItem) {
-      console.log(workItem)
+      console.log(JSON.parse(JSON.stringify(workItem)))
       this.updateWorkItem(workItem);
       if (this.isRecordManage) {
         this.$router.push("/record-setting");

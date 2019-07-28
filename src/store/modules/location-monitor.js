@@ -1,5 +1,6 @@
 import { $apis } from "@/helper";
 import Vue from "vue";
+import testServer from '@/test-service.json'
 
 const vm = new Vue();
 
@@ -74,7 +75,6 @@ const convertHistoryGps = async list => {
     // 再通过高德来转
     for(let i = 0; i < sliceList.length; i++) {
       let lngLats = sliceList[i].map(item => item.lngLat)
-      // console.log('lngLats', lngLats)
       await new Promise((resolve, reject) => {
         AMap.convertFrom(lngLats, "gps", function(status, result) {
           if (result.info === "ok") {
@@ -85,6 +85,7 @@ const convertHistoryGps = async list => {
                 lat: location.lat
               }
             })
+            // console.log('convert-index', i)
             convertLocations = convertLocations.concat(locations)
           }
           resolve()
@@ -95,6 +96,7 @@ const convertHistoryGps = async list => {
       list[index].lng = item.lng,
       list[index].lat = item.lat
     })
+
     return Promise.resolve(list)
   } catch (error) {
     return Promise.resolve(list);
@@ -226,9 +228,11 @@ const locationMonitor = {
       state.deviceParams = deviceParams;
     },
     updateHistoryInfo(state, historyInfo) {
-      state.historyInfo = historyInfo.filter(item => {
-        return item.lng > 0 && item.lat > 0
-      });
+      state.historyInfo = historyInfo
+      // state.historyInfo = historyInfo.filter(item => {
+      //   return item.lng > 0 && item.lat > 0
+      // });
+      console.log('historyInfo', historyInfo)
     },
     updateCurrentLocationInfo(state, currentLocationInfo) {
       state.currentLocationInfo = currentLocationInfo;
@@ -400,7 +404,7 @@ const locationMonitor = {
           if (result.data && result.data.length > 1000) {
             vm.$message({
               type: "warning",
-              message: "发现该设备历史轨迹数据超过1000条，转化时间较长，请耐心等待!"
+              message: "该设备历史轨迹数据较多，请耐心等待!"
             });
           }
           await convertHistoryGps(result.data);
@@ -432,6 +436,7 @@ const locationMonitor = {
     // historyLineInfo: state => state.historyInfo,
     historyLineInfo: state => {
       let firstTime = 0
+      console.log('historyLineInfo-store', testServer.data)
       return state.historyInfo.map((item, index) => {
         let currentTime = new Date(`${item.signal_time}`).getTime() / 1000
         let delayTime = 0
@@ -444,8 +449,8 @@ const locationMonitor = {
         return {
           x: item.lng,
           y: item.lat,
-          sp: item.course,
-          ag: item.speed,
+          sp: item.speed,
+          ag: item.course,
           tm: delayTime
         }
       })

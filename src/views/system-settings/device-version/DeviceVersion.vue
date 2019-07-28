@@ -198,7 +198,7 @@ $basic-ratio: 1.4;
         }
       }
       .menu-ipt {
-        width: d2r(200px);
+        width: d2r(220px);
         margin-left: d2r(16px);
       }
     }

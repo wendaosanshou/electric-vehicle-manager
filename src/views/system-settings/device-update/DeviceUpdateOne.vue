@@ -8,7 +8,6 @@
       @click="onDialogShow"
     >单个升级</el-button>
     <el-dialog class="dialog-fix" title="单个设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
-      <!-- {{this.form.imei}}--{{`${this.form.imei}`.length}}--{{this.form.version}} -->
       <div class="dialog-content">
         <el-form class="user-add-form device-form-fix" label-position="right" label-width="140px" :model="form">
           <el-form-item label="IMEI">

@@ -218,7 +218,7 @@
             <div class="item-selector-wraper">
               <div class="item-label">IMEI</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.imei"
                 placeholder="请输入IMEI"
@@ -230,7 +230,7 @@
             <div class="item-selector-wraper">
               <div class="item-label">ICCID</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.iccid"
                 placeholder="请输入ICCID"

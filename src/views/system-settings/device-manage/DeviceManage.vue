@@ -4,6 +4,7 @@
       <page-title>设备管理</page-title>
       <div class="manage-title-container">
         <device-edit type="is-add"></device-edit>
+        <device-add-more></device-add-more>
         <el-button
           class="button-fix btn-refresh"
           :class="{active: hasRebotImeis}"
@@ -20,7 +21,7 @@
         </div>
         <div class="menu-btn-wraper">
           <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchProducts">查询</el-button>
-        <el-button class="button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
+          <el-button class="button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
         </div>
       </div>
     </div>
@@ -70,6 +71,7 @@
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import DeviceEdit from './DeviceEdit.vue'
+import DeviceAddMore from './DeviceAddMore.vue'
 import DeviceDelete from './DeviceDelete.vue'
 
 export default {
@@ -125,6 +127,7 @@ export default {
       this.onSearchProducts()
     },
     onSearchProducts() {
+      this.pageIndex = 1
       this.searchProducts({
         page_size: this.pageSize,
         page_index: this.pageIndex,
@@ -135,7 +138,8 @@ export default {
   components: {
     PageTitle,
     DeviceEdit,
-    DeviceDelete
+    DeviceDelete,
+    DeviceAddMore
   },
   mounted() {
     this.onSearchProducts()

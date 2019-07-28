@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     ...mapActions(['modifyWorkItem']),
-    handleModifyWorkItem() {
+    async handleModifyWorkItem() {
       const form = this.$refs.recordSetting.form
       let params = {
         user: form.user,
@@ -59,7 +59,7 @@ export default {
         work: form.work,
         imgs: form.imgs
       }
-      this.modifyWorkItem(params)
+      await this.modifyWorkItem(params)
       console.log('modifyWorkItem', params)
     },
     onDialogShow() {

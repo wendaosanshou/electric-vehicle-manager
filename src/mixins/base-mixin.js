@@ -1,6 +1,11 @@
 import { mapGetters } from "vuex";
 
 export default {
+  data() {
+    return {
+      fileUploadUrl: "http://47.92.237.140/api/v1/img/web"
+    }
+  },
   computed: {
     ...mapGetters(['businessAttributeList', 'installAttributeList', 'userInfo', 'role', 'business']),
     mergeBusinessAttributeList() {

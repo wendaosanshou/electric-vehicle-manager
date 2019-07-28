@@ -1,5 +1,6 @@
 import { mapGetters, mapActions } from "vuex";
 import dayjs from 'dayjs'
+import testApp from '../test-app.js'
 
 export default {
     data() {
@@ -8,7 +9,7 @@ export default {
         }
     },
   computed: {
-    ...mapGetters(["historyLineInfo"])
+    ...mapGetters(["historyInfo"])
   },
   methods: {
     initPickerTime() {
@@ -84,14 +85,16 @@ export default {
       this.map.setFitView();
     },
     drawGraspRoadPath(paths) {
-      let newLine = new AMap.Polyline({
+      console.log('drawGraspRoadPath', paths)
+      new AMap.Polyline({
+        map: this.map,
         path: paths,
-        strokeWeight: 8,
+        strokeWeight: 7,
         strokeOpacity: 0.8,
         strokeColor: "#0091ea",
         showDir: true
       });
-      this.map.add(newLine);
+      this.map.setFitView()
     },
     convertGraspRoad(paths) {
       let that = this;
@@ -128,8 +131,8 @@ export default {
         return {
           x: item.lng,
           y: item.lat,
-          sp: item.course,
-          ag: item.speed,
+          sp: item.speed,
+          ag: item.course,
           tm: delayTime
         };
       });
@@ -137,14 +140,12 @@ export default {
     async drawHistoryLine() {
       this.map.clearMap();
       this.graspRoadPath = [];
-      for (let index = 0; index < this.historyLineInfo.length; index = index + 500) {
-        let path = this.historyLineInfo.slice(index, index + 500);
+      for (let index = 0; index < this.historyInfo.length; index = index + 500) {
+        let path = this.historyInfo.slice(index, index + 500);
+        path = this.getDrawGraspRoadPath(path)
         await this.convertGraspRoad(path);
       }
-      console.log("allGraspRoadPath", this.graspRoadPath);
-      // 画轨迹
       this.drawGraspRoadPath(this.graspRoadPath);
-      // 画车
       this.drawCarMarker(this.graspRoadPath);
     }
   }

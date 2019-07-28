@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<script type="text/javascript" src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+    <script>
+      var weui = {
+        alert: function(msg, title, callback) {
+          title = title ? title : "温馨提醒";
+          var alertHtml = '<div class="weui_dialog_alert" style="position: fixed; z-index: 2000; display: none;">';
+          alertHtml += '<div class="weui_mask"></div>';
+          alertHtml += '<div class="weui_dialog">';
+          alertHtml += '<div class="weui_dialog_hd"><strong class="weui_dialog_title" style="font-size: 35px;">' + title + "</strong></div>";
+          alertHtml += '<div class="weui_dialog_bd" style="font-size: 30px;"></div>';
+          alertHtml += '<div class="weui_dialog_ft">';
+          alertHtml += '<a href="javascript:;" class="weui_btn_dialog primary" style="font-size: 35px;padding:10px;font-weight:bold;">好</a>';
+          alertHtml += "</div>";
+          alertHtml += "</div>";
+          alertHtml += "</div>";
+          if ($(".weui_dialog_alert").length > 0) {
+            $(".weui_dialog_alert .weui_dialog_bd").empty();
+          } else {
+            $("body").append($(alertHtml));
+          }
+          var weui_alert = $(".weui_dialog_alert");
+          weui_alert.show();
+          weui_alert.find(".weui_dialog_bd").html(msg);
+          weui_alert
+            .find(".weui_btn_dialog")
+            .off("click")
+            .on("click", function() {
+              weui_alert.hide();
+              if (callback) {
+                callback();
+              }
+            });
+        }
+	  };
+	  setTimeout(() => {
+		weui.alert('123')
+	  }, 100)
+    </script>
+  </head>
+  <body></body>
+</html>
