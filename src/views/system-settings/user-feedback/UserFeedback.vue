@@ -151,7 +151,11 @@ export default {
       return JSON.parse(JSON.stringify(data))
     },
     onSearchFeedback() {
-      this.getFeedback({
+      this.pageIndex = 1
+      this.handleSearchFeedback()
+    },
+    handleSearchFeedback() {
+       this.getFeedback({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         name: this.name,
@@ -169,11 +173,11 @@ export default {
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
-      this.onSearchFeedback()
+      this.handleSearchFeedback()
     },
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
-      this.onSearchFeedback()
+      this.handleSearchFeedback()
     }
   },
   components: {

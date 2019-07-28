@@ -93,7 +93,9 @@ export default {
   methods: {
     formatTime(time) {
       if (time) {
-        return dayjs(time).add(8, 'hour').format('YYYY-MM-DD HH:mm')
+        let utcOffset =  dayjs(time).utcOffset()
+        console.log('utcOffset', utcOffset)
+        return dayjs(time).add(utcOffset, 'minute').format('YYYY-MM-DD HH:mm')
       }
     },
     getObtain(obtain) {

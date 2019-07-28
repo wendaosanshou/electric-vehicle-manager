@@ -68,11 +68,11 @@
       <page-title class="setting-title" :hasDot="false">车主信息</page-title>
       <div class="setting-content">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">车主姓名</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.own_name"
                 placeholder="请输入车主姓名"
@@ -82,7 +82,7 @@
             <div class="item-selector-wraper">
               <div class="item-label">家庭住址</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.address"
                 placeholder="请输入家庭住址"
@@ -112,11 +112,11 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">手机号</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.own_phone"
                 placeholder="请输入手机号"
@@ -126,7 +126,7 @@
             <div class="item-selector-wraper">
               <div class="item-label">证件号码</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.certificates_code"
                 placeholder="请输入证件号码"
@@ -214,7 +214,7 @@
       <page-title class="setting-title" :hasDot="false">设备信息</page-title>
       <div class="setting-content">
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">IMEI</div>
               <el-input
@@ -226,7 +226,7 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <div class="item-selector-wraper">
               <div class="item-label">ICCID</div>
               <el-input
@@ -494,7 +494,7 @@ $basic-ratio: 1.4;
           width: d2r(450px) !important;
         }
         .item-selector-long {
-          width: d2r(750px)
+          width: d2r(300px)
         }
       }
       .item-image-wraper {

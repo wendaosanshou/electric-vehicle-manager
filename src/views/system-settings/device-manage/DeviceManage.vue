@@ -4,7 +4,7 @@
       <page-title>设备管理</page-title>
       <div class="manage-title-container">
         <device-edit type="is-add"></device-edit>
-        <device-add-more></device-add-more>
+        <!-- <device-add-more></device-add-more> -->
         <el-button
           class="button-fix btn-refresh"
           :class="{active: hasRebotImeis}"
@@ -120,19 +120,22 @@ export default {
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
-      this.onSearchProducts()
+      this.handleSearchProducts()
     },
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
-      this.onSearchProducts()
+      this.handleSearchProducts()
     },
-    onSearchProducts() {
-      this.pageIndex = 1
+    handleSearchProducts() {
       this.searchProducts({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         imei: this.imei
       });
+    },
+    onSearchProducts() {
+      this.pageIndex = 1
+      this.handleSearchProducts()
     }
   },
   components: {

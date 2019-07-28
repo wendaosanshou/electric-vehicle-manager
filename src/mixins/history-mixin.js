@@ -110,6 +110,11 @@ export default {
             // this.drawGraspRoadPath(graspRoadPath)
             this.graspRoadPath = this.graspRoadPath.concat(graspRoadPath);
             resolve();
+          } else {
+            this.$message({
+              type: "error",
+              message: '历史轨迹数据转化异常~'
+            })
           }
         });
       });
@@ -117,9 +122,10 @@ export default {
     getDrawGraspRoadPath(path) {
       let firstTime = 0;
       return path.map((item, index) => {
+        let utcOffset =  dayjs(`${item.signal_time}`).utcOffset()
         let currentTime =
           dayjs(`${item.signal_time}`)
-            .subtract(8, "hour")
+            .subtract(utcOffset, "minute")
             .valueOf() / 1000;
         let delayTime = 0;
         if (index == 0) {

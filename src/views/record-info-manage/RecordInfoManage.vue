@@ -185,7 +185,7 @@
           </div>
         </template>
       </div>
-      <div class="menu-item menu-col-less" v-if="!isProcessSearch">
+      <div class="menu-item menu-col-less menu-item-long" v-if="!isProcessSearch">
         <!-- <div class="item-selector-wraper">
           <div class="item-label">合约期</div>
           <el-select
@@ -204,7 +204,7 @@
         <div class="item-selector-wraper">
           <div class="item-label">激活状态</div>
           <el-select
-            class="item-selector ipt-fix"
+            class="item-selector ipt-fix ipt-long"
             size="mini"
             v-model="contractActive"
             placeholder="请选择"
@@ -219,12 +219,12 @@
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">IMEI</div>
-          <el-input class="item-selector ipt-fix" size="mini" v-model="imei" placeholder="请输入IMEI"></el-input>
+          <el-input class="item-selector ipt-fix ipt-long" size="mini" v-model="imei" placeholder="请输入IMEI"></el-input>
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">ICCID</div>
           <el-input
-            class="item-selector ipt-fix"
+            class="item-selector ipt-fix ipt-long"
             size="mini"
             v-model="iccid"
             placeholder="请输入ICCID"
@@ -1006,6 +1006,9 @@ $basic-ratio: 1.4;
   }
   .item-selector-long {
     width: d2r(320px);
+  }
+  .ipt-long {
+    width: d2r(220px);
   }
 }
 

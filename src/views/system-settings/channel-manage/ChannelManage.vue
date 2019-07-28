@@ -114,15 +114,12 @@ export default {
         this.initAttributeList()
       },
       async handleRefresh() {
+        this.pageIndex = 1
         await this.getAttributeList({
           pageSize: this.pageSize,
           pageIndex: this.pageIndex,
           type: this.searchType
         })
-        // this.$message({
-        //   type: "success",
-        //   message: "刷新当前列表成功!"
-        // });
       },
       initAttributeList() {
         this.getAttributeList({

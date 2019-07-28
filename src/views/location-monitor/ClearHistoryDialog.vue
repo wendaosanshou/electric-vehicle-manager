@@ -86,7 +86,7 @@ export default {
       } else {
         this.$message({
           type: "error",
-          message: "请输入正确的时间段和查询条件!"
+          message: "请输入正确的查询条件"
         });
       }
     }

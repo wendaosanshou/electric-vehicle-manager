@@ -1,6 +1,7 @@
 import { $apis } from "@/helper";
 import Vue from "vue";
-import testServer from '@/test-service.json'
+import dayjs from 'dayjs'
+// import testServer from '@/test-service.json'
 
 const vm = new Vue();
 
@@ -436,9 +437,12 @@ const locationMonitor = {
     // historyLineInfo: state => state.historyInfo,
     historyLineInfo: state => {
       let firstTime = 0
-      console.log('historyLineInfo-store', testServer.data)
       return state.historyInfo.map((item, index) => {
-        let currentTime = new Date(`${item.signal_time}`).getTime() / 1000
+        let utcOffset =  dayjs(`${item.signal_time}`).utcOffset()
+        let currentTime =
+          dayjs(`${item.signal_time}`)
+            .subtract(utcOffset, "minute")
+            .valueOf() / 1000;
         let delayTime = 0
         if (index == 0) {
           delayTime = currentTime

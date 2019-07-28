@@ -201,9 +201,9 @@ export default {
       // 初始化地图
       this.map = new AMap.Map(id, {
         expandZoomRange:true,
-        zoom: 13,
+        zoom: 10,
         zooms:[3, 20],
-        center: position,
+        // center: position,
         resizeEnable: true
       });
       this.addControl(this.map);
@@ -216,7 +216,7 @@ export default {
       this.heatmap = new AMap.Map(id, {
         resizeEnable: true,
         center: position,
-        zoom: 13,
+        zoom: 10,
         zooms:[3,20]
       });
 

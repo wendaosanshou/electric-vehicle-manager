@@ -20,6 +20,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             align="right"
+            :picker-options="pickerOptions"
           ></el-date-picker>
           <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchHistory">查询</el-button>
         </div>
@@ -67,7 +68,31 @@ export default {
       carSpeed: 1,
       pickerTime: [],
       dialogVisible: false,
-      graspRoadPath: []
+      graspRoadPath: [],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+        shortcuts: [
+          {
+            text: "今天",
+            onClick(picker) {
+              const end = dayjs().toDate();
+              const start = dayjs().set('h', 0).set('m', 0).set('s', 0).toDate();
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      }
     };
   },
   model: {
@@ -143,7 +168,7 @@ export default {
         } else {
           this.$message({
             type: "error",
-            message: "请输入正确的时间段和查询条件!"
+            message: "请输入正确的查询条件!"
           });
         }
       } catch (error) {

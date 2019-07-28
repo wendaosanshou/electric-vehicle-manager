@@ -84,6 +84,9 @@ export default {
       value2: "",
       carMarker: {},
       pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
         shortcuts: [
           {
             text: "今天",
@@ -139,6 +142,8 @@ export default {
       const [startDate, endDate] = this.pickerTime;
       try {
         if (startDate && endDate && this.searchValue) {
+          // console.log('utcOffset', dayjs(startDate).utcOffset())
+          let utcOffset =  dayjs(startDate).utcOffset()
           this.renderLoading();
           await this.getDeviceInfo({
             type: this.searchType,
@@ -147,8 +152,8 @@ export default {
           if (this.deviceInfo && this.deviceInfo.id) {
             await this.getHistoryInfo({
               id: this.deviceInfo.id,
-              start: dayjs(startDate).subtract(8, 'hour').format("YYYY-MM-DD HH:mm:ss"),
-              end: dayjs(endDate).subtract(8, 'hour').format("YYYY-MM-DD HH:mm:ss")
+              start: dayjs(startDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss"),
+              end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
             });
             this.drawHistoryLine();
             this.isShowHistoryTrack = true;

@@ -293,7 +293,7 @@
                 size="mini"
                 v-model="form.iccid"
                 placeholder="请输入ICCID"
-                :disabled="true"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>

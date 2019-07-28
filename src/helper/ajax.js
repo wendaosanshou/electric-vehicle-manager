@@ -50,10 +50,11 @@ function requestHandle(params) {
           defer.resolve(res.data);
         } else {
           defer.reject(res.data);
+          let message = res.data.msg || getErrorTips(res.data.code)
           if (res.data.code === '10007') {
-            vm.$message.error(`${getErrorTips(res.data.code)}！`);
+            vm.$message.error(`${message}！`);
           } else {
-            vm.$message.error(`${getErrorTips(res.data.code)}！`);
+            vm.$message.error(`${message}！`);
           }
         }
       } else {
