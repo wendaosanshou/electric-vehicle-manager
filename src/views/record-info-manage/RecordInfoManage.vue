@@ -372,7 +372,7 @@
       stripe
       style="width: 100%"
       v-show="false">
-       <el-table-column type="selection" width="55" v-if="isSelectionActive"></el-table-column>
+             <el-table-column type="selection" width="55" v-if="isSelectionActive"></el-table-column>
       <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
       <el-table-column label="车主手机号" width="120" align="center">
         <template slot-scope="scope">

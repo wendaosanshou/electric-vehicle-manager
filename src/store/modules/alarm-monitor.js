@@ -55,6 +55,7 @@ const convertGps = list => {
 
 const Login = {
   state: {
+    alarmId: 0,
     alarmLatest: [],
     alarmAnalyse: {},
     alarmTypeClass: '',
@@ -119,6 +120,9 @@ const Login = {
     ]
   },
   mutations: {
+    updateAlarmLatestId(state, alarmId) {
+      state.alarmId = alarmId
+    },
     updateAlarmLatest(state, alarmLatest) {
       console.log('alarmLatest', alarmLatest)
       state.alarmLatest = alarmLatest;
@@ -198,8 +202,12 @@ const Login = {
         return Promise.reject(error);
       }
     },
-    async getAlarmLatest({ commit, rootState }, data) {
+    async getAlarmLatest({ commit, state, rootState }, data) {
       try {
+        if (data && data.isStartAlarm) {
+          commit("updateAlarmLatestId", 0);
+        }
+        data.alarmId = state.alarmId
         const result = await $apis.getAlarmLatest({
             token: getToken(rootState),
             ...data
@@ -207,15 +215,24 @@ const Login = {
         if (result.data && result.data.length > 0) {
           await convertGps(result.data)
           console.log('updateAlarmLatest', result.data)
+          let [firstAlarm] = result.data
+          commit("updateAlarmLatestId", firstAlarm.id);
           commit("updateAlarmLatest", result.data);
           console.log(result);
+          if (data && !data.isStartAlarm) {
+            vm.$message({
+              type: "success",
+              message: "告警信息已更新~"
+            });
+          }
         } else {
           vm.$message({
-            type: "error",
-            message: "未查到任何报警信息~"
+            type: "success",
+            message: "告警信息已更新，未找到新的告警信息~"
           });
           return Promise.reject();
         }
+        
       } catch (error) {
         console.log(error);
         return Promise.reject(error);

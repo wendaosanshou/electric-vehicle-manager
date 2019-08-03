@@ -8,7 +8,8 @@ export default {
       searchType: "account",
       searchValue: "",
       pageHeight: '800px',
-      markerClusterer: []
+      markerClusterer: [],
+      cluster: {}
     };
   },
   methods: {
@@ -18,28 +19,25 @@ export default {
       let pageHeight = document.documentElement.clientHeight
       let rect = document.querySelector('.js-map-container').getBoundingClientRect()
       let { top } = rect
-      let mapHeight = pageHeight - top - 16
+      let mapHeight = pageHeight - top - 10
       console.log('getMapHeight', pageHeight, top, mapHeight)
       this.pageHeight = `${mapHeight}px`
     },
-    renderClusterMarker(context) {
+    renderClusterMarker(context, markers, marker) {
       let markerContent = document.createElement("div");
       let markerContent1 = document.createElement("div");
-      let markerContent2 = document.createElement("div");
-      let markerContent3 = document.createElement("div");
+      markerContent.append(markerContent1)
       markerContent.className = "mark-content";
       markerContent1.className = "mark-content-1";
-      markerContent2.className = "mark-content-2";
-      markerContent3.className = "mark-content-3";
-      markerContent2.append(markerContent3);
-      markerContent1.append(markerContent2);
-      markerContent.append(markerContent1);
-      markerContent3.innerHTML = context.count;
+      markerContent1.innerHTML = context.count;
+      $(markerContent1).on("click", () => {
+        console.log('renderClusterMarker-click')
+      });
       context.marker.setContent(markerContent)
     },
     addMarkerClusterer(markers) {
       this.map.plugin(["AMap.MarkerClusterer"], () => {
-        let cluster = new AMap.MarkerClusterer(
+        this.cluster = new AMap.MarkerClusterer(
           this.map, // 地图实例
           this.markerClusterer, // 海量点组成的数组
           {
@@ -53,6 +51,7 @@ export default {
     addLocationMarker(info) {
       const position = [info.lng, info.lat];
       this.map.clearMap();
+      // that.addCicleMarkers();
       this.addInfoWindow(position, this.getLocationMarkerContent());
       setTimeout(() => {
         this.initLocaionEvent(position);
@@ -131,18 +130,14 @@ export default {
       console.log(path)
       let markerContent = document.createElement("div");
       let markerContent1 = document.createElement("div");
-      let markerContent2 = document.createElement("div");
-      let markerContent3 = document.createElement("div");
       markerContent.className = "mark-content";
       markerContent1.className = "mark-content-1";
-      markerContent2.className = "mark-content-2";
-      markerContent3.className = "mark-content-3";
-      markerContent2.append(markerContent3);
-      markerContent1.append(markerContent2);
       markerContent.append(markerContent1);
-      markerContent3.innerHTML = "1";
+      markerContent1.innerHTML = "1";
       setTimeout(() => {
-        $(markerContent).on("click", () => {
+        $(markerContent).on("click", (e) => {
+          console.log('markerContent-click')
+          e.stopPropagation()
           if (path === '/location-monitor') {
             this.updateCurrentLocationInfo(positionInfo);
             this.addLocationMarker(positionInfo);
@@ -157,6 +152,7 @@ export default {
       return markerContent;
     },
     addCicleMarkers() {
+      console.log('addCicleMarkers')
       this.map.clearMap();
       this.markerClusterer = []
       this.allLocationInfo.forEach(item => {
@@ -174,15 +170,16 @@ export default {
         content: content,
         icon:
           "//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png",
-        offset: new AMap.Pixel(-13, -30)
+        anchor: "middle-center",
+        offset: new AMap.Pixel(0, 0)
       });
       this.markerClusterer.push(marker);
     },
     addInfoWindow(position, content) {
       let infoWindow = new AMap.InfoWindow({
-        anchor: "bottom-center",
         content: content, //使用默认信息窗体框样式，显示信息内容
-        offset: new AMap.Pixel(28, 30)
+        anchor: "bottom-center",
+        offset: new AMap.Pixel(6, 22)
       });
       infoWindow.open(this.map, position);
     },
@@ -243,6 +240,9 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.getMapHeight()
+      setTimeout(() => {
+        this.getMapHeight()
+      }, 100)
     })
   }
 };

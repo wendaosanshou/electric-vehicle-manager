@@ -84,7 +84,7 @@ export default {
             },
             {
               id: 14,
-              label: "App资讯管理"
+              label: "APP资讯管理"
             },
             {
               id: 15,

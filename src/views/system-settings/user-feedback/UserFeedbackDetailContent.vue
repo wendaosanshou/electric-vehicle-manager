@@ -4,6 +4,7 @@
       <page-title class="setting-title" :hasDot="false">预约信息</page-title>
       <div class="setting-content">
         <!-- {{feedbackDetail}} -->
+        <!-- {{feedbackDetail.feedback}} -->
         <el-row :gutter="20">
           <el-col :span="7">
             <div class="item-selector-wraper">
@@ -361,14 +362,13 @@ export default {
       this.initProcessDetail();
     },
     async initProcessDetail() {
-      const {
-        contract,
-        device,
-        feedback,
-        user,
-        vehicle
-      } = this.feedbackDetail
-      this.feedbackImgs = feedback.imgs ? feedback.imgs.split(',') : [feedback.imgs]
+      let contract = this.feedbackDetail.contract || {}
+      let device = this.feedbackDetail.device || {}
+      let feedback = this.feedbackDetail.feedback || {}
+      let user = this.feedbackDetail.user || {}
+      let vehicle = this.feedbackDetail.vehicle || {}
+      console.log('device', device)
+      this.feedbackImgs = feedback.imgs ? feedback.imgs.split(';') : [feedback.imgs]
       this.form = {
         pre_time: contract.pre_time,
         contract_active: contract.contract_start,

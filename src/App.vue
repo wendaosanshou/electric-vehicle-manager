@@ -274,21 +274,24 @@ $basic-ratio: 1.4;
   justify-content: center;
   align-items: center;
 }
+
 .mark-content {
-  width: d2r(100px);
-  height: d2r(100px);
+  width: 134px;
+  height: 124px;
   border-radius: 100%;
-  background: rgba(255, 117, 37, 0.3);
+  background: url('~@/assets/icons/img_information.png');
+  background-size: 100% 100%; 
   .mark-content-1 {
-    width: d2r(88px);
-    height: d2r(88px);
+    width: auto;
+    height: auto;
+    text-align: center;
+    color: #ffffff;
+    margin-top: d2r(5px);
     border-radius: 100%;
-    background: rgba(255, 117, 37, 0.4);
     .mark-content-2 {
       width: d2r(73px);
       height: d2r(73px);
       border-radius: 100%;
-      background: rgba(255, 117, 37, 0.6);
     }
     .mark-content-3 {
       width: d2r(48px);
@@ -298,7 +301,6 @@ $basic-ratio: 1.4;
       color: #ffffff;
       font-size: d2r(17px);
       border-radius: 100%;
-      background: rgba(255, 117, 37, 1);
     }
   }
 }

@@ -119,7 +119,8 @@
         @click="onSearchAllUser"
       >查询</el-button>
       <el-button class="button-fix" size="mini" type="primary" @click="handleClearSearchParams">清空</el-button>
-      <el-button size="mini" class="button-fix btn-export" @click="exportExcel">导出</el-button>
+      <el-button size="mini" class="button-fix btn-export" @click="exportCurrentExcel">导出当前</el-button>
+      <el-button size="mini" class="button-fix btn-export" @click="exportAllExcel">导出全部</el-button>
       <div class="btn-right">
         <el-button
         class="button-fix"
@@ -135,6 +136,7 @@
     <el-table
       ref="userTable"
       class="table-fix table-disable-select-all"
+      id="user-export-table"
       size="mini"
       :data="filterUserList"
       border
@@ -175,25 +177,25 @@
 
     <!-- 导数据用的table -->
     <el-table
-      id="user-export-table"
+      id="user-export-all"
       ref="userTable"
       class="table-fix table-disable-select-all table-hide"
       size="mini"
-      :data="allUser"
+      :data="filterExportAllUser"
       v-show="false"
     >
-      <el-table-column prop="id" align="center" label="序号"></el-table-column>
-      <el-table-column prop="account" align="center" label="账号（手机号）"></el-table-column>
-      <el-table-column prop="name" align="center" label="账号姓名"></el-table-column>
-      <el-table-column prop="site_name" align="center" label="所属组织"></el-table-column>
-      <el-table-column prop="site_type" align="center" label="组织类型">
+      <el-table-column prop="index" align="center" width="50" label="序号"></el-table-column>
+      <el-table-column prop="account" align="center" width="100" label="账号（手机号）"></el-table-column>
+      <el-table-column prop="name" align="center" width="100" label="账号姓名"></el-table-column>
+      <el-table-column prop="site_name" align="center" width="120" label="所属组织"></el-table-column>
+      <el-table-column prop="site_type" align="center" width="100" label="组织类型">
         <template slot-scope="scope">
           {{getAttributeTypeLable(scope.row.site_type)}}
         </template>
       </el-table-column>
-      <el-table-column prop="attribute" align="center" label="渠道属性"></el-table-column>
-      <el-table-column prop="role_name" align="center" label="角色名称"></el-table-column>
-      <el-table-column prop="phone" align="center" label="手机号码"></el-table-column>
+      <el-table-column prop="attribute" align="center" width="100" label="渠道属性"></el-table-column>
+      <el-table-column prop="role_name" align="center" width="100" label="角色名称"></el-table-column>
+      <el-table-column prop="phone" align="center" width="100" label="手机号码"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
       <el-table-column prop="note" align="center" label="备注"></el-table-column>
     </el-table>
@@ -236,6 +238,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "exportAllUser",
       "allUser",
       "allRoles",
       "selectUser",
@@ -245,6 +248,14 @@ export default {
     ]),
     filterUserList() {
       return this.allUser.map((item, index) => {
+        return {
+          index: (this.pageIndex - 1) * this.pageSize + index + 1,
+          ...item
+        }
+      })
+    },
+    filterExportAllUser() {
+      return this.exportAllUser.map((item, index) => {
         return {
           index: (this.pageIndex - 1) * this.pageSize + index + 1,
           ...item
@@ -269,7 +280,7 @@ export default {
   },
   methods: {
     ...mapMutations(["udpateSelectUser"]),
-    ...mapActions(["getAllUser", "getAllRoles", "getBusinessAttributeList", "getInstallAttributeList"]),
+    ...mapActions(["getAllUser", "getAllRoles", "getBusinessAttributeList", "getInstallAttributeList", "getExportAllUser"]),
     getAttributeTypeLable(type) {
       let attributeLable = ''
       if (type === 1) {
@@ -293,10 +304,11 @@ export default {
       console.log("onSelectInstallPoint", data);
       this.installPoint = data;
     },
-    exportExcel() {
+    exportExcel(id) {
+      console.log('exportExcel', id)
       /* 从表生成工作簿对象 */
       var wb = XLSX.utils.table_to_book(
-        document.querySelector("#user-export-table")
+        document.querySelector(id)
       );
       /* 获取二进制字符串作为输出 */
       var wbout = XLSX.write(wb, {
@@ -319,6 +331,12 @@ export default {
       }
       return wbout;
     },
+    exportCurrentExcel() {
+      this.exportExcel('#user-export-table')
+    },
+    async exportAllExcel() {
+      this.exportExcel('#user-export-all')
+    },
     handleSizeChange(pageSize) {
       console.log(pageSize);
       this.pageSize = pageSize;
@@ -329,9 +347,9 @@ export default {
       this.pageIndex = pageIndex;
       this.handleSearchAllUser();
     },
-    initSearchAllUser() {
-      this.getAllUser({
-        page_size: 1000,
+    initExportAllUser() {
+      this.getExportAllUser({
+        page_size: 10000,
         page_index: 1,
         account: "",
         role: "",
@@ -423,6 +441,7 @@ export default {
   },
   mounted() {
     this.initAllUser();
+    this.initExportAllUser()
   }
 };
 </script>

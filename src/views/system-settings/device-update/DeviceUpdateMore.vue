@@ -108,14 +108,21 @@ export default {
     },
     async handleUpdateDevice() {
       console.log(this.imeis);
-      await this.updateProduce({
-        imeis: this.imeis,
-        version_url: this.currentVersion.version_url,
-        update_operation: this.userInfo.account,
-        md5: this.currentVersion.md5
-      })
-      this.onDialogHide()
-      this.$emit('on-refresh')
+      if (this.imeis && this.imeis.length > 0 && this.currentVersion.version_url) {
+        await this.updateProduce({
+          imeis: this.imeis,
+          version_url: this.currentVersion.version_url,
+          update_operation: this.userInfo.account,
+          md5: this.currentVersion.md5
+        })
+        this.onDialogHide()
+        this.$emit('on-refresh')
+      } else {
+        this.$message({
+          type: "error",
+          message: "信息输入不完整~"
+        })
+      }
     }
   },
   components: {

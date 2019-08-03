@@ -78,13 +78,46 @@ export default {
       alarmValue: 0,
       pageIndex: 1,
       pageSize: 10,
-      searchType: 'account'
+      searchType: 'account',
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      }
     };
   },
   computed: {
     ...mapGetters([
       "deviceIds",
-      "pickerOptions",
       "accountList",
       "alarmTypes",
       "deviceInfo",
@@ -115,8 +148,10 @@ export default {
         });
         await this.getAlarmAnalyse({
           id: this.deviceInfo.id,
-          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          // start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+          // end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          start: this.getUtcTime(startDate),
+          end: this.getUtcTime(endDate),
           page_size: this.pageSize,
           page_index: this.pageIndex,
           alarm: this.alarmValue
@@ -173,6 +208,7 @@ export default {
       console.log('init', this.allDeviceInfo)
       this.initAMap("map-container", [lng, lat]);
       this.map.setFitView()
+      this.initPickerTime()
     }
   },
   components: {

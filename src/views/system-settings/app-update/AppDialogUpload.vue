@@ -189,17 +189,24 @@ export default {
       }
     },
     async handleAddFirmware() {
-      await this.addApkFile({
-        name: this.form.name,
-        operation: this.userInfo.account,
-        version: this.form.version,
-        download: this.form.download,
-        note: this.form.note,
-        upgrade: this.form.upgrade
-      });
-      this.clearForm()
-      this.$emit('onRefresh')
-      this.onDialogHide()
+      if (this.form.name && this.form.download && this.form.version && this.form.note) {
+        await this.addApkFile({
+          name: this.form.name,
+          operation: this.userInfo.account,
+          version: this.form.version,
+          download: this.form.download,
+          note: this.form.note,
+          upgrade: this.form.upgrade
+        });
+        this.clearForm()
+        this.$emit('onRefresh')
+        this.onDialogHide()
+      } else {
+        this.$message({
+          type: "error",
+          message: "信息输入不完整~"
+        })
+      }
     },
     onDialogShow() {
       if (this.isEditDialog) {

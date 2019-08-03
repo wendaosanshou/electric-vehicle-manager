@@ -15,6 +15,7 @@
               size="mini"
               v-model="pickerTime"
               type="datetime"
+              :picker-options="pickerOptions"
               placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
@@ -38,29 +39,37 @@ export default {
       dialogFormVisible: false,
       pickerTime: '',
       contract: 1,
+      pickerOptions: {},
       contractList: [
         {
           label: '一年',
           value: 1
         }
-      // {
-      //   label: '两年',
-      //   value: 2
-      // }
-      ]
+      ],
     }
   },
   computed: {
-    ...mapGetters(['workItem', 'userInfo']),
+    ...mapGetters(['workItem', 'userInfo'])
   },
+  props: ['contract_expire'],
   methods: {
     ...mapActions(['renewContract']),
+    initPickerTime() {
+      this.pickerTime = dayjs(this.contract_expire).format('YYYY-MM-DD HH:mm:ss')
+      let timestamp = dayjs(this.pickerTime).valueOf() - 24 * 60 * 60 * 1000
+      this.pickerOptions = {
+        disabledDate(time) {
+          return time.getTime() <= timestamp;
+        }
+      }
+    },
     resetForm() {
       this.contract = 1
       this.pickerTime = ''
     },
     onDialogShow() {
       this.resetForm()
+      this.initPickerTime()
       this.dialogFormVisible = true
     },
     onDialogConfirm() {

@@ -1,4 +1,5 @@
 import { mapGetters } from "vuex";
+import dayjs from 'dayjs'
 
 export default {
   data() {
@@ -22,6 +23,28 @@ export default {
     }
   },
   methods: {
+    getUtcTime(time) {
+      if (time) {
+        let utcOffset =  dayjs().utcOffset()
+        return dayjs(time).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
+      } else {
+        return time
+      }
+    },
+    getUtcOffsestTime(time) {
+      if (time) {
+        let utcOffset = dayjs(time).utcOffset()
+        console.log('utcOffset', utcOffset)
+        return dayjs(time).add(utcOffset, 'minute').format('YYYY-MM-DD HH:mm')
+      } else {
+        return time
+      }
+    },
+    initPickerTime() {
+      const end = dayjs().toDate();
+      const start = dayjs().set('h', 0).set('m', 0).set('s', 0).toDate();
+      this.pickerTime = [start, end]
+    },
     getFilterRoleNames(roleNames) {
       return roleNames.filter(item => {
         return item.indexOf("商户APP") === -1;

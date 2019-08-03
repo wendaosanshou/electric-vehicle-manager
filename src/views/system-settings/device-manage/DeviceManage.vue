@@ -3,7 +3,7 @@
     <div class="device-manage-title">
       <page-title>设备管理</page-title>
       <div class="manage-title-container">
-        <device-edit type="is-add"></device-edit>
+        <device-edit type="is-add" @onRefresh="handleSearchProducts"></device-edit>
         <!-- <device-add-more></device-add-more> -->
         <el-button
           class="button-fix btn-refresh"
@@ -46,7 +46,7 @@
             <div class="btn-container">
               <!-- <device-edit :data="deepClone(scope.row)"></device-edit> -->
               <!-- <div class="part-line"></div> -->
-              <device-delete :data="deepClone(scope.row)" @onRefresh="onSearchProducts"></device-delete>
+              <device-delete :data="deepClone(scope.row)" @onRefresh="handleSearchProducts"></device-delete>
             </div>
           </template>
         </el-table-column>

@@ -25,7 +25,7 @@
     >
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
-          <el-form-item label="序号">
+          <el-form-item label="创建人">
             <el-input
               class="ipt-fix"
               size="mini"
@@ -57,8 +57,7 @@
                 class="ipt-fix ipt-half-width"
                 size="mini"
                 v-model="form.html_url"
-                placeholder="选择页面上传"
-                disabled
+                placeholder="选择页面上传或手动输入链接"
               ></el-input>
               <el-upload :show-file-list="false" class="page-upload" :action="htmlUploadUrl" :on-success="onFileUploadSuccess">
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>

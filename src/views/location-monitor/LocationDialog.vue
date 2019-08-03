@@ -19,16 +19,12 @@
           <div class="form-title">车辆信息</div>
           <div class="form-item-wrap">
             <div class="form-item">车辆ID：{{vehicleInfo.id}}</div>
-            <div class="form-item">车架编号：{{vehicleInfo.frame}}</div>
             <div class="form-item">IMEI：{{deviceInfo.imei}}</div>
-            <div class="form-item">电机编号：{{deviceInfo.power}}</div>
-            <!-- <div class="form-item">电池编号：{{deviceInfo.battery}}</div> -->
-            <!-- <div class="form-item">防盗编号：{{deviceInfo.theft}}</div> -->
-            <div class="form-item">制造商：{{deviceInfo.brand}}</div>
-            <!-- <div class="form-item">设备品牌类型：{{deviceInfo.brand_type}}</div> -->
-            <div class="form-item">产品型号：{{deviceInfo.model}}</div>
-            <div class="form-item">颜色：{{deviceInfo.color}}</div>
-            <div class="form-item">获得方式：{{getObtain(vehicleInfo.obtain)}}</div>
+            <div class="form-item">规格：{{vehicleInfo.model}}</div>
+            <div class="form-item">电池编号：{{vehicleInfo.battery}}</div>
+            <div class="form-item">电机号：{{vehicleInfo.power}}</div>
+            <div class="form-item">车架号：{{vehicleInfo.frame}}</div>
+            <div class="form-item">防火防盗备案号：{{vehicleInfo.theft}}</div>
             <div class="form-item">车辆温度：{{deviceInfo.temperature}}℃</div>
           </div>
           <!-- <div class="form-title">网络信息</div>
@@ -42,7 +38,7 @@
           </div> -->
           <div class="form-title">数据时间</div>
           <div class="form-item-wrap">
-            <div class="form-item">更新时间：{{formatTime(deviceInfo.recv_time)}}</div>
+            <div class="form-item">更新时间：{{getUtcOffsestTime(deviceInfo.recv_time)}}</div>
           </div>
         </div>
         <div slot="footer" class="dialog-footer">

@@ -13,6 +13,7 @@ const Login = {
   state: {
     allUser: [],
     allUserTotal: 0,
+    exportAllUser: [],
     allOrg: [],
     businessAll: [],
     businessHandle: [],
@@ -27,6 +28,9 @@ const Login = {
   mutations: {
     udpateSelectUser(state, selectUser) {
       state.selectUser = selectUser
+    },
+    udpateExportAllUser(state, allUser) {
+      state.exportAllUser = allUser.data;
     },
     udpateAllUser(state, allUser) {
       state.allUser = allUser.data;
@@ -137,6 +141,18 @@ const Login = {
     }
   },
   actions: {
+    async getExportAllUser({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getAllUser({
+          token: getToken(rootState),
+          ...data
+        });
+        commit("udpateExportAllUser", result);
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error)
+      }
+    },
     async getAllUser({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllUser({
@@ -346,6 +362,7 @@ const Login = {
   getters: {
     allUser: state => state.allUser,
     allUserTotal: state => state.allUserTotal,
+    exportAllUser: state => state.exportAllUser,
     selectUser: state => state.selectUser,
     allOrg: state => state.allOrg,
     businessAll: state => state.businessAll,

@@ -50,7 +50,7 @@ import { mapGetters, mapActions } from "vuex";
 import MapMixin from '@/mixins/map-mixin'
 import AlarmDetailDialog from './AlarmDetailDialog'
 import AlarmTipsDialog from './AlarmTipsDialog'
-import { setTimeout } from 'timers';
+import { setTimeout, setInterval, clearInterval } from 'timers';
 
 export default {
   mixins: [MapMixin],
@@ -62,7 +62,8 @@ export default {
       positionCenter: [116.43, 39.92],
       searchValue: "",
       alarmValue: 0,
-      searchType: 'account'
+      searchType: 'account',
+      tid: ''
     };
   },
   computed: {
@@ -77,6 +78,19 @@ export default {
   },
   methods: {
     ...mapActions(['getAlarmLatest', "getDeviceInfo"]),
+    startMonitorAlarm() {
+      this.$message({
+        type: "success",
+        message: `开启告警监控`
+      })
+      clearInterval(this.tid)
+      this.tid = setInterval(() => {
+        this.getAlarmLatest({
+          deviceId: this.deviceInfo.id,
+          alarmValue: this.alarmValue
+        })
+      }, 30 * 1000)
+    },
     async onSearchAlarm() {
       console.log(this.alarmType && this.searchType)
       if (this.searchValue) {
@@ -85,13 +99,14 @@ export default {
           value: this.searchValue
         });
         await this.getAlarmLatest({
-          alarmId: 0,
+          isStartAlarm: true,
           deviceId: this.deviceInfo.id,
           alarmValue: this.alarmValue
         })
         this.drawAlarmMap()
         this.isAlarmTipsVisible = true
         this.isAlarmDetailVisible = true
+        this.startMonitorAlarm()
         console.log(this.deviceInfo)
       } else {
         this.$message({
@@ -135,6 +150,15 @@ export default {
   components: {
     AlarmDetailDialog,
     AlarmTipsDialog,
+  },
+  beforeDestroy() {
+    if (this.tid) {
+      this.$message({
+        type: "success",
+        message: `关闭告警监控`
+      })
+      clearInterval(this.tid)
+    }
   },
   mounted() {
     this.init()

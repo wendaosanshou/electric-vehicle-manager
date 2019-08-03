@@ -146,7 +146,9 @@ export default {
       this.filingDialogVisible = false;
     },
     getHeatMapData() {
-      let heatmapData = this.allDeviceInfo.map(item => {
+      let heatmapData = this.allDeviceInfo.filter(item => {
+        return item.lat > 0 && item.lng > 0
+      }).map(item => {
         return {
           lat: item.lat,
           lng: item.lng,

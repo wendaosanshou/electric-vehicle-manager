@@ -122,7 +122,7 @@ export default {
         roleName = "设备安装点管理";
         break;
       case 14:
-        roleName = "App资讯管理";
+        roleName = "APP资讯管理";
         break;
       case 15:
         roleName = "设备管理";

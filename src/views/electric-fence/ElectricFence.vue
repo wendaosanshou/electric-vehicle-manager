@@ -21,7 +21,7 @@
           size="mini"
           class="ipt-fix time-picker"
           type="datetimerange"
-          :picker-options="pickerOptions"
+          :picker-options="searchPickerOptions"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -120,15 +120,25 @@
       class="dialog-fix"
       title="保存电子围栏"
       :visible.sync="dialogVisible"
-      @close="onDialogHide"
-    >
+      @close="onDialogHide">
       <div class="dialog-content">
         <el-form
           class="user-add-form device-form-fix"
           label-position="right"
           label-width="220px"
-          :model="form"
-        >
+          :model="form">
+          <!-- <el-form-item label="电子围栏时间段">
+            <el-date-picker
+            v-model="addFencePickerTime"
+            size="mini"
+            class="ipt-fix time-picker dialog-time-picker"
+            type="datetimerange"
+            :picker-options="pickerOptions"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            align="right"></el-date-picker>
+          </el-form-item> -->
           <el-form-item label="电子围栏命名">
             <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入电子围栏名称"></el-input>
           </el-form-item>
@@ -140,8 +150,7 @@
               resize="none"
               :autosize="{ minRows: 10, maxRows: 10}"
               v-model="form.note"
-              placeholder="请输入电子围栏说明"
-            ></el-input>
+              placeholder="请输入电子围栏说明"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -183,6 +192,7 @@ export default {
   data() {
     return {
       pickerTime: "",
+      addFencePickerTime: "",
       fenceValue: [],
       fenceObjList: [],
       fencePolygons: [],
@@ -203,17 +213,51 @@ export default {
       form: {
         name: "",
         note: ""
+      },
+      searchPickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
       }
     };
   },
   computed: {
     ...mapGetters([
-      "pickerOptions",
       "accountList",
       "allLocationInfo",
       "allFence",
       "fenceAlarm",
-      "fenceAlarmTotal"
+      "fenceAlarmTotal",
+      "pickerOptions"
     ]),
     isModifyModel() {
       return this.fenceModelValue === 0;
@@ -347,38 +391,33 @@ export default {
       }
     },
     async handleConfirmAddFence() {
-      const [startDate, endDate] = this.pickerTime;
+      const [startDate, endDate] = this.addFencePickerTime;
       if (this.form.name && this.form.name.length > 10) {
         return this.$message({
           type: "error",
           message: `名称较长无法保存`
         });
       }
-      if (!this.form.name || !this.form.note) {
-        return this.$message({
-          type: "error",
-          message: `输入信息不完整`
-        });
-      }
-      if (startDate && endDate) {
+      if (this.form.name && this.form.note) {
         const params = {
-          start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          end_time: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          start_time: dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss"),
+          end_time: dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss"),
           data: this.pathString,
           name: this.form.name,
           note: this.form.note
         };
+        console.log(params)
         await this.addFence(params);
         this.form.name = "";
         this.form.note = "";
         this.getAllFence();
+        this.onDialogHide();
       } else {
         this.$message({
           type: "error",
-          message: `请选择开始日期和结束日期`
+          message: `输入信息不完整`
         });
       }
-      this.onDialogHide();
     },
     async handleSearchFenceAlarms() {
       const [startDate, endDate] = this.pickerTime;
@@ -426,6 +465,7 @@ export default {
       await this.getWebDevice();
       this.getAllFence();
       this.drawAMap();
+      this.initPickerTime()
     }
   },
   components: {
@@ -601,5 +641,9 @@ $basic-ratio: 1.4;
       }
     }
   }
+}
+
+.dialog-time-picker {
+  margin-top: 5px;
 }
 </style>

@@ -63,7 +63,7 @@
           </el-col>
           <el-col :span="4" class="item-btn-wrap">
             <div class="item-selector-wraper">
-              <renew-btn></renew-btn>
+              <renew-btn :contract_expire="form.contract_expire"></renew-btn>
             </div>
             <div class="item-selector-wraper">
               <renew-btn-log></renew-btn-log>
@@ -146,6 +146,7 @@
                 size="mini"
                 v-model="form.address"
                 placeholder="请输入家庭住址"
+                :disabled="forbidModify"
               ></el-input>
             </div>
           </el-col>
@@ -244,11 +245,11 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="8">
             <div class="item-selector-wraper item-selector-wraper-long">
               <div class="item-label">车架号</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.frame"
                 placeholder="请输入车架号"
@@ -258,7 +259,7 @@
             <div class="item-selector-wraper item-selector-wraper-long">
               <div class="item-label">防火防盗备案号</div>
               <el-input
-                class="item-selector ipt-fix"
+                class="item-selector item-selector-long ipt-fix"
                 size="mini"
                 v-model="form.theft"
                 placeholder="请输入防火防盗备案号"

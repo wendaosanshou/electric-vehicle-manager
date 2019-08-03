@@ -153,6 +153,7 @@ export default {
         await this.getBusinessInstall()
       }
       this.handleGetAttributeList()
+      this.$eventBus.$emit('on-refresh-business-point-form')
     },
     async onRefreshBusinessPoint() {
       this.initAllBusinessPoint()

@@ -20,19 +20,18 @@
           </div>
           <div class="form-title">车辆信息</div>
           <div class="form-item-wrap">
-            <!-- <div class="form-item">车编号：{{vehicleInfo.frame}}</div> -->
-            <div class="form-item">车牌号：{{vehicleInfo.frame}}</div>
+            <div class="form-item">车辆ID：{{vehicleInfo.id}}</div>
             <div class="form-item">IMEI：{{deviceInfo.imei}}</div>
-            <div class="form-item">电机编号：{{vehicleInfo.power}}</div>
-            <div class="form-item">制造商：{{vehicleInfo.brand}}</div>
-            <div class="form-item">产品型号：{{vehicleInfo.model}}</div>
-            <div class="form-item">颜色：{{vehicleInfo.color}}</div>
-            <div class="form-item">获得方式：{{vehicleInfo.obtain === 0 ? '购买' : '获取'}}</div>
+            <div class="form-item">规格：{{vehicleInfo.model}}</div>
+            <div class="form-item">电池编号：{{vehicleInfo.battery}}</div>
+            <div class="form-item">电机号：{{vehicleInfo.power}}</div>
+            <div class="form-item">车架号：{{vehicleInfo.frame}}</div>
+            <div class="form-item">防火防盗备案号：{{vehicleInfo.theft}}</div>
             <div class="form-item">车辆温度：{{deviceInfo.temperature}}℃</div>
           </div>
           <div class="form-title">告警信息</div>
           <div class="form-item-wrap">
-            <div class="form-item">告警时间：{{currentAlarm.signal_time}}</div>
+            <div class="form-item">告警时间：{{getUtcOffsestTime(currentAlarm.signal_time)}}</div>
             <div class="form-item">告警事件：{{getAlarmLabel(currentAlarm.note)}}</div>
           </div>
         </div>
@@ -127,7 +126,7 @@ $basic-ratio: 1.4;
       .form-item {
         box-sizing: border-box;
         width: 100%;
-        height: d2r(34px);
+        min-height: d2r(34px);
         line-height: d2r(34px);
         font-size: d2r(13px);
         color: #9b9b9b;

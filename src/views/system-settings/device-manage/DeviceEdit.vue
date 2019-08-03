@@ -126,6 +126,7 @@ export default {
           imeis: [this.form.imei]
         };
         await this.importProducts(params);
+        this.$emit('onRefresh')
         this.onDialogHide()
       }
     }

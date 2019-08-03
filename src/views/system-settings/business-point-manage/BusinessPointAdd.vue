@@ -1,5 +1,6 @@
 <template>
   <div class="point-content">
+    <!-- {{businessForm}} -->
     <div class="point-item" v-if="isAddForm">
       <div class="point-item-label">父节点组织名称</div>
       <el-input
@@ -71,6 +72,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import { setTimeout } from 'timers';
 
 export default {
   data() {
@@ -210,6 +212,7 @@ export default {
       }
     },
     initEditBusinessForm() {
+      console.log('filterAllOrg', this.filterAllOrg)
       this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
       if (this.businessForm && this.businessForm.organization_id > 4) {
         // 处理organization_id异常的情况
@@ -318,7 +321,12 @@ export default {
       }
     },
     async init() {
-      this.initBusinessForm();
+      this.$nextTick(() => {
+        this.initBusinessForm();
+      })
+      // this.$eventBus.$on('on-refresh-business-point-form', () => {
+      //   this.initBusinessForm();
+      // })
     }
   },
   mounted() {

@@ -4,7 +4,7 @@
     <el-dialog class="dialog-fix" title="选择角色模板" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-title">
         <span class="dialog-title-content">当前角色模板</span>
-        <span class="refresh-link" @click="onRefresh">刷新</span>
+        <!-- <span class="refresh-link" @click="onRefresh">刷新</span> -->
       </div>
       <div class="table-container">
         <el-table ref="roleTable" class="table-fix table-disable-select-all" :data="allRoles" size="mini" border stripe max-height="450" style="width: 100%"
