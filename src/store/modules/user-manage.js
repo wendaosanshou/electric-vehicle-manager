@@ -90,7 +90,7 @@ const Login = {
     },
     updateAppInfo(state, result) {
       state.infoWeb = result.data
-      state.appInfoCount = 16
+      state.appInfoCount = result.total
     }
   },
   actions: {

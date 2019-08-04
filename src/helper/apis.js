@@ -199,8 +199,8 @@ export default {
     return $ajax.post(requestUrl(`produce/import`), data);
   },
   batchImportProducts(data) {
-    const { token, formData } = data
-    return $ajax.post(requestUrl(`produce/batch/admin?token=${token}`), formData, {
+    const { token, formData, account } = data
+    return $ajax.post(requestUrl(`produce/batch/${account}?token=${token}`), formData, {
       'Content-Type': 'multipart/form-data '
     });
   },

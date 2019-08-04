@@ -369,6 +369,9 @@ export default {
       let vehicle = this.feedbackDetail.vehicle || {}
       console.log('device', device)
       this.feedbackImgs = feedback.imgs ? feedback.imgs.split(';') : [feedback.imgs]
+      if (user && user.head && user.head.indexOf('http') > -1) {
+        this.feedbackImgs.push(user.head)
+      }
       this.form = {
         pre_time: contract.pre_time,
         contract_active: contract.contract_start,
@@ -616,5 +619,9 @@ $basic-ratio: 1.4;
   max-width: d2r(1232px);
   padding-right: d2r(36px)!important;
   overflow: auto;
+}
+
+.item-label {
+  font-size: d2r(14px);
 }
 </style>

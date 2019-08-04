@@ -9,30 +9,57 @@
     <div class="user-manage-header">
       <div class="user-menu-list">
         <div class="user-menu-item">
-          <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label">用户姓名</span>
-            <el-input class="menu-ipt ipt-fix" size="mini" v-model="name" placeholder="请输入用户姓名"></el-input>
+          <div class="user-menu-row">
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label">用户姓名</span>
+              <el-input class="menu-ipt ipt-fix" size="mini" v-model="name" placeholder="请输入用户姓名"></el-input>
+            </div>
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label">用户手机号</span>
+              <el-input class="menu-ipt ipt-fix" size="mini" v-model="account" placeholder="请输入手机号"></el-input>
+            </div>
           </div>
-          <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label">用户手机号</span>
-            <el-input class="menu-ipt ipt-fix" size="mini" v-model="account" placeholder="请输入手机号"></el-input>
+          <div class="user-menu-row">
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label menu-label-short">状态</span>
+              <el-select
+                class="menu-ipt ipt-fix ipt-selector"
+                size="mini"
+                v-model="process"
+                placeholder="请选择状态">
+                <el-option
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in processList"
+                  :key="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label menu-label-half">意见分类</span>
+              <el-select
+                class="menu-ipt ipt-fix ipt-selector"
+                size="mini"
+                v-model="feedbackType"
+                placeholder="请选择意见分类">
+                <el-option
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in feedbackTypeList"
+                  :key="item.value"
+                ></el-option>
+              </el-select>
+            </div>
           </div>
-          <div class="menu-account menu-ipt-wraper">
-            <span class="menu-label menu-label-half">状态</span>
-            <el-select
-              class="menu-ipt ipt-fix ipt-selector"
-              size="mini"
-              v-model="process"
-              placeholder="请选择状态">
-              <el-option
-                :label="item.label"
-                :value="item.value"
-                v-for="item in processList"
-                :key="item.value"
-              ></el-option>
-            </el-select>
-            <!-- <el-input class="menu-ipt ipt-fix" size="mini" v-model="process" placeholder="请输入版本名称"></el-input> -->
+          <div class="user-menu-row">
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label">处理人账号</span>
+              <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入处理人账号"></el-input>
+            </div>
+            <div class="menu-account menu-ipt-wraper">
+            </div>
           </div>
+          
           <!-- <div class="menu-account menu-ipt-wraper">
             <span class="menu-label menu-label-half">操作人</span>
             <el-input class="menu-ipt ipt-fix" size="mini" v-model="operation" placeholder="请输入创建人"></el-input>
@@ -44,6 +71,10 @@
         <el-button class="btn-clear button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
       </div>
     </div>
+    <!-- <div class="menu-btns">
+        <el-button icon="el-icon-search" class="button-fix" type="primary" size="mini" @click="onSearchFeedback">查询</el-button>
+        <el-button class="btn-clear button-fix" size="mini" @click="onClearSearchParams">清空</el-button>
+      </div> -->
     <div class="table-container">
     <!-- {{feedbackList}} -->
     <el-table
@@ -111,6 +142,29 @@ export default {
       operation: "",
       pageIndex: 1,
       pageSize: 10,
+      feedbackType: '',
+      feedbackTypeList: [
+        {
+          value:  '',
+          label: '全部'
+        },
+        {
+          value: 'APP问题',
+          label: 'APP问题'
+        },
+        {
+          value: '设备问题',
+          label: '设备问题'
+        },
+        {
+          value: '售后问题',
+          label: '售后问题'
+        },
+        {
+          value: '其它问题',
+          label: '其它问题'
+        }
+      ],
       processList: [
         {
           value: -1,
@@ -158,6 +212,7 @@ export default {
        this.getFeedback({
         page_size: this.pageSize,
         page_index: this.pageIndex,
+        type: this.feedbackType,
         name: this.name,
         account: this.account,
         process: this.process,
@@ -229,34 +284,49 @@ $basic-ratio: 1.4;
 }
 
 .user-manage-header {
+  box-sizing: border-box;
+  width: 100%;
+  height: d2r(140px);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding-right: d2r(25px);
+  padding-top: d2r(20px);
   background: #f5f5f6ff;
   margin-top: d2r(16px);
   .user-menu-list {
+    width: auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: d2r(23px);
     .user-menu-item {
+      width: auto;
+      height: 100%;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-      margin-top: d2r(20px);
+      .user-menu-row {
+        width: auto;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
       .menu-ipt-wraper {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
-        margin-left: d2r(16px);
+        margin-right: d2r(16px);
         .menu-label {
           display: block;
-          width: d2r(144px);
+          min-width: d2r(100px);
+          width: auto;
           text-align: right;
         }
         .menu-label-half {
@@ -270,20 +340,22 @@ $basic-ratio: 1.4;
       }
     }
   }
-  .menu-btns {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: d2r(16px);
-    .el-btn {
-      &.btn-search {
-        background: #ff7525ff;
-      }
-      &.btn-clear {
-        margin-left: d2r(9px);
-        background: #a7b0bbff;
-      }
+
+}
+
+.menu-btns {
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  .el-btn {
+    &.btn-search {
+      background: #ff7525ff;
+    }
+    &.btn-clear {
+      margin-left: d2r(9px);
+      background: #a7b0bbff;
     }
   }
 }
@@ -302,5 +374,15 @@ $basic-ratio: 1.4;
 
 .menu-label {
   font-size: d2r(14px);
+}
+
+.menu-label-short {
+  width: d2r(60px);
+}
+
+.menu-account {
+  &:nth-last-child(1) {
+    margin-top: d2r(16px);
+  }
 }
 </style>

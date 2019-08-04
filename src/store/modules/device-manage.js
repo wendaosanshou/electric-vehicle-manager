@@ -262,7 +262,7 @@ const Login = {
         });
         vm.$message({
           type: "success",
-          message: "批量添加成功!"
+          message: "批量导入文件上传成功!"
         });
         console.log(result);
       } catch (error) {

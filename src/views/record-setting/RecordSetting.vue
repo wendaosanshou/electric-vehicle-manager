@@ -45,8 +45,15 @@ export default {
         work: form.work,
         imgs: form.imgs
       }
-      await this.modifyWorkItem(params)
-      history.back()
+      if (!params.imei || params.imei.length !== 15) {
+        this.$message({
+          type: "error",
+          message: `imei号不能为空且长度需要是15位数字!`
+        })
+      } else {
+        await this.modifyWorkItem(params)
+        history.back()
+      }
       console.log('modifyWorkItem', params)
     }
   },

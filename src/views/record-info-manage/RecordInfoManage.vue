@@ -183,7 +183,7 @@
           </div>
         </template>
       </div>
-      <div class="menu-item menu-col-less menu-item-long" v-if="!isProcessSearch">
+      <div class="menu-item menu-col-less menu-item-long menu-item-last" v-if="!isProcessSearch">
         <div class="item-selector-wraper">
           <div class="item-label">激活状态</div>
           <el-select
@@ -704,7 +704,7 @@ export default {
       let activeTips = "";
       switch (contract_active) {
         case 0:
-          activeTips = "";
+          activeTips = "未激活";
           break;
         case 1:
           activeTips = "激活";
@@ -948,6 +948,9 @@ $basic-ratio: 1.4;
         width: d2r(160px);
         white-space: nowrap;
       }
+    }
+    &.menu-item-last {
+      padding-right: d2r(16px);
     }
   }
 }

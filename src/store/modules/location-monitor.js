@@ -171,7 +171,7 @@ const accountList = [
   },
   {
     value: "iccid",
-    label: "IMSI"
+    label: "ICCID"
   },
   {
     value: "cert",

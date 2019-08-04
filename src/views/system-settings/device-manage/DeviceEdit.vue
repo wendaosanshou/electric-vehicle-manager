@@ -4,11 +4,11 @@
     <el-dialog class="dialog-fix" :title="tipsConfig.titleText" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
-          <el-form-item label="IMEI">
-            <el-input class="ipt-fix" size="mini" v-model="form.imei" placeholder="请输入IMEI" :disabled="isEditDialog"></el-input>
+          <el-form-item label="创建人">
+            <el-input class="ipt-fix" size="mini" v-model="userInfo.account" placeholder="请输入创建人" disabled></el-input>
           </el-form-item>
-          <el-form-item label="序号" v-if="isEditDialog">
-            <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="请输入序号" disabled></el-input>
+          <el-form-item label="IMEI">
+            <el-input class="ipt-fix" size="mini" v-model="form.imei" placeholder="请输入IMEI"></el-input>
           </el-form-item>
           <el-form-item label="备注信息">
             <el-input
@@ -86,9 +86,6 @@ export default {
   methods: {
     ...mapActions(['importProducts']),
     onDialogShow() {
-      if (this.isEditDialog) {
-        this.form = this.data
-      }
       this.dialogVisible = true
     },
     onDialogHide() {

@@ -4,11 +4,26 @@
     <el-dialog class="dialog-fix" title="批量添加设备" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
+          <el-form-item label="创建人">
+            <el-input class="ipt-fix" size="mini" v-model="userInfo.account" placeholder="请输入创建人" disabled></el-input>
+          </el-form-item>
           <el-form-item label="设备文件">
             <el-input class="ipt-fix" size="mini" v-model="filename" placeholder="请导入设备文件" disabled></el-input>
             <el-upload :show-file-list="false" class="page-upload" action :before-upload="onBeforeUpload">
               <el-button class="button-fix btn-select" size="mini" type="primary">导入文件</el-button>
             </el-upload>
+          </el-form-item>
+          <el-form-item label="备注信息">
+            <el-input
+              type="textarea"
+              class="ipt-fix"
+              size="mini"
+              resize="none"
+              maxlength="50"
+              :autosize="{ minRows: 10, maxRows: 10}"
+              v-model="form.note"
+              placeholder="请输入备注信息（50字内）"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -24,6 +39,7 @@
 import XLSX from 'xlsx'
 import { mapGetters, mapActions } from 'vuex'
 import PageTitle from '@/components/PageTitle.vue'
+import { setTimeout } from 'timers';
 
 export default {
   data() {
@@ -91,11 +107,16 @@ export default {
       if (this.filename && this.filename.length > 0 && this.file) {
         let formData = new FormData()
         formData.append('file', this.file)
+        formData.append('operation', this.userInfo.account)
+        formData.append('note', this.form.note)
         this.batchImportProducts({
-          formData
+          formData,
+          account: this.userInfo.account
         })
         this.onDialogHide()
-        this.$emit('onRefresh')
+        setTimeout(() => {
+          this.$emit('onRefresh')
+        }, 1000)
       } else {
         this.$message({
           type: 'error',

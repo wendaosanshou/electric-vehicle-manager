@@ -14,6 +14,7 @@
         <div class="form-item-wrap">
           <div class="form-item">车辆ID：{{vehicleInfo.id}}</div>
           <div class="form-item">IMEI：{{deviceInfo.imei}}</div>
+          <div class="form-item">ICCID：{{deviceInfo.iccid}}</div>
           <div class="form-item">规格：{{vehicleInfo.model}}</div>
           <div class="form-item">电池编号：{{vehicleInfo.battery}}</div>
           <div class="form-item">电机号：{{vehicleInfo.power}}</div>
