@@ -1,30 +1,17 @@
 <template>
   <div class="role-add">
     <el-button class="button-fix" icon="el-icon-edit" type="primary" size="mini" @click="onDialogShow">编辑</el-button>
-    <el-dialog
-      class="dialog-fix"
-      title="修改角色"
-      :visible.sync="dialogVisible"
-      @close="onDialogHide"
-    >
-    <!-- {{tableData}} -->
+    <el-dialog class="dialog-fix" title="修改角色" :visible.sync="dialogVisible" @close="onDialogHide">
+      <!-- {{tableData}} -->
       <div class="dialog-title">修改角色</div>
       <div class="dialog-content">
-        <el-table
-          class="role-manage-table table-fix table-disable-hover"
-          :data="tableData"
-          size="mini"
-          border
-          stripe
-          style="width: 100%"
-        >
-          <el-table-column prop="code" label="角色模板编号" width="180" align="center">
-          </el-table-column>
+        <el-table class="role-manage-table table-fix table-disable-hover" :data="tableData" size="mini" border stripe style="width: 100%">
+          <el-table-column prop="code" label="角色模板编号" width="180" align="center"></el-table-column>
           <el-table-column prop="name" label="角色名称" align="center">
             <template slot-scope="scope">
               <div class="table-col-item">
                 <div class="user-name">
-                  <el-input size="mini" class="ipt-fix" v-model="scope.row.name"  placeholder="填写角色名称" disabled></el-input>
+                  <el-input size="mini" class="ipt-fix" v-model="scope.row.name" placeholder="填写角色名称" disabled></el-input>
                 </div>
               </div>
             </template>
@@ -65,7 +52,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import RoleManageTree from './RoleManageTree'
+import RoleManageTree from './RoleManageTree.vue'
 
 export default {
   data() {
@@ -73,7 +60,7 @@ export default {
       dialogVisible: false,
       authorList: [],
       tableData: []
-    };
+    }
   },
   props: {
     data: {
@@ -90,10 +77,10 @@ export default {
     ...mapActions(['editRole']),
     onDialogShow() {
       this.initTableData()
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
     onDialogHide() {
-      this.dialogVisible = false;
+      this.dialogVisible = false
     },
     removeNode(item, array) {
       for (let index = 0; index < array.length; index++) {
@@ -104,13 +91,13 @@ export default {
       return array
     },
     onRoleChange(data) {
-      const {role, isCheck} = data
+      const { role, isCheck } = data
       if (isCheck) {
         this.authorList.push(role.id)
       } else {
         this.authorList = this.removeNode(role.id, this.authorList)
       }
-      let hasChildren = this.authorList.some(author => author > 9)
+      const hasChildren = this.authorList.some(author => author > 9)
       if (hasChildren) {
         this.authorList.push(9)
       } else {
@@ -125,7 +112,8 @@ export default {
       const { author } = this.data
       if (author) {
         this.authorList = author.split(',').map(item => {
-          if(!isNaN(item)) {
+          // eslint-disable-next-line
+          if (!isNaN(item)) {
             return +item
           }
           return item
@@ -134,7 +122,7 @@ export default {
     },
     async handleEditRole() {
       const [role] = this.tableData
-      if(role.name && role.note) {
+      if (role.name && role.note) {
         await this.editRole({
           id: role.id,
           name: role.name,
@@ -145,14 +133,14 @@ export default {
         this.onDialogHide()
         this.$emit('onRefreshRoleInfo')
       } else {
-        this.$message('输入信息不完整!');
+        this.$message('输入信息不完整!')
       }
     }
   },
   components: {
     RoleManageTree
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -183,7 +171,7 @@ $basic-ratio: 1.4;
   justify-content: center;
   align-items: center;
   font-size: d2r(13px);
-  color: #3B4859;
+  color: #3b4859;
   min-height: d2r(443px);
 }
 
@@ -194,7 +182,6 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
-
 </style>

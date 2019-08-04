@@ -72,7 +72,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import RoleManageTree from "./RoleManageTree";
+import RoleManageTree from "./RoleManageTree.vue";
 
 export default {
   data() {
@@ -196,6 +196,6 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

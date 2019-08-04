@@ -178,14 +178,14 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import MapMixin from "@/mixins/map-mixin";
 import dayjs from "dayjs";
-import MenuContent from "./menu-context";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import ElectricFenceDelete from "./ElectricFenceDelete";
-import { setTimeout } from "timers";
+import MapMixin from "@/mixins/map-mixin";
+import MenuContent from "./menu-context";
+import ElectricFenceDelete from "./ElectricFenceDelete.vue";
 
 export default {
   mixins: [MapMixin],
@@ -344,8 +344,9 @@ export default {
         });
       var polygon = new AMap.Polygon({
         path: path,
-        fillColor: "#F8755487",
-        strokeColor: "#F87554FF"
+        fillOpacity: 0.7,
+        fillColor: "#FFFFFF",
+        strokeColor: "#F87554"
       });
 
       this.map.add(polygon);
@@ -420,30 +421,36 @@ export default {
       }
     },
     async handleSearchFenceAlarms() {
-      const [startDate, endDate] = this.pickerTime;
-      if (startDate && endDate) {
-        const params = {
-          start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          end_time: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
-          arr_id: this.fenceValue,
-          page_size: 10,
-          page_index: 1
-        };
-        await this.getFenceAlarm(params);
-        this.form.name = "";
-        this.form.note = "";
-      } else {
-        this.$message({
+      if (this.pickerTime && this.pickerTime.length !== 2) {
+        return this.$message({
           type: "error",
           message: `请选择开始日期和结束日期`
         });
+      } else if (this.fenceValue && this.fenceValue.length === 0) {
+        return this.$message({
+          type: "error",
+          message: `请选择要查询的电子围栏`
+        });
       }
+      const [startDate, endDate] = this.pickerTime;
+      const params = {
+        start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+        end_time: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+        arr_id: this.fenceValue,
+        page_size: 10000,
+        page_index: 1
+      };
+      await this.getFenceAlarm(params);
+      this.form.name = "";
+      this.form.note = "";
+
     },
     initFenceEnv() {
       this.mouseTool = new AMap.MouseTool(this.map);
       this.mouseTool.polygon({
-        fillColor: "#F8755487",
-        strokeColor: "#F87554FF"
+        fillOpacity: 0.7,
+        fillColor: "#FFFFFF",
+        strokeColor: "#F87554"
       });
       this.mouseTool.on("draw", e => {
         let paths = e.obj.getPath();
@@ -522,7 +529,7 @@ $basic-ratio: 1.4;
         margin-left: auto;
       }
       .ipt-selector-long {
-        width: d2r(870px);
+        width: d2r(898px);
       }
     }
   }
@@ -567,6 +574,10 @@ $basic-ratio: 1.4;
       justify-content: flex-start;
       align-items: flex-end;
       .electric-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
         width: d2r(300px);
         height: 50%;
         margin-top: d2r(10px);
@@ -582,20 +593,23 @@ $basic-ratio: 1.4;
           font-size: d2r(14px);
           text-align: left;
           line-height: d2r(40px);
-          background: #9e9db6ff;
+          background: #9e9db6;
           color: #3b4859ff;
         }
         .electric-item-content {
+          flex-grow: 1;
           width: 100%;
           height: auto;
-          max-height: d2r(340px);
           font-size: d2r(13px);
           color: #3b4859ff;
-          overflow: scroll;
+          overflow: auto;
         }
         .empty-data {
-          height: d2r(340px);
-          line-height: d2r(340px);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
         }
         .electric-alarm-item {
           padding-top: d2r(19px);

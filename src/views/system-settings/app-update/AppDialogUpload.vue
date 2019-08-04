@@ -56,7 +56,7 @@
             v-model="form.note" placeholder="请输入版本说明（200字内）"></el-input>
           </el-form-item>
           <el-form-item label="是否强制升级">
-            <el-select 
+            <el-select
               class="ipt-fix"
               size="mini"
               width="120"
@@ -120,10 +120,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo"]),
-    allowUpload() {
-      return Object.keys(this.form).every(key => item[key])
-    }
+    ...mapGetters(["userInfo"])
   },
   methods: {
     ...mapActions(["importProducts", "addApkFile"]),
@@ -267,7 +264,7 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .el-form-item {

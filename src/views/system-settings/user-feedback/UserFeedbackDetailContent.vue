@@ -461,7 +461,7 @@ $basic-ratio: 1.4;
       margin-left: d2r(25px);
       padding: d2r(18px) 0 d2r(22px) 0;
       background: #f5f5f6;
-      
+
       .item-selector-wraper {
         display: flex;
         flex-direction: row;
@@ -470,27 +470,27 @@ $basic-ratio: 1.4;
         margin-top: d2r(20px);
         &.item-selector-wraper-long {
           .item-label {
-            width: d2r(140px);
+            width: d2r(160px);
           }
         }
         &:nth-child(1) {
           margin-top: 0;
         }
         .item-label {
-          width: d2r(110px);
+          width: d2r(130px);
           height: d2r(22px);
           text-align: right;
         }
         .item-selector {
-          margin-left: d2r(6px);
+          margin-left: d2r(12px);
           width: d2r(180px);
         }
         .item-selector-timer {
-          margin-left: d2r(6px);
+          margin-left: d2r(12px);
           width: d2r(220px) !important;
         }
         .item-selector-datapicker {
-          margin-left: d2r(6px);
+          margin-left: d2r(12px);
           width: d2r(450px) !important;
         }
         .item-selector-long {
@@ -498,7 +498,7 @@ $basic-ratio: 1.4;
         }
       }
       .item-image-wraper {
-        margin-left: d2r(6px);
+        margin-left: d2r(12px);
       }
       .item-btn-wrap {
         display: flex;
@@ -555,12 +555,12 @@ $basic-ratio: 1.4;
         width: d2r(46px);
         height: d2r(46px);
         font-size: d2r(46px);
-        color: #9e9db6ff;
+        color: #9e9db6;
         &.icon-large-light {
           width: d2r(46px);
           height: d2r(46px);
           font-size: d2r(46px);
-          color: #ff7525ff;
+          color: #ff7525;
         }
       }
       .card-title {
@@ -589,7 +589,7 @@ $basic-ratio: 1.4;
 
 .record-setting-container.is-dialog-setting {
   padding: d2r(25px) d2r(38px) d2r(33px) d2r(30px);
-  overflow: scroll;
+  overflow: atuo;
   .setting-part-container {
     display: flex;
     flex-direction: column;
@@ -615,6 +615,6 @@ $basic-ratio: 1.4;
   box-sizing: border-box;
   max-width: d2r(1232px);
   padding-right: d2r(36px)!important;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

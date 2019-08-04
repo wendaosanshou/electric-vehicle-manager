@@ -4,7 +4,8 @@ import dayjs from 'dayjs'
 export default {
   data() {
     return {
-      fileUploadUrl: "http://47.92.237.140/api/v1/img/web"
+      fileUploadUrl: "http://47.92.237.140/api/v1/img/web",
+      batchImportUrl: "http://47.92.237.140/api/v1/produce/batch/admin"
     }
   },
   computed: {

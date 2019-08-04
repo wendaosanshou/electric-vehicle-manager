@@ -29,10 +29,10 @@
             class="ipt-fix"
             size="mini"
             resize="none"
-            maxlength="50"
+            maxlength="200"
             v-model="form.feedback_process"
             :autosize="{ minRows: 10, maxRows: 10}"
-            placeholder="请输入版本说明（50字内）"></el-input>
+            placeholder="请输入问题处理过程（200字内）"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -48,7 +48,7 @@
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import PageBack from "@/components/PageBack.vue";
-import UserFeedbackDetailContent from "./UserFeedbackDetailContent";
+import UserFeedbackDetailContent from "./UserFeedbackDetailContent.vue";
 
 export default {
   data() {

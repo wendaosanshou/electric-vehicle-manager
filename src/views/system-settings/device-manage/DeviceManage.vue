@@ -4,7 +4,7 @@
       <page-title>设备管理</page-title>
       <div class="manage-title-container">
         <device-edit type="is-add" @onRefresh="handleSearchProducts"></device-edit>
-        <!-- <device-add-more></device-add-more> -->
+        <device-add-more @onRefresh="handleSearchProducts"></device-add-more>
         <el-button
           class="button-fix btn-refresh"
           :class="{active: hasRebotImeis}"
@@ -18,6 +18,20 @@
         <div class="menu-account menu-ipt-wraper">
           <span class="menu-label">IMEI</span>
           <el-input class="menu-ipt ipt-fix" size="mini" v-model="imei" placeholder="请输入imei号"></el-input>
+        </div>
+        <div class="ipt-select-wraper">
+          <span class="menu-label">使用状态</span>
+          <el-select
+          class="ipt-fix menu-ipt-selector"
+          size="mini"
+          v-model="isInstall"
+          placeholder="请选择使用情况">
+          <el-option
+            :label="item.label"
+            :value="item.value"
+            v-for="item in installList"
+            :key="item.value"></el-option>
+          </el-select>
         </div>
         <div class="menu-btn-wraper">
           <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchProducts">查询</el-button>
@@ -41,6 +55,11 @@
         <el-table-column prop="imei" align="center" label="IMEI"></el-table-column>
         <el-table-column prop="operation" align="center" label="创建人"></el-table-column>
         <el-table-column prop="import_time" align="center" label="入库时间"></el-table-column>
+        <el-table-column prop="is_install" align="center" label="绑定状态">
+          <template slot-scope="scope">
+            {{getInstallStatus(scope.row.is_install)}}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template slot-scope="scope">
             <div class="btn-container">
@@ -80,6 +99,17 @@ export default {
       allUser: [],
       pageSize: 10,
       pageIndex: 1,
+      isInstall: -1, // 0-未安装 1-已安装 -1所有
+      installList: [{
+        value: -1,
+        label: "全部"
+      },{
+        value: 0,
+        label: "未使用"
+      },{
+        value: 1,
+        label: "已使用"
+      }],
       imei: "",
       rebotImeis: []
     };
@@ -92,6 +122,15 @@ export default {
   },
   methods: {
     ...mapActions(["searchProducts", "rebotDevice"]),
+    getInstallStatus(isInstall) {
+      let isInstallLable = ''
+      if (isInstall === 0) {
+        isInstallLable = '未使用'
+      } else if (isInstall === 1) {
+        isInstallLable = '已使用'
+      }
+      return isInstallLable
+    },
     async rebotDeivce() {
       if (this.hasRebotImeis) {
         await this.rebotDevice({
@@ -130,7 +169,8 @@ export default {
       this.searchProducts({
         page_size: this.pageSize,
         page_index: this.pageIndex,
-        imei: this.imei
+        imei: this.imei,
+        is_install: this.isInstall
       });
     },
     onSearchProducts() {
@@ -216,6 +256,9 @@ $basic-ratio: 1.4;
     .menu-user-name {
       margin-left: d2r(24px);
     }
+    .ipt-select-wraper {
+      margin-left: d2r(40px);
+    }
     .menu-btn-wraper {
       margin-left: d2r(40px);
       box-sizing: border-box;
@@ -261,6 +304,10 @@ $basic-ratio: 1.4;
   .part-line {
     width: d2r(10px);
   }
+}
+
+.menu-ipt-selector {
+  margin-left: d2r(10px);
 }
 
 </style>

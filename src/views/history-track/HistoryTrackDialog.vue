@@ -51,6 +51,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
 import { setTimeout } from "timers";
@@ -156,7 +157,7 @@ export default {
       console.log(this.pickerTime);
       this.renderLoading()
       try {
-         const [startDate, endDate] = this.pickerTime;
+        const [startDate, endDate] = this.pickerTime;
         if (startDate && endDate) {
           await this.getHistoryInfo({
             id: this.currentLocationInfo.id,
@@ -172,6 +173,7 @@ export default {
           });
         }
       } catch (error) {
+        this.loading.close()
         console.log(error)
       }
       this.loading.close()

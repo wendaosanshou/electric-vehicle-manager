@@ -183,5 +183,8 @@ $basic-ratio: 1.4;
   .menu-label-ipt {
     margin-left: d2r(14px);
   }
+  .menu-label {
+    font-size: d2r(14px);
+  }
 }
 </style>

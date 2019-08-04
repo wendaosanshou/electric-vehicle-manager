@@ -299,4 +299,8 @@ $basic-ratio: 1.4;
   justify-content: flex-end;
   align-items: center;
 }
+
+.menu-label {
+  font-size: d2r(14px);
+}
 </style>

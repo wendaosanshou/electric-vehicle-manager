@@ -36,7 +36,7 @@
 
     <!-- pickerTime:{{pickerTime}} -->
     <div class="monitor-container">
-      <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
+      <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
       <div class="car-marker-menu" v-if="isShowHistoryTrack">
         <div
           class="car-marker-item"
@@ -69,7 +69,6 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from '@/mixins/history-mixin'
-import { setTimeout } from "timers";
 
 export default {
   mixins: [MapMixin, HistoryMixin],

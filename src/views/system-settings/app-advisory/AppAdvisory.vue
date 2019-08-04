@@ -33,6 +33,17 @@
         <el-table-column prop="content" width="180" label="备注信息" align="center"></el-table-column>
       </el-table>
     </div>
+
+    <div class="pagination-wraper">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pageIndex"
+        :page-size="pageSize"
+        layout="prev, pager, next, jumper"
+        :total="appInfoCount"
+      ></el-pagination>
+    </div>
   </div>
 </template>
 
@@ -45,10 +56,13 @@ import AdvisoryEdit from "./AdvisoryEdit";
 
 export default {
   data() {
-    return {};
+    return {
+      pageIndex: 1,
+      pageSize: 10
+    };
   },
   computed: {
-    ...mapGetters(["infoWeb"]),
+    ...mapGetters(["infoWeb", "appInfoCount"]),
     sortInfoWeb() {
       if (this.infoWeb && this.infoWeb.length > 0) {
         return this.infoWeb.sort((a, b) => a.id - b.id);
@@ -58,9 +72,24 @@ export default {
   },
   methods: {
     ...mapActions(["getInfoWeb"]),
+    handleSizeChange(pageSize) {
+      this.pageSize = pageSize;
+      this.onSearchAppInfo();
+    },
+    handleCurrentChange(pageIndex) {
+      this.pageIndex = pageIndex;
+      this.onSearchAppInfo();
+    },
+    onSearchAppInfo() {
+      this.getInfoWeb({
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      });
+    },
     initInfoWeb() {
       this.getInfoWeb({
-        index: 1
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
       });
     }
   },

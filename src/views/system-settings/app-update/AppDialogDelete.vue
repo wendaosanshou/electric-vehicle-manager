@@ -25,6 +25,11 @@
         <el-table-column prop="operation" align="center" label="操作人"></el-table-column>
         <el-table-column prop="note" width="240" align="center" label="版本说明"></el-table-column>
         <el-table-column prop="download" width="220" align="center" label="下载地址"></el-table-column>
+        <el-table-column align="center" prop="operation" width="100" label="是否强制升级">
+          <template slot-scope="scope">
+            {{getUpgradeLable(scope.row.upgrade)}}
+          </template>
+        </el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -54,6 +59,9 @@ export default {
   },
   methods: {
     ...mapActions(["deleteApkVersion"]),
+    getUpgradeLable(upgrade) {
+      return upgrade === 1 ? '强制升级' : '非强制升级'
+    },
     onDialogShow() {
       this.tableData = [this.data];
       this.dialogVisible = true;
@@ -115,6 +123,6 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

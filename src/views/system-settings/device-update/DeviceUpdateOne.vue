@@ -1,32 +1,16 @@
 <template>
   <div class="role-add">
-    <el-button
-      class="button-fix"
-      icon="el-icon-refresh"
-      type="primary"
-      size="mini"
-      @click="onDialogShow"
-    >单个升级</el-button>
+    <el-button class="button-fix" icon="el-icon-refresh" type="primary" size="mini" @click="onDialogShow">单个升级</el-button>
     <el-dialog class="dialog-fix" title="单个设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
         <el-form class="user-add-form device-form-fix" label-position="right" label-width="140px" :model="form">
           <el-form-item label="IMEI">
-            <el-input
-              class="ipt-fix"
-              size="mini"
-              v-model.number="form.imei"
-              placeholder="请输入IMEI号"
-            ></el-input>
+            <el-input class="ipt-fix" size="mini" v-model.number="form.imei" placeholder="请输入IMEI号"></el-input>
           </el-form-item>
           <el-form-item label="设备升级文件">
-              <el-select class="ipt-fix" size="mini" @change="onVersionChange" v-model="form.version" placeholder="请选择">
-                <el-option
-                  v-for="item in firewareList"
-                  :key="item.id"
-                  :label="item.version"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+            <el-select class="ipt-fix" size="mini" @change="onVersionChange" v-model="form.version" placeholder="请选择">
+              <el-option v-for="item in firewareList" :key="item.id" :label="item.version" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -39,8 +23,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import PageTitle from "@/components/PageTitle.vue";
+import { mapGetters, mapActions } from 'vuex'
+import PageTitle from '@/components/PageTitle.vue'
 
 export default {
   data() {
@@ -48,10 +32,10 @@ export default {
       dialogVisible: false,
       currentVersion: {},
       form: {
-        imei: "",
-        version: ""
+        imei: '',
+        version: ''
       }
-    };
+    }
   },
   props: {
     data: {
@@ -64,37 +48,37 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo", "firewareList"]),
+    ...mapGetters(['userInfo', 'firewareList']),
     isAllowConfirm() {
       return this.form.imei && `${this.form.imei}`.length >= 11 && this.form.version
     }
   },
   methods: {
-    ...mapActions(["updateProduce"]),
+    ...mapActions(['updateProduce']),
     onVersionChange(versionId) {
       console.log('onVersionChange', versionId)
-      let [currentVersion] = this.firewareList.filter(item => item.id === versionId)
+      const [currentVersion] = this.firewareList.filter(item => item.id === versionId)
       this.currentVersion = currentVersion
       console.log(currentVersion)
     },
     onDialogShow() {
       if (this.isEditDialog) {
-        this.form = this.data;
+        this.form = this.data
       }
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
     onDialogHide() {
-      this.dialogVisible = false;
+      this.dialogVisible = false
       this.resetDevice()
     },
     resetDevice() {
       this.form = {
-        imei: "",
-        version: ""
+        imei: '',
+        version: ''
       }
     },
     async handleUpdateDevice() {
-      console.log(this.form);
+      console.log(this.form)
       if (this.isAllowConfirm) {
         await this.updateProduce({
           imeis: [this.form.imei],
@@ -106,7 +90,7 @@ export default {
         this.$emit('on-refresh')
       } else {
         this.$message({
-          type: "error",
+          type: 'error',
           message: `请输入正确的信息（IMEI号需要11位以上）`
         })
       }
@@ -115,7 +99,7 @@ export default {
   components: {
     PageTitle
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -157,12 +141,12 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .el-form-item {
   .el-form-item__label {
-    width: d2r(220px)!important;
+    width: d2r(220px) !important;
   }
 }
 
@@ -177,6 +161,6 @@ $basic-ratio: 1.4;
 }
 
 .ipt-half-width {
-      width: d2r(330px) !important;
+  width: d2r(330px) !important;
 }
 </style>

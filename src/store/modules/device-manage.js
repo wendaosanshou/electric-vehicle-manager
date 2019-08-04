@@ -254,6 +254,22 @@ const Login = {
         return Promise.reject(error)
       }
     },
+    async batchImportProducts({ commit, rootState }, data) {
+      try {
+        const result = await $apis.batchImportProducts({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "批量添加成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
     async importProducts({ commit, rootState }, data) {
       try {
         const result = await $apis.importProducts({

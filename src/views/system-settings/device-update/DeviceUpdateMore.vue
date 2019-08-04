@@ -1,34 +1,18 @@
 <template>
   <div class="role-add">
-    <el-button
-      class="button-fix"
-      icon="el-icon-upload"
-      type="primary"
-      size="mini"
-      @click="onDialogShow"
-    >批量升级</el-button>
+    <el-button class="button-fix" icon="el-icon-upload" type="primary" size="mini" @click="onDialogShow">批量升级</el-button>
     <el-dialog class="dialog-fix" title="批量设备升级" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
         <el-form class="user-add-form device-form-fix" label-position="right" label-width="140px" :model="form">
           <el-form-item label="IMEI">
             <el-select multiple filterable class="ipt-fix" size="mini" v-model="imeis" placeholder="请选择IMEI号">
-                <el-option
-                  v-for="item in productPages"
-                  :key="item.imei"
-                  :label="item.imei"
-                  :value="item.imei">
-                </el-option>
-              </el-select>
+              <el-option v-for="item in productPages" :key="item.imei" :label="item.imei" :value="item.imei"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="设备升级文件" class="ipt-select-last">
-              <el-select class="ipt-fix" @change="onVersionChange" v-model="form.version" placeholder="请选择升级文件">
-                <el-option
-                  v-for="item in firewareList"
-                  :key="item.id"
-                  :label="item.version"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+            <el-select class="ipt-fix" @change="onVersionChange" v-model="form.version" placeholder="请选择升级文件">
+              <el-option v-for="item in firewareList" :key="item.id" :label="item.version" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -41,20 +25,20 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import PageTitle from "@/components/PageTitle.vue";
+import { mapGetters, mapActions } from 'vuex'
+import PageTitle from '@/components/PageTitle.vue'
 
 export default {
   data() {
     return {
       dialogVisible: false,
       currentVersion: {},
-      imeis: "", 
+      imeis: '',
       form: {
-        imei: "",
-        version: ""
+        imei: '',
+        version: ''
       }
-    };
+    }
   },
   props: {
     data: {
@@ -67,24 +51,24 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo", "firewareList", "productPages"]),
+    ...mapGetters(['userInfo', 'firewareList', 'productPages'])
   },
   methods: {
-    ...mapActions(["updateProduce"]),
+    ...mapActions(['updateProduce']),
     onVersionChange(versionId) {
       console.log('onVersionChange', versionId)
-      let [currentVersion] = this.firewareList.filter(item => item.id === versionId)
+      const [currentVersion] = this.firewareList.filter(item => item.id === versionId)
       this.currentVersion = currentVersion
       console.log(currentVersion)
     },
     onDialogShow() {
       if (this.isEditDialog) {
-        this.form = this.data;
+        this.form = this.data
       }
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
     onDialogHide() {
-      this.dialogVisible = false;
+      this.dialogVisible = false
       this.resetDeviceDialog()
     },
     async getAllProductPage() {
@@ -92,22 +76,22 @@ export default {
         page_size: 1000,
         page_index: 1,
         imei: '',
-        import_operation: '', //引入操作人
-        update_operation: '', //升级操作人
-        update_time: '', //升级时间
-        import_time: '', //引入时间
-        version: '' //版本
-      });
+        import_operation: '', // 引入操作人
+        update_operation: '', // 升级操作人
+        update_time: '', // 升级时间
+        import_time: '', // 引入时间
+        version: '' // 版本
+      })
     },
     resetDeviceDialog() {
       this.form = {
-        imei: "",
-        version: ""
+        imei: '',
+        version: ''
       }
-      this.imeis = ""
+      this.imeis = ''
     },
     async handleUpdateDevice() {
-      console.log(this.imeis);
+      console.log(this.imeis)
       if (this.imeis && this.imeis.length > 0 && this.currentVersion.version_url) {
         await this.updateProduce({
           imeis: this.imeis,
@@ -119,8 +103,8 @@ export default {
         this.$emit('on-refresh')
       } else {
         this.$message({
-          type: "error",
-          message: "信息输入不完整~"
+          type: 'error',
+          message: '信息输入不完整~'
         })
       }
     }
@@ -128,7 +112,7 @@ export default {
   components: {
     PageTitle
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -170,12 +154,12 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .el-form-item {
   .el-form-item__label {
-    width: d2r(220px)!important;
+    width: d2r(220px) !important;
   }
 }
 
@@ -190,7 +174,7 @@ $basic-ratio: 1.4;
 }
 
 .ipt-half-width {
-      width: d2r(330px) !important;
+  width: d2r(330px) !important;
 }
 
 .ipt-select-last {

@@ -61,7 +61,7 @@
               ></el-input>
             </div>
           </el-col>
-          <el-col :span="4" class="item-btn-wrap">
+          <el-col :span="4" class="item-btn-wrap" v-if="!forbidModify">
             <div class="item-selector-wraper">
               <renew-btn :contract_expire="form.contract_expire"></renew-btn>
             </div>
@@ -303,7 +303,7 @@
     </div>
     <div class="setting-picture-info setting-part-container">
       <page-title class="setting-title" :hasDot="false">照片信息</page-title>
-      <div class="setting-content setting-image-wraper">
+      <div class="setting-content setting-image-wraper" v-if="hasImageItem">
         <img class="setting-image" :src="item" v-for="(item, index) in imagelist" :key="index">
         <el-upload
           class="page-upload"
@@ -311,10 +311,11 @@
           :show-file-list="false"
           :action="imageUploadUrl"
           :on-success="onImageUploadSuccess"
-          v-if="isRecordSetting && isAllowUpload">
+          v-if="hasUpload">
           <i class="el-icon-plus"></i>
         </el-upload>
       </div>
+      <div class="setting-content-empty" v-else>暂无照片信息</div>
     </div>
     <div class="setting-processing-process setting-part-container">
       <page-title class="setting-title" :hasDot="false">业务办理流程</page-title>
@@ -357,11 +358,13 @@
 </template>
 
 <script>
+/* eslint-disable */
+import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import RenewBtn from "./RenewBtn.vue";
 import RenewBtnLog from "./RenewBtnLog.vue";
-import { mapGetters, mapActions } from "vuex";
-const SPLIT_IMAGE_SYMBOL = "$_$";
+
+const SPLIT_IMAGE_SYMBOL = ";";
 
 export default {
   data() {
@@ -404,6 +407,13 @@ export default {
     },
     isAllowUpload() {
       return this.imagelist && this.imagelist.length < 4
+    },
+    hasUpload() {
+      return this.isAllowUpload && this.workItem.process === 4 && this.isRecordSetting
+    },
+    hasImageItem() {
+      let hasImage = this.imagelist && this.imagelist.length > 0
+      return hasImage || this.hasUpload
     },
     getAllImages() {
       const { imgs } = this.form;
@@ -652,6 +662,14 @@ $basic-ratio: 1.4;
         margin-top: 10px;
       }
     }
+    .setting-content-empty {
+      box-sizing: border-box;
+      width: d2r(1300px);
+      min-height: d2r(70px);
+      margin-left: d2r(25px);
+      padding: d2r(18px) 0 d2r(22px) 0;
+      background: #f5f5f6;
+    }
   }
   .setting-time {
     .setting-content {
@@ -688,12 +706,12 @@ $basic-ratio: 1.4;
         width: d2r(46px);
         height: d2r(46px);
         font-size: d2r(46px);
-        color: #9e9db6ff;
+        color: #9e9db6;
         &.icon-large-light {
           width: d2r(46px);
           height: d2r(46px);
           font-size: d2r(46px);
-          color: #ff7525ff;
+          color: #ff7525;
         }
       }
       .card-title {
@@ -722,7 +740,7 @@ $basic-ratio: 1.4;
 
 .record-setting-container.is-dialog-setting {
   padding: d2r(25px) d2r(38px) d2r(33px) d2r(30px);
-  overflow: scroll;
+  overflow: auto;
   .setting-part-container {
     display: flex;
     flex-direction: column;
@@ -748,6 +766,6 @@ $basic-ratio: 1.4;
   box-sizing: border-box;
   max-width: d2r(1232px);
   padding-right: d2r(36px)!important;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

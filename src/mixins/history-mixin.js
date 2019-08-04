@@ -1,6 +1,6 @@
+/* eslint-disable */
 import { mapGetters, mapActions } from "vuex";
 import dayjs from 'dayjs'
-import testApp from '../test-app.js'
 
 export default {
     data() {
@@ -115,6 +115,7 @@ export default {
               type: "error",
               message: '历史轨迹数据转化异常~'
             })
+            reject()
           }
         });
       });

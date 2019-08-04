@@ -538,4 +538,8 @@ $basic-ratio: 1.4;
     background-color: none;
   }
 }
+
+.menu-label {
+  font-size: d2r(14px);
+}
 </style>

@@ -143,7 +143,7 @@ export default {
     },
     init() {
       let [{lng, lat}] = this.allDeviceInfo
-      this.initAMap("map-container", [lng, lat]);
+      this.initAMap("map-container", []);
       this.map.setFitView()
     }
   },

@@ -174,7 +174,7 @@ export default {
         label: '广州',
         value: 0
       }, {
-         label: '深圳',
+        label: '深圳',
         value: 1
       }]
     };
@@ -199,7 +199,7 @@ export default {
 
 .form-content {
   max-height: d2r(600px);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .form-selector {

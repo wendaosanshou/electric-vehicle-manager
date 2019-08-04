@@ -23,121 +23,126 @@ import AppUpdate from './views/system-settings/app-update/AppUpdate.vue'
 import UserFeedback from './views/system-settings/user-feedback/UserFeedback.vue'
 import UserFeedbackDetail from './views/system-settings/user-feedback/UserFeedbackDetail.vue'
 import ChannelManage from './views/system-settings/channel-manage/ChannelManage.vue'
+import AdvertiseManage from './views/system-settings/advertise-manage/AdvertiseManage.vue'
 
 Vue.use(Router);
 
 export default new Router({
   base: process.env.BASE_URL,
   routes: [{
-      path: '/',
-      name: 'home',
-      component: Home,
-      children: [{
-        path: 'location-monitor',
-        name: 'LocationMonitor',
-        component: LocationMonitor
-      }, {
-        path: 'history-track',
-        name: 'HistoryTrack',
-        component: HistoryTrack
-      },{
-        path: 'alarm-monitor',
-        name: 'AlarmMonitor',
-        component: AlarmMonitor
-      },{
-        path: 'alarm-analysis',
-        name: 'AlarmAnalysis',
-        component: AlarmAnalysis
-      }, {
-        path: 'electric-fence',
-        name: 'ElectricFence',
-        component: ElectricFence
-      }, {
-        path: 'user-manage',
-        name: 'UserManage',
-        component: UserManage,
-      }, {
-        path: 'user-add',
-        name: 'UserAdd',
-        component: UserAdd,
-      },{
-        path: 'user-edit',
-        name: 'UserEdit',
-        component: UserAdd,
-      }, {
-        path: 'record-manage',
-        name: 'RecordManage',
-        component: RecordInfoManage
-      }, {
-        path: 'process-manage',
-        name: 'ProcessManage',
-        component: RecordInfoManage
-      }, {
-        path: 'process-search',
-        name: 'ProcessSearch',
-        component: RecordInfoManage
-      }, {
-        path: 'record-setting',
-        name: 'RecordSetting',
-        component: RecordSetting
-      }, {
-        path: 'role-manage',
-        name: 'RoleManage',
-        component: RoleManage
-      }, {
-        path: 'business-manage',
-        name: 'BusinessPointManage',
-        component: BusinessPointManage
-      }, {
-        path: 'equipment-manage',
-        name: 'EquipmentManage',
-        component: BusinessPointManage
-      }, {
-        path: 'app-advisory',
-        name: 'AppAdvisory',
-        component: AppAdvisory
-      }, {
-        path: 'device-manage',
-        name: 'DeviceManage',
-        component: DeviceManage
-      }, {
-        path: 'device-update',
-        name: 'DeviceUpdate',
-        component: DeviceUpdate
-      }, {
-        path: 'device-version',
-        name: 'DeviceVersion',
-        component: DeviceVersion
-      }, {
-        path: 'app-update',
-        name: 'AppUpdate',
-        component: AppUpdate
-      }, {
-        path: 'user-feedback',
-        name: 'UserFeedback',
-        component: UserFeedback
-      }, {
-        path: 'user-feedback-detail',
-        name: 'UserFeedbackDetail',
-        component: UserFeedbackDetail
-      }, {
-        path: 'channel-manage',
-        name: 'ChannelManage',
-        component: ChannelManage
-      }]
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import( /* webpackChunkName: "about" */ './views/About.vue'),
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login,
-    },
+    path: '/',
+    name: 'home',
+    component: Home,
+    children: [{
+      path: 'location-monitor',
+      name: 'LocationMonitor',
+      component: LocationMonitor
+    }, {
+      path: 'history-track',
+      name: 'HistoryTrack',
+      component: HistoryTrack
+    }, {
+      path: 'alarm-monitor',
+      name: 'AlarmMonitor',
+      component: AlarmMonitor
+    }, {
+      path: 'alarm-analysis',
+      name: 'AlarmAnalysis',
+      component: AlarmAnalysis
+    }, {
+      path: 'electric-fence',
+      name: 'ElectricFence',
+      component: ElectricFence
+    }, {
+      path: 'user-manage',
+      name: 'UserManage',
+      component: UserManage,
+    }, {
+      path: 'user-add',
+      name: 'UserAdd',
+      component: UserAdd,
+    }, {
+      path: 'user-edit',
+      name: 'UserEdit',
+      component: UserAdd,
+    }, {
+      path: 'record-manage',
+      name: 'RecordManage',
+      component: RecordInfoManage
+    }, {
+      path: 'process-manage',
+      name: 'ProcessManage',
+      component: RecordInfoManage
+    }, {
+      path: 'process-search',
+      name: 'ProcessSearch',
+      component: RecordInfoManage
+    }, {
+      path: 'record-setting',
+      name: 'RecordSetting',
+      component: RecordSetting
+    }, {
+      path: 'role-manage',
+      name: 'RoleManage',
+      component: RoleManage
+    }, {
+      path: 'business-manage',
+      name: 'BusinessPointManage',
+      component: BusinessPointManage
+    }, {
+      path: 'equipment-manage',
+      name: 'EquipmentManage',
+      component: BusinessPointManage
+    }, {
+      path: 'app-advisory',
+      name: 'AppAdvisory',
+      component: AppAdvisory
+    }, {
+      path: 'device-manage',
+      name: 'DeviceManage',
+      component: DeviceManage
+    }, {
+      path: 'device-update',
+      name: 'DeviceUpdate',
+      component: DeviceUpdate
+    }, {
+      path: 'device-version',
+      name: 'DeviceVersion',
+      component: DeviceVersion
+    }, {
+      path: 'app-update',
+      name: 'AppUpdate',
+      component: AppUpdate
+    }, {
+      path: 'user-feedback',
+      name: 'UserFeedback',
+      component: UserFeedback
+    }, {
+      path: 'user-feedback-detail',
+      name: 'UserFeedbackDetail',
+      component: UserFeedbackDetail
+    }, {
+      path: 'channel-manage',
+      name: 'ChannelManage',
+      component: ChannelManage
+    }, {
+      path: 'advertise-manage',
+      name: 'AdvertiseManage',
+      component: AdvertiseManage
+    }]
+  },
+  {
+    path: '/about',
+    name: 'about',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+  },
   ],
 });

@@ -70,7 +70,7 @@ export default {
       typeList: [{
         label: '业务办理点',
         value: 1
-      },{
+      }, {
         label: '设备安装点',
         value: 2
       }]
@@ -90,10 +90,11 @@ export default {
     },
     async handleAddAttribute() {
       if (!this.form.name || !this.form.note) {
-        return this.$message({
+        this.$message({
           type: "error",
           message: `请输入名称和说明信息！`
         })
+        return Promise.reject()
       }
       await this.addAttribute(this.form);
       this.$emit('onRefresh')
@@ -155,7 +156,7 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .el-form-item {

@@ -1,5 +1,5 @@
 <template>
-  <div class="history-track">
+  <div class="alarm-analysis">
     <div class="track-title">
       <div class="track-time">
         <el-date-picker
@@ -42,17 +42,15 @@
           ></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
-      </div>
-      <div class="title-right">
         <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchAlarm">查询</el-button>
       </div>
     </div>
     <div class="monitor-container">
       <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
       <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
-      <alarm-analysis-table 
-        v-model="isAlarmTableVisible" 
-        :pageIndex="pageIndex" 
+      <alarm-analysis-table
+        v-model="isAlarmTableVisible"
+        :pageIndex="pageIndex"
         :pageSize="pageSize"
         @current-change="handleCurrentChange"
         ></alarm-analysis-table>
@@ -206,7 +204,7 @@ export default {
     init() {
       let [{lng, lat}] = this.allDeviceInfo
       console.log('init', this.allDeviceInfo)
-      this.initAMap("map-container", [lng, lat]);
+      this.initAMap("map-container", []);
       this.map.setFitView()
       this.initPickerTime()
     }
@@ -228,7 +226,7 @@ $basic-ratio: 1.4;
   @return $designpx / $basic-ratio;
 }
 
-.history-track {
+.alarm-analysis {
   padding: d2r(20px) d2r(43px) 0 d2r(42px);
   .track-title {
     box-sizing: border-box;

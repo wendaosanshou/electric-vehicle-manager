@@ -1,23 +1,14 @@
 <template>
   <div class="point-content">
-    <!-- {{businessForm}} -->
+    <!-- {{businessForm}}<br/>{{defaultForm}} -->
+    <!-- {{filterAllOrg}}--{{useOrg}}--{{businessType}} -->
     <div class="point-item" v-if="isAddForm">
       <div class="point-item-label">父节点组织名称</div>
-      <el-input
-        class="item-ipt ipt-fix"
-        v-model="businessForm.parentName"
-        size="mini"
-        placeholder="请填写当前组织名称"
-        disabled></el-input>
+      <el-input class="item-ipt ipt-fix" v-model="businessForm.parentName" size="mini" placeholder="请填写当前组织名称" disabled></el-input>
     </div>
     <div class="point-item">
       <div class="point-item-label">当前组织名称</div>
-      <el-input
-        class="item-ipt ipt-fix"
-        size="mini"
-        v-model="businessForm.name"
-        placeholder="请填写当前组织名称"
-        :disabled="isDeleteForm"></el-input>
+      <el-input class="item-ipt ipt-fix" size="mini" v-model="businessForm.name" placeholder="请填写当前组织名称" :disabled="isDeleteForm"></el-input>
     </div>
     <div class="point-item point-item-textarea">
       <div class="point-item-label">备注</div>
@@ -30,7 +21,8 @@
         :autosize="{ minRows: 10, maxRows: 10}"
         v-model="businessForm.note"
         placeholder="请输入备注信息（50字内）"
-        :disabled="isDeleteForm"></el-input>
+        :disabled="isDeleteForm"
+      ></el-input>
     </div>
     <div class="point-item">
       <div class="point-item-label">组织类型</div>
@@ -40,39 +32,29 @@
         @change="handleOrgChange"
         v-model="businessForm.organization_id"
         :disabled="!hasOrgSelector || isDeleteForm"
-        placeholder="请选择组织类型">
+        placeholder="请选择组织类型"
+      >
         <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
       </el-select>
     </div>
     <div class="point-item">
       <div class="point-item-label">渠道属性</div>
-      <el-select
-        class="item-ipt ipt-fix"
-        size="small"
-        v-model="businessForm.attribute_id"
-        @change="handleAttributeChange"
-        :disabled="disabledAttribute"
-        placeholder="请选择渠道属性">
+      <el-select class="item-ipt ipt-fix" size="small" v-model="businessForm.attribute_id" @change="handleAttributeChange" :disabled="disabledAttribute" placeholder="请选择渠道属性">
         <el-option :label="item.name" :value="item.id" v-for="(item, index) in orgAttribute" :key="index"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
       <div class="btn-wrap">
-        <el-button
-        class="point-btn point-btn-add button-fix"
-        :class="{active: isAllowAdd}"
-        size="mini"
-        type="primary"
-        @click="handleConfirm">{{isDeleteForm ? '删除' : '保存'}}</el-button>
+        <el-button class="point-btn point-btn-add button-fix" :class="{active: isBtnActive}" size="mini" type="primary" @click="handleConfirm">{{isDeleteForm ? '删除' : '保存'}}</el-button>
       </div>
-      <!-- <el-button class="point-btn button-fix" size="mini" @click="onCancleForm">取消</el-button> -->
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import { setTimeout } from 'timers';
+/* eslint-disable */
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { setTimeout } from 'timers'
 
 export default {
   data() {
@@ -80,18 +62,18 @@ export default {
       organization: [],
       attributeDisable: false,
       businessForm: {
-        name: "",
-        note: "",
-        country: "",
-        street: "",
-        parentName: "",
-        parent_id: "",
+        name: '',
+        note: '',
+        country: '',
+        street: '',
+        parentName: '',
+        parent_id: '',
         type: 0,
-        organization_id: "",
-        attribute_id: "",
-        attribute_name: ""
+        organization_id: '',
+        attribute_id: '',
+        attribute_name: ''
       }
-    };
+    }
   },
   props: {
     defaultForm: {
@@ -105,17 +87,17 @@ export default {
   },
   watch: {
     defaultForm() {
-      this.initBusinessForm(this.defaultForm);
+      this.initBusinessForm(this.defaultForm)
     },
     type() {
-      this.initBusinessForm(this.defaultForm);
+      this.initBusinessForm(this.defaultForm)
     },
     $route() {
       this.resetBusinessForm()
     }
   },
   computed: {
-    ...mapGetters(["allOrg", 'businessType', "channelTypes", "orgAttribute"]),
+    ...mapGetters(['allOrg', 'businessType', 'channelTypes', 'orgAttribute']),
     disabledAttribute() {
       return this.attributeDisable || !this.hasOrgSelector || this.isDeleteForm
     },
@@ -132,7 +114,7 @@ export default {
       let useOrg = this.allOrg.filter(item => {
         return [1, 2, 3].indexOf(item.id) > -1
       })
-      let businessPoint = this.businessType === 1 ? { "id": 4, "name": "业务办理点", "note": "" } : { "id": 4, "name": "设备安装点", "note": "" }
+      let businessPoint = this.businessType === 1 ? { id: 4, name: '业务办理点', note: '' } : { id: 4, name: '设备安装点', note: '' }
       return useOrg.concat([businessPoint])
     },
     filterAllOrg() {
@@ -155,33 +137,28 @@ export default {
       if ([1, 2, 3].indexOf(this.businessForm.organization_id) > -1) {
         return 0
       } else {
-        return this.businessType 
+        return this.businessType
       }
     },
-    isAllowAdd() {
+    isBtnActive() {
       const organization_id = this.businessForm['organization_id']
       console.log('organization_id', organization_id)
       return Object.keys(this.businessForm).every(key => {
-        if (
-          ["name", "parent_id", "organization_id", "attribute_id"].indexOf(key) > -1
-        ) {
+        if (['name', 'parent_id', 'organization_id', 'attribute_id'].indexOf(key) > -1) {
           // 如果organization_id小于4则不用判断attribute_id
           if (key === 'attribute_id' && organization_id < 4) {
             return true
           } else {
-            return this.businessForm[key];
+            return this.businessForm[key]
           }
         } else {
-          return true;
+          return true
         }
-      });
+      })
     }
   },
   methods: {
-    ...mapActions(["addBusinessPoint", "editBusinessPoint", "getOrgAttribute", "deleteBusinessPoint"]),
-    onCancleForm() {
-      this.$emit('on-cancle-form')
-    },
+    ...mapActions(['addBusinessPoint', 'editBusinessPoint', 'getOrgAttribute', 'deleteBusinessPoint']),
     handleOrgChange(id) {
       let [currentItem] = this.filterAllOrg.filter(item => item.id === id)
       if (id !== 4) {
@@ -212,8 +189,8 @@ export default {
       }
     },
     initEditBusinessForm() {
-      console.log('filterAllOrg', this.filterAllOrg)
-      this.businessForm = JSON.parse(JSON.stringify(this.defaultForm));
+      console.log('initEditBusinessForm', this.defaultForm)
+      this.businessForm = JSON.parse(JSON.stringify(this.defaultForm))
       if (this.businessForm && this.businessForm.organization_id > 4) {
         // 处理organization_id异常的情况
         this.businessForm.organization_id = 4
@@ -226,20 +203,20 @@ export default {
     },
     resetBusinessForm() {
       this.businessForm = {
-        name: "",
-        note: "",
-        country: "",
-        street: "",
-        parentName: "",
-        parent_id: "",
+        name: '',
+        note: '',
+        country: '',
+        street: '',
+        parentName: '',
+        parent_id: '',
         type: 0,
-        organization_id: "",
-        attribute_id: "",
-        attribute_name: ""
+        organization_id: '',
+        attribute_id: '',
+        attribute_name: ''
       }
     },
     initAddBusinessForm() {
-      let { name, id, country, street, organization_id } = this.defaultForm;
+      let { name, id, country, street, organization_id } = this.defaultForm
       // 1是市
       if (organization_id === 1) {
         country = this.businessForm.name
@@ -261,15 +238,13 @@ export default {
         parent_id: id,
         country,
         street
-      };
+      }
     },
     async handleEditBusinessPoint() {
       try {
-        if (this.isAllowAdd) {
-          console.log("handleEditBusinessPoint", this.businessForm);
-          await this.editBusinessPoint(this.businessForm);
-          this.onCancleForm()
-          this.$emit("onRefresh");
+        if (this.isBtnActive) {
+          console.log('handleEditBusinessPoint', this.businessForm)
+          await this.editBusinessPoint(this.businessForm)
         }
       } catch (error) {
         console.log(error)
@@ -278,7 +253,7 @@ export default {
     async handleAddBusinessPoint() {
       this.initAddBusinessForm()
       try {
-        if (this.isAllowAdd) {
+        if (this.isBtnActive) {
           console.log({
             ...this.businessForm,
             type: this.addBusinessType
@@ -286,9 +261,7 @@ export default {
           await this.addBusinessPoint({
             ...this.businessForm,
             type: this.addBusinessType
-          });
-          this.onCancleForm()
-          this.$emit("onRefresh");
+          })
         }
       } catch (error) {
         console.log(error)
@@ -305,34 +278,33 @@ export default {
         await this.deleteBusinessPoint({
           id: this.defaultForm.id
         })
-        this.$emit('onRefresh')
-        this.onCancleForm()
+
       } catch (error) {
         console.log(error)
       }
     },
     async handleConfirm() {
-      if (this.isAddForm) {
-        await this.handleAddBusinessPoint()
-      } else if (this.isDeleteForm) {
-        await this.handleDeleteBusinessPoint()
-      } else {
-        await this.handleEditBusinessPoint()
+      if (this.isBtnActive) {
+        if (this.isAddForm) {
+          await this.handleAddBusinessPoint()
+        } else if (this.isDeleteForm) {
+          await this.handleDeleteBusinessPoint()
+        } else {
+          await this.handleEditBusinessPoint()
+        }
+        this.$emit('onRefresh')
       }
     },
     async init() {
       this.$nextTick(() => {
-        this.initBusinessForm();
+        this.initBusinessForm()
       })
-      // this.$eventBus.$on('on-refresh-business-point-form', () => {
-      //   this.initBusinessForm();
-      // })
     }
   },
   mounted() {
-     this.init()
+    this.init()
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -347,6 +319,7 @@ $basic-ratio: 1.4;
   width: d2r(985px);
   height: d2r(747px);
   padding-top: d2r(60px);
+  overflow: auto;
   background: #f7f7f7;
   .point-item {
     display: flex;
@@ -359,6 +332,7 @@ $basic-ratio: 1.4;
     .point-item-label {
       width: d2r(154px);
       height: auto;
+      font-size: d2r(14px);
       text-align: right;
     }
     .item-ipt {
@@ -390,7 +364,7 @@ $basic-ratio: 1.4;
 
 .point-btn-add {
   opacity: 0.4;
-  width: d2r(320px)!important;
+  width: d2r(320px) !important;
   &.active {
     opacity: 1;
   }

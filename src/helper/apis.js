@@ -16,7 +16,9 @@ export default {
     return $ajax.post(requestUrl(`alarm/analyse?token=${token}`), data);
   },
   getAlarmLatest(data) {
-    const { token, alarmId, deviceId, alarmValue } = data
+    const {
+ token, alarmId, deviceId, alarmValue 
+} = data
     return $ajax.get(requestUrl(`alarm/latest/${alarmId}/${deviceId}/${alarmValue}?token=${token}`));
   },
   modifyWorkItem(data) {
@@ -93,43 +95,43 @@ export default {
   },
   /**
    * 获取所有角色信息
-   * @param {{token}} data 
+   * @param {{token}} data
    */
   getAllRole(data) {
     return $ajax.get(requestUrl('role/all'), data);
   },
   /**
    * 新增角色
-   * @param {*} data 
+   * @param {*} data
    */
   addRole(data) {
     return $ajax.post(requestUrl('role/add'), data);
   },
   /**
    * 编辑角色
-   * @param {*} data 
+   * @param {*} data
    */
   editRole(data) {
     return $ajax.post(requestUrl('role/edit'), data);
   },
   /**
    * 删除角色
-   * @param {角色id} uri 
-   * @param {角色信息} data 
+   * @param {角色id} uri
+   * @param {角色信息} data
    */
   deleteRole(uri, data) {
     return $ajax.get(requestUrl(`role/delete/${uri}`), data);
   },
   /**
    * 获取所有组织结果
-   * @param {查询条件} data 
+   * @param {查询条件} data
    */
   getAllOrg(data) {
     return $ajax.get(requestUrl('org/all'), data);
   },
   /**
    * 获取所有业务办理点
-   * @param {查询条件} data 
+   * @param {查询条件} data
    */
   getAllBusinessPoint(data) {
     return $ajax.get(requestUrl('business/all'), data);
@@ -139,34 +141,35 @@ export default {
   },
   /**
    * 删除当前业务办理点
-   * @param {查询条件} data 
+   * @param {查询条件} data
    */
   deleteBusinessPoint(data) {
     return $ajax.get(requestUrl(`business/delete/${data.id}`), data);
   },
   /**
    * 编辑业务办理点/业务安装点
-   * @param {*} data 
+   * @param {*} data
    */
   editBusinessPoint(data) {
     return $ajax.post(requestUrl('business/edit'), data);
   },
   /**
    * 获取业务办理点
-   * @param {*} data 
+   * @param {*} data
    */
   getBusinessHandle(data) {
     return $ajax.get(requestUrl('business/handle'), data);
   },
   /**
    * 获取业务安装点
-   * @param {*} data 
+   * @param {*} data
    */
   getBusinessInstall(data) {
     return $ajax.get(requestUrl('business/install'), data);
   },
   getInfoWeb(data) {
-    return $ajax.get(requestUrl(`info/web/${data.index}`), data);
+    const { pageIndex, pageSize } = data
+    return $ajax.get(requestUrl(`info/web/${pageIndex}/${pageSize}`), data);
   },
   addInfoWeb(data) {
     return $ajax.post(requestUrl('info/upload'), data);
@@ -177,7 +180,7 @@ export default {
   deleteInfoWeb(data) {
     return $ajax.get(requestUrl(`info/delete/${data.id}`), data);
   },
-  updateProduce(data){
+  updateProduce(data) {
     const { token } = data
     return $ajax.post(requestUrl(`produce/update?token=${token}`), data);
   },
@@ -194,6 +197,12 @@ export default {
   },
   importProducts(data) {
     return $ajax.post(requestUrl(`produce/import`), data);
+  },
+  batchImportProducts(data) {
+    const { token, formData } = data
+    return $ajax.post(requestUrl(`produce/batch/admin?token=${token}`), formData, {
+      'Content-Type': 'multipart/form-data '
+    });
   },
   deleteProduct(data) {
     const { imei, token } = data
@@ -263,7 +272,9 @@ export default {
     return $ajax.post(requestUrl(`attribute/delete/${id}?token=${token}`), data);
   },
   getAttribute(data) {
-    const { type, token, pageSize, pageIndex } = data
+    const {
+ type, token, pageSize, pageIndex 
+} = data
     return $ajax.post(requestUrl(`attribute/query/${pageSize}/${pageIndex}/${type}?token=${token}`), data);
   },
   resetPassword(data) {

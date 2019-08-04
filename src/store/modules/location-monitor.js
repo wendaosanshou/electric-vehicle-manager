@@ -1,6 +1,7 @@
-import { $apis } from "@/helper";
+/* eslint-disable */
 import Vue from "vue";
 import dayjs from 'dayjs'
+import { $apis } from "@/helper";
 // import testServer from '@/test-service.json'
 
 const vm = new Vue();
@@ -109,10 +110,10 @@ const alarmTypes = [
     value: 0,
     label: "全部告警类型"
   },
-  {
-    value: 1,
-    label: "位移告警"
-  },
+  // {
+  //   value: 1,
+  //   label: "位移告警"
+  // },
   {
     value: 2,
     label: "温度告警"
@@ -129,10 +130,10 @@ const alarmTypes = [
     value: 16,
     label: "断电报警(剪线报警)"
   },
-  {
-    value: 32,
-    label: "震动报警"
-  },
+  // {
+  //   value: 32,
+  //   label: "震动报警"
+  // },
   {
     value: 64,
     label: "摔倒告警"
@@ -141,14 +142,14 @@ const alarmTypes = [
     value: 128,
     label: "超速告警"
   },
-  {
-    value: 256,
-    label: "紧急告警"
-  },
-  {
-    value: 512,
-    label: "非法行驶告警"
-  },
+  // {
+  //   value: 256,
+  //   label: "紧急告警"
+  // },
+  // {
+  //   value: 512,
+  //   label: "非法行驶告警"
+  // },
   {
     value: 1024,
     label: "防盗告警"
@@ -342,6 +343,7 @@ const locationMonitor = {
         if (result.data) {
           let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
           await convertHistoryGps(deviceInfos);
+          console.log(deviceInfos)
           commit("updateDeviceInfo", deviceInfos[0]);
           commit("updateWebDeviceInfo", deviceInfos);
         } else {
@@ -444,7 +446,7 @@ const locationMonitor = {
             .subtract(utcOffset, "minute")
             .valueOf() / 1000;
         let delayTime = 0
-        if (index == 0) {
+        if (index === 0) {
           delayTime = currentTime
           firstTime = currentTime
         } else {

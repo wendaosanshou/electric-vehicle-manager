@@ -21,7 +21,7 @@
         @node-click="handleNodeClick"
       ></el-tree>
     </div>
-      
+
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" type="primary" @click="onDialogConfirm">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
@@ -88,6 +88,7 @@ export default {
           buttonClass: 'btn-small'
         }
       }
+      return {}
     }
   },
   methods: {
@@ -106,7 +107,7 @@ export default {
       this.$emit('onConfirm', this.currentBusinessPoint)
     },
     async initBusinessInfo() {
-       await this.getAllBusinessPoint();
+      await this.getAllBusinessPoint();
     }
   },
   components: {
@@ -159,6 +160,6 @@ $basic-ratio: 1.4;
 
 .role-tree {
   max-height: 450px;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

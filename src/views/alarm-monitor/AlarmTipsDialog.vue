@@ -68,7 +68,7 @@ $basic-ratio: 1.4;
     width: 100%;
     max-height: d2r(611px);
     background: #ffffff;
-    overflow: scroll;
+    overflow: auto;
     padding: 0 d2r(15px);
     border-radius: d2r(4px);
     border: 2px solid rgba(240, 243, 247, 1);

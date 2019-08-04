@@ -518,6 +518,7 @@ $basic-ratio: 1.4;
         }
         .item-label {
           width: d2r(120px);
+          font-size: d2r(14px);
           text-align: right;
         }
         .item-selector {

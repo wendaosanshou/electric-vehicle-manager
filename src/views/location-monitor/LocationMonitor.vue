@@ -2,43 +2,22 @@
   <div class="location-monitor">
     <div class="monitor-title">
       <div class="title-left">
-        <el-select
-          class="ipt-fix"
-          size="mini"
-          v-model="mapValue"
-          placeholder="请选择模式"
-          @change="onMapSelect"
-        >
-          <el-option
-            :label="item.label"
-            :value="item.value"
-            v-for="item in mapList"
-            :key="item.value"
-          ></el-option>
+        <el-select class="ipt-fix" size="mini" v-model="mapValue" placeholder="请选择模式" @change="onMapSelect">
+          <el-option :label="item.label" :value="item.value" v-for="item in mapList" :key="item.value"></el-option>
         </el-select>
       </div>
       <div class="title-right">
-        <el-select
-          class="ipt-fix ipt-selector"
-          size="mini"
-          v-model="searchType"
-          placeholder="请选择账号类型"
-        >
-          <el-option
-            :label="item.label"
-            :value="item.value"
-            v-for="item in accountList"
-            :key="item.value"
-          ></el-option>
+        <el-select class="ipt-fix ipt-selector" size="mini" v-model="searchType" placeholder="请选择账号类型">
+          <el-option :label="item.label" :value="item.value" v-for="item in accountList" :key="item.value"></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
         <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchLocation">查询</el-button>
         <!-- <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchAllDevice">查询全部</el-button> -->
       </div>
     </div>
-    <!-- {{getLocation(allLocationInfo)}}--{{getLocation(allDeviceInfo)}} -->
+    <!-- {{getLocation(allLocationInfo)}} -->
     <div class="monitor-container">
-      <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div>
+      <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
       <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
     </div>
 
@@ -51,19 +30,19 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import MapMixin from "@/mixins/map-mixin";
-import FilingLoseDialog from "./FilingLoseDialog";
-import HistoryTrackDialog from "../history-track/HistoryTrackDialog";
-import LocationDialog from "./LocationDialog";
-import TrackModeDialog from "./TrackModeDialog";
-import ClearHistoryDialog from "./ClearHistoryDialog";
-import { setTimeout } from "timers";
+import { mapGetters, mapActions } from 'vuex'
+import MapMixin from '@/mixins/map-mixin'
+import FilingLoseDialog from './FilingLoseDialog.vue'
+import HistoryTrackDialog from '../history-track/HistoryTrackDialog.vue'
+import LocationDialog from './LocationDialog.vue'
+import TrackModeDialog from './TrackModeDialog.vue'
+import ClearHistoryDialog from './ClearHistoryDialog.vue'
 
 export default {
   mixins: [MapMixin],
   data() {
     return {
+      isInit: false,
       filingDialogVisible: false,
       filingLoseDialogVisible: false,
       historyTrackVisible: false,
@@ -74,32 +53,25 @@ export default {
       mapList: [
         {
           value: 0,
-          label: "地图模式"
+          label: '地图模式'
         },
         {
           value: 1,
-          label: "热力图模式"
+          label: '热力图模式'
         }
       ],
-      searchType: "account",
-      searchValue: ""
-    };
+      searchType: 'account',
+      searchValue: ''
+    }
   },
   computed: {
-    ...mapGetters([
-      "deviceIds",
-      "allLocationInfo",
-      "currentLocationInfo",
-      "deviceInfo",
-      "accountList",
-      "allDeviceInfo"
-    ]),
+    ...mapGetters(['deviceIds', 'allLocationInfo', 'currentLocationInfo', 'deviceInfo', 'accountList', 'allDeviceInfo']),
     isAllowSearch() {
-      return this.searchType && this.searchValue;
+      return this.searchType && this.searchValue
     }
   },
   methods: {
-    ...mapActions(["getWebDevice", "getDeviceInfo", "getDeviceInfoAndUpdate", "getAllDevice"]),
+    ...mapActions(['getWebDevice', 'getDeviceInfo', 'getDeviceInfoAndUpdate', 'getAllDevice']),
     getLocation(list) {
       return list.map(item => {
         return {
@@ -109,85 +81,91 @@ export default {
       })
     },
     async onSearchLocation() {
+      this.isInit = false
       if (this.isAllowSearch) {
         await this.getDeviceInfoAndUpdate({
           type: this.searchType,
           value: this.searchValue
-        });
-        this.drawAMap();
+        })
+        this.drawAMap()
         setTimeout(() => {
-          this.filingDialogVisible = true;
-        }, 300);
+          this.filingDialogVisible = true
+        }, 300)
       } else {
         this.$message({
-          type: "error",
-          message: "请输入正确的查询条件!"
-        });
+          type: 'error',
+          message: '请输入正确的查询条件!'
+        })
       }
     },
     async toogleLocationLabel(className, position, that) {
-      if (className.indexOf("location-marker-label-1") > -1) {
+      if (className.indexOf('location-marker-label-1') > -1) {
         await this.getDeviceInfo({
-          type: "imei",
+          type: 'imei',
           value: this.currentLocationInfo.imei
-        });
-        this.filingDialogVisible = true;
-      } else if (className.indexOf("location-marker-label-2") > -1) {
-        this.historyTrackVisible = true;
-      } else if (className.indexOf("location-marker-label-3") > -1) {
-        this.trackModeVisible = true;
-      } else if (className.indexOf("location-marker-label-4") > -1) {
-        this.filingLoseDialogVisible = true;
-      } else if (className.indexOf("location-marker-label-5") > -1) {
-        this.clearHistoryDialogVisible = true;
+        })
+        this.filingDialogVisible = true
+      } else if (className.indexOf('location-marker-label-2') > -1) {
+        this.historyTrackVisible = true
+      } else if (className.indexOf('location-marker-label-3') > -1) {
+        this.trackModeVisible = true
+      } else if (className.indexOf('location-marker-label-4') > -1) {
+        this.filingLoseDialogVisible = true
+      } else if (className.indexOf('location-marker-label-5') > -1) {
+        this.clearHistoryDialogVisible = true
       }
     },
     onDialogHide() {
-      this.filingDialogVisible = false;
+      this.filingDialogVisible = false
     },
     getHeatMapData() {
-      let heatmapData = this.allDeviceInfo.filter(item => {
-        return item.lat > 0 && item.lng > 0
-      }).map(item => {
-        return {
-          lat: item.lat,
-          lng: item.lng,
-          count: 50
-        }
-      })
+      const heatmapData = this.allDeviceInfo
+        .filter(item => {
+          return item.lat > 0 && item.lng > 0
+        })
+        .map(item => {
+          return {
+            lat: item.lat,
+            lng: item.lng,
+            count: 50
+          }
+        })
       console.log('getHeatMapData', heatmapData)
       return heatmapData
     },
     getLocationArray(deviceInfo) {
       return deviceInfo.map(item => {
-        return [item.lng, item.lat];
-      });
+        return [item.lng, item.lat]
+      })
     },
     drawAMap() {
-      const locationArray = this.getLocationArray(this.allLocationInfo);
-      const [positionCenter] = locationArray;
-      // alert(positionCenter)
-      this.initAMap("map-container", positionCenter);
-      this.addCicleMarkers();
+      const locationArray = this.getLocationArray(this.allLocationInfo)
+      const [positionCenter] = locationArray
+      const position = this.isInit ? [] : positionCenter
+      console.log(positionCenter)
+      this.initAMap('map-container', position)
+      this.addCicleMarkers()
     },
     async drawHeatMap() {
-      let heatMapData = this.getHeatMapData()
-      let [firstItem] = heatMapData
-      let positionCenter = [firstItem.lng, firstItem.lat]
-      this.initHeatMap("map-container", positionCenter, heatMapData);
-      this.heatmap.setZoomAndCenter(8, positionCenter);
+      const heatMapData = this.getHeatMapData()
+      const [firstItem] = heatMapData
+      const positionCenter = [firstItem.lng, firstItem.lat]
+      const position = this.isInit ? [] : positionCenter
+      this.initHeatMap('map-container', position, heatMapData)
+      this.heatmap.setZoomAndCenter(8, position)
     },
-    onMapSelect(value) {
+    onMapSelect() {
       if (this.mapValue === 0) {
         this.drawAMap()
       } else if (this.mapValue === 1) {
         this.drawHeatMap()
       }
     },
-    async onSearchAllDevice() {
-      await this.getWebDevice();
+    async init() {
+      this.isInit = true
+      await this.getWebDevice()
       await this.getAllDevice()
-      this.onMapSelect();
+      this.drawAMap()
     }
   },
   components: {
@@ -198,9 +176,9 @@ export default {
     ClearHistoryDialog
   },
   mounted() {
-    this.onSearchAllDevice();
+    this.init()
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -269,7 +247,7 @@ $basic-ratio: 1.4;
   .dialog-content {
     max-height: d2r(611px);
     background: #ffffff;
-    overflow: scroll;
+    overflow: auto;
     .form-title {
       box-sizing: border-box;
       width: 100%;

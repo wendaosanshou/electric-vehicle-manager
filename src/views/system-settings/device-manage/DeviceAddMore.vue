@@ -1,24 +1,13 @@
 <template>
   <div class="role-add">
-    <el-button
-      class="button-fix btn-add-more"
-      icon="el-icon-folder-add"
-      type="primary"
-      size="mini"
-      @click="onDialogShow"
-    >批量添加</el-button>
+    <el-button class="button-fix btn-add-more" icon="el-icon-folder-add" type="primary" size="mini" @click="onDialogShow">批量添加</el-button>
     <el-dialog class="dialog-fix" title="批量添加设备" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
-          <el-form-item label="IMEI">
-            <el-input
-              class="ipt-fix"
-              size="mini"
-              v-model="form.imei"
-              placeholder="设备文件"
-            ></el-input>
-            <el-upload :show-file-list="false" class="page-upload" action="" :before-upload="onBeforeUpload">
-                <el-button class="button-fix btn-select" size="mini" type="primary">导入文件</el-button>
+          <el-form-item label="设备文件">
+            <el-input class="ipt-fix" size="mini" v-model="filename" placeholder="请导入设备文件" disabled></el-input>
+            <el-upload :show-file-list="false" class="page-upload" action :before-upload="onBeforeUpload">
+              <el-button class="button-fix btn-select" size="mini" type="primary">导入文件</el-button>
             </el-upload>
           </el-form-item>
         </el-form>
@@ -32,21 +21,23 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import PageTitle from "@/components/PageTitle.vue";
-import XLSX from "xlsx";
+import XLSX from 'xlsx'
+import { mapGetters, mapActions } from 'vuex'
+import PageTitle from '@/components/PageTitle.vue'
 
 export default {
   data() {
     return {
       dialogVisible: false,
       authorList: [],
+      file: '',
+      filename: '',
       form: {
-        imei: "",
-        id: "",
-        note: ""
+        imei: '',
+        id: '',
+        note: ''
       }
-    };
+    }
   },
   props: {
     data: {
@@ -59,61 +50,64 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo"])
+    ...mapGetters(['userInfo'])
   },
   methods: {
-    ...mapActions(["importProducts"]),
+    ...mapActions(['importProducts', "batchImportProducts"]),
+    resetForm() {
+      this.file = ''
+      this.filename = ''
+    },
     onBeforeUpload(file) {
-    console.log(file)
-        //   const { name } = file
-    //   let wb = XLSX.read(file)
-    //   console.log(wb)
+      console.log(file)
+      const { name } = file
+      this.file = file
+      this.filename = name
       return Promise.reject()
     },
     onImageUploadSuccess(res) {
-      const { code, data} = res
+      const { code, data } = res
       if (code === '10000') {
         this.$message({
-          type: "success",
-          message: "上传成功!"
+          type: 'success',
+          message: '上传成功!'
         })
       } else {
         this.$message({
-          type: "error",
-          message: "上传失败!"
+          type: 'error',
+          message: '上传失败!'
         })
       }
       console.log('onImageUploadSuccess', res)
     },
     onDialogShow() {
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
     onDialogHide() {
-      this.dialogVisible = false;
-      this.resetDeviceParams()
-    },
-    resetDeviceParams() {
-      this.form = {
-        imei: "",
-        id: "",
-        note: ""
-      }
+      this.dialogVisible = false
+      this.resetForm()
     },
     async handleAddDevice() {
-      if (!this.form.imei || this.form.imei.length !== 15) {
+      if (this.filename && this.filename.length > 0 && this.file) {
+        let formData = new FormData()
+        formData.append('file', this.file)
+        this.batchImportProducts({
+          formData
+        })
+        this.onDialogHide()
+        this.$emit('onRefresh')
+      } else {
         this.$message({
           type: 'error',
-          message: 'IMEI号格式不正确'
+          message: '请先上传批量导入文档'
         })
-      } else {
-        this.onDialogHide()
       }
     }
   },
   components: {
     PageTitle
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -128,7 +122,7 @@ $basic-ratio: 1.4;
 }
 
 .page-upload {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .dialog-title {
@@ -163,6 +157,6 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

@@ -22,27 +22,24 @@
         <el-tabs type="border-card">
           <el-tab-pane label="添加子节点">
             <span slot="label"><i class="el-icon-folder-add"></i> 添加子节点</span>
-            <business-point-add 
-              :defaultForm="currentBusinessPoint" 
+            <business-point-add
+              :defaultForm="currentBusinessPoint"
               type="form-add"
-              @onRefresh="onRefreshBusinessPoint" 
-              @on-cancle-form="onCancleForm"></business-point-add>
+              @onRefresh="onRefreshBusinessPoint"></business-point-add>
           </el-tab-pane>
           <el-tab-pane label="删除节点">
             <span slot="label"><i class="el-icon-delete"></i> 删除节点</span>
-            <business-point-add 
-              :defaultForm="currentBusinessPoint" 
+            <business-point-add
+              :defaultForm="currentBusinessPoint"
               type="form-delete"
-              @onRefresh="onRefreshBusinessPoint" 
-              @on-cancle-form="onCancleForm"></business-point-add>
+              @onRefresh="onRefreshBusinessPoint"></business-point-add>
           </el-tab-pane>
           <el-tab-pane label="修改节点">
             <span slot="label"><i class="el-icon-edit"></i> 修改节点</span>
-            <business-point-add 
-              :defaultForm="currentBusinessPoint" 
+            <business-point-add
+              :defaultForm="currentBusinessPoint"
               type="form-edit"
-              @onRefresh="onRefreshBusinessPoint" 
-              @on-cancle-form="onCancleForm"></business-point-add>
+              @onRefresh="onRefreshBusinessPoint"></business-point-add>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -51,7 +48,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+/* eslint-disable */
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import BusinessPointAdd from "./BusinessPointAdd.vue";
 import BusinessPointDelete from "./BusinessPointDelete.vue";
@@ -102,10 +100,21 @@ export default {
   watch: {
     $route() {
       this.initAllBusinessPoint();
+      this.initBusinessType()
     }
   },
   methods: {
+    ...mapMutations(['updateBusinessType']),
     ...mapActions(["getAllOrg", "getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall', 'getOrgAttribute']),
+    initBusinessType() {
+      const { path } = this.$route
+      console.log('initBusinessType', path)
+      if (path === '/business-manage') {
+        this.updateBusinessType(1)
+      } else if (path === '/equipment-manage') {
+        this.updateBusinessType(2)
+      }
+    },
     async handleGetAttributeList() {
       await this.getOrgAttribute({
         pageSize: 100,
@@ -157,6 +166,8 @@ export default {
     },
     async onRefreshBusinessPoint() {
       this.initAllBusinessPoint()
+      // 刷新后需要清除当前选中的安装点
+      this.currentBusinessPoint = {}
     }
   },
   components: {
@@ -204,12 +215,13 @@ $basic-ratio: 1.4;
       align-items: center;
       width: 100%;
       height: d2r(53px);
+      font-size: d2r(14px);
       padding-left: d2r(23px);
       border-bottom: 1px solid #dddddd;
     }
     .role-tree {
       max-height: d2r(787px);
-      overflow: scroll;
+      overflow: auto;
     }
   }
   .point-content-right {

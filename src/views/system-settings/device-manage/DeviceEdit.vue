@@ -1,23 +1,11 @@
 <template>
   <div class="role-add">
-    <el-button
-      class="button-fix"
-      :icon="tipsConfig.icon"
-      type="primary"
-      size="mini"
-      @click="onDialogShow"
-    >{{tipsConfig.btnText}}</el-button>
+    <el-button class="button-fix" :icon="tipsConfig.icon" type="primary" size="mini" @click="onDialogShow">{{tipsConfig.btnText}}</el-button>
     <el-dialog class="dialog-fix" :title="tipsConfig.titleText" :visible.sync="dialogVisible" @close="onDialogHide">
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
           <el-form-item label="IMEI">
-            <el-input
-              class="ipt-fix"
-              size="mini"
-              v-model="form.imei"
-              placeholder="请输入IMEI"
-              :disabled="isEditDialog"
-            ></el-input>
+            <el-input class="ipt-fix" size="mini" v-model="form.imei" placeholder="请输入IMEI" :disabled="isEditDialog"></el-input>
           </el-form-item>
           <el-form-item label="序号" v-if="isEditDialog">
             <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="请输入序号" disabled></el-input>
@@ -45,8 +33,8 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import PageTitle from "@/components/PageTitle.vue";
+import { mapGetters, mapActions } from 'vuex'
+import PageTitle from '@/components/PageTitle.vue'
 
 export default {
   data() {
@@ -54,11 +42,11 @@ export default {
       dialogVisible: false,
       authorList: [],
       form: {
-        imei: "",
-        id: "",
-        note: ""
+        imei: '',
+        id: '',
+        note: ''
       }
-    };
+    }
   },
   props: {
     data: {
@@ -71,46 +59,47 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo"]),
+    ...mapGetters(['userInfo']),
     isEditDialog() {
       return this.type === 'is-edit'
     },
     isAddDialog() {
       return this.type === 'is-add'
     },
-    tipsConfig () {
+    tipsConfig() {
       if (this.isEditDialog) {
         return {
-        btnText: '修改',
-        titleText: '修改设备',
-        icon: 'el-icon-edit'
-      }
+          btnText: '修改',
+          titleText: '修改设备',
+          icon: 'el-icon-edit'
+        }
       } else if (this.isAddDialog) {
         return {
           btnText: '手动添加',
           titleText: '手动添加设备',
-          icon: 'el-icon-folder-add'
+          icon: 'el-icon-document-add'
         }
       }
+      return {}
     }
   },
   methods: {
-    ...mapActions(["importProducts"]),
+    ...mapActions(['importProducts']),
     onDialogShow() {
       if (this.isEditDialog) {
-        this.form = this.data;
+        this.form = this.data
       }
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
     onDialogHide() {
-      this.dialogVisible = false;
+      this.dialogVisible = false
       this.resetDeviceParams()
     },
     resetDeviceParams() {
       this.form = {
-        imei: "",
-        id: "",
-        note: ""
+        imei: '',
+        id: '',
+        note: ''
       }
     },
     async handleEditDevice() {
@@ -124,8 +113,8 @@ export default {
           operation: this.userInfo.account,
           note: this.form.note,
           imeis: [this.form.imei]
-        };
-        await this.importProducts(params);
+        }
+        await this.importProducts(params)
         this.$emit('onRefresh')
         this.onDialogHide()
       }
@@ -134,7 +123,7 @@ export default {
   components: {
     PageTitle
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -176,6 +165,6 @@ $basic-ratio: 1.4;
 .role-manage-tree-wrap {
   width: 100%;
   height: d2r(500px);
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

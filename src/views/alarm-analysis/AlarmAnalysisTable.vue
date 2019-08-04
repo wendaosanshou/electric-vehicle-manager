@@ -131,7 +131,7 @@ $basic-ratio: 1.4;
   .dialog-content {
     max-height: d2r(611px);
     background: #ffffff;
-    overflow: scroll;
+    overflow: auto;
     .form-title {
       box-sizing: border-box;
       width: 100%;

@@ -1,7 +1,5 @@
 <template>
   <div class="page-record">
-    <!-- {{exportWorkList.length}} -->
-    <!-- {{businessPoint}}--{{role}}--{{business}}--{{isHandleUser}}--{{isStoreManager}} -->
     <div class="record-menu-container">
       <div class="menu-item menu-item-point menu-col-more">
         <div class="item-selector-wraper">
@@ -186,21 +184,6 @@
         </template>
       </div>
       <div class="menu-item menu-col-less menu-item-long" v-if="!isProcessSearch">
-        <!-- <div class="item-selector-wraper">
-          <div class="item-label">合约期</div>
-          <el-select
-            class="item-selector ipt-fix"
-            size="mini"
-            v-model="contractContent"
-            placeholder="请选择">
-            <el-option
-              v-for="item in contractContentList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div> -->
         <div class="item-selector-wraper">
           <div class="item-label">激活状态</div>
           <el-select
@@ -361,7 +344,6 @@
       @on-refresh="handleSearchWrokList"></procss-detail-dialog>
 
 
-
     <!-- 导数据用的table,不需要显示出来 -->
     <el-table
       class="table-fix export-table"
@@ -433,18 +415,19 @@
         <template slot-scope="scope">{{getActiveTips(scope.row.contract_active)}}</template>
       </el-table-column>
     </el-table>
-    
+
   </div>
 </template>
 
 <script>
+/* eslint-disable */
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import dayjs from "dayjs";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import OrgAddDialog from "../system-settings/user-manage/user-add/OrgAddDialog";
-import BtnQuery from "./RecordManageQuery";
-import ProcssDetailDialog from "./ProcssDetailDialog";
+import OrgAddDialog from "../system-settings/user-manage/user-add/OrgAddDialog.vue";
+import BtnQuery from "./RecordManageQuery.vue";
+import ProcssDetailDialog from "./ProcssDetailDialog.vue";
 import { setTimeout } from 'timers';
 
 export default {
@@ -888,7 +871,7 @@ export default {
       }
     },
     initBusinessPointRule() {
-      if (this.isStoreManager || this.isHandleUser) { 
+      if (this.isStoreManager || this.isHandleUser) {
         const { type, attribute_name, name, id } = this.business
         let site_type = type === 1 ? '办理点' : '安装点'
         let attribute_label = attribute_name ? `(${attribute_name}-${site_type})` : ''
@@ -920,7 +903,7 @@ export default {
       vm.handleClearSearch()
       vm.initIsHandleUser()
       vm.initIsStoreManager()
-      vm.handleSearchWrokList();
+      vm.handleSearchWrokList()
     })
   },
   mounted() {
@@ -952,21 +935,19 @@ $basic-ratio: 1.4;
   height: auto;
   padding: 0 d2r(14px) d2r(15px) d2r(11px);
   background: #f5f5f6;
-  overflow: scroll;
+  overflow: auto;
   .menu-item {
-    width: 22%;
+    width: auto;
     height: 100%;
+    margin-left: d2r(31px);
+    &:nth-child(1) {
+      margin-left: 0;
+    }
     &.menu-item-long-label .item-selector-wraper {
       .item-label {
         width: d2r(160px);
         white-space: nowrap;
       }
-    }
-    &.menu-item-long {
-      width: 28%;
-    }
-    &.menu-item-point {
-      width: 30%;
     }
   }
 }
@@ -994,6 +975,7 @@ $basic-ratio: 1.4;
   .item-label {
     width: d2r(110px);
     height: d2r(22px);
+    font-size: d2r(14px);
     text-align: right;
   }
   .item-selector {

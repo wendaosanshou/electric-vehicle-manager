@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <div class="home-sidebar" :class="{'is-collapse': isCollapse}">
+  <div class="home" :class="{'is-collapse': isCollapse}">
+    <div class="home-sidebar">
       <div class="home-sidebar-title">
         <i class="home-sidebar-logo"></i>
         <span class="home-sidebar-text">电动车智慧管理平台</span>
@@ -43,6 +43,7 @@
       </div>
     </div>
     <div class="home-content-container">
+      <div class="menu-part"></div>
       <div class="home-content">
         <div class="home-content-title">
           <div class="home-title-label">欢迎您，登录电动车智慧管理平台！</div>
@@ -127,6 +128,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import { setTimeout, setImmediate } from "timers";
 
@@ -252,77 +254,84 @@ export default {
           children: [
             {
               name: "工作人员管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "user-manage",
               index: "9-1",
               role: "10"
             },
             {
               name: "角色模板管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "role-manage",
               index: "9-2",
               role: "11"
             },
             {
               name: "业务办理点管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "business-manage",
               index: "9-3",
               role: "12"
             },
             {
               name: "设备安装点管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "equipment-manage",
               index: "9-4",
               role: "13",
             },
             {
               name: "渠道属性管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "channel-manage",
               index: "9-11",
               role: "23"
             },
             {
               name: "APP资讯管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "app-advisory",
               index: "9-5",
               role: "14"
             },
             {
+              name: "APP升级管理",
+              logo: "",
+              path: "app-update",
+              index: "9-9",
+              role: "21"
+            },
+            {
+              name: "APP广告管理",
+              logo: "",
+              path: "advertise-manage",
+              index: "9-12",
+              role: "24"
+            },
+            {
               name: "设备管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "device-manage",
               index: "9-6",
               role: "15"
             },
             {
               name: "设备在线升级",
-              logo: "el-icon-location",
+              logo: "",
               path: "device-update",
               index: "9-7",
               role: "16"
             },
             {
               name: "设备版本管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "device-version",
               index: "9-8",
               role: "17"
             },
             {
-              name: "APP升级管理",
-              logo: "el-icon-location",
-              path: "app-update",
-              index: "9-9",
-              role: "21"
-            },
-            {
               name: "客户留言管理",
-              logo: "el-icon-location",
+              logo: "",
               path: "user-feedback",
               index: "9-10",
               role: "22"
@@ -633,27 +642,16 @@ $basic-ratio: 1.4;
   }
 }
 
-.home-content-container {
-  flex: 1;
-  width: auto;
-  overflow: scroll;
-}
 
 .home {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  width: 100vw;
+  width: auto;
   height: 100vh;
-  overflow: hidden;
-  .home-sidebar {
-    width: d2r(340px);
-    min-width: d2r(340px);
-    height: 100vh;
-    background: rgba(48, 48, 48, 1);
-    transition: all 0.1s;
-    &.is-collapse {
+  &.is-collapse {
+    .home-sidebar {
       width: 64px;
       min-width: 64px;
       .home-sidebar-title {
@@ -668,6 +666,20 @@ $basic-ratio: 1.4;
         }
       }
     }
+    .home-content-container {
+      padding-left: 64px;
+    }
+  }
+  .home-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: d2r(340px);
+    min-width: d2r(340px);
+    height: 100vh;
+    background: rgba(48, 48, 48, 1);
+    transition: all 0.1s;
+    z-index: 999;
     .home-sidebar-title {
       box-sizing: border-box;
       display: flex;
@@ -701,7 +713,7 @@ $basic-ratio: 1.4;
       align-items: flex-start;
       width: 100%;
       height: calc(100% - 160px);
-      overflow: scroll;
+      overflow: auto;
       .sidebar-meun-content {
         border-right: 0 !important;
         transition: width 0.3s;
@@ -735,15 +747,23 @@ $basic-ratio: 1.4;
       }
     }
   }
+
+  .home-content-container {
+    box-sizing: border-box;
+    width: 100vw;
+    height: auto;
+    padding-left: d2r(340px);
+    min-width: d2r(1920px);
+  }
   .home-content {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    flex-grow: 1;
-    min-width: d2r(1580px);
     height: 100vh;
-    overflow: scroll;
+    z-index: 1;
+    transition: all 0.1s;
     .home-content-title {
       box-sizing: border-box;
       display: flex;
@@ -814,7 +834,6 @@ $basic-ratio: 1.4;
       box-sizing: border-box;
       width: 100%;
       flex-grow: 1;
-      padding-right: d2r(6px);
     }
   }
 }
