@@ -13,18 +13,18 @@
       </div>
       <div class="dialog-content">
          <el-table class="table-analysis table-fix" size="mini" :data="tableData" border style="width: 100%">
-            <el-table-column align="center" prop="id" label="属性编号">
+            <el-table-column prop="id" align="center" label="类型编号">
               <template slot-scope="scope">
                 {{getAttributeId(scope.row.id)}}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="name" label="属性类型"></el-table-column>
-            <el-table-column align="center" prop="type" label="所属渠道">
+            <el-table-column prop="name" align="center" label="类型名称"></el-table-column>
+            <el-table-column prop="type" align="center" label="所属渠道">
               <template slot-scope="scope">
                 {{getAttributeLable(scope.row.type)}}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="note" label="说明"></el-table-column>
+            <el-table-column prop="note" align="center" label="渠道类型说明"></el-table-column>
         </el-table>
       </div>
       <div slot="footer" class="dialog-footer">

@@ -7,6 +7,7 @@
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
+    <!-- currentLocationInfo: {{currentLocationInfo}} -->
       <!-- {{historylineArr}} -->
       <!-- {{historylineArr}} -->
       <div class="history-dialog-content">
@@ -153,16 +154,23 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       });
     },
+    resetMap() {
+      this.isShowHistoryTrack = false
+      this.map.clearMap();
+    },
     async onSearchHistory() {
       console.log(this.pickerTime);
       this.renderLoading()
       try {
         const [startDate, endDate] = this.pickerTime;
         if (startDate && endDate) {
+          this.resetMap()
+          let utcOffset =  dayjs(startDate).utcOffset()
           await this.getHistoryInfo({
             id: this.currentLocationInfo.id,
-            start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-            end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+            userId: this.currentLocationInfo.user,
+            start: dayjs(startDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss"),
+            end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
           });
           await this.drawHistoryLine();
           this.isShowHistoryTrack = true;

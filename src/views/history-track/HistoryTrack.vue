@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <!-- pickerTime:{{pickerTime}} -->
+    <!-- deviceInfo:{{deviceInfo}} -->
     <div class="monitor-container">
       <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
       <div class="car-marker-menu" v-if="isShowHistoryTrack">
@@ -137,24 +137,30 @@ export default {
     getLineArr(historyInfo) {
       return historyInfo.map(item => [item.x, item.y]);
     },
+    resetMap() {
+      this.isShowHistoryTrack = false
+      this.map.clearMap();
+    },
     async onHistorySearch() {
       const [startDate, endDate] = this.pickerTime;
       try {
         if (startDate && endDate && this.searchValue) {
-          // console.log('utcOffset', dayjs(startDate).utcOffset())
-          let utcOffset =  dayjs(startDate).utcOffset()
+          let utcOffset =  dayjs().utcOffset()
+          console.log(utcOffset)
           this.renderLoading();
           await this.getDeviceInfo({
             type: this.searchType,
             value: this.searchValue
           });
           if (this.deviceInfo && this.deviceInfo.id) {
+            this.resetMap()
             await this.getHistoryInfo({
               id: this.deviceInfo.id,
+              userId: this.deviceInfo.user,
               start: dayjs(startDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss"),
               end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
             });
-            this.drawHistoryLine();
+            await this.drawHistoryLine();
             this.isShowHistoryTrack = true;
           }
         } else {

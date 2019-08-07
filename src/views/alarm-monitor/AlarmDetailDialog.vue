@@ -33,7 +33,7 @@
           <div class="form-title">告警信息</div>
           <div class="form-item-wrap">
             <div class="form-item">告警时间：{{getUtcOffsestTime(currentAlarm.signal_time)}}</div>
-            <div class="form-item">告警事件：{{getAlarmLabel(currentAlarm.note)}}</div>
+            <div class="form-item">告警事件：{{getAlarmLabel(currentAlarm.alarm)}}</div>
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
@@ -66,7 +66,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['deviceInfo', 'alarmLatest', 'alarmTypes', 'currentAlarm']),
+    ...mapGetters(['deviceInfo', 'alarmLatest', 'currentAlarm', 'alarmTypeList']),
     alarmLatestInfo() {
       if (this.alarmLatest && this.alarmLatest.length > 0) {
         return this.alarmLatest[0]
@@ -88,10 +88,13 @@ export default {
   },
   methods: {
     getAlarmLabel(alarm) {
-      if (alarm && alarm.length > 0) {
-        return alarm.replace(/[^\u4e00-\u9fa5]/g, '')
-      }
-      return ''
+      let alarmLable = ''
+      this.alarmTypeList.forEach(item => {
+        if (item.value === alarm) {
+          alarmLable = item.content
+        }
+      });
+      return alarmLable
     },
     onDialogHide() {
       this.$emit('change', false)

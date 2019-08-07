@@ -83,8 +83,16 @@ export default {
               label: "设备安装点管理"
             },
             {
+              id: 23,
+              label: "渠道属性管理"
+            },
+            {
               id: 14,
               label: "APP资讯管理"
+            },
+            {
+              id: 21,
+              label: "APP升级管理"
             },
             {
               id: 15,
@@ -111,16 +119,8 @@ export default {
             //   label: "商户APP现场安装"
             // },
             {
-              id: 21,
-              label: "APP升级管理"
-            },
-            {
               id: 22,
               label: "客户留言管理"
-            },
-            {
-              id: 23,
-              label: "渠道属性管理"
             }
           ]
         }

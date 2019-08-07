@@ -65,58 +65,69 @@ const Login = {
     alarmAnalyseTotal: 0,
     alarmTypeList: [
       // {
+      //   value: 1,
       //   icon: "weiyi",
-      //   content: "位移报警",
+      //   content: "位移报警（未启用）",
       //   count: 0
       // },
       {
+        value: 2,
         icon: "gaowen",
-        content: "温度报警",
+        content: "高温告警",
         count: 0
       },
       {
+        value: 4,
         icon: "neizhidiya",
-        content: "电池低电压报警",
+        content: "电池低电压告警",
         count: 0
       },
       {
+        value: 8,
         icon: "duandian",
-        content: "电瓶低电压报警",
+        content: "电瓶低电压告警",
         count: 0
       },
       {
+        value: 16,
         icon: "duandian2",
-        content: "断电报警(剪线报警)",
+        content: "电瓶断电/剪线告警",
         count: 0
       },
       // {
+      //   value: 32,
       //   icon: "zhendong",
-      //   content: "震动告警",
+      //   content: "震动报警（未启用）",
       //   count: 0
       // },
       {
+        value: 64,
         icon: "suaidao",
-        content: "摔倒报警",
+        content: "车辆碰撞/倾覆告警",
         count: 0
       },
       {
+        value: 128,
         icon: "chaosu",
         content: "超速告警",
         count: 0
       },
       // {
+      //   value: 256,
       //   icon: "jinjigaojing",
-      //   content: "紧急报警",
+      //   content: "紧急报警（未启用）",
       //   count: 0
       // },
       // {
+      //   value: 512,
       //   icon: "feifaxingshi",
-      //   content: "非法行驶报警",
+      //   content: "非法行驶报警（未启用）",
       //   count: 0
       // },
       {
+        value: 1024,
         icon: "fangdao",
-        content: "防盗告警",
+        content: "车辆异常移动告警",
         count: 0
       }
     ]
@@ -128,22 +139,16 @@ const Login = {
     updateAlarmLatest(state, alarmLatest) {
       console.log('alarmLatest', alarmLatest)
       state.alarmLatest = alarmLatest;
-      // todo delete
-      // state.alarmLatest[0].note = '震动告警'
-      // 更新alarmTypeList
       // 重置count
       state.alarmTypeList.forEach((item) => {
         item.count = 0
       })
       state.alarmTypeClass = ''
       alarmLatest.forEach((item) => {
-        const { note } = item;
+        const { alarm } = item;
         state.alarmTypeList.forEach((alarmTypeItem) => {
-          const alarmTips = alarmTypeItem.content.substr(0, 2);
-          console.log('--note--', note, alarmTips)
-          if (note.indexOf(alarmTips) > -1) {
+          if (alarm === alarmTypeItem.value) {
             alarmTypeItem.count += 1;
-            console.log('alarmLatest', alarmTips, alarmTypeItem)
             // 显示最后一个class
             item.iconClass = `item-icon-${alarmTypeItem.icon}`
             state.currentAlarm = item
@@ -154,19 +159,15 @@ const Login = {
     updateAlarmAnalyse(state, result) {
       state.alarmAnalyse = result.data;
       state.alarmAnalyseTotal = result.total
-      // todo delete
-      // state.alarmAnalyse[1].note = '震动告警'
-      // 更新alarmTypeList
       // 重置count
       state.alarmTypeList.forEach((item) => {
         item.count = 0
       })
       state.alarmTypeClass = ''
       result.data.forEach((item) => {
-        const { note } = item;
+        const { alarm } = item;
         state.alarmTypeList.forEach((alarmTypeItem) => {
-          const alarmTips = alarmTypeItem.content.substr(0, 2);
-          if (note.indexOf(alarmTips) > -1) {
+          if (alarm === alarmTypeItem.value) {
             item.iconClass = `item-icon-${alarmTypeItem.icon}`
             alarmTypeItem.count += 1;
             state.currentAlarm = item
@@ -243,6 +244,13 @@ const Login = {
     alarmLatest: state => state.alarmLatest,
     alarmAnalyse: state => state.alarmAnalyse,
     alarmTypeList: state => state.alarmTypeList,
+    alarmTypes: state => {
+      let alarmTypes = [{
+        value: 0,
+        content: "全部",
+      }, ...state.alarmTypeList]
+      return alarmTypes
+    },
     alarmTypeClass: state => state.alarmTypeClass,
     currentAlarm: state => state.currentAlarm,
     alarmAnalyseTotal: state => state.alarmAnalyseTotal

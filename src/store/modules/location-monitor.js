@@ -105,57 +105,6 @@ const convertHistoryGps = async list => {
   }
 };
 
-const alarmTypes = [
-  {
-    value: 0,
-    label: "全部告警类型"
-  },
-  // {
-  //   value: 1,
-  //   label: "位移告警"
-  // },
-  {
-    value: 2,
-    label: "温度告警"
-  },
-  {
-    value: 4,
-    label: "电池低电压报警"
-  },
-  {
-    value: 8,
-    label: "电瓶低电压报警"
-  },
-  {
-    value: 16,
-    label: "断电报警(剪线报警)"
-  },
-  // {
-  //   value: 32,
-  //   label: "震动报警"
-  // },
-  {
-    value: 64,
-    label: "摔倒告警"
-  },
-  {
-    value: 128,
-    label: "超速告警"
-  },
-  // {
-  //   value: 256,
-  //   label: "紧急告警"
-  // },
-  // {
-  //   value: 512,
-  //   label: "非法行驶告警"
-  // },
-  {
-    value: 1024,
-    label: "防盗告警"
-  }
-]
-
 const accountList = [
   {
     value: "account",
@@ -221,7 +170,6 @@ const locationMonitor = {
     webDeviceInfo: [],
     allDeviceInfo: [],
     deviceInfo: {},
-    alarmTypes: alarmTypes,
     accountList: accountList,
     pickerOptions: pickerOptions
   },
@@ -407,16 +355,28 @@ const locationMonitor = {
           if (result.data && result.data.length > 1000) {
             vm.$message({
               type: "warning",
-              message: "该设备历史轨迹数据较多，请耐心等待!"
+              message: "该设备轨迹数据较多，请耐心等待~"
             });
           }
-          await convertHistoryGps(result.data);
-          commit("updateHistoryInfo", result.data);
+          let devices = []
+          let gpsDatas = []
+          result.data.forEach(item => {
+            if (item.device && devices.indexOf(item.device) === -1) {
+              devices.push(item.device)
+            }
+          })
+          if (devices.length > 1) {
+            gpsDatas = result.data.filter(item => item.device === devices[devices.length - 1])
+          } else {
+            gpsDatas = result.data
+          }
+          await convertHistoryGps(gpsDatas);
+          commit("updateHistoryInfo", gpsDatas);
         } else {
           commit("updateHistoryInfo", []);
           vm.$message({
             type: "error",
-            message: "未查到历史轨迹信息!"
+            message: "暂无轨迹数据~"
           });
           return Promise.reject()
         }
@@ -468,7 +428,6 @@ const locationMonitor = {
         return [item.lng, item.lat];
       });
     },
-    alarmTypes: state => state.alarmTypes,
     accountList: state => state.accountList,
     pickerOptions: state => state.pickerOptions,
     currentLocationInfo: state => state.currentLocationInfo,

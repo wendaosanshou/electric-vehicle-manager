@@ -10,7 +10,7 @@
           placeholder="请选择告警类型"
         >
           <el-option
-            :label="item.label"
+            :label="item.content"
             :value="item.value"
             v-for="item in alarmTypes"
             :key="item.value"

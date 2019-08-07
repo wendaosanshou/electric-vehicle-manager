@@ -55,7 +55,7 @@
         <el-table-column prop="imei" align="center" label="IMEI"></el-table-column>
         <el-table-column prop="operation" align="center" label="创建人"></el-table-column>
         <el-table-column prop="import_time" align="center" label="入库时间"></el-table-column>
-        <el-table-column prop="is_install" align="center" label="绑定状态">
+        <el-table-column prop="is_install" align="center" label="使用状态">
           <template slot-scope="scope">
             {{getInstallStatus(scope.row.is_install)}}
           </template>

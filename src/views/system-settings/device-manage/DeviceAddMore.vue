@@ -49,8 +49,6 @@ export default {
       file: '',
       filename: '',
       form: {
-        imei: '',
-        id: '',
         note: ''
       }
     }
@@ -73,6 +71,7 @@ export default {
     resetForm() {
       this.file = ''
       this.filename = ''
+      this.form.note = ''
     },
     onBeforeUpload(file) {
       console.log(file)

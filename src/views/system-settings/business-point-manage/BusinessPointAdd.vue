@@ -1,5 +1,6 @@
 <template>
   <div class="point-content">
+    <!-- {{businessForm}} -->
     <!-- {{businessForm}}<br/>{{defaultForm}} -->
     <!-- {{filterAllOrg}}--{{useOrg}}--{{businessType}} -->
     <div class="point-item" v-if="isAddForm">
@@ -189,16 +190,18 @@ export default {
       }
     },
     initEditBusinessForm() {
-      console.log('initEditBusinessForm', this.defaultForm)
-      this.businessForm = JSON.parse(JSON.stringify(this.defaultForm))
-      if (this.businessForm && this.businessForm.organization_id > 4) {
-        // 处理organization_id异常的情况
-        this.businessForm.organization_id = 4
-      }
-      const { attribute_id, organization_id } = this.businessForm
-      this.handleOrgChange(organization_id)
-      if (this.businessForm && this.businessForm.children) {
-        delete this.businessForm.children
+      console.log('initEditBusinessForm', JSON.parse(JSON.stringify(this.defaultForm)))
+      if (this.defaultForm && Object.keys(this.defaultForm).length > 0) {
+         this.businessForm = JSON.parse(JSON.stringify(this.defaultForm))
+        if (this.businessForm && this.businessForm.organization_id > 4) {
+          // 处理organization_id异常的情况
+          this.businessForm.organization_id = 4
+        }
+        const { attribute_id, organization_id } = this.businessForm
+        this.handleOrgChange(organization_id)
+        if (this.businessForm && this.businessForm.children) {
+          delete this.businessForm.children
+        }
       }
     },
     resetBusinessForm() {
