@@ -2,51 +2,64 @@
   <div class="role-add">
     <el-button
       class="button-fix"
-      icon="el-icon-refresh"
+      :icon="dialogTips.icon"
       type="primary"
       size="mini"
       @click="onDialogShow"
-    >添加广告</el-button>
+    >{{dialogTips.btn}}</el-button>
     <el-dialog
       class="dialog-fix"
-      title="添加广告"
+      :title="dialogTips.title"
       :visible.sync="dialogVisible"
-      @close="onDialogHide"
-    >
+      @close="onDialogHide">
       <div class="dialog-content">
         <el-form
           class="user-add-form device-form-fix"
           label-position="right"
           label-width="220px"
           :model="form">
+          <el-form-item label="序号" v-if="isEdit">
+            <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="请输入序号" disabled></el-input>
+          </el-form-item>
           <el-form-item label="上传图片">
             <div class="form-btn-wrap">
               <el-input
                 class="ipt-fix ipt-half-width"
                 size="mini"
-                v-model="form.download"
+                v-model="form.img_url"
                 placeholder="请选择您要上传的图片"
                 disabled
               ></el-input>
               <el-upload
                 :show-file-list="false"
                 class="page-upload"
+                accept="image/*"
                 :action="imageUploadUrl"
-                :before-upload="onBeforeUpload"
-                :on-success="onImageUploadSuccess"
-              >
+                :on-success="onImageUploadSuccess">
                 <el-button class="button-fix btn-select" size="mini" type="primary">本地文件选择</el-button>
               </el-upload>
             </div>
           </el-form-item>
           <el-form-item label="跳转url">
-            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入app名称" disabled></el-input>
+            <el-input class="ipt-fix" size="mini" v-model="form.page_url" placeholder="请输入跳转url"></el-input>
           </el-form-item>
           <el-form-item label="生效时间">
-            <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称" disabled></el-input>
+            <el-date-picker
+              class="ipt-fix ipt-timer-selector"
+              v-model="form.start_time"
+              type="datetime"
+              size="mini"
+              placeholder="选择生效时间">
+            </el-date-picker>
           </el-form-item>
           <el-form-item label="截止时间">
-            <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称" disabled></el-input>
+            <el-date-picker
+              class="ipt-fix ipt-timer-selector"
+              v-model="form.end_time"
+              type="datetime"
+              size="mini"
+              placeholder="截止时间">
+            </el-date-picker>
           </el-form-item>
           <el-form-item label="备注说明">
             <el-input type="textarea"
@@ -57,10 +70,11 @@
             :autosize="{ minRows: 10, maxRows: 10}"
             v-model="form.note" placeholder="请输入版本说明（200字内）"></el-input>
           </el-form-item>
+          
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="handleAddFirmware">确 定</el-button>
+        <el-button size="mini" type="primary" @click="handleConfirmAdvertise">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -69,14 +83,15 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import dayjs from 'dayjs'
 import PageTitle from "@/components/PageTitle.vue";
 
 export default {
   data() {
     return {
+      pickerTime: [],
       loading: '',
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/file/apk",
       form: {
         name: "",
         img_url: "",
@@ -88,20 +103,41 @@ export default {
     };
   },
   props: {
-    data: {
+    advertiseData: {
       type: Object,
       default: () => {}
     },
     type: {
       type: String,
-      default: "is-edit"
+      default: "is-add"
     }
   },
   computed: {
-    ...mapGetters(["userInfo"])
+    ...mapGetters(["userInfo"]),
+    isEdit() {
+      return this.type && this.type === 'is-edit'
+    },
+    isAdd() {
+      return this.type && this.type === 'is-add'
+    },
+    dialogTips() {
+      if (this.isEdit) {
+        return {
+          btn: '编辑',
+          title: '编辑广告',
+          icon: 'el-icon-edit'
+        }
+      } else {
+        return {
+          btn: '添加广告',
+          title: '添加广告',
+          icon: 'el-icon-document-add'
+        }
+      }
+    }
   },
   methods: {
-    ...mapActions(["importProducts", "addApkFile"]),
+    ...mapActions(["addGuide", "addApkFile"]),
     onBeforeUpload(file) {
       const { name } = file
       console.log(name)
@@ -117,33 +153,22 @@ export default {
         return Promise.reject()
       }
     },
-    getApkName(name) {
-      let apkName = ''
-      if (name.indexOf('merchant') > -1) {
-        apkName = '易骑商家'
-      } else if (name.indexOf('eriding') > -1) {
-        apkName = '易骑无忧'
-      }
-      return apkName
-    },
-    onImageUploadSuccess(res, file) {
+    onImageUploadSuccess(res) {
       const { code, data } = res;
-      const { name } = file
       if (code === "10000") {
-        this.form.version = name.replace(/([^\d]+)(\d+)(_*)(\d*)(.apk)/gi, '$2')
-        this.form.name = this.getApkName(name)
         this.$message({
           type: "success",
           message: "上传成功!"
         });
-        this.form.download = data;
+        console.log(data)
+        this.form.img_url = data
       } else {
         this.$message({
           type: "error",
           message: "上传失败!"
         });
       }
-      this.loading.close()
+      console.log("onImageUploadSuccess", res);
     },
     renderLoading() {
       this.loading = this.$loading({
@@ -155,24 +180,42 @@ export default {
     },
     clearForm() {
       this.form = {
-        version: "",
-        download: "",
-        operation: "",
         name: "",
-        note: "",
-        upgrade: 1
+        img_url: "",
+        page_url: "",
+        start_time: "",
+        end_time: "",
+        note: ""
       }
     },
-    async handleAddFirmware() {
-      if (this.form.name && this.form.download && this.form.version && this.form.note) {
-        await this.addApkFile({
-          name: this.form.name,
-          operation: this.userInfo.account,
-          version: this.form.version,
-          download: this.form.download,
-          note: this.form.note,
-          upgrade: this.form.upgrade
-        });
+    async handleAddAdvertise() {
+      await this.addGuide({
+        name: this.form.name,
+        img_url: this.form.img_url,
+        page_url: this.form.page_url,
+        start_time: dayjs(this.form.start_time).format("YYYY-MM-DD HH:mm:ss"),
+        end_time: dayjs(this.form.end_time).format("YYYY-MM-DD HH:mm:ss"),
+        note: this.form.note
+      });
+    },
+    async handleEditAdvertise() {
+      // await this.addGuide({
+      //   name: this.form.name,
+      //   img_url: this.form.img_url,
+      //   page_url: this.form.page_url,
+      //   start_time: dayjs(this.form.start_time).format("YYYY-MM-DD HH:mm:ss"),
+      //   end_time: dayjs(this.form.end_time).format("YYYY-MM-DD HH:mm:ss"),
+      //   note: this.form.note
+      // });
+    },
+    async handleConfirmAdvertise() {
+      const isAllowConfirm = this.form.img_url && this.form.page_url && this.form.start_time && this.form.end_time && this.form.note
+      if (isAllowConfirm) {
+        if (this.isAdd) {
+          await this.handleAddAdvertise()
+        } else {
+          await this.handleEditAdvertise()
+        }
         this.clearForm()
         this.$emit('onRefresh')
         this.onDialogHide()
@@ -184,8 +227,8 @@ export default {
       }
     },
     onDialogShow() {
-      if (this.isEditDialog) {
-        this.form = this.data;
+      if (this.isEdit) {
+        this.form = this.advertiseData;
       }
       this.dialogVisible = true;
     },
@@ -263,5 +306,9 @@ $basic-ratio: 1.4;
 
 .ipt-half-width {
   width: d2r(330px) !important;
+}
+
+.ipt-timer-selector {
+  width: 100% !important;
 }
 </style>

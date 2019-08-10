@@ -323,10 +323,8 @@
       <page-title class="setting-title" :hasDot="false">业务办理流程</page-title>
       <div class="setting-content">
         <div class="box-card">
-          <i
-            class="el-icon-s-order icon-large-gray"
-            :class="{'icon-large-light' : workItem.process >= 1}"
-          ></i>
+          <i class="el-icon-s-order icon-large-gray"
+            :class="{'icon-large-light' : workItem.process >= 1}"></i>
           <div class="card-title">预约登记</div>
           <div class="card-title-desc">预约时间：{{getTimeLabel(workItem.pre_time)}}</div>
         </div>
@@ -371,7 +369,6 @@ const SPLIT_IMAGE_SYMBOL = ";";
 export default {
   data() {
     return {
-      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
       form: {
         user: "",
         address: "",
@@ -395,8 +392,15 @@ export default {
   },
   computed: {
     ...mapGetters(["workItem", "vehicleInfo"]),
+    isProcessManage() {
+      return this.$route && this.$route.name === "ProcessManage";
+    },
+    isRecordManage() {
+      return this.$route && this.$route.name === "RecordManage";
+    },
     forbidModify() {
-      return this.workItem && this.workItem.process !== 4
+      // 状态不是已安装或者是办理状态管理 都无法修改
+      return this.workItem && this.workItem.process !== 4 || this.isProcessManage
     },
     imagelist() {
       const { imgs } = this.form;
@@ -511,8 +515,6 @@ export default {
           message: "上传成功!"
         });
         this.form.imgs = this.form.imgs ? `${this.form.imgs}${SPLIT_IMAGE_SYMBOL}${data}` : data
-        // this.form.imgs = data;
-        // console.log(this.form);
       } else {
         this.$message({
           type: "error",

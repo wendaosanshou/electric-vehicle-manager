@@ -30,7 +30,7 @@
               <el-upload
                 :show-file-list="false"
                 class="page-upload"
-                :action="imageUploadUrl"
+                :action="firmwareUploadUrl"
                 :before-upload="onBeforeUpload"
                 :on-success="onImageUploadSuccess"
               >
@@ -72,7 +72,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/file/firmware",
+      firmwareUploadUrl: "http://47.92.237.140/api/v1/file/firmware",
       form: {
         version: "",
         version_url: "",

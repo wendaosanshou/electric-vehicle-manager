@@ -4,8 +4,10 @@ import dayjs from 'dayjs'
 export default {
   data() {
     return {
-      fileUploadUrl: "http://47.92.237.140/api/v1/img/web",
-      batchImportUrl: "http://47.92.237.140/api/v1/produce/batch/admin"
+      apkUploadUrl: "http://47.92.237.140/api/v1/file/apk",
+      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
+      htmlUploadUrl: "http://47.92.237.140/api/v1/img/guide",
+      firmwareUploadUrl: "http://47.92.237.140/api/v1/file/firmware"
     }
   },
   computed: {

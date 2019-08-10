@@ -88,7 +88,6 @@ export default {
     return {
       loading: '',
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/file/apk",
       form: {
         version: "",
         download: "",

@@ -108,8 +108,6 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
-      htmlUploadUrl: "http://47.92.237.140/api/v1/img/guide",
       form: {
         title: "",
         content: "",

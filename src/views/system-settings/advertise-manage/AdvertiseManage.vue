@@ -3,32 +3,34 @@
     <div class="advertise-manage-title">
       <page-title>APP广告管理</page-title>
       <div class="manage-title-container">
-        <advertise-manage-add></advertise-manage-add>
+        <advertise-manage-add @onRefresh="onSearchAllGuide"></advertise-manage-add>
       </div>
     </div>
+    <!-- {{allGuide[0]}} -->
     <div class="table-container">
       <el-table
         ref="userTable"
         class="table-fix table-disable-select-all"
         size="mini"
-        :data="[]"
+        :data="allGuide"
         border
-        style="width: 100%"
-      >
-        <el-table-column align="center" prop="id" label="序号"></el-table-column>
-        <el-table-column align="center" prop="name" label="广告页图片"></el-table-column>
-        <el-table-column align="center" prop="version" label="广告页链接"></el-table-column>
-        <el-table-column align="center" prop="update_time" label="创建人"></el-table-column>
-        <el-table-column align="center" prop="operation" label="创建时间"></el-table-column>
-        <el-table-column align="center" prop="note" label="生效时间"></el-table-column>
-        <el-table-column align="center" prop="download" label="截止时间"></el-table-column>
-        <!-- <el-table-column align="center" width="160" label="操作">
+        style="width: 100%">
+        <el-table-column align="center" prop="id" width="70" label="序号" sortable></el-table-column>
+        <el-table-column align="center" prop="img_url" width="220" label="广告页图片" sortable></el-table-column>
+        <el-table-column align="center" prop="page_url" width="180"  label="广告页链接" sortable></el-table-column>
+        <el-table-column align="center" prop="create_time" width="180"  label="创建时间" sortable></el-table-column>
+        <el-table-column align="center" prop="start_time" width="180"  label="生效时间" sortable></el-table-column>
+        <el-table-column align="center" prop="end_time" width="180"  label="截止时间" sortable></el-table-column>
+        <el-table-column label="操作" align="center" width="280">
           <template slot-scope="scope">
             <div class="btn-container">
+              <advertise-manage-add type="is-edit" :advertiseData="deepClone(scope.row)" @onRefresh="onSearchAllGuide"></advertise-manage-add>
+              <div class="part-line"></div>
+              <advertise-delete :advertiseData="deepClone(scope.row)" @onRefresh="onSearchAllGuide"/>
             </div>
           </template>
-        </el-table-column> -->
-        <el-table-column align="center" prop="download" label="备注信息"></el-table-column>
+        </el-table-column>
+        <el-table-column align="center" prop="note" width="220"  label="备注信息" sortable></el-table-column>
       </el-table>
     </div>
 
@@ -39,7 +41,7 @@
         :current-page="pageIndex"
         :page-size="pageSize"
         layout="prev, pager, next, jumper"
-        :total="apkListTotal"
+        :total="allGuideTotal"
       ></el-pagination>
     </div>
   </div>
@@ -50,6 +52,7 @@ import dayjs from "dayjs";
 import { mapGetters, mapActions } from "vuex";
 import PageTitle from "@/components/PageTitle.vue";
 import AdvertiseManageAdd from "./AdvertiseManageAdd.vue";
+import AdvertiseDelete from "./AdvertiseDelete.vue";
 
 export default {
   data() {
@@ -62,42 +65,37 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["apkList", "apkListTotal"])
+    ...mapGetters(["allGuide", "allGuideTotal"])
   },
   methods: {
-    ...mapActions(["getApkList"]),
+    ...mapActions(["getAllGuide"]),
     onClearSearchParams() {
-      this.version = "";
-      this.uploadDate = "";
-      this.operation = "";
-    },
-    getUpgradeLable(upgrade) {
-      return upgrade === 1 ? '强制升级' : '非强制升级'
     },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data));
     },
-    onSearchApkList() {
-      this.getApkList({
-        page_size: this.pageSize,
-        page_index: this.pageIndex
+    onSearchAllGuide() {
+      this.getAllGuide({
+        pageSize: this.pageSize,
+        pageIndex: this.pageIndex
       });
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize;
-      this.onSearchApkList();
+      this.onSearchAllGuide();
     },
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex;
-      this.onSearchApkList();
+      this.onSearchAllGuide();
     }
   },
   components: {
     PageTitle,
-    AdvertiseManageAdd
+    AdvertiseManageAdd,
+    AdvertiseDelete
   },
   mounted() {
-    this.onSearchApkList();
+    this.onSearchAllGuide();
   }
 };
 </script>
@@ -206,5 +204,10 @@ $basic-ratio: 1.4;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+}
+
+.image-picture {
+  width: d2r(80px);
+  height: auto;
 }
 </style>

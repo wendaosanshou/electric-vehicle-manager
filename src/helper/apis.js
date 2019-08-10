@@ -288,5 +288,17 @@ export default {
   addGuide(data) {
     const { token } = data
     return $ajax.post(requestUrl(`guide/add?token=${token}`), data);
+  },
+  getAllGuide(data) {
+    const { pageIndex, pageSize, token } = data
+    return $ajax.get(requestUrl(`/guide/query/${pageSize}/${pageIndex}?token=${token}`), data);
+  },
+  deleteGuide(data) {
+    const { id, token } = data
+    return $ajax.get(requestUrl(`guide/delete/${id}?token=${token}`), data);
+  },
+  editGuide(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`guide/add?token=${token}`), data);
   }
 };

@@ -305,7 +305,6 @@ const SPLIT_IMAGE_SYMBOL = "$_$";
 export default {
   data() {
     return {
-      imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
       form: {
         address: "",
         vehicle: "",

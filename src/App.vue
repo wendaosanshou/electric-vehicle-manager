@@ -286,7 +286,7 @@ $basic-ratio: 1.4;
   height: 124px;
   border-radius: 100%;
   background: url('~@/assets/icons/img_information.png');
-  background-size: 100% 100%; 
+  background-size: 100% 100%;
   .mark-content-1 {
     width: auto;
     height: auto;
