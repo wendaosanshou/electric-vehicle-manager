@@ -553,4 +553,8 @@ $basic-ratio: 1.4;
     max-height: d2r(210px);
   }
 }
+
+.pswp__caption__center {
+  text-align: center!important;
+}
 </style>

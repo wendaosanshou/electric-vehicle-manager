@@ -42,6 +42,7 @@
         </div>
       </div>
     </div>
+
     <div class="home-content-container">
       <div class="menu-part"></div>
       <div class="home-content">
@@ -59,6 +60,7 @@
           </div>
         </div>
         <div class="home-title-crumbs">所在位置：{{activePageName}}</div>
+        <!-- {{role}} -->
         <div class="home-body">
           <router-view/>
         </div>

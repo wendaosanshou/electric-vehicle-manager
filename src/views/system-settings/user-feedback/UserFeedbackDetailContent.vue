@@ -279,11 +279,11 @@
             <div class="item-selector-wraper item-content-long">
               <div class="item-label">问题处理过程</div>
               <el-input
-                class="item-selector ipt-fix item-selector-long"
+                class="item-selector ipt-fix item-selector-textarea"
                 type="textarea"
                 size="mini"
                 resize="none"
-                :autosize="{ minRows: 5, maxRows: 5}"
+                :autosize="{ minRows: 10, maxRows: 20}"
                 v-model="form.feedback_process"
                 placeholder="问题描述"
               ></el-input>
@@ -546,7 +546,10 @@ $basic-ratio: 1.4;
           width: d2r(450px) !important;
         }
         .item-selector-long {
-          width: d2r(300px)
+          width: d2r(300px);
+        }
+        .item-selector-textarea {
+           width: d2r(800px);
         }
       }
       .item-image-wraper {

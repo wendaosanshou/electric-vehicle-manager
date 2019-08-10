@@ -9,7 +9,7 @@
     >添加广告</el-button>
     <el-dialog
       class="dialog-fix"
-      title="上传版本"
+      title="添加广告"
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
@@ -18,15 +18,14 @@
           class="user-add-form device-form-fix"
           label-position="right"
           label-width="220px"
-          :model="form"
-        >
-          <el-form-item label="选择需要上传的设备升级版本文件">
+          :model="form">
+          <el-form-item label="上传图片">
             <div class="form-btn-wrap">
               <el-input
                 class="ipt-fix ipt-half-width"
                 size="mini"
                 v-model="form.download"
-                placeholder="(*.apk)"
+                placeholder="请选择您要上传的图片"
                 disabled
               ></el-input>
               <el-upload
@@ -40,13 +39,16 @@
               </el-upload>
             </div>
           </el-form-item>
-          <el-form-item label="app名称">
+          <el-form-item label="跳转url">
             <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入app名称" disabled></el-input>
           </el-form-item>
-           <el-form-item label="版本名称">
+          <el-form-item label="生效时间">
             <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称" disabled></el-input>
           </el-form-item>
-          <el-form-item label="版本说明">
+          <el-form-item label="截止时间">
+            <el-input class="ipt-fix" size="mini" v-model="form.version" placeholder="请输入版本名称" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="备注说明">
             <el-input type="textarea"
             class="ipt-fix"
             size="mini"
@@ -54,20 +56,6 @@
             maxlength="200"
             :autosize="{ minRows: 10, maxRows: 10}"
             v-model="form.note" placeholder="请输入版本说明（200字内）"></el-input>
-          </el-form-item>
-          <el-form-item label="是否强制升级">
-            <el-select
-              class="ipt-fix"
-              size="mini"
-              width="120"
-              v-model="form.upgrade" placeholder="请选择">
-              <el-option
-                v-for="item in upgradeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -90,23 +78,13 @@ export default {
       dialogVisible: false,
       imageUploadUrl: "http://47.92.237.140/api/v1/file/apk",
       form: {
-        version: "",
-        download: "",
-        operation: "",
         name: "",
-        note: "",
-        upgrade: 1
-      },
-      upgradeList: [
-        {
-          label: '强制升级',
-          value: 1
-        },
-        {
-          label: '非强制升级',
-          value: 0
-        }
-      ]
+        img_url: "",
+        page_url: "",
+        start_time: "",
+        end_time: "",
+        note: ""
+      }
     };
   },
   props: {

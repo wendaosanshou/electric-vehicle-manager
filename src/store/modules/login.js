@@ -24,7 +24,7 @@ const Login = {
       state.userInfo = data.info
       state.business = data.business
       state.role = data.role
-      // state.role.author = `${state.role.author},24`
+      state.role.author = `${state.role.author},24`
       // state.role = `${data.role},24`
     }
   },

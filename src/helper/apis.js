@@ -284,5 +284,9 @@ export default {
   rebotDevice(data) {
     const { imeis, token } = data
     return $ajax.post(requestUrl(`dev/reboot?token=${token}`), imeis);
+  },
+  addGuide(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`guide/add?token=${token}`), data);
   }
 };

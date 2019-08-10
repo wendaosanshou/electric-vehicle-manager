@@ -11,7 +11,7 @@
         ref="userTable"
         class="table-fix table-disable-select-all"
         size="mini"
-        :data="apkList"
+        :data="[]"
         border
         style="width: 100%"
       >
@@ -22,12 +22,12 @@
         <el-table-column align="center" prop="operation" label="创建时间"></el-table-column>
         <el-table-column align="center" prop="note" label="生效时间"></el-table-column>
         <el-table-column align="center" prop="download" label="截止时间"></el-table-column>
-        <el-table-column align="center" width="160" label="操作">
+        <!-- <el-table-column align="center" width="160" label="操作">
           <template slot-scope="scope">
             <div class="btn-container">
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column align="center" prop="download" label="备注信息"></el-table-column>
       </el-table>
     </div>
