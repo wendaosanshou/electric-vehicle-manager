@@ -1,6 +1,7 @@
 <template>
   <div class="record-setting-container" :class="rootClass">
     <!-- {{workItem}} -->
+    <!-- {{imagelist}} -->
     <div class="setting-time setting-part-container">
       <page-title class="setting-title" :hasDot="false">预约时间</page-title>
       <div class="setting-content" v-if="isRecordSetting">
@@ -304,7 +305,8 @@
     <div class="setting-picture-info setting-part-container">
       <page-title class="setting-title" :hasDot="false">照片信息</page-title>
       <div class="setting-content setting-image-wraper" v-if="hasImageItem">
-        <img class="setting-image" :src="item" v-for="(item, index) in imagelist" :key="index">
+        <vue-preview :slides="previewImageList"></vue-preview>
+        <!-- <img class="setting-image" :src="item" v-for="(item, index) in imagelist" :key="index"> -->
         <el-upload
           class="page-upload"
           list-type="picture-card"
@@ -387,6 +389,7 @@ export default {
         imgs: ""
       },
       defaultImages: [],
+      previewImageList: [],
       value: ""
     };
   },
@@ -436,6 +439,28 @@ export default {
   },
   methods: {
     ...mapActions(["modifyWorkItem", "getVehicleInfo"]),
+    async getImagesOption(item, index) {
+      let img = document.createElement('img');
+      img.src = item;
+      return new Promise((resolve) => {
+        img.onload = () => {
+          console.log('onload', img.width, img.height)
+          resolve({
+            src: item,
+            msrc: item,
+            alt: `图片详情-${index + 1}`,
+            title: `图片详情-${index + 1}`,
+            w: img.width * 1.5,
+            h: img.height * 1.5
+          })
+        }
+      })
+    },
+    async initPreviewImageList() {
+      this.previewImageList = await Promise.all(this.imagelist.map(async (item, index) => {
+       return await this.getImagesOption(item, index)
+      }))
+    },
     getFilterTime(time) {
       if (time.indexOf('2000-01-01') > -1) {
         return ''
@@ -541,6 +566,8 @@ export default {
         work: this.workItem.id,
         imgs: this.workItem.imgs
       };
+      // 初始化预加载页
+      this.initPreviewImageList()
     },
     getIdcardContent(card) {
       if (card === 0) {
@@ -622,6 +649,7 @@ $basic-ratio: 1.4;
           margin-top: 0;
         }
         .item-label {
+          font-size: d2r(14px);
           width: d2r(120px);
           height: d2r(22px);
           text-align: right;

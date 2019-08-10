@@ -542,4 +542,15 @@ $basic-ratio: 1.4;
 .menu-label {
   font-size: d2r(14px);
 }
+
+.my-gallery {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  img {
+    margin-right: 16px;
+    max-height: d2r(210px);
+  }
+}
 </style>

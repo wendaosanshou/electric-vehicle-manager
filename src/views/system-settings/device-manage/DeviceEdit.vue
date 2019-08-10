@@ -103,7 +103,7 @@ export default {
       if (!this.form.imei || this.form.imei.length !== 15) {
         this.$message({
           type: 'error',
-          message: 'IMEI号格式不正确'
+          message: '请输入正确的信息（IMEI号长度需要是15位）'
         })
       } else {
         const params = {

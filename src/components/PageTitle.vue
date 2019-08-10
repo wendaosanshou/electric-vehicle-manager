@@ -46,6 +46,7 @@ $basic-ratio: 1.4;
     font-family: PingFangSC-Regular;
     font-weight: 400;
     color: #3b4859;
+    white-space: nowrap;
   }
 }
 </style>

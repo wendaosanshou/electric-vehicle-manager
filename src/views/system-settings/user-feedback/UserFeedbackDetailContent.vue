@@ -3,7 +3,9 @@
     <div class="setting-time setting-part-container">
       <page-title class="setting-title" :hasDot="false">预约信息</page-title>
       <div class="setting-content">
+        <!-- {{previewFeedbackImgs}} -->
         <!-- {{feedbackDetail}} -->
+        <!-- {{feedbackImgs}} -->
         <!-- {{feedbackDetail.feedback}} -->
         <el-row :gutter="20">
           <el-col :span="7">
@@ -270,7 +272,8 @@
             <div class="item-selector-wraper item-content-long">
               <div class="item-label">照片信息</div>
               <div class="item-image-wraper">
-                <img class="setting-image" :src="item" v-for="(item, index) in feedbackImgs" :key="index">
+                <vue-preview :slides="previewFeedbackImgs"></vue-preview>
+                <!-- <img class="setting-image" :src="item" v-for="(item, index) in feedbackImgs" :key="index"> -->
               </div>
             </div>
             <div class="item-selector-wraper item-content-long">
@@ -295,6 +298,8 @@
 <script>
 import PageTitle from "@/components/PageTitle.vue";
 import { mapGetters, mapActions } from "vuex";
+import { setTimeout } from 'timers';
+import { Promise } from 'q';
 const SPLIT_IMAGE_SYMBOL = "$_$";
 
 export default {
@@ -317,11 +322,26 @@ export default {
         imgs: ""
       },
       feedbackImgs: [],
-      value: ""
+      value: "",
+      previewFeedbackImgs: []
     };
   },
   computed: {
     ...mapGetters(["feedbackDetail", "workItem", "vehicleInfo"]),
+    // previewFeedbackImgs() {
+    //   return this.feedbackImgs.map((item, index) => {
+    //     let img = document.createElement('img');
+    //     img.src = item;
+    //     return {
+    //       src: item,
+    //       msrc: item,
+    //       alt: `图片详情-${index + 1}`,
+    //       title: `图片详情-${index + 1}`,
+    //       w: img.width * 1.5,
+    //       h: img.height * 1.5
+    //     }
+    //   })
+    // },
     isRecordSetting() {
       return this.$route && this.$route.name === "RecordSetting";
     },
@@ -361,17 +381,46 @@ export default {
       });
       this.initProcessDetail();
     },
+    async getImagesOption(item, index) {
+      let img = document.createElement('img');
+      img.src = item;
+      return new Promise((resolve) => {
+        img.onload = () => {
+          console.log('onload', img.width, img.height)
+          resolve({
+            src: item,
+            msrc: item,
+            alt: `图片详情-${index + 1}`,
+            title: `图片详情-${index + 1}`,
+            w: img.width * 1.5,
+            h: img.height * 1.5
+          })
+        }
+      })
+    },
+    async initPreviewFeedbackImgs() {
+      this.previewFeedbackImgs = await Promise.all(this.feedbackImgs.map(async (item, index) => {
+       return await this.getImagesOption(item, index)
+      }))
+    },
+    getFeedbackImgs(feedbackDetail) {
+      let feedback = this.feedbackDetail.feedback || {}
+      let user = this.feedbackDetail.user || {}
+      let feedbackImgs = []
+      feedbackImgs = feedback.imgs ? feedback.imgs.split(';') : [feedback.imgs]
+      if (user && user.head) {
+        feedbackImgs.push(user.head)
+      }
+      return feedbackImgs.filter(item => item.indexOf('http') > -1)
+    },
     async initProcessDetail() {
       let contract = this.feedbackDetail.contract || {}
       let device = this.feedbackDetail.device || {}
       let feedback = this.feedbackDetail.feedback || {}
       let user = this.feedbackDetail.user || {}
       let vehicle = this.feedbackDetail.vehicle || {}
-      console.log('device', device)
-      this.feedbackImgs = feedback.imgs ? feedback.imgs.split(';') : [feedback.imgs]
-      if (user && user.head && user.head.indexOf('http') > -1) {
-        this.feedbackImgs.push(user.head)
-      }
+      this.feedbackImgs = this.getFeedbackImgs(this.feedbackDetail)
+      this.initPreviewFeedbackImgs()
       this.form = {
         pre_time: contract.pre_time,
         contract_active: contract.contract_start,

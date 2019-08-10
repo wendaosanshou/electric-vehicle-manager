@@ -50,7 +50,7 @@ export default {
   computed: {
     ...mapGetters(['userInfo', 'firewareList']),
     isAllowConfirm() {
-      return this.form.imei && `${this.form.imei}`.length >= 15 && this.form.version
+      return this.form.imei && `${this.form.imei}`.length === 15 && this.form.version
     }
   },
   methods: {
@@ -91,7 +91,7 @@ export default {
       } else {
         this.$message({
           type: 'error',
-          message: `请输入正确的信息（IMEI号需要15）`
+          message: `请输入正确的信息（IMEI号长度需要是15位）`
         })
       }
     }
