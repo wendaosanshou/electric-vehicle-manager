@@ -140,6 +140,12 @@ $basic-ratio: 1.4;
       }
     }
   }
+  &.el-table .sort-caret.descending {
+    border-top-color: #ffffff;
+  }
+  &.el-table .sort-caret.ascending {
+    border-bottom-color: #ffffff;
+  }
 }
 
 .el-table__fixed .el-table__header, .el-table__fixed-right .el-table__header{
@@ -557,4 +563,6 @@ $basic-ratio: 1.4;
 .pswp__caption__center {
   text-align: center!important;
 }
+
+
 </style>

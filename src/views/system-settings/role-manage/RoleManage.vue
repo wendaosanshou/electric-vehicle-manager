@@ -13,9 +13,9 @@
         border
         stripe
         style="width: 100%">
-        <el-table-column prop="code" label="角色模板编号" width="180" align="center"></el-table-column>
-        <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
-        <el-table-column prop="author" label="角色模板" align="center" width="300">
+        <el-table-column prop="code" label="角色模板编号" width="180" align="center" sortable></el-table-column>
+        <el-table-column prop="name" label="角色名称" align="center" sortable></el-table-column>
+        <el-table-column prop="author" label="角色模板" align="center" width="300" sortable>
            <template slot-scope="scope">
              <div v-if="scope.row.roleNames.length === 1 && !scope.row.roleNames[0]">暂无任何权限信息</div>
               <div v-else>
@@ -29,7 +29,7 @@
               </div>
           </template>
         </el-table-column>
-        <el-table-column prop="note" label="角色说明" align="center"></el-table-column>
+        <el-table-column prop="note" label="角色说明" align="center" sortable></el-table-column>
         <el-table-column label="操作" align="center" width="280">
           <template slot-scope="scope">
             <div class="btn-container" v-if="isAllowModify(scope.row.name)">

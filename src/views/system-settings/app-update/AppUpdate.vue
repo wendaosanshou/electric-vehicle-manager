@@ -16,14 +16,14 @@
         border
         style="width: 100%"
       >
-        <el-table-column align="center" prop="id" label="序号"></el-table-column>
-        <el-table-column align="center" prop="name" label="APP名称"></el-table-column>
-        <el-table-column align="center" prop="version" label="版本名称"></el-table-column>
-        <el-table-column align="center" prop="update_time" width="140" label="更新时间"></el-table-column>
-        <el-table-column align="center" prop="operation" label="操作人"></el-table-column>
-        <el-table-column align="center" prop="note" width="200" label="版本说明"></el-table-column>
-        <el-table-column align="center" prop="download" width="220" label="下载地址"></el-table-column>
-        <el-table-column align="center" prop="operation" width="100" label="是否强制升级">
+        <el-table-column align="center" prop="id" width="70" label="序号" sortable></el-table-column>
+        <el-table-column align="center" prop="name" width="120" label="APP名称" sortable></el-table-column>
+        <el-table-column align="center" prop="version" width="120" label="版本名称" sortable></el-table-column>
+        <el-table-column align="center" prop="update_time" width="140" label="更新时间" sortable></el-table-column>
+        <el-table-column align="center" prop="operation" width="120" label="操作人" sortable></el-table-column>
+        <el-table-column align="center" prop="note" width="200" label="版本说明" sortable></el-table-column>
+        <el-table-column align="center" prop="download" width="220" label="下载地址" sortable></el-table-column>
+        <el-table-column align="center" prop="operation" width="120" label="是否强制升级" sortable>
           <template slot-scope="scope">
             {{getUpgradeLable(scope.row.upgrade)}}
           </template>

@@ -78,17 +78,17 @@
       @selection-change="handleSelectionChange"
       @select="handleSelect"
     >
-      <el-table-column align="center" prop="id" label="序号"></el-table-column>
-      <el-table-column align="center" prop="imei" label="IMEI"></el-table-column>
-      <el-table-column align="center" prop="operation" label="创建人"></el-table-column>
-      <el-table-column align="center" prop="import_time" label="入库时间"></el-table-column>
-      <el-table-column align="center" prop="version" label="版本信息"></el-table-column>
-      <el-table-column align="center" prop="update_date" label="升级时间">
+      <el-table-column align="center" prop="id" label="序号" sortable></el-table-column>
+      <el-table-column align="center" prop="imei" label="IMEI" sortable></el-table-column>
+      <el-table-column align="center" prop="operation" label="创建人" sortable></el-table-column>
+      <el-table-column align="center" prop="import_time" label="入库时间" sortable></el-table-column>
+      <el-table-column align="center" prop="version" label="版本信息" sortable></el-table-column>
+      <el-table-column align="center" prop="update_date" label="升级时间" sortable>
          <template slot-scope="scope">
             {{$util.getFilterDefaultTime(scope.row.update_date)}}
           </template>
       </el-table-column>
-      <el-table-column align="center" prop="update_operation" label="升级操作人"></el-table-column>
+      <el-table-column align="center" prop="update_operation" label="升级操作人" sortable></el-table-column>
     </el-table>
 
     <div class="pagination-wraper">

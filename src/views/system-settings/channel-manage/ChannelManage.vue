@@ -24,25 +24,25 @@
         <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="handleRefresh">查询</el-button>
     </div>
     <div class="table-container">
-        <el-table class="table-analysis table-fix" align="center" size="mini" :data="attributeList" border style="width: 100%">
-            <el-table-column prop="id" align="center" label="类型编号">
-              <template slot-scope="scope">
-                {{getAttributeId(scope.row.id)}}
-              </template>
-            </el-table-column>
-            <el-table-column prop="name" align="center" label="类型名称"></el-table-column>
-            <el-table-column prop="type" align="center" label="所属渠道">
-              <template slot-scope="scope">
-                {{getAttributeLable(scope.row.type)}}
-              </template>
-            </el-table-column>
-            <el-table-column prop="note" align="center" label="渠道类型说明"></el-table-column>
-            <el-table-column align="center" label="操作">
-              <template slot-scope="scope">
-                <channel-manange-delete :defaultData="scope.row" @onRefresh="initAttributeList"></channel-manange-delete>
-              </template>
-            </el-table-column>
-        </el-table>
+    <el-table class="table-analysis table-fix" align="center" size="mini" :data="attributeList" border style="width: 100%">
+        <el-table-column prop="id" align="center" label="类型编号" sortable>
+          <template slot-scope="scope">
+            {{getAttributeId(scope.row.id)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" align="center" label="类型名称" sortable></el-table-column>
+        <el-table-column prop="type" align="center" label="所属渠道" sortable>
+          <template slot-scope="scope">
+            {{getAttributeLable(scope.row.type)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="note" align="center" label="渠道类型说明" sortable></el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <channel-manange-delete :defaultData="scope.row" @onRefresh="initAttributeList"></channel-manange-delete>
+          </template>
+        </el-table-column>
+    </el-table>
     </div>
 
     <div class="pagination-wraper">

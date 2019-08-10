@@ -263,8 +263,8 @@
       v-if="reloadTable"
       @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" v-if="isSelectionActive"></el-table-column>
-      <el-table-column prop="own_name" label="车主姓名" align="center"></el-table-column>
-      <el-table-column label="车主手机号" width="120" align="center">
+      <el-table-column prop="own_name" width="100" label="车主姓名" align="center" sortable></el-table-column>
+      <el-table-column label="车主手机号" width="120" align="center" sortable>
         <template slot-scope="scope">
           <div v-if="isProcessSearch">{{scope.row.own_phone}}</div>
           <el-tooltip
@@ -290,36 +290,36 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column prop="own_sex" label="性别" align="center">
+      <el-table-column prop="own_sex" label="性别" align="center" sortable>
         <template slot-scope="scope">{{scope.row.own_sex === 0 ? "男" : "女"}}</template>
       </el-table-column>
-      <el-table-column prop="business_name" width="120" label="业务办理点" align="center"></el-table-column>
-      <el-table-column prop="business_attribute_name" width="120" label="业务办理渠道" align="center"></el-table-column>
-      <el-table-column prop="install_name" width="120" label="设备安装点" align="center"></el-table-column>
-      <el-table-column prop="install_attribute_name" width="120" label="设备安装渠道" align="center"></el-table-column>
-      <el-table-column prop="sys_business_account" width="100" label="业务办理员手机" align="center"></el-table-column>
-      <el-table-column prop="sys_audit_account" width="100" label="审核人手机" align="center"></el-table-column>
-      <el-table-column prop="audit_time" width="100" label="审核时间" align="center">
+      <el-table-column prop="business_name" width="120" label="业务办理点" align="center" sortable></el-table-column>
+      <el-table-column prop="business_attribute_name" width="120" label="业务办理渠道" align="center" sortable></el-table-column>
+      <el-table-column prop="install_name" width="120" label="设备安装点" align="center" sortable></el-table-column>
+      <el-table-column prop="install_attribute_name" width="120" label="设备安装渠道" align="center" sortable></el-table-column>
+      <el-table-column prop="sys_business_account" width="140" label="业务办理员手机" align="center" sortable></el-table-column>
+      <el-table-column prop="sys_audit_account" width="120" label="审核人手机" align="center" sortable></el-table-column>
+      <el-table-column prop="audit_time" width="100" label="审核时间" align="center" sortable>
         <template slot-scope="scope">{{getInstallTime(scope.row.audit_time)}}</template>
       </el-table-column>
-      <el-table-column prop="sys_distribute_account" width="80" label="派单员手机" align="center" v-if="!isProcessSearch"></el-table-column>
+      <el-table-column prop="sys_distribute_account" width="120" label="派单员手机" align="center" v-if="!isProcessSearch" sortable></el-table-column>
       <el-table-column prop="distribute_time" label="派单时间" align="center">
         <template slot-scope="scope">{{getInstallTime(scope.row.distribute_time)}}</template>
       </el-table-column>
-      <el-table-column label="安装状态" align="center">
+      <el-table-column label="安装状态" width="120" align="center" sortable>
         <template slot-scope="scope">{{getProcessTips(scope.row.process)}}</template>
       </el-table-column>
-      <el-table-column prop="sys_install_account" width="80"  label="安装工手机" align="center" v-if="!isProcessSearch"></el-table-column>
-      <el-table-column prop="install_time" width="100"  label="安装时间" align="center">
+      <el-table-column prop="sys_install_account" width="120"  label="安装工手机" align="center" v-if="!isProcessSearch" sortable></el-table-column>
+      <el-table-column prop="install_time" width="100"  label="安装时间" align="center" sortable>
         <template slot-scope="scope">{{getInstallTime(scope.row.install_time)}}</template>
       </el-table-column>
-      <el-table-column prop="install_position" width="230"  label="安装地理位置" align="center"></el-table-column>
-      <el-table-column prop="imei" label="IMEI" width="80"  align="center" v-if="!isProcessSearch"></el-table-column>
-      <el-table-column prop="iccid" label="ICCID" width="80"  align="center" v-if="!isProcessSearch"></el-table-column>
-      <el-table-column prop="contract_content" width="80"  label="合约期" align="center">
+      <el-table-column prop="install_position" width="230"  label="安装地理位置" align="center" sortable></el-table-column>
+      <el-table-column prop="imei" label="IMEI" width="80"  align="center" v-if="!isProcessSearch" sortable></el-table-column>
+      <el-table-column prop="iccid" label="ICCID" width="80"  align="center" v-if="!isProcessSearch" sortable></el-table-column>
+      <el-table-column prop="contract_content" width="120"  label="合约期" align="center" sortable>
         <template slot-scope="scope">{{getContractContent(scope.row.contract_content)}}</template>
       </el-table-column>
-      <el-table-column prop="contract_active" width="80"  label="激活状态" align="center">
+      <el-table-column prop="contract_active" width="120"  label="激活状态" align="center" sortable>
         <template slot-scope="scope">{{getActiveTips(scope.row.contract_active)}}</template>
       </el-table-column>
     </el-table>

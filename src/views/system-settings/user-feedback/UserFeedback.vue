@@ -85,31 +85,26 @@
       border
       style="width: 100%"
     >
-      <el-table-column align="center" prop="account" label="用户手机号"></el-table-column>
-      <el-table-column align="center" prop="name" label="用户姓名"></el-table-column>
-      <el-table-column align="center" prop="feedback_type" label="意见分类"></el-table-column>
-      <el-table-column align="center" width="260" prop="content" label="意见内容"></el-table-column>
-      <el-table-column align="center" prop="process" label="处理状态">
+      <el-table-column align="center" prop="account" label="用户手机号" sortable></el-table-column>
+      <el-table-column align="center" prop="name" label="用户姓名" sortable></el-table-column>
+      <el-table-column align="center" prop="feedback_type" label="意见分类" sortable></el-table-column>
+      <el-table-column align="center" width="260" prop="content" label="意见内容" sortable></el-table-column>
+      <el-table-column align="center" prop="process" label="处理状态" sortable>
         <template slot-scope="scope">
           {{getProcessTips(scope.row.process)}}
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="operation" label="处理人账号">
+      <el-table-column align="center" prop="operation" label="处理人账号" sortable>
       </el-table-column>
-      <el-table-column align="center" prop="process_time" label="处理时间">
+      <el-table-column align="center" prop="process_time" label="处理时间" sortable>
         <template slot-scope="scope">
           {{$util.getFilterDefaultTime(scope.row.process_time)}}
         </template>
       </el-table-column>
-      <el-table-column align="center" width="160" label="操作">
+      <el-table-column align="center" width="160" label="操作" sortable>
         <template slot-scope="scope">
           <el-button class="button-fix" type="primary" size="mini" @click="onEditDetail(scope.row)">问题处理</el-button>
         </template>
-        <!-- <template slot-scope="scope">
-            <div class="btn-container">
-              <app-dialog-delete :data="deepClone(scope.row)" @onRefresh="onSearchFeedback"></app-dialog-delete>
-            </div>
-          </template> -->
       </el-table-column>
     </el-table>
     </div>
