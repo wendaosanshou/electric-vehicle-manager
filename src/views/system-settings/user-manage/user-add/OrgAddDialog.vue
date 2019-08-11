@@ -9,9 +9,11 @@
       @close="onDialogHide"
     >
     <div class="add-org-body">
+      <!-- {{businessPoint}}
+      {{currentTree}} -->
       <div class="dialog-title">当前组织</div>
       <el-tree
-        :data="treeData"
+        :data="filterTreeData"
         :expand-on-click-node="false"
         class="role-tree tree-fix"
         default-expand-all
@@ -38,10 +40,15 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      currentBusinessPoint: {}
+      currentBusinessPoint: {},
+      currentTree: []
     };
   },
   props: {
+    defaultBusinessId: {
+      type: String | Number,
+      default: ''
+    },
     isSearch: {
       type: Boolean,
       default: false
@@ -66,6 +73,14 @@ export default {
         return this.businessInstallTree
       } else {
         return this.businessAllTree
+      }
+    },
+    filterTreeData() {
+      if (this.defaultBusinessId && this.treeData) {
+        this.getCurrentTree(this.defaultBusinessId, this.treeData)
+        return this.currentTree
+      } else {
+        return this.treeData
       }
     },
     dialogConfig() {
@@ -93,6 +108,17 @@ export default {
   },
   methods: {
     ...mapActions(["getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall']),
+    getCurrentTree(defaultBusinessId, treeData) {
+      for (let i = 0; i < treeData.length; i++) {
+        let currentItem = treeData[i]
+        let rowIds = treeData.filter(item => item.id).map(item => item.id)
+        if (rowIds.indexOf(defaultBusinessId) > -1) {
+          this.currentTree = treeData
+        } else if (currentItem && currentItem.children && currentItem.children.length > 0) {
+          this.getCurrentTree(defaultBusinessId, currentItem.children)
+        }
+      }
+    },
     onDialogShow() {
       this.dialogVisible = true;
     },
@@ -115,6 +141,9 @@ export default {
   },
   mounted() {
     this.initBusinessInfo()
+    // setTimeout(() => {
+    //   this.initCurrentTree()
+    // }, 100)
   }
 };
 </script>

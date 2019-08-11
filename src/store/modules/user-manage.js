@@ -42,7 +42,7 @@ const Login = {
       state.allOrg = allOrg
     },
     updateBusinessAll(state, businessAll) {
-      console.log('businessAll', businessAll)
+      // console.log('businessAll', businessAll)
       let mapBusinessAll = businessAll.map(item => {
         const { type, name, attribute_name } = item
         let label = name

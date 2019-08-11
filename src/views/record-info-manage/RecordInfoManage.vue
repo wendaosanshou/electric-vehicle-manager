@@ -12,7 +12,7 @@
             disabled>
             <el-button class="el-button" slot="append" icon="el-icon-edit-outline" @click="handleRenderOrgBusiness"></el-button>
           </el-input>
-          <org-add-dialog selectType="handle-tree" :isSearch="true" @onConfirm="onSelectBusinessPoint" ref="orgBusiness"></org-add-dialog>
+          <org-add-dialog selectType="handle-tree" :defaultBusinessId="defaultBusinessId" :isSearch="true" @onConfirm="onSelectBusinessPoint" ref="orgBusiness"></org-add-dialog>
         </div>
         <div class="item-selector-wraper">
           <div class="item-label">业务办理渠道</div>
@@ -436,6 +436,7 @@ export default {
       reloadTable: true,
       procssDetailDialogVisible: false,
       forbidModify: false,
+      defaultBusinessId: '',
       businessPoint: {
         id: "",
         name: ""
@@ -550,14 +551,15 @@ export default {
       }
     },
     handleRenderOrgBusiness() {
-      if (this.isStoreManager || this.isHandleUser) {
-        this.$message({
-          type: 'error',
-          message: `对不起，您没有相关查询权限！`
-        })
-      } else {
-        this.$refs.orgBusiness.onDialogShow()
-      }
+      this.$refs.orgBusiness.onDialogShow()
+      // if (this.isStoreManager || this.isHandleUser) {
+      //   this.$message({
+      //     type: 'error',
+      //     message: `对不起，您没有相关查询权限！`
+      //   })
+      // } else {
+      //   this.$refs.orgBusiness.onDialogShow()
+      // }
     },
     handleRenderOrgInstall() {
       this.$refs.orgInstall.onDialogShow()
@@ -819,22 +821,22 @@ export default {
       await this.getWorkList({
         page_size: this.pageSize,
         page_index: this.pageIndex,
-        business: "",
-        install: "",
-        client_account: "",
-        install_account: "",
-        business_attribute: "",
-        install_attribute: "",
-        business_account: "",
-        audit_account: "",
+        business: this.businessPoint.id,
+        business_attribute: this.businessAttribute,
+        install: this.installPoint.id,
+        install_attribute: this.installAttribute,
+        client_account: this.clientAccount,
+        install_account: this.installAccount,
+        business_account: this.businessAccount,
+        audit_account: this.auditAccount,
         install_status: this.installStatus, // 安装状态为已审核
         audit_time: `2018-01-01 00:00:00_${auditTime}`,
-        distribute_time: "",
-        install_time: "",
-        contract_content: "",
-        contract_active: "",
-        imei: "",
-        iccid: ""
+        distribute_time: this.getFormatTime(this.distributeTime),
+        install_time: this.getFormatTime(this.installTime),
+        contract_content: this.contractContent,
+        contract_active: this.contractActive,
+        imei: this.imei,
+        iccid: this.iccid
       });
     },
     async handleGetExportWorkList() {
@@ -873,6 +875,7 @@ export default {
         let site_type = type === 1 ? '办理点' : '安装点'
         let attribute_label = attribute_name ? `(${attribute_name}-${site_type})` : ''
         let site_label = `${name}${attribute_label}`
+        this.defaultBusinessId = id
         this.businessPoint = {
           id: id,
           name: name,
