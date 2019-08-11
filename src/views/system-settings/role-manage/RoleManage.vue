@@ -6,6 +6,7 @@
     </div>
     <div class="role-manage-content">
       <div class="role-manage-subtitle">当前角色模板</div>
+      <!-- {{sortAllRoles}} -->
       <el-table
         class="role-manage-table table-fix"
         :data="sortAllRoles"

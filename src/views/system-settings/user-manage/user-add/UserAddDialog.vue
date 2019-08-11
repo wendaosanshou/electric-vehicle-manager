@@ -137,4 +137,9 @@ $basic-ratio: 1.4;
 .table-container {
   padding: d2r(24px) d2r(24px) d2r(33px) d2r(24px);
 }
+
+.role-tag {
+  margin-left: d2r(6px);
+  cursor: pointer;
+}
 </style>

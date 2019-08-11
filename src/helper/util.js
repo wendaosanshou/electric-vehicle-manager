@@ -151,6 +151,9 @@ export default {
       case 23:
         roleName = "渠道属性管理";
         break;
+      case 24:
+        roleName = "APP广告管理";
+        break;
     }
     return roleName;
   },
