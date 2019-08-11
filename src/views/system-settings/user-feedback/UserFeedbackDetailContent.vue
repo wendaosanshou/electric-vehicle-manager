@@ -264,7 +264,7 @@
               <el-input
                 class="item-selector ipt-fix item-selector-long"
                 size="mini"
-                v-model="form.imei"
+                v-model="form.feedback_content"
                 placeholder="请输入问题描述"
                 disabled
               ></el-input>
@@ -273,7 +273,6 @@
               <div class="item-label">照片信息</div>
               <div class="item-image-wraper">
                 <vue-preview :slides="previewFeedbackImgs"></vue-preview>
-                <!-- <img class="setting-image" :src="item" v-for="(item, index) in feedbackImgs" :key="index"> -->
               </div>
             </div>
             <div class="item-selector-wraper item-content-long">
@@ -285,7 +284,7 @@
                 resize="none"
                 :autosize="{ minRows: 10, maxRows: 20}"
                 v-model="form.feedback_process"
-                placeholder="问题描述"
+                placeholder="问题描述以及问题处理过程"
               ></el-input>
             </div>
           </el-col>

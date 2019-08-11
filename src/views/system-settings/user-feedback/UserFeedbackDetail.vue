@@ -70,7 +70,8 @@ export default {
     },
     handleSave() {
       this.form = JSON.parse(JSON.stringify(this.$refs.feedbackContent.form));
-      this.onDialogShow()
+      this.handleConfirm()
+      // this.onDialogShow()
     },
     async handleConfirm() {
       await this.processFeedback({

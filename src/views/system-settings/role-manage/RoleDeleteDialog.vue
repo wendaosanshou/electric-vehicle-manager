@@ -74,11 +74,6 @@ export default {
   },
   methods: {
     ...mapActions(['deleteRole']),
-    getFilterRoleNames(roleNames) {
-      return roleNames.filter(item => {
-        return item.indexOf('商户APP') === -1
-      })
-    },
     onDialogShow() {
       this.dialogVisible = true;
     },

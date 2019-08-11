@@ -96,7 +96,7 @@
       </el-table-column>
       <el-table-column align="center" prop="operation" label="处理人账号" sortable>
       </el-table-column>
-      <el-table-column align="center" prop="process_time" label="处理时间" sortable>
+      <el-table-column align="center" width="160" prop="process_time" label="处理时间" sortable>
         <template slot-scope="scope">
           {{$util.getFilterDefaultTime(scope.row.process_time)}}
         </template>
@@ -203,6 +203,9 @@ export default {
       this.pageIndex = 1
       this.handleSearchFeedback()
     },
+    initSearchFeedback() {
+      this.handleSearchFeedback()
+    },
     handleSearchFeedback() {
        this.getFeedback({
         page_size: this.pageSize,
@@ -234,7 +237,7 @@ export default {
     PageTitle
   },
   mounted() {
-    this.onSearchFeedback()
+    this.initSearchFeedback()
   }
 };
 </script>

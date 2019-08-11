@@ -74,11 +74,6 @@ export default {
     },
     handleEdit() {},
     handleDelete() {},
-    getFilterRoleNames(roleNames) {
-      return roleNames.filter(item => {
-        return item.indexOf('商户APP') === -1 || item.indexOf('系统设置') === -1
-      })
-    },
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     }

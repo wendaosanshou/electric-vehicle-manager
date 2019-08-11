@@ -95,6 +95,10 @@ export default {
               label: "APP升级管理"
             },
             {
+              id: 24,
+              label: "APP广告管理"
+            },
+            {
               id: 15,
               label: "设备管理"
             },

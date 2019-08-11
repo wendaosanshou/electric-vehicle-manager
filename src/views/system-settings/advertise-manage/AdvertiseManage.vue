@@ -21,11 +21,11 @@
         <el-table-column align="center" prop="create_time" width="180"  label="创建时间" sortable></el-table-column>
         <el-table-column align="center" prop="start_time" width="180"  label="生效时间" sortable></el-table-column>
         <el-table-column align="center" prop="end_time" width="180"  label="截止时间" sortable></el-table-column>
-        <el-table-column label="操作" align="center" width="280">
+        <el-table-column label="操作" align="center" width="180">
           <template slot-scope="scope">
             <div class="btn-container">
-              <advertise-manage-add type="is-edit" :advertiseData="deepClone(scope.row)" @onRefresh="onSearchAllGuide"></advertise-manage-add>
-              <div class="part-line"></div>
+              <!-- <advertise-manage-add type="is-edit" :advertiseData="deepClone(scope.row)" @onRefresh="onSearchAllGuide"></advertise-manage-add>
+              <div class="part-line"></div> -->
               <advertise-delete :advertiseData="deepClone(scope.row)" @onRefresh="onSearchAllGuide"/>
             </div>
           </template>
