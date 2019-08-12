@@ -113,7 +113,7 @@ export default {
         let currentItem = treeData[i]
         let rowIds = treeData.filter(item => item.id).map(item => item.id)
         if (rowIds.indexOf(defaultBusinessId) > -1) {
-          this.currentTree = treeData
+          this.currentTree = treeData.filter(item => item.id === defaultBusinessId)
         } else if (currentItem && currentItem.children && currentItem.children.length > 0) {
           this.getCurrentTree(defaultBusinessId, currentItem.children)
         }
@@ -190,5 +190,9 @@ $basic-ratio: 1.4;
 .role-tree {
   max-height: 450px;
   overflow: auto;
+}
+
+.dialog-footer {
+  margin-top: d2r(26px);
 }
 </style>

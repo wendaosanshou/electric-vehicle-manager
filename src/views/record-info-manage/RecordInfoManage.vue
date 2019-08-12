@@ -552,7 +552,7 @@ export default {
     },
     handleRenderOrgBusiness() {
       this.$refs.orgBusiness.onDialogShow()
-      // if (this.isStoreManager || this.isHandleUser) {
+      // if (this.isHandleUser) {
       //   this.$message({
       //     type: 'error',
       //     message: `对不起，您没有相关查询权限！`
