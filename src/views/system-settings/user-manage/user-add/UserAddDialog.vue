@@ -7,6 +7,7 @@
         <!-- <span class="refresh-link" @click="onRefresh">刷新</span> -->
       </div>
       <div class="table-container">
+        <!-- {{allRoles}}--{{defaultRoleId}} -->
         <el-table ref="roleTable" class="table-fix table-disable-select-all" :data="allRoles" size="mini" border stripe max-height="450" style="width: 100%"
           @selection-change="handleSelectionChange"
           @select="handleSelect">
@@ -63,9 +64,13 @@ export default {
     ...mapActions(['getAllRoles']),
     onDialogShow() {
       this.dialogVisible = true;
+      this.$nextTick(() => {
+        this.toggleSelection()
+      })
     },
     onDialogHide() {
       this.dialogVisible = false;
+      this.$refs.roleTable.clearSelection();
     },
     handleSelectionChange(val) {
       if (val.length > 1) {
@@ -87,7 +92,17 @@ export default {
         type: "success",
         message: "刷新角色信息成功!"
       })
-    }
+    },
+    toggleSelection() {
+      if (this.defaultRoleId && this.allRoles && this.allRoles.length > 0) {
+        let rows = this.allRoles.filter(item => item.id === this.defaultRoleId)
+        if (rows && rows.length > 0) {
+          this.$refs.roleTable.toggleRowSelection(rows[0]);
+        }
+      } else {
+        this.$refs.roleTable.clearSelection();
+      }
+    },
   },
   components: {
     PageTitle

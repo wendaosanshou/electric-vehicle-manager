@@ -35,7 +35,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input class="ipt-fix" size="mini" v-model="form.title" placeholder="输入标题"></el-input>
+            <el-input maxlength="22" class="ipt-fix" size="mini" v-model="form.title" placeholder="输入标题"></el-input>
           </el-form-item>
           <el-form-item label="缩略图">
             <div class="form-btn-wrap">

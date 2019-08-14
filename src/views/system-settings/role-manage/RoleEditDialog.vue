@@ -19,7 +19,7 @@
           <el-table-column prop="author" label="角色模板" width="230" align="center">
             <template slot-scope="scope">
               <div class="role-manage-tree-wrap">
-                <role-manage-tree :defaultCheck="scope.row.author" @onChange="onRoleChange"></role-manage-tree>
+                <role-manage-tree :defaultCheck="scope.row.author" @onChange="onRoleChange" ref="roleManageTree"></role-manage-tree>
               </div>
             </template>
           </el-table-column>
@@ -78,6 +78,9 @@ export default {
     onDialogShow() {
       this.initTableData()
       this.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.roleManageTree.initDefaultChecked()
+      })
     },
     onDialogHide() {
       this.dialogVisible = false

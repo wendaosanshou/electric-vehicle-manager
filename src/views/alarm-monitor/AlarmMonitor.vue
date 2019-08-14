@@ -79,10 +79,10 @@ export default {
   methods: {
     ...mapActions(['getAlarmLatest', "getDeviceInfo"]),
     startMonitorAlarm() {
-      this.$message({
-        type: "success",
-        message: `开启告警监控`
-      })
+      // this.$message({
+      //   type: "success",
+      //   message: `开启告警监控`
+      // })
       clearInterval(this.tid)
       this.tid = setInterval(() => {
         this.getAlarmLatest({
@@ -153,10 +153,10 @@ export default {
   },
   beforeDestroy() {
     if (this.tid) {
-      this.$message({
-        type: "success",
-        message: `关闭告警监控`
-      })
+      // this.$message({
+      //   type: "success",
+      //   message: `关闭告警监控`
+      // })
       clearInterval(this.tid)
     }
   },

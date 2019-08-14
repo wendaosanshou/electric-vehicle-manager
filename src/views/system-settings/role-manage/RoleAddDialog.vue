@@ -39,7 +39,7 @@
           <el-table-column prop="author" label="角色模板" width="230" align="center">
             <template>
               <div class="role-manage-tree-wrap">
-                <role-manage-tree @onChange="onRoleChange"></role-manage-tree>
+                <role-manage-tree @onChange="onRoleChange" ref="roleManageTree"></role-manage-tree>
               </div>
             </template>
           </el-table-column>
@@ -98,6 +98,7 @@ export default {
     onDialogHide() {
       this.resetRoleTable()
       this.dialogVisible = false;
+      this.$refs.roleManageTree.resetRoleTreeChecked()
     },
     removeNode(item, array) {
       for (let index = 0; index < array.length; index++) {

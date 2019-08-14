@@ -51,7 +51,7 @@ export default {
     },
     addLocationMarker(info) {
       const position = [info.lng, info.lat]
-      this.map.clearMap()
+      // this.map.clearMap()
       // that.addCicleMarkers();
       this.addInfoWindow(position, this.getLocationMarkerContent())
       setTimeout(() => {
@@ -141,6 +141,9 @@ export default {
           e.stopPropagation()
           if (path === '/location-monitor') {
             this.updateCurrentLocationInfo(positionInfo)
+            // setTimeout(() => {
+            //   this.addLocationMarker(positionInfo)
+            // }, 100)
             this.addLocationMarker(positionInfo)
           } else if (path === '/history-track') {
             this.updateCurrentLocationInfo(positionInfo)
@@ -155,6 +158,16 @@ export default {
     addCicleMarkers() {
       console.log('addCicleMarkers')
       this.map.clearMap()
+      this.markerClusterer = []
+      this.allLocationInfo.forEach(item => {
+        const { lng, lat } = item
+        const position = [lng, lat]
+        this.addMarker(position, this.getCicleMarkerContent(item))
+      })
+      this.addMarkerClusterer()
+      // this.map.setFitView();
+    },
+    addCicleMarkersNoClear() {
       this.markerClusterer = []
       this.allLocationInfo.forEach(item => {
         const { lng, lat } = item

@@ -230,7 +230,7 @@ const Login = {
         } else {
           vm.$message({
             type: "success",
-            message: "告警信息已更新，未找到新的告警信息~"
+            message: "告警信息已更新~"
           });
           return Promise.reject();
         }

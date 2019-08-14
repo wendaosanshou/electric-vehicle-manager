@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <el-dialog custom-class="process-dialog" class="process-detail-dialog dialog-fix" title="办理状态详细信息查看" :visible="dialogVisible" width="960px" @close="onDialogHide">
+    <el-dialog custom-class="process-dialog" class="process-detail-dialog dialog-fix" :title="dialogTitle" :visible="dialogVisible" width="960px" @close="onDialogHide">
       <div class="record-setting-container">
         <record-setting-content :forbidModify="forbidModify" ref="recordSetting"></record-setting-content>
       </div>
@@ -29,6 +29,14 @@ export default {
   props: {
     dialogVisible: Boolean,
     forbidModify: Boolean
+  },
+  computed: {
+    isProcessManage() {
+      return this.$route && this.$route.name === "ProcessManage";
+    },
+    dialogTitle() {
+      return this.isProcessManage ? '办理状态详情查看' : '备案信息详情查看'
+    }
   },
   watch: {
     dialogVisible() {
@@ -59,16 +67,28 @@ export default {
         work: form.work,
         imgs: form.imgs
       }
-      await this.modifyWorkItem(params)
-      console.log('modifyWorkItem', params)
+      if (!params.imei || params.imei.length !== 15) {
+        this.$message({
+          type: "error",
+          message: 'imei号不能为空且长度需要是15位数字!'
+        })
+      } else if (!params.iccid) {
+        this.$message({
+          type: "error",
+          message: 'iccid号不能为空!'
+        })
+      } else {
+        await this.modifyWorkItem(params)
+        console.log('modifyWorkItem', params)
+        this.onDialogHide()
+        this.$emit('on-refresh')
+      }
     },
     onDialogShow() {
       this.dialogVisible = true;
     },
     async onDialogConfirm() {
       await this.handleModifyWorkItem()
-      this.onDialogHide()
-      this.$emit('on-refresh')
     },
     onDialogHide() {
       this.$emit("change", this.dialogVisible);

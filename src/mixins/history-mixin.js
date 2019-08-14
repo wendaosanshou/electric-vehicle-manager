@@ -43,7 +43,7 @@ export default {
       this.drawHistoryLine();
     },
     leaveStopMove() {
-      if ((this.activeType = "stop")) {
+      if ((this.activeType === "stop")) {
         this.activeType = "";
       }
     },

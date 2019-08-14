@@ -3,6 +3,7 @@
     <div class="role-tree-title">选择角色模板</div>
     <div class="role-tree-content">
       <el-tree
+        ref="roleTree"
         :data="roleManageData"
         class="role-tree tree-fix"
         show-checkbox
@@ -143,6 +144,12 @@ export default {
     }
   },
   methods: {
+    initDefaultChecked() {
+      this.$refs.roleTree.setCheckedKeys(this.defaultCheckKeys)
+    },
+    resetRoleTreeChecked() {
+      this.$refs.roleTree.setCheckedKeys([]);
+    },
     handleCheckChange(data, isCheck, isChildrenCheck) {
       const { id } = data
       // 系统设置和管理平台权限去掉

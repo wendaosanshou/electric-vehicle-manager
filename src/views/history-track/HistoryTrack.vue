@@ -69,6 +69,7 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from '@/mixins/history-mixin'
+import { setTimeout } from 'timers';
 
 export default {
   mixins: [MapMixin, HistoryMixin],
@@ -180,12 +181,11 @@ export default {
       });
     },
     onBackHistoryTrack() {
-      this.activeType = 'destory'
+      this.activeType = ''
       this.isShowHistoryTrack = false;
       this.init();
     },
     async init() {
-      this.initPickerTime()
       await this.getWebDevice();
       const locationArray = this.getLocationArray(this.allLocationInfo);
       const [positionCenter] = locationArray;
@@ -193,6 +193,7 @@ export default {
     }
   },
   mounted() {
+    this.initPickerTime()
     this.init();
   }
 };

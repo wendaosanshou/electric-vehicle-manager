@@ -12,7 +12,7 @@
           <!-- {{deviceInfo}} -->
         <el-table ref="userTable" class="table-analysis table-fix table-fix-yellow table-disable-select-all" size="mini" :data="filterAlarmAnalyse" border style="width: 100%" max-height="340">
             <el-table-column prop="vehicleAccount" label="车主姓名"></el-table-column>
-            <el-table-column prop="imei" width="130" label="防火防盗备案号"></el-table-column>
+            <el-table-column prop="theft" width="130" label="防火防盗备案号"></el-table-column>
             <el-table-column prop="signal_time" width="120" label="告警时间">
               <template slot-scope="scope">
                 {{getUtcOffsestTime(scope.row.signal_time)}}
@@ -68,8 +68,9 @@ export default {
         const { user_info, vehicle_info } = this.deviceInfo
         if (this.alarmAnalyse && this.alarmAnalyse.length > 0) {
            return this.alarmAnalyse.map(item => {
-            item.vehicleAccount = user_info.name
-            item.invoice = vehicle_info.invoice
+            item.vehicleAccount = user_info.name || '暂无数据'
+            item.invoice = vehicle_info.invoice | '暂无数据'
+            item.theft = vehicle_info.theft || '暂无数据'
             return item
           })
         } else {

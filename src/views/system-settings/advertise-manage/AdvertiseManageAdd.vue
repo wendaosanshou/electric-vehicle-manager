@@ -49,7 +49,7 @@
               v-model="form.start_time"
               type="datetime"
               size="mini"
-              placeholder="选择生效时间">
+              placeholder="请选择生效时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="截止时间">
@@ -58,7 +58,7 @@
               v-model="form.end_time"
               type="datetime"
               size="mini"
-              placeholder="截止时间">
+              placeholder="请选择截止时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="备注说明">

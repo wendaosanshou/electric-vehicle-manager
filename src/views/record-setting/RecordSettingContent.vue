@@ -695,8 +695,8 @@ $basic-ratio: 1.4;
     .setting-content-empty {
       box-sizing: border-box;
       width: d2r(1300px);
+      margin-top: d2r(9px);
       min-height: d2r(70px);
-      margin-left: d2r(25px);
       padding: d2r(18px) 0 d2r(22px) 0;
       background: #f5f5f6;
     }

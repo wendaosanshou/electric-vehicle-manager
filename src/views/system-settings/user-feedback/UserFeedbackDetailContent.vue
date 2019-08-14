@@ -406,9 +406,9 @@ export default {
       let user = this.feedbackDetail.user || {}
       let feedbackImgs = []
       feedbackImgs = feedback.imgs ? feedback.imgs.split(';') : [feedback.imgs]
-      if (user && user.head) {
-        feedbackImgs.push(user.head)
-      }
+      // if (user && user.head) {
+      //   feedbackImgs.push(user.head)
+      // }
       return feedbackImgs.filter(item => item.indexOf('http') > -1)
     },
     async initProcessDetail() {

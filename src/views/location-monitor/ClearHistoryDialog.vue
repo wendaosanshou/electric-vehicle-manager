@@ -26,6 +26,12 @@
           type="primary"
           @click="onDialogConfirm"
         >确认</el-button>
+        <el-button
+          class="btn-cancel"
+          size="mini"
+          type="primary"
+          @click="onDialogHide"
+        >取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -71,7 +77,6 @@ export default {
     },
     async onDialogConfirm() {
       const [startDate, endDate] = this.pickerTime
-      this.onDialogHide();
       if (startDate && endDate) {
         console.log({
           id: this.currentLocationInfo.id,
@@ -83,10 +88,11 @@ export default {
           start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
           end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
         });
+        this.onDialogHide();
       } else {
         this.$message({
           type: "error",
-          message: "请输入正确的查询条件"
+          message: "请选择开始日期和结束日期！"
         });
       }
     }
