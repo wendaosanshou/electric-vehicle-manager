@@ -186,6 +186,7 @@ $basic-ratio: 1.4;
 }
 
 .ipt-fix {
+  border-radius: 0 !important;
   &.el-input__inner {
     border-radius: 0 !important;
   }
@@ -195,6 +196,10 @@ $basic-ratio: 1.4;
   .el-textarea__inner {
     border-radius: 0 !important;
   }
+}
+
+.ipt-date-fix {
+  border-radius: 0!important;
 }
 
 .el-select-dropdown__item,

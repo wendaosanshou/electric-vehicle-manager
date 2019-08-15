@@ -16,13 +16,13 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" label="序号" align="center" sortable></el-table-column>
-        <el-table-column prop="title" label="资讯标题" width="180" align="center" sortable></el-table-column>
+        <el-table-column prop="id" label="序号" min-width="70" align="center" sortable></el-table-column>
+        <el-table-column prop="title" label="资讯标题" min-width="180" align="center" sortable></el-table-column>
         <!-- <el-table-column label="创建人" align="center"></el-table-column> -->
-        <el-table-column prop="time" label="创建时间" width="140" align="center" sortable></el-table-column>
-        <el-table-column prop="active_time" label="生效时间" width="140" align="center" sortable></el-table-column>
-        <el-table-column prop="expire_time" label="截止时间" width="140" align="center" sortable></el-table-column>
-        <el-table-column label="操作" align="center" width="260">
+        <el-table-column prop="time" label="创建时间" min-width="140" align="center" sortable></el-table-column>
+        <el-table-column prop="active_time" label="生效时间" min-width="140" align="center" sortable></el-table-column>
+        <el-table-column prop="expire_time" label="截止时间" min-width="140" align="center" sortable></el-table-column>
+        <el-table-column label="操作" align="center" min-width="260">
           <template slot-scope="scope">
             <div class="table-col-btn-wrap">
               <!-- <advisory-add :defaultData="scope.row" dialogType="edit" @onRefresh="initInfoWeb"></advisory-add> -->
@@ -30,7 +30,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="content" width="180" label="备注信息" align="center" sortable></el-table-column>
+        <el-table-column prop="content" min-width="180" label="备注信息" align="center" sortable></el-table-column>
       </el-table>
     </div>
 

@@ -51,7 +51,7 @@ export default {
     },
     addLocationMarker(info) {
       const position = [info.lng, info.lat]
-      // this.map.clearMap()
+      this.map.clearMap()
       // that.addCicleMarkers();
       this.addInfoWindow(position, this.getLocationMarkerContent())
       setTimeout(() => {

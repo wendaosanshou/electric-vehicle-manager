@@ -32,7 +32,7 @@
               <el-upload
                 :show-file-list="false"
                 class="page-upload"
-                :action="imageUploadUrl"
+                :action="apkUploadUrl"
                 :before-upload="onBeforeUpload"
                 :on-success="onImageUploadSuccess"
               >

@@ -3,7 +3,7 @@
     <el-dialog
       class="dialog-fix dialog-container"
       title="清除轨迹"
-      width="430px"
+      width="540px"
       :visible.sync="dialogVisible"
       @close="onDialogHide"
     >
@@ -11,8 +11,8 @@
         <el-date-picker
           v-model="pickerTime"
           size="mini"
-            clss="ipt-fix"
-          type="daterange"
+          clss="ipt-fix ipt-date-fix"
+          type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -26,12 +26,12 @@
           type="primary"
           @click="onDialogConfirm"
         >确认</el-button>
-        <el-button
+        <!-- <el-button
           class="btn-cancel"
           size="mini"
           type="primary"
           @click="onDialogHide"
-        >取消</el-button>
+        >取消</el-button> -->
       </div>
     </el-dialog>
   </div>
@@ -113,5 +113,9 @@ $basic-ratio: 1.4;
   width: 100%;
   height: auto;
   padding: d2r(40px) d2r(51px) d2r(40px) d2r(52px);
+}
+
+.ipt-date-fix {
+  border-radius: 0;
 }
 </style>
