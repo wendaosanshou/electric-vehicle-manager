@@ -156,46 +156,55 @@ const Login = {
         });
       });
     },
-    updateAlarmAnalyse(state, result) {
-      state.alarmAnalyse = result.data;
-      state.alarmAnalyseTotal = result.total
-      // 重置count
+    updateAlarmAnalyseTotal(state, result) {
       state.alarmTypeList.forEach((item) => {
         item.count = 0
       })
-      state.alarmTypeClass = ''
       result.data.forEach((item) => {
         const { alarm } = item;
         state.alarmTypeList.forEach((alarmTypeItem) => {
           if (alarm === alarmTypeItem.value) {
-            item.iconClass = `item-icon-${alarmTypeItem.icon}`
             alarmTypeItem.count += 1;
-            state.currentAlarm = item
-            // if (!state.alarmTypeClass) {
-            //   state.alarmTypeClass = `item-icon-${alarmTypeItem.icon}`
-            //   state.currentAlarm = item
-            // }
+            item.iconClass = `item-icon-${alarmTypeItem.icon}`
           }
         });
       });
+    },
+    updateAllAlarmAnalyse(state, result) {
+      state.alarmAnalyse = result.data;
+      state.alarmAnalyseTotal = result.total
+    },
+    updateAlarmAnalyse(state, result) {
+      state.alarmAnalyse = result.data;
+      state.alarmAnalyseTotal = result.total
+    },
+    clearAlarmAnalyse(state) {
+      state.alarmAnalyse = []
+      state.alarmAnalyseTotal = 0
     }
   },
   actions: {
     async getAlarmAnalyse({ commit, rootState }, data) {
       try {
+        const { alarm } =  data
         const result = await $apis.getAlarmAnalyse({
           token: getToken(rootState),
           ...data
         });
         if (result.data && result.data.length > 0) {
           await convertGps(result.data)
-          console.log('getAlarmAnalyse', result.data)
-          commit("updateAlarmAnalyse", result);
-          console.log(result);
+          // 如果是查询所有类型
+          if (alarm === 0) {
+            commit('updateAlarmAnalyseTotal', result)
+            commit("updateAllAlarmAnalyse", result);
+          } else {
+            commit("updateAllAlarmAnalyse", result);
+          }
         } else {
+          commit("clearAlarmAnalyse");
           vm.$message({
             type: "error",
-            message: "未查到相关报警信息~"
+            message: "暂无数据~"
           });
           return Promise.reject();
         }

@@ -472,8 +472,12 @@ export default {
       contractActive: 0,
       contractActiveList: [
         {
-          value: 0,
+          value: '',
           label: "全部"
+        },
+        {
+          value: 0,
+          label: "未激活"
         },
         {
           value: 1,

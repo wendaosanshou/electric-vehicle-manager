@@ -15,19 +15,18 @@
         ></el-date-picker>
       </div>
       <div class="title-right">
-        <el-select
+        <!-- <el-select
           class="ipt-fix ipt-selector"
           size="mini"
           v-model="alarmValue"
-          placeholder="请选择告警类型"
-        >
+          placeholder="请选择告警类型">
           <el-option
             :label="item.content"
             :value="item.value"
             v-for="item in alarmTypes"
             :key="item.value"
           ></el-option>
-        </el-select>
+        </el-select> -->
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
@@ -47,7 +46,7 @@
     </div>
     <div class="monitor-container">
       <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
-      <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
+      <alarm-tips-dialog v-model="isAlarmTipsVisible" @on-select-alarm="onSelectAlarm"></alarm-tips-dialog>
       <alarm-analysis-table
         v-model="isAlarmTableVisible"
         :pageIndex="pageIndex"
@@ -75,7 +74,7 @@ export default {
       searchValue: "",
       alarmValue: 0,
       pageIndex: 1,
-      pageSize: 10,
+      pageSize: 1000,
       searchType: 'account',
       pickerOptions: {
         disabledDate(time) {
@@ -134,51 +133,79 @@ export default {
     ...mapActions(["getAlarmAnalyse", "getDeviceInfo"]),
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
-      this.onSearchAlarm()
+      this.handleSearchAlarm()
     },
-    async onSearchAlarm() {
-      const [startDate, endDate] = this.pickerTime;
-      console.log(startDate, endDate, this.searchValue)
-      if (startDate && endDate && this.searchValue) {
-        await this.getDeviceInfo({
-          type: this.searchType,
-          value: this.searchValue
-        });
-        await this.getAlarmAnalyse({
-          id: this.deviceInfo.id,
-          // start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          // end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
-          start: this.getUtcTime(startDate),
-          end: this.getUtcTime(endDate),
-          page_size: this.pageSize,
-          page_index: this.pageIndex,
-          alarm: this.alarmValue
-        });
-        this.isAlarmTipsVisible = true;
-        this.isAlarmTableVisible = true;
-        this.addAlarmMarkers()
-      } else {
-        if (!startDate || !endDate) {
-           this.$message({
-            type: "error",
-            message: "请选择开始日期和结束日期!"
+    onSelectAlarm(value) {
+      this.alarmValue = value
+      this.pageSize = 10
+      this.handleSearchAlarm()
+    },
+    onSearchAlarm() {
+      // 查询所有报警类型
+      this.alarmValue = 0
+      this.pageSize = 10000
+      this.handleSearchAlarm()
+    },
+    async handleSearchAlarm() {
+      this.showLoading()
+      try {
+        const [startDate, endDate] = this.pickerTime;
+        if (startDate && endDate && this.searchValue) {
+          await this.getDeviceInfo({
+            type: this.searchType,
+            value: this.searchValue
           });
+          await this.getAlarmAnalyse({
+            id: this.deviceInfo.id,
+            start: this.getUtcTime(startDate),
+            end: this.getUtcTime(endDate),
+            page_size: this.pageSize,
+            page_index: this.pageIndex,
+            alarm: this.alarmValue
+          });
+          this.isAlarmTipsVisible = true;
+          this.isAlarmTableVisible = true;
+          this.addAlarmMarkers()
         } else {
-          this.$message({
-            type: "error",
-            message: "请输入正确的查询条件!"
-          });
+          if (!startDate || !endDate) {
+            this.$message({
+              type: "error",
+              message: "请选择开始日期和结束日期!"
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: "请输入正确的查询条件!"
+            });
+          }
         }
+      } catch (error) {
+        console.log(error)
       }
+      this.hideLoading()
     },
     getAlarmMarkerContent(item) {
       let {lng, lat} = item
       let markerContent = document.createElement("div");
-      markerContent.className = `alarm-mark-content ${item.iconClass}`;
-      console.log(markerContent.className)
+      let timeContent = document.createElement("div");
+      let iconContent = document.createElement("div");
+      markerContent.className = 'alarm-mark';
+      iconContent.className = `alarm-mark-content ${item.iconClass}`
+      timeContent.className = 'alarm-time-content'
+      timeContent.innerHTML = item.signal_time
+      markerContent.append(iconContent)
+      markerContent.append(timeContent)
+      console.log('getAlarmMarkerContent', item)
       setTimeout(() => {
-        $(markerContent).on("click", () => {
-          this.map.setZoomAndCenter(16, [lng, lat]);
+        $(iconContent).on("click", () => {
+          // this.map.setZoomAndCenter(16, [lng, lat]);
+          let $parent = $(iconContent).parent('.alarm-mark')
+          let hasActive = $parent.attr('class').indexOf('is-active') > -1
+          if (hasActive) {
+            $parent.removeClass('is-active')
+          } else {
+            $parent.addClass('is-active')
+          }
         });
       }, 100);
       return markerContent;
@@ -187,7 +214,7 @@ export default {
       this.map.clearMap();
       let seldomNumber = Math.random()
       this.alarmAnalyse.forEach(item => {
-        console.log('alarmAnalyse', item.lng)
+        // console.log('alarmAnalyse', item.lng)
         // item.lng += Math.random() * 0.1
         // item.lat += Math.random() * 0.1
         this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent(item));

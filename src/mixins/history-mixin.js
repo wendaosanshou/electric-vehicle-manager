@@ -103,10 +103,11 @@ export default {
       return new Promise((resolve, reject) => {
         graspRoad.driving(paths, (error, result) => {
           if (!error) {
+            console.log('===points===', result.data)
             let graspRoadPath = result.data.points.map(item => {
               return [item.x, item.y];
             });
-            console.log("graspRoadPath", graspRoadPath);
+            // console.log("====graspRoadPath===", graspRoadPath);
             // this.drawGraspRoadPath(graspRoadPath)
             this.graspRoadPath = this.graspRoadPath.concat(graspRoadPath);
             resolve();

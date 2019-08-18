@@ -10,7 +10,7 @@
     >
       <!-- {{alarmTypeList}} -->
       <div class="dialog-content">
-        <div class="form-item" v-for="(item, index) in alarmTypeList" :key="index">
+        <div class="form-item" v-for="(item, index) in alarmTypeList" :key="index" @click="onAlarmTipsClick(item)">
           <i class="item-icon" :class="[`item-icon-${item.icon}`]"></i>
           <span class="item-content">{{`${item.content}(${item.count})`}}</span>
         </div>
@@ -47,6 +47,10 @@ export default {
     ...mapMutations(['updateAlarmTypeList']),
     onDialogHide() {
       this.$emit("change", false);
+    },
+    onAlarmTipsClick(item) {
+      console.log('onAlarmTipsClick', item)
+      this.$emit('on-select-alarm', item.value)
     }
   }
 };
@@ -82,6 +86,7 @@ $basic-ratio: 1.4;
       height: d2r(50px);
       padding-left: d2r(16px);
       border-bottom: 1px solid #f0f3f7;
+      cursor: pointer;
       .item-icon {
         width: d2r(22px);
         height: d2r(27px);

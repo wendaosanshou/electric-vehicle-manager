@@ -7,8 +7,7 @@
           class="ipt-fix ipt-selector"
           size="mini"
           v-model="alarmValue"
-          placeholder="请选择告警类型"
-        >
+          placeholder="请选择告警类型">
           <el-option
             :label="item.content"
             :value="item.value"
@@ -118,8 +117,13 @@ export default {
     getAlarmMarkerContent(item) {
       let {lng, lat} = item
       let markerContent = document.createElement("div");
-      markerContent.className = `alarm-mark-content ${item.iconClass}`;
-      console.log(markerContent.className)
+      let timeContent = document.createElement("div");
+      let iconContent = document.createElement("div");
+      markerContent.className = 'alarm-mark';
+      markerContent.className = `alarm-mark-content ${item.iconClass}`
+      timeContent.className = 'alarm-time-content'
+      timeContent.innerHTML = item.signal_time
+      console.log('getAlarmMarkerContent', item)
       setTimeout(() => {
         $(markerContent).on("click", () => {
           this.map.setZoomAndCenter(16, [lng, lat]);

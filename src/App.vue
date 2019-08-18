@@ -240,6 +240,14 @@ $basic-ratio: 1.4;
   }
 }
 
+.is-collapse .dialog-small-left {
+  .el-dialog {
+    margin-top: d2r(280px) !important;
+    margin-left: d2r(174px);
+    width: d2r(300px);
+  }
+}
+
 .dialog-small-left {
   .el-dialog {
     margin-top: d2r(280px) !important;
@@ -316,7 +324,36 @@ $basic-ratio: 1.4;
   }
 }
 
+.alarm-mark {
+  position: relative;
+  width: d2r(22px);
+  height: d2r(27px);
+  &.is-active {
+    .alarm-time-content {
+      display: block;
+    }
+  }
+  .alarm-time-content {
+    position: absolute;
+    left: d2r(26px);
+    top: 50%;
+    transform: translate(0, -50%);
+    min-width: d2r(150px);
+    height: d2r(22px);
+    padding: 0 d2r(5px); 
+    font-size: d2r(13px);
+    color: #D0021B; 
+    border: 1px solid #D0021BFF;
+    background: #ffffff;
+    white-space: nowrap;
+    display: none;
+  }
+}
+
 .alarm-mark-content {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: d2r(22px);
   height: d2r(27px);
   background: url("~@/assets/icons/weiyi_icon@2x.png");

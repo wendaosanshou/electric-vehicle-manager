@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 export default {
   data() {
     return {
+      loadingPic: {},
       apkUploadUrl: "http://47.92.237.140/api/v1/file/apk",
       imageUploadUrl: "http://47.92.237.140/api/v1/img/web",
       htmlUploadUrl: "http://47.92.237.140/api/v1/img/guide",
@@ -26,6 +27,21 @@ export default {
     }
   },
   methods: {
+    showLoading() {
+      this.loadingPic = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+
+      setTimeout(() => {
+        this.hideLoading()
+      }, 3000)
+    },
+    hideLoading() {
+      this.loadingPic.close();
+    },
     getUtcTime(time) {
       if (time) {
         let utcOffset =  dayjs().utcOffset()
