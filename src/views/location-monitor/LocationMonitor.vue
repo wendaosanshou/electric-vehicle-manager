@@ -15,7 +15,6 @@
         <!-- <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchAllDevice">查询全部</el-button> -->
       </div>
     </div>
-    <!-- {{getLocation(allLocationInfo)}} -->
     <div class="monitor-container">
       <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
       <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
@@ -99,11 +98,11 @@ export default {
       }
     },
     async toogleLocationLabel(className, position, that) {
+      await this.getDeviceInfo({
+        type: 'imei',
+        value: this.currentLocationInfo.imei
+      })
       if (className.indexOf('location-marker-label-1') > -1) {
-        await this.getDeviceInfo({
-          type: 'imei',
-          value: this.currentLocationInfo.imei
-        })
         this.filingDialogVisible = true
       } else if (className.indexOf('location-marker-label-2') > -1) {
         this.historyTrackVisible = true
@@ -220,6 +219,7 @@ $basic-ratio: 1.4;
     width: 100%;
     height: d2r(820px);
     margin-top: d2r(19px);
+    border: 1px solid #ebeef5;
     .map-tips {
       position: absolute;
       top: d2r(22px);

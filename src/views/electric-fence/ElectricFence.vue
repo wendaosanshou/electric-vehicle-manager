@@ -563,6 +563,7 @@ $basic-ratio: 1.4;
       box-sizing: border-box;
       flex-grow: 1;
       height: 100%;
+      border: 1px solid #ebeef5;
     }
     .electric-desc-content {
       box-sizing: border-box;

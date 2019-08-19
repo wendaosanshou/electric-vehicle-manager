@@ -169,6 +169,10 @@ const locationMonitor = {
     historylineArr: [],
     webDeviceInfo: [],
     allDeviceInfo: [],
+    historyAlarm: [],
+    trickAlarms: [],
+    trickList: [],
+    trickAlarmId: 0,
     deviceInfo: {},
     accountList: accountList,
     pickerOptions: pickerOptions
@@ -179,10 +183,36 @@ const locationMonitor = {
     },
     updateHistoryInfo(state, historyInfo) {
       state.historyInfo = historyInfo
-      // state.historyInfo = historyInfo.filter(item => {
-      //   return item.lng > 0 && item.lat > 0
-      // });
-      console.log('historyInfo', historyInfo)
+    },
+    resetTrackAlarms(state, trickAlarm) {
+      state.trickAlarms = []
+      state.trickList = []
+    },
+    updateTrackAlarmId(state, trickAlarmId) {
+      state.trickAlarmId = trickAlarmId
+    },
+    updateTrackAlarms(state, points) {
+      if (points && points.length > 0) {
+        let [point] = points
+        let ids = state.trickAlarms.map(item => item.id)
+        let filterPoints = points.filter(item => ids.indexOf(item.id) === -1)
+        state.trickAlarmId = point.id
+        state.trickAlarms = state.trickAlarms.concat(filterPoints)
+      }
+    },
+    updateTrackList(state, points) {
+      if (points && points.length > 0) {
+        let ids = state.trickList.map(item => item.id)
+        let filterPoints = points.filter(item => ids.indexOf(item.id) === -1)
+        state.trickList = state.trickList.concat(filterPoints)
+      }
+    },
+    updateHistoryAlarm(state, historyAlarm) {
+      state.historyAlarm = historyAlarm
+    },
+    clearHistoryInfo(state) {
+      state.historyInfo = []
+      state.historyAlarm = []
     },
     updateCurrentLocationInfo(state, currentLocationInfo) {
       state.currentLocationInfo = currentLocationInfo;
@@ -199,6 +229,9 @@ const locationMonitor = {
     },
     updateDeviceInfo(state, deviceInfo) {
       state.deviceInfo = deviceInfo;
+    },
+    updateUserInfoGps(state, userInfoGps) {
+
     }
   },
   actions: {
@@ -250,10 +283,10 @@ const locationMonitor = {
           token: getToken(rootState),
           ...data
         });
-        vm.$message({
-          type: "success",
-          message: "设置追踪模式成功!"
-        });
+        // vm.$message({
+        //   type: "success",
+        //   message: "设置追踪模式成功!"
+        // });
       } catch (error) {
         console.log(error);
         return Promise.reject(error)
@@ -347,10 +380,15 @@ const locationMonitor = {
     },
     async getHistoryInfo({ commit, rootState }, data) {
       try {
-        const result = await $apis.getHistoryInfo({
+        const result = await $apis.getAlarmHistoryInfo({
           token: getToken(rootState),
           ...data
         });
+        if (result.alarm && result.alarm.length > 0) {
+          await convertHistoryGps(result.alarm);
+          commit('updateHistoryAlarm', result.alarm)
+        }
+
         if (result.data && result.data.length > 0) {
           if (result.data && result.data.length > 1000) {
             vm.$message({
@@ -360,11 +398,13 @@ const locationMonitor = {
           }
           let devices = []
           let gpsDatas = []
+          // 获取所有设备
           result.data.forEach(item => {
             if (item.device && devices.indexOf(item.device) === -1) {
               devices.push(item.device)
             }
           })
+          // 过滤掉单设备
           if (devices.length > 1) {
             gpsDatas = result.data.filter(item => item.device === devices[devices.length - 1])
           } else {
@@ -374,6 +414,32 @@ const locationMonitor = {
           commit("updateHistoryInfo", gpsDatas);
         } else {
           commit("updateHistoryInfo", []);
+          vm.$message({
+            type: "error",
+            message: "暂无轨迹数据~"
+          });
+          return Promise.reject()
+        }
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error)
+      }
+    },
+    async getUserInfoGps({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getUserInfoGps({
+          token: getToken(rootState),
+          ...data
+        });
+        if (result.alarm && result.alarm.length > 0) {
+          await convertHistoryGps(result.alarm);
+          commit('updateTrackAlarms', result.alarm)
+        }
+        if (result.data && result.data.length > 0) {
+          await convertHistoryGps(result.data);
+          commit("updateTrackList", result.data);
+        } else {
+          commit("updateTrackList", []);
           vm.$message({
             type: "error",
             message: "暂无轨迹数据~"
@@ -432,7 +498,11 @@ const locationMonitor = {
     pickerOptions: state => state.pickerOptions,
     currentLocationInfo: state => state.currentLocationInfo,
     deviceParams: state => state.deviceParams,
-    allDeviceInfo: state => state.allDeviceInfo
+    allDeviceInfo: state => state.allDeviceInfo,
+    historyAlarm: state => state.historyAlarm,
+    trickAlarms: state => state.trickAlarms,
+    trickAlarmId: state => state.trickAlarmId,
+    trickList: state => state.trickList
   }
 };
 

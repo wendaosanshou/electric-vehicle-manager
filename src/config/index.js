@@ -11,7 +11,7 @@ export const getRoleName = (roleType) => {
         roleName = "告警监控";
         break;
       case 4:
-        roleName = "告警分析";
+        roleName = "历史告警";
         break;
       case 5:
         roleName = "电子围栏";

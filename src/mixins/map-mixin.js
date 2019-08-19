@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { mapMutations, mapActions } from 'vuex'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -9,13 +9,27 @@ export default {
       searchType: 'account',
       searchValue: '',
       pageHeight: '800px',
+      alartMonitorMapHeight: '800px',
       markerClusterer: [],
-      cluster: {}
+      cluster: {},
+      formattedAddressList: []
     }
+  },
+  computed: {
+    ...mapGetters(['alarmTypeList'])
   },
   methods: {
     ...mapActions(['getDeviceInfo']),
     ...mapMutations(['updateCurrentLocationInfo']),
+    getAlarmLabel(alarm) {
+      let alarmLable = ''
+      this.alarmTypeList.forEach(item => {
+        if (item.value === alarm) {
+          alarmLable = item.content
+        }
+      });
+      return alarmLable
+    },
     getMapHeight() {
       let pageHeight = document.documentElement.clientHeight
       let rect = document.querySelector('.js-map-container').getBoundingClientRect()
@@ -23,6 +37,81 @@ export default {
       let mapHeight = pageHeight - top - 10
       console.log('getMapHeight', pageHeight, top, mapHeight)
       this.pageHeight = `${mapHeight}px`
+      this.alartMonitorMapHeight = `${mapHeight - 200}px`
+    },
+    async addFormattedAddress(locationList) {
+      let formattedAddressList = []
+      console.log('addFormattedAddress', locationList)
+      for (let index = 0; index < locationList.length; index++) {
+        const item = locationList[index]
+        console.log('formattedAddress', item)
+        if (item && item.lng && item.lat) {
+          let formattedAddress = await this.getFormattedAddress(item)
+          formattedAddressList.push({
+            ...item,
+            formattedAddress
+          })
+        }
+      }
+      return formattedAddressList
+    },
+    async getFormattedAddress(item) {
+      const { lng, lat } = item
+      let lnglat = [lng, lat]
+      console.log('getFormattedAddress', lnglat)
+      return new Promise((resolve, reject) => {
+        AMap.plugin('AMap.Geocoder', function() {
+          let geocoder = new AMap.Geocoder()
+          geocoder.getAddress(lnglat, function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+                // result为对应的地理位置详细信息
+                const address = result.regeocode.formattedAddress
+                resolve(address)
+            } else {
+              console.log('format-error', result)
+            }
+          })
+        })
+      })
+    },
+    getAlarmMarkerContent(item) {
+      let { lng, lat } = item
+      let markerContent = document.createElement("div");
+      let timeContent = document.createElement("div");
+      let iconContent = document.createElement("div");
+      markerContent.className = 'alarm-mark';
+      iconContent.className = `alarm-mark-content ${item.iconClass}`
+      timeContent.className = 'alarm-time-content'
+      timeContent.innerHTML = item.signal_time
+      markerContent.append(iconContent)
+      markerContent.append(timeContent)
+      // console.log('getAlarmMarkerContent', item)
+      setTimeout(() => {
+        $(iconContent).on("click", () => {
+          // this.map.setZoomAndCenter(16, [lng, lat]);
+          let $parent = $(iconContent).parent('.alarm-mark')
+          let hasActive = $parent.attr('class').indexOf('is-active') > -1
+          if (hasActive) {
+            $parent.removeClass('is-active')
+          } else {
+            $parent.addClass('is-active')
+          }
+        });
+      }, 100);
+      return markerContent;
+    },
+    addAlarmMarkers(alarmAnalyse) {
+      this.map.clearMap();
+      alarmAnalyse.forEach(item => {
+        new AMap.Marker({
+          map: this.map,
+          position: [item.lng, item.lat],
+          content: this.getAlarmMarkerContent(item),
+          anchor: 'bottom-center',
+          offset: new AMap.Pixel(0, 0)
+        })
+      });
+      this.map.setFitView();
     },
     renderClusterMarker(context, markers, marker) {
       let markerContent = document.createElement('div')
@@ -128,7 +217,6 @@ export default {
     },
     getCicleMarkerContent(positionInfo) {
       let { path } = this.$route
-      console.log(path)
       let markerContent = document.createElement('div')
       let markerContent1 = document.createElement('div')
       markerContent.className = 'mark-content'
@@ -175,7 +263,6 @@ export default {
         this.addMarker(position, this.getCicleMarkerContent(item))
       })
       this.addMarkerClusterer()
-      // this.map.setFitView();
     },
     addMarker(position, content) {
       let marker = new AMap.Marker({
@@ -218,6 +305,7 @@ export default {
         params.center = position
       }
       this.map = new AMap.Map(selector, params)
+      console.log(this.map)
       this.addControl(this.map)
     },
     isSupportCanvas() {

@@ -34,32 +34,39 @@
       </div>
     </div>
 
-    <!-- deviceInfo:{{deviceInfo}} -->
+    <!-- deviceInfo:{{historyAlarmWithAddress[0]}} -->
     <div class="monitor-container">
       <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
-      <div class="car-marker-menu" v-if="isShowHistoryTrack">
-        <div
-          class="car-marker-item"
-          :class="{active: carSpeed === 0.25}"
-          @click="onSetSpeed(0.25)"
-        >1/4X</div>
-        <div
-          class="car-marker-item"
-          :class="{active: carSpeed === 0.5}"
-          @click="onSetSpeed(0.5)"
-        >1/2X</div>
-        <div class="car-marker-item" :class="{active: carSpeed === 2}" @click="onSetSpeed(2)">2X</div>
-        <div class="car-marker-item" :class="{active: carSpeed === 4}" @click="onSetSpeed(4)">4X</div>
-        <div class="car-marker-item" :class="{active: activeType === 'pause'}" @click="pauseMove">暂停</div>
-        <div class="car-marker-item" :class="{active: activeType === 'start'}" @click="startMove">开始</div>
-        <div class="car-marker-item" :class="{active: activeType === 'stop'}" @click="stopMove" @mouseleave="leaveStopMove">停止</div>
-        <div class="car-marker-item" :class="{active: activeType === 'destory'}" @click="onBackHistoryTrack">退出</div>
+      <div class="hisotry-map-container">
+        <div class="hisotry-map-content" :style="{height: alartMonitorMapHeight}">
+          <div class="car-marker-menu" v-if="isShowHistoryTrack">
+            <div class="car-marker-item" :class="{active: carSpeed === 0.25}" @click="onSetSpeed(0.25)">1/4X</div>
+            <div class="car-marker-item" :class="{active: carSpeed === 0.5}" @click="onSetSpeed(0.5)">1/2X</div>
+            <div class="car-marker-item" :class="{active: carSpeed === 2}" @click="onSetSpeed(2)">2X</div>
+            <div class="car-marker-item" :class="{active: carSpeed === 4}" @click="onSetSpeed(4)">4X</div>
+            <div class="car-marker-item" :class="{active: activeType === 'pause'}" @click="pauseMove">暂停</div>
+            <div class="car-marker-item" :class="{active: activeType === 'start'}" @click="startMove">开始</div>
+            <div class="car-marker-item" :class="{active: activeType === 'stop'}" @click="stopMove" @mouseleave="leaveStopMove">停止</div>
+            <div class="car-marker-item" :class="{active: activeType === 'destory'}" @click="onBackHistoryTrack">退出</div>
+          </div>
+          <div class="map-content js-map-container" id="history-map-container"></div>
+        </div>
+        <div class="history-location">
+          <el-table class="table-analysis table-analysis-fix" size="mini" :data="historyLocation" border style="width: 100%" :height="alartMonitorMapHeight" :max-height="alartMonitorMapHeight">
+            <el-table-column prop="signal_time"  min-width="130" label="经过时间"></el-table-column>
+            <el-table-column prop="formattedAddress" min-width="130" label="经过地点"></el-table-column>
+          </el-table>
+        </div>
       </div>
-      <div
-        class="map-content js-map-container"
-        id="history-map-container"
-        :style="{height: pageHeight}"
-      ></div>
+      <div class="history-alarm">
+        <el-table class="table-analysis table-analysis-fix" size="mini" :data="historyAlarmWithAddress" border style="width: 100%" max-height="190px">
+          <el-table-column prop="note"  min-width="130" label="告警类型">
+            <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
+          </el-table-column>
+          <el-table-column prop="signal_time" min-width="130" label="告警时间"></el-table-column>
+          <el-table-column prop="formattedAddress" min-width="130" label="告警地点"></el-table-column>
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -69,7 +76,6 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from '@/mixins/history-mixin'
-import { setTimeout } from 'timers';
 
 export default {
   mixins: [MapMixin, HistoryMixin],
@@ -81,8 +87,10 @@ export default {
       isPauseMove: false,
       activeType: '',
       carSpeed: 1,
-      value2: "",
       carMarker: {},
+      alarmMonitor: [],
+      historyLocation: [],
+      historyAlarmWithAddress: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -114,40 +122,34 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "historylineArr",
       "historyInfo",
       "historyLineInfo",
       "deviceIds",
       "allLocationInfo",
       "currentLocationInfo",
       "accountList",
-      "deviceInfo"
+      "deviceInfo",
+      'historyAlarm'
     ])
   },
   methods: {
-    ...mapMutations(["updateCurrentLocationInfo"]),
+    ...mapMutations(["updateCurrentLocationInfo", 'clearHistoryInfo']),
     ...mapActions(["getHistoryInfo", "getWebDevice", "getDeviceInfo"]),
     initPickerTime() {
       const end = dayjs().toDate();
       const start = dayjs().set('h', 0).set('m', 0).set('s', 0).toDate();
       this.pickerTime = [start, end]
     },
-    deepClone(historylineArr) {
-      return JSON.parse(JSON.stringify(historylineArr));
-    },
-    getLineArr(historyInfo) {
-      return historyInfo.map(item => [item.x, item.y]);
-    },
     resetMap() {
       this.isShowHistoryTrack = false
       this.map.clearMap();
     },
     async onHistorySearch() {
+      this.clearHistoryInfo()
       const [startDate, endDate] = this.pickerTime;
       try {
         if (startDate && endDate && this.searchValue) {
-          let utcOffset =  dayjs().utcOffset()
-          console.log(utcOffset)
+          let utcOffset = dayjs().utcOffset()
           this.renderLoading();
           await this.getDeviceInfo({
             type: this.searchType,
@@ -162,6 +164,8 @@ export default {
               end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
             });
             await this.drawHistoryLine();
+            this.historyLocation = await this.addFormattedAddress(this.historyInfo)
+            this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
             this.isShowHistoryTrack = true;
           }
         } else {
@@ -175,11 +179,6 @@ export default {
       }
       this.loading.close();
     },
-    getLocationArray(locationInfo) {
-      return locationInfo.map(item => {
-        return [item.lng, item.lat];
-      });
-    },
     onBackHistoryTrack() {
       this.activeType = ''
       this.isShowHistoryTrack = false;
@@ -187,10 +186,13 @@ export default {
     },
     async init() {
       await this.getWebDevice();
-      const locationArray = this.getLocationArray(this.allLocationInfo);
+      const locationArray = this.allLocationInfo.map(item => [item.lng, item.lat]);
       const [positionCenter] = locationArray;
       this.initAMap("history-map-container", positionCenter);
     }
+  },
+  beforeDestroy() {
+    this.clearHistoryInfo()
   },
   mounted() {
     this.initPickerTime()
@@ -254,36 +256,62 @@ $basic-ratio: 1.4;
       z-index: 100;
       cursor: pointer;
     }
+
+  }
+}
+
+
+.hisotry-map-container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  .hisotry-map-content {
+    position: relative;
+    width: calc(100% - 310px);
+    height: 100%;
+    border: 1px solid #ebeef5;
     .map-content {
       width: 100%;
       height: 100%;
     }
+    .car-marker-menu {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      position: absolute;
+      right: d2r(20px);
+      top: d2r(39px);
+      width: d2r(364px);
+      height: d2r(37px);
+      font-size: d2r(17px);
+      background: #6fa8e0ff;
+      color: #ffffff;
+      z-index: 100;
+      .car-marker-item {
+        width: d2r(58px);
+        height: d2r(37px);
+        line-height: d2r(37px);
+        text-align: center;
+        cursor: pointer;
+        &.active {
+          background: #9acdffff;
+        }
+      }
+    }
+  }
+  .history-location {
+    width: 300px;
+    height: 100%;
   }
 }
 
-.car-marker-menu {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  position: absolute;
-  right: d2r(20px);
-  top: d2r(39px);
-  width: d2r(364px);
-  height: d2r(37px);
-  font-size: d2r(17px);
-  background: #6fa8e0ff;
-  color: #ffffff;
-  z-index: 100;
-  .car-marker-item {
-    width: d2r(58px);
-    height: d2r(37px);
-    line-height: d2r(37px);
-    text-align: center;
-    cursor: pointer;
-    &.active {
-      background: #9acdffff;
-    }
-  }
+.history-alarm {
+  padding-top: 10px;
+  width: 100%;
+  height: 200px;
 }
 </style>

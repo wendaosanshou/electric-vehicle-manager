@@ -43,7 +43,7 @@ export default {
             },
             {
               id: 4,
-              label: "告警分析"
+              label: "历史告警"
             },
             {
               id: 5,

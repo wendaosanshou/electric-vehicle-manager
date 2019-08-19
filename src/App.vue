@@ -129,6 +129,20 @@ $basic-ratio: 1.4;
   }
 }
 
+.table-analysis-fix {
+  box-sizing: border-box;
+  .el-table__header-wrapper .el-table__header {
+    thead {
+      color: #3B4859;
+      background: #9E9DB6;
+      tr,
+      th {
+        background: #9E9DB6;
+      }
+    }
+  }
+}
+
 .table-fix {
   .el-table__header-wrapper .el-table__header {
     thead {
@@ -326,26 +340,87 @@ $basic-ratio: 1.4;
 
 .alarm-mark {
   position: relative;
-  width: d2r(22px);
-  height: d2r(27px);
+  width: d2r(44px);
+  height: d2r(54px);
   &.is-active {
     .alarm-time-content {
       display: block;
     }
   }
   .alarm-time-content {
+    box-sizing: border-box;
     position: absolute;
-    left: d2r(26px);
+    left: d2r(60px);
     top: 50%;
     transform: translate(0, -50%);
-    min-width: d2r(150px);
-    height: d2r(22px);
-    padding: 0 d2r(5px); 
+    height: 22px;
+    line-height: 22px;
+    padding: 0 5px;
     font-size: d2r(13px);
-    color: #D0021B; 
+    color: #D0021B;
     border: 1px solid #D0021BFF;
     background: #ffffff;
     white-space: nowrap;
+    text-align: left;
+    display: none;
+  }
+}
+
+.track-mark {
+  position: relative;
+  width: d2r(33px);
+  height: d2r(48px);
+  &.is-start {
+    .track-mark-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: d2r(33px);
+      height: d2r(48px);
+      background: url("~@/assets/icons/icon_start@2x.png");
+      background-size: 100% 100%;
+    }
+  }
+  &.is-end {
+    .track-mark-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: d2r(33px);
+      height: d2r(48px);
+      background: url("~@/assets/icons/icon_end@2x.png");
+      background-size: 100% 100%;
+    }
+  }
+  &.is-active {
+    .track-mark-time {
+      display: block;
+    }
+  }
+  .track-mark-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: d2r(33px);
+    height: d2r(48px);
+    background: url("~@/assets/icons/icon_start@2x.png");
+    background-size: 100% 100%;
+  }
+  .track-mark-time {
+    box-sizing: border-box;
+    position: absolute;
+    left: d2r(45px);
+    top: 50%;
+    transform: translate(0, -50%);
+    height: d2r(22px);
+    line-height: d2r(22px);
+    padding: 0 d2r(5px);
+    font-size: d2r(13px);
+    color: #D0021B;
+    border: 1px solid #D0021BFF;
+    background: #ffffff;
+    white-space: nowrap;
+    text-align: left;
     display: none;
   }
 }
@@ -354,8 +429,8 @@ $basic-ratio: 1.4;
   position: absolute;
   left: 0;
   top: 0;
-  width: d2r(22px);
-  height: d2r(27px);
+  width: d2r(44px);
+  height: d2r(54px);
   background: url("~@/assets/icons/weiyi_icon@2x.png");
   background-size: 100% 100%;
   &.item-icon-weiyi {

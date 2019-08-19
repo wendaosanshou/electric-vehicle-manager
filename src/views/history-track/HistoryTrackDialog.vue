@@ -247,6 +247,7 @@ $basic-ratio: 1.4;
   .history-map-container {
     width: 100%;
     height: d2r(646px);
+    border: 1px solid #ebeef5;
   }
 }
 </style>

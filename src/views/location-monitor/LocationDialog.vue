@@ -85,7 +85,6 @@ export default {
     formatTime(time) {
       if (time) {
         const utcOffset = dayjs(time).utcOffset()
-        console.log('utcOffset', utcOffset)
         return dayjs(time)
           .add(utcOffset, 'minute')
           .format('YYYY-MM-DD HH:mm')

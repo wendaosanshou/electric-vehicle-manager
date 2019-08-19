@@ -49,6 +49,7 @@
       <alarm-tips-dialog v-model="isAlarmTipsVisible" @on-select-alarm="onSelectAlarm"></alarm-tips-dialog>
       <alarm-analysis-table
         v-model="isAlarmTableVisible"
+        :alarmAnalyse="filterAlarmAnalysis"
         :pageIndex="pageIndex"
         :pageSize="pageSize"
         @current-change="handleCurrentChange"
@@ -58,8 +59,9 @@
 </template>
 
 <script>
+/* eslint-disable */
 import dayjs from "dayjs";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import AlarmTipsDialog from "../alarm-monitor/AlarmTipsDialog";
 import AlarmAnalysisTable from "./AlarmAnalysisTable";
@@ -76,6 +78,7 @@ export default {
       pageIndex: 1,
       pageSize: 1000,
       searchType: 'account',
+      filterAlarmAnalysis: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -131,6 +134,7 @@ export default {
   },
   methods: {
     ...mapActions(["getAlarmAnalyse", "getDeviceInfo"]),
+    ...mapMutations(['clearAlarmAnalyse']),
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
       this.handleSearchAlarm()
@@ -163,9 +167,10 @@ export default {
             page_index: this.pageIndex,
             alarm: this.alarmValue
           });
+          this.filterAlarmAnalysis = await this.addFormattedAddress(this.alarmAnalyse)
           this.isAlarmTipsVisible = true;
           this.isAlarmTableVisible = true;
-          this.addAlarmMarkers()
+          this.addAlarmMarkers(this.alarmAnalyse)
         } else {
           if (!startDate || !endDate) {
             this.$message({
@@ -184,52 +189,8 @@ export default {
       }
       this.hideLoading()
     },
-    getAlarmMarkerContent(item) {
-      let {lng, lat} = item
-      let markerContent = document.createElement("div");
-      let timeContent = document.createElement("div");
-      let iconContent = document.createElement("div");
-      markerContent.className = 'alarm-mark';
-      iconContent.className = `alarm-mark-content ${item.iconClass}`
-      timeContent.className = 'alarm-time-content'
-      timeContent.innerHTML = item.signal_time
-      markerContent.append(iconContent)
-      markerContent.append(timeContent)
-      console.log('getAlarmMarkerContent', item)
-      setTimeout(() => {
-        $(iconContent).on("click", () => {
-          // this.map.setZoomAndCenter(16, [lng, lat]);
-          let $parent = $(iconContent).parent('.alarm-mark')
-          let hasActive = $parent.attr('class').indexOf('is-active') > -1
-          if (hasActive) {
-            $parent.removeClass('is-active')
-          } else {
-            $parent.addClass('is-active')
-          }
-        });
-      }, 100);
-      return markerContent;
-    },
-    addAlarmMarkers() {
-      this.map.clearMap();
-      let seldomNumber = Math.random()
-      this.alarmAnalyse.forEach(item => {
-        // console.log('alarmAnalyse', item.lng)
-        // item.lng += Math.random() * 0.1
-        // item.lat += Math.random() * 0.1
-        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent(item));
-      });
-      this.map.setFitView();
-    },
-    drawAlarmMap() {
-      if (this.alarmAnalyse && this.alarmAnalyse.length > 0) {
-        const [{lng, lat}] = this.alarmAnalyse
-        this.initAMap('map-container', [lng, lat]);
-        this.addAlarmMarkers()
-      }
-    },
     init() {
-      let [{lng, lat}] = this.allDeviceInfo
+      let [{ lng, lat }] = this.allDeviceInfo
       console.log('init', this.allDeviceInfo)
       this.initAMap("map-container", []);
       this.map.setFitView()
@@ -239,6 +200,9 @@ export default {
   components: {
     AlarmTipsDialog,
     AlarmAnalysisTable
+  },
+  beforeDestroy() {
+    this.clearAlarmAnalyse()
   },
   mounted() {
     this.init();
@@ -310,6 +274,7 @@ $basic-ratio: 1.4;
     .map-content {
       width: 100%;
       height: 100%;
+      border: 1px solid #ebeef5;
     }
   }
 }

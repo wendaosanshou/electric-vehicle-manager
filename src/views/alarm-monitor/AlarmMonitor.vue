@@ -1,32 +1,17 @@
 <template>
   <div class="history-track">
-    <!-- {{accountList}} -->
     <div class="track-title">
       <div class="title-left">
         <el-select
           class="ipt-fix ipt-selector"
           size="mini"
-          v-model="alarmValue"
-          placeholder="请选择告警类型">
-          <el-option
-            :label="item.content"
-            :value="item.value"
-            v-for="item in alarmTypes"
-            :key="item.value"
-          ></el-option>
-        </el-select>
-        <el-select
-          class="ipt-fix ipt-selector"
-          size="mini"
           v-model="searchType"
-          placeholder="请选择号码类型"
-        >
+          placeholder="请选择号码类型">
           <el-option
             :label="item.label"
             :value="item.value"
             v-for="item in accountList"
-            :key="item.value"
-          ></el-option>
+            :key="item.value"></el-option>
         </el-select>
         <el-input class="ipt-fix ipt-number" size="mini" v-model="searchValue" placeholder="请输入内容"></el-input>
       </div>
@@ -36,20 +21,27 @@
     </div>
     <div class="monitor-container">
       <!-- <div class="map-tips">地图默认标尺为“5公里”，可以放大缩小。</div> -->
-      <div class="map-content js-map-container" id="map-container" :style="{height: pageHeight}"></div>
+      <div class="map-content js-map-container" id="map-container" :style="{height: alartMonitorMapHeight}"></div>
+      <el-table class="table-analysis table-analysis-fix" size="mini" :data="filterAlarmAnalysis" border style="width: 100%" max-height="180">
+          <el-table-column prop="note"  min-width="130" label="告警类型">
+            <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
+          </el-table-column>
+          <el-table-column prop="signal_time" min-width="130" label="告警时间"></el-table-column>
+          <el-table-column prop="formattedAddress" min-width="430" label="告警地点"></el-table-column>
+      </el-table>
     </div>
 
-    <alarm-tips-dialog v-model="isAlarmTipsVisible"></alarm-tips-dialog>
+    <alarm-tips-dialog v-model="isAlarmTipsVisible" @on-select-alarm="onSelectAlarm"></alarm-tips-dialog>
     <alarm-detail-dialog v-model="isAlarmDetailVisible"></alarm-detail-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+/* eslint-disable */
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import MapMixin from '@/mixins/map-mixin'
 import AlarmDetailDialog from './AlarmDetailDialog'
 import AlarmTipsDialog from './AlarmTipsDialog'
-import { setTimeout, setInterval, clearInterval } from 'timers';
 
 export default {
   mixins: [MapMixin],
@@ -57,16 +49,18 @@ export default {
     return {
       isAlarmDetailVisible: false,
       isAlarmTipsVisible: false,
-      value2: "",
-      positionCenter: [116.43, 39.92],
       searchValue: "",
       alarmValue: 0,
       searchType: 'account',
-      tid: ''
+      tid: '',
+      pageIndex: 1,
+      pageSize: 1000,
+      startDate: Date.now(),
+      filterAlarmAnalysis: []
     };
   },
   computed: {
-    ...mapGetters(['alarmLatest', 'deviceInfo', 'accountList', 'alarmTypes', 'allDeviceInfo'])
+    ...mapGetters(['alarmAnalyse', 'deviceInfo', 'accountList', 'alarmTypes', 'allDeviceInfo', 'alarmTypeList'])
   },
   watch: {
     isAlarmDetailVisible() {
@@ -76,32 +70,67 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getAlarmLatest', "getDeviceInfo"]),
+    ...mapActions(['getAlarmAnalyseEx', 'getAlarmLatest', "getDeviceInfo"]),
+    ...mapMutations(['clearAlarmAnalyse']),
+    getAlarmLabel(alarm) {
+      let alarmLable = ''
+      this.alarmTypeList.forEach(item => {
+        if (item.value === alarm) {
+          alarmLable = item.content
+        }
+      });
+      return alarmLable
+    },
     startMonitorAlarm() {
-      // this.$message({
-      //   type: "success",
-      //   message: `开启告警监控`
-      // })
       clearInterval(this.tid)
+      this.$message({
+        type: "success",
+        message: `告警监控定时刷新任务已开启，刷新时间间隔30秒一次`
+      })
       this.tid = setInterval(() => {
-        this.getAlarmLatest({
-          deviceId: this.deviceInfo.id,
-          alarmValue: this.alarmValue
+        this.$message({
+          type: "success",
+          message: `告警监控数据已刷新~`
         })
+        this.handleGetAlarmAnalyse()
       }, 30 * 1000)
     },
+    async handleGetAlarmAnalyse() {
+      let endDate = Date.now()
+      await this.getAlarmAnalyseEx({
+        id: this.deviceInfo.id,
+        start: this.getUtcTime(this.startDate),
+        end: this.getUtcTime(endDate),
+        page_size: this.pageSize,
+        page_index: this.pageIndex,
+        alarm: this.alarmValue
+      });
+      this.filterAlarmAnalysis = await this.addFormattedAddress(this.alarmAnalyse)
+    },
+    onSelectAlarm(value) {
+      this.alarmValue = value
+      this.pageSize = 10
+      this.handleSearchAlarm()
+    },
     async onSearchAlarm() {
+      this.showLoading()
+      try {
+        this.alarmValue = 0
+        this.pageSize = 1000
+        await this.handleSearchAlarm()
+      } catch (error) {
+        console.log(error)
+      }
+      this.hideLoading()
+    },
+    async handleSearchAlarm() {
       console.log(this.alarmType && this.searchType)
       if (this.searchValue) {
         await this.getDeviceInfo({
           type: this.searchType,
           value: this.searchValue
         });
-        await this.getAlarmLatest({
-          isStartAlarm: true,
-          deviceId: this.deviceInfo.id,
-          alarmValue: this.alarmValue
-        })
+        await this.handleGetAlarmAnalyse()
         this.drawAlarmMap()
         this.isAlarmTipsVisible = true
         this.isAlarmDetailVisible = true
@@ -114,39 +143,14 @@ export default {
         });
       }
     },
-    getAlarmMarkerContent(item) {
-      let {lng, lat} = item
-      let markerContent = document.createElement("div");
-      let timeContent = document.createElement("div");
-      let iconContent = document.createElement("div");
-      markerContent.className = 'alarm-mark';
-      markerContent.className = `alarm-mark-content ${item.iconClass}`
-      timeContent.className = 'alarm-time-content'
-      timeContent.innerHTML = item.signal_time
-      console.log('getAlarmMarkerContent', item)
-      setTimeout(() => {
-        $(markerContent).on("click", () => {
-          this.map.setZoomAndCenter(16, [lng, lat]);
-        });
-      }, 100);
-      return markerContent;
-    },
-    addAlarmMarkers() {
-      this.map.clearMap();
-      console.log('addAlarmMarkers', this.alarmLatest)
-      this.alarmLatest.forEach(item => {
-        this.addMarker([item.lng, item.lat], this.getAlarmMarkerContent(item));
-      });
-      this.map.setFitView();
-    },
     drawAlarmMap() {
-      console.log(this.alarmLatest)
-      const [{lng, lat}] = this.alarmLatest
+      console.log(this.alarmAnalyse)
+      const [{ lng, lat }] = this.alarmAnalyse
       this.initAMap('map-container', [lng, lat]);
-      this.addAlarmMarkers()
+      this.addAlarmMarkers(this.alarmAnalyse)
     },
     init() {
-      let [{lng, lat}] = this.allDeviceInfo
+      let [{ lng, lat }] = this.allDeviceInfo
       this.initAMap("map-container", []);
       this.map.setFitView()
     }
@@ -156,11 +160,8 @@ export default {
     AlarmTipsDialog,
   },
   beforeDestroy() {
+    this.clearAlarmAnalyse()
     if (this.tid) {
-      // this.$message({
-      //   type: "success",
-      //   message: `关闭告警监控`
-      // })
       clearInterval(this.tid)
     }
   },
@@ -234,7 +235,12 @@ $basic-ratio: 1.4;
     .map-content {
       width: 100%;
       height: 100%;
+      border: 1px solid #ebeef5;
     }
   }
+}
+
+.table-analysis {
+  margin-top: 13px;
 }
 </style>

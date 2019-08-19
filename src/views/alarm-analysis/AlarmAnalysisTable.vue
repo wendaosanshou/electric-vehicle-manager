@@ -23,6 +23,7 @@
                 {{getAlarmNote(scope.row.note)}}
               </template>
             </el-table-column>
+            <el-table-column prop="formattedAddress" min-width="430" label="告警地点"></el-table-column>
         </el-table>
 
         <el-pagination
@@ -45,6 +46,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { mapGetters, mapActions } from "vuex";
 
 export default {
@@ -59,7 +61,7 @@ export default {
     event: 'change'
   },
   computed: {
-      ...mapGetters(['allUser', 'alarmAnalyse', 'alarmAnalyseTotal', 'deviceInfo']),
+      ...mapGetters(['allUser', 'alarmAnalyseTotal', 'deviceInfo']),
       user_info() {
         const { user_info } = this.deviceInfo
         return user_info || ''
@@ -79,6 +81,12 @@ export default {
       }
   },
   props: {
+    alarmAnalyse: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
     visible: {
       type: Boolean,
       default: false

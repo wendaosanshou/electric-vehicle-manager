@@ -15,10 +15,14 @@ export default {
     const { token } = data
     return $ajax.post(requestUrl(`alarm/analyse?token=${token}`), data);
   },
+  getAlarmAnalyseEx(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`alarm/analyse/ex?token=${token}`), data);
+  },
   getAlarmLatest(data) {
     const {
- token, alarmId, deviceId, alarmValue 
-} = data
+      token, alarmId, deviceId, alarmValue
+    } = data
     return $ajax.get(requestUrl(`alarm/latest/${alarmId}/${deviceId}/${alarmValue}?token=${token}`));
   },
   modifyWorkItem(data) {
@@ -64,6 +68,14 @@ export default {
   getHistoryInfo(data) {
     const { token } = data
     return $ajax.post(requestUrl(`history/info?token=${token}`), data);
+  },
+  getAlarmHistoryInfo(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`history/info_alarm?token=${token}`), data);
+  },
+  getUserInfoGps(data) {
+    const { userId, alarmId, token } = data
+    return $ajax.get(requestUrl(`dev/gps/user/${userId}/${alarmId}?token=${token}`), data);
   },
   clearHistoryInfo(data) {
     const { token } = data
@@ -273,8 +285,8 @@ export default {
   },
   getAttribute(data) {
     const {
- type, token, pageSize, pageIndex 
-} = data
+      type, token, pageSize, pageIndex
+    } = data
     return $ajax.post(requestUrl(`attribute/query/${pageSize}/${pageIndex}/${type}?token=${token}`), data);
   },
   resetPassword(data) {

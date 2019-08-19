@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * constrcut 方法
  * 根据提供的 id, pid 和 children 将一个个节点构建成一棵或者多棵树

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { mapGetters } from "vuex";
 import dayjs from 'dayjs'
 
@@ -44,7 +45,7 @@ export default {
     },
     getUtcTime(time) {
       if (time) {
-        let utcOffset =  dayjs().utcOffset()
+        let utcOffset = dayjs().utcOffset()
         return dayjs(time).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
       } else {
         return time
@@ -53,7 +54,6 @@ export default {
     getUtcOffsestTime(time) {
       if (time) {
         let utcOffset = dayjs(time).utcOffset()
-        console.log('utcOffset', utcOffset)
         return dayjs(time).add(utcOffset, 'minute').format('YYYY-MM-DD HH:mm')
       } else {
         return time
@@ -65,9 +65,7 @@ export default {
       this.pickerTime = [start, end]
     },
     getFilterRoleNames(roleNames) {
-      return roleNames.filter(item => {
-        return item.indexOf("商户APP") === -1 && item.indexOf('系统设置') === -1
-      });
+      return roleNames.filter(item => item.indexOf("商户APP") === -1 && item.indexOf('系统设置') === -1);
     },
     getAttributeTypeLable(type) {
       let attributeLable = ''

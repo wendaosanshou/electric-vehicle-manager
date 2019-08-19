@@ -469,10 +469,10 @@ export default {
           label: "一年"
         }
       ],
-      contractActive: 0,
+      contractActive: -1,
       contractActiveList: [
         {
-          value: '',
+          value: -1,
           label: "全部"
         },
         {
@@ -671,7 +671,7 @@ export default {
       this.distributeTime = [];
       this.installTime = [];
       this.contractContent = 0;
-      this.contractActive = 0;
+      this.contractActive = -1;
       this.imei = "";
       this.iccid = "";
       this.businessAttribute = ""

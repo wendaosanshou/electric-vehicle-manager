@@ -170,6 +170,16 @@ const Login = {
         });
       });
     },
+    updateAlarmAnalyseIcon(state, result) {
+      result.data.forEach((item) => {
+        const { alarm } = item;
+        state.alarmTypeList.forEach((alarmTypeItem) => {
+          if (alarm === alarmTypeItem.value) {
+            item.iconClass = `item-icon-${alarmTypeItem.icon}`
+          }
+        });
+      });
+    },
     updateAllAlarmAnalyse(state, result) {
       state.alarmAnalyse = result.data;
       state.alarmAnalyseTotal = result.total
@@ -184,6 +194,36 @@ const Login = {
     }
   },
   actions: {
+    async getAlarmAnalyseEx({ commit, rootState }, data) {
+      try {
+        const { alarm } =  data
+        const result = await $apis.getAlarmAnalyseEx({
+          token: getToken(rootState),
+          ...data
+        });
+        if (result.data && result.data.length > 0) {
+          await convertGps(result.data)
+          // 如果是查询所有类型
+          if (alarm === 0) {
+            commit('updateAlarmAnalyseTotal', result)
+            commit("updateAllAlarmAnalyse", result);
+          } else {
+            commit("updateAllAlarmAnalyse", result);
+            commit('updateAlarmAnalyseIcon', result)
+          }
+        } else {
+          commit("clearAlarmAnalyse");
+          vm.$message({
+            type: "error",
+            message: "暂无数据~"
+          });
+          return Promise.reject();
+        }
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error);
+      }
+    },
     async getAlarmAnalyse({ commit, rootState }, data) {
       try {
         const { alarm } =  data
@@ -199,6 +239,7 @@ const Login = {
             commit("updateAllAlarmAnalyse", result);
           } else {
             commit("updateAllAlarmAnalyse", result);
+            commit('updateAlarmAnalyseIcon', result)
           }
         } else {
           commit("clearAlarmAnalyse");

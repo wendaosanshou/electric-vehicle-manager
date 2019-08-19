@@ -55,7 +55,7 @@ export default {
       if (this.isPauseMove) {
         this.resumeMove();
       } else {
-        this.carMarker.moveAlong(this.graspRoadPath, 1000 * this.carSpeed);
+        this.carMarker.moveAlong(this.graspRoadPath, 500 * this.carSpeed);
       }
     },
     getCarMarkerContent() {
@@ -75,7 +75,7 @@ export default {
 
       var passedPolyline = new AMap.Polyline({
         map: this.map,
-        strokeColor: "#AF5", //线颜色
+        strokeColor: "#FF7525", //线颜色
         strokeWeight: 6 //线宽
       });
 
@@ -91,7 +91,7 @@ export default {
         path: paths,
         strokeWeight: 7,
         strokeOpacity: 0.8,
-        strokeColor: "#0091ea",
+        strokeColor: "#FF7525",
         showDir: true
       });
       this.map.setFitView()

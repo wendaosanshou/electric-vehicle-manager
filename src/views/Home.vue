@@ -213,7 +213,7 @@ export default {
           role: "3"
         },
         {
-          name: "告警分析",
+          name: "历史告警",
           logo: "el-icon-ship",
           path: "alarm-analysis",
           index: "4",
@@ -514,7 +514,7 @@ export default {
           activeMenu = "告警监控";
           break;
         case "/alarm-analysis":
-          activeMenu = "告警分析";
+          activeMenu = "历史告警";
           break;
         case "/electric-fence":
           activeMenu = "电子围栏";

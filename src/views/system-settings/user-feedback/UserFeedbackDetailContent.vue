@@ -295,11 +295,8 @@
 </template>
 
 <script>
-import PageTitle from "@/components/PageTitle.vue";
 import { mapGetters, mapActions } from "vuex";
-import { setTimeout } from 'timers';
-import { Promise } from 'q';
-const SPLIT_IMAGE_SYMBOL = "$_$";
+import PageTitle from "@/components/PageTitle.vue";
 
 export default {
   data() {
@@ -398,7 +395,7 @@ export default {
     },
     async initPreviewFeedbackImgs() {
       this.previewFeedbackImgs = await Promise.all(this.feedbackImgs.map(async (item, index) => {
-       return await this.getImagesOption(item, index)
+        await this.getImagesOption(item, index)
       }))
     },
     getFeedbackImgs(feedbackDetail) {
