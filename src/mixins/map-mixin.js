@@ -11,6 +11,7 @@ export default {
       pageHeight: '800px',
       alartMonitorMapHeight: '800px',
       markerClusterer: [],
+      alarmMarkerClusterer: [],
       cluster: {},
       formattedAddressList: []
     }
@@ -74,6 +75,24 @@ export default {
         })
       })
     },
+    renderAlarmClusterMarker(context) {
+      let markerContent = document.createElement("div");
+      markerContent.className = 'alarm-cluster';
+      markerContent.innerHTML = context.count
+      context.marker.setContent(markerContent)
+    },
+    addAlarmMarkerClusterer() {
+      this.map.plugin(['AMap.MarkerClusterer'], () => {
+        this.cluster = new AMap.MarkerClusterer(
+          this.map, // 地图实例
+          this.alarmMarkerClusterer, // 海量点组成的数组
+          {
+            gridSize: 80,
+            renderClusterMarker: this.renderAlarmClusterMarker
+          }
+        )
+      })
+    },
     getAlarmMarkerContent(item) {
       let { lng, lat } = item
       let markerContent = document.createElement("div");
@@ -85,10 +104,8 @@ export default {
       timeContent.innerHTML = item.signal_time
       markerContent.append(iconContent)
       markerContent.append(timeContent)
-      // console.log('getAlarmMarkerContent', item)
       setTimeout(() => {
         $(iconContent).on("click", () => {
-          // this.map.setZoomAndCenter(16, [lng, lat]);
           let $parent = $(iconContent).parent('.alarm-mark')
           let hasActive = $parent.attr('class').indexOf('is-active') > -1
           if (hasActive) {
@@ -102,15 +119,18 @@ export default {
     },
     addAlarmMarkers(alarmAnalyse) {
       this.map.clearMap();
+      this.alarmMarkerClusterer = []
       alarmAnalyse.forEach(item => {
-        new AMap.Marker({
+        let marker = new AMap.Marker({
           map: this.map,
           position: [item.lng, item.lat],
           content: this.getAlarmMarkerContent(item),
           anchor: 'bottom-center',
           offset: new AMap.Pixel(0, 0)
         })
+        this.alarmMarkerClusterer.push(marker)
       });
+      // this.addAlarmMarkerClusterer()
       this.map.setFitView();
     },
     renderClusterMarker(context, markers, marker) {
@@ -131,7 +151,6 @@ export default {
           this.map, // 地图实例
           this.markerClusterer, // 海量点组成的数组
           {
-            // styles: styles,
             gridSize: 80,
             renderClusterMarker: this.renderClusterMarker
           }
@@ -253,7 +272,6 @@ export default {
         this.addMarker(position, this.getCicleMarkerContent(item))
       })
       this.addMarkerClusterer()
-      // this.map.setFitView();
     },
     addCicleMarkersNoClear() {
       this.markerClusterer = []

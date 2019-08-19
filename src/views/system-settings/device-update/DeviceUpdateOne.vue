@@ -8,7 +8,7 @@
             <el-input class="ipt-fix" size="mini" v-model.number="form.imei" placeholder="请输入IMEI号"></el-input>
           </el-form-item>
           <el-form-item label="设备升级文件">
-            <el-select class="ipt-fix" size="mini" @change="onVersionChange" v-model="form.version" placeholder="请选择">
+            <el-select class="ipt-fix" size="mini" @change="onVersionChange" v-model="form.version" placeholder="请选择升级文件">
               <el-option v-for="item in firewareList" :key="item.id" :label="item.version" :value="item.id"></el-option>
             </el-select>
           </el-form-item>

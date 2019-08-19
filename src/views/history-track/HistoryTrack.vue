@@ -76,6 +76,7 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from '@/mixins/history-mixin'
+import { Promise } from 'q';
 
 export default {
   mixins: [MapMixin, HistoryMixin],
@@ -163,9 +164,9 @@ export default {
               start: dayjs(startDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss"),
               end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
             });
-            await this.drawHistoryLine();
             this.historyLocation = await this.addFormattedAddress(this.historyInfo)
             this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
+            await this.drawHistoryLine();
             this.isShowHistoryTrack = true;
           }
         } else {

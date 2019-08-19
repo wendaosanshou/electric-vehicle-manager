@@ -366,6 +366,18 @@ $basic-ratio: 1.4;
   }
 }
 
+.alarm-cluster {
+  position: relative;
+  width: d2r(56px);
+  height: d2r(56px);
+  color: #ffffff;
+  font-size: d2r(17px);
+  text-align: center;
+  line-height: d2r(56px);
+  background: #FF7525FF;
+  border-radius: 100%;
+}
+
 .track-mark {
   position: relative;
   width: d2r(33px);

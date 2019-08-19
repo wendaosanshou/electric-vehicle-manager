@@ -66,12 +66,18 @@ export default {
     isAlarmDetailVisible() {
       if (!this.isAlarmDetailVisible) {
         this.isAlarmTipsVisible = false
+        this.resetAlarmMonitor()
       }
     }
   },
   methods: {
     ...mapActions(['getAlarmAnalyseEx', 'getAlarmLatest', "getDeviceInfo"]),
     ...mapMutations(['clearAlarmAnalyse']),
+    resetAlarmMonitor() {
+      this.map.clearMap();
+      this.clearAlarmAnalyse()
+      this.filterAlarmAnalysis = []
+    },
     getAlarmLabel(alarm) {
       let alarmLable = ''
       this.alarmTypeList.forEach(item => {
