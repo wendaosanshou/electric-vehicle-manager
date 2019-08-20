@@ -4,7 +4,7 @@
     <!-- {{imagelist}} -->
     <div class="setting-time setting-part-container">
       <page-title class="setting-title" :hasDot="false">预约时间</page-title>
-      <div class="setting-content" v-if="isRecordSetting">
+      <div class="setting-content">
         <el-row :gutter="20">
           <el-col :span="7">
             <div class="item-selector-wraper">
@@ -72,7 +72,7 @@
           </el-col>
         </el-row>
       </div>
-      <div class="setting-content" v-else>
+      <!-- <div class="setting-content" v-else>
         <el-row :gutter="20">
           <el-col :span="7">
             <div class="item-selector-wraper">
@@ -123,7 +123,7 @@
             </div>
           </el-col>
         </el-row>
-      </div>
+      </div> -->
     </div>
     <div class="setting-owner-info setting-part-container">
       <page-title class="setting-title" :hasDot="false">车主信息</page-title>

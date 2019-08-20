@@ -2,13 +2,14 @@
   <div class="role-add">
     <el-button class="button-fix" :icon="tipsConfig.icon" type="primary" size="mini" @click="onDialogShow">{{tipsConfig.btnText}}</el-button>
     <el-dialog class="dialog-fix" :title="tipsConfig.titleText" :visible.sync="dialogVisible" @close="onDialogHide">
+      <!-- {{data}} -->
       <div class="dialog-content">
         <el-form class="user-add-form" label-position="right" label-width="80px" :model="form">
           <el-form-item label="创建人">
             <el-input class="ipt-fix" size="mini" v-model="userInfo.account" placeholder="请输入创建人" disabled></el-input>
           </el-form-item>
           <el-form-item label="IMEI">
-            <el-input class="ipt-fix" size="mini" v-model="form.imei" placeholder="请输入IMEI"></el-input>
+            <el-input class="ipt-fix" size="mini" v-model="form.imei" placeholder="请输入IMEI" :disabled="isEditDialog"></el-input>
           </el-form-item>
           <el-form-item label="备注信息">
             <el-input
@@ -83,8 +84,22 @@ export default {
       return {}
     }
   },
+  watch: {
+    dialogVisible(value) {
+      if (value) {
+        this.initEditParams()
+      }
+    } 
+  },
   methods: {
-    ...mapActions(['importProducts']),
+    ...mapActions(['importProducts', 'modifyProducts']),
+    initEditParams() {
+      if (this.isEditDialog) {
+        const { imei, note } = this.data
+        this.form.imei = imei
+        this.form.note = note
+      }
+    },
     onDialogShow() {
       this.dialogVisible = true
     },
@@ -99,6 +114,21 @@ export default {
         note: ''
       }
     },
+    async handleAddProducts() {
+      const params = {
+        operation: this.userInfo.account,
+        note: this.form.note,
+        imeis: [this.form.imei]
+      }
+      await this.importProducts(params)
+    },
+    async handleModifyProducts() {
+      const params = {
+        note: this.form.note,
+        imei: this.form.imei
+      }
+      await this.modifyProducts(params)
+    },
     async handleEditDevice() {
       if (!this.form.imei || this.form.imei.length !== 15) {
         this.$message({
@@ -106,12 +136,11 @@ export default {
           message: '请输入正确的信息（IMEI号长度需要是15位）'
         })
       } else {
-        const params = {
-          operation: this.userInfo.account,
-          note: this.form.note,
-          imeis: [this.form.imei]
+        if (this.isEditDialog) {
+          await this.handleModifyProducts()
+        } else {
+          await this.handleAddProducts()
         }
-        await this.importProducts(params)
         this.$emit('onRefresh')
         this.onDialogHide()
       }

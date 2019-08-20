@@ -1,7 +1,7 @@
 <template>
   <div class="renew">
     <div class="el-btn btn-renew" @click="onDialogShow">续费</div>
-    <el-dialog class="dialog-fix" title="续费信息" :visible.sync="dialogFormVisible" width="500px">
+    <el-dialog class="dialog-fix" title="续费信息" :visible.sync="dialogFormVisible" width="500px" :append-to-body="true">
       <div class="dialog-renew">
         <el-form class="form-fix">
           <el-form-item label="新增合约期">
@@ -116,7 +116,7 @@ $basic-ratio: 1.4;
   text-align: center;
   line-height: d2r(35px);
   color: #ffffff;
-  background: #7aa9ec;
+  background: #ff7525;
 }
 
 .dialog-renew {

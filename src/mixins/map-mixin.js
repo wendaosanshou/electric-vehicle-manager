@@ -101,7 +101,7 @@ export default {
       markerContent.className = 'alarm-mark';
       iconContent.className = `alarm-mark-content ${item.iconClass}`
       timeContent.className = 'alarm-time-content'
-      timeContent.innerHTML = item.signal_time
+      timeContent.innerHTML = this.getUtcOffsestTime(item.signal_time)
       markerContent.append(iconContent)
       markerContent.append(timeContent)
       setTimeout(() => {

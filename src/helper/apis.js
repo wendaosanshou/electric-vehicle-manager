@@ -210,6 +210,10 @@ export default {
   importProducts(data) {
     return $ajax.post(requestUrl(`produce/import`), data);
   },
+  modifyProducts(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`produce/modify?token=${token}`), data);
+  },
   batchImportProducts(data) {
     const { token, formData, account } = data
     return $ajax.post(requestUrl(`produce/batch/${account}?token=${token}`), formData, {

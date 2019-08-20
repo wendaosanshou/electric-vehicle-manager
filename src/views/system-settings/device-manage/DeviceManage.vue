@@ -60,11 +60,11 @@
             {{getInstallStatus(scope.row.is_install)}}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="280">
           <template slot-scope="scope">
             <div class="btn-container">
-              <!-- <device-edit :data="deepClone(scope.row)"></device-edit> -->
-              <!-- <div class="part-line"></div> -->
+              <device-edit type="is-edit" :data="deepClone(scope.row)" @onRefresh="handleSearchProducts"></device-edit>
+              <div class="part-line"></div>
               <device-delete :data="deepClone(scope.row)" @onRefresh="handleSearchProducts"></device-delete>
             </div>
           </template>

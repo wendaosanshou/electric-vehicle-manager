@@ -1,7 +1,7 @@
 <template>
   <div class="renew-log">
     <div class="el-btn btn-renew-log" @click="onDialogShow">续费日志</div>
-    <el-dialog class="dialog-fix" title="续费信息" :visible.sync="dialogFormVisible">
+    <el-dialog class="dialog-fix" title="续费信息" :visible.sync="dialogFormVisible" :append-to-body="true">
       <div class="renew-table-container">
         <el-table
           class="renew-log-table table-fix"
@@ -81,7 +81,7 @@ $basic-ratio: 1.4;
   text-align: center;
   line-height: d2r(35px);
   color: #ffffff;
-  background: #7aa9ec;
+  background: #ff7525;
 }
 
 .btn-renew-log {

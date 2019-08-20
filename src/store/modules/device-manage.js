@@ -298,7 +298,23 @@ const Login = {
         console.log(error)
         return Promise.reject(error)
       }
-    }
+    },
+    async modifyProducts({ commit, rootState }, data) {
+      try {
+        const result = await $apis.modifyProducts({
+            token: getToken(rootState),
+            ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "修改成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+      }
+    },
   },
   getters: {
     productList: state => state.productList,

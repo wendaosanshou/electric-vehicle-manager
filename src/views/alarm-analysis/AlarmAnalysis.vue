@@ -129,12 +129,18 @@ export default {
     isAlarmTableVisible() {
       if (!this.isAlarmTableVisible) {
         this.isAlarmTipsVisible = false;
+        this.resetAlarmAnalyse()
       }
     }
   },
   methods: {
     ...mapActions(["getAlarmAnalyse", "getDeviceInfo"]),
     ...mapMutations(['clearAlarmAnalyse']),
+    resetAlarmAnalyse() {
+      this.map.clearMap();
+      this.clearAlarmAnalyse()
+      this.filterAlarmAnalysis = []
+    },
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
       this.handleSearchAlarm()
@@ -167,10 +173,11 @@ export default {
             page_index: this.pageIndex,
             alarm: this.alarmValue
           });
-          this.filterAlarmAnalysis = await this.addFormattedAddress(this.alarmAnalyse)
           this.isAlarmTipsVisible = true;
           this.isAlarmTableVisible = true;
           this.addAlarmMarkers(this.alarmAnalyse)
+          this.hideLoading()
+          this.filterAlarmAnalysis = await this.addFormattedAddress(this.alarmAnalyse)
         } else {
           if (!startDate || !endDate) {
             this.$message({
