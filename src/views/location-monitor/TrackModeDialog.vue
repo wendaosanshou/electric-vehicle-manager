@@ -166,10 +166,10 @@ export default {
     },
     async onSearchGpsInfo() {
       this.showLoading()
-      await this.setDeviceTrace({
-        id: this.currentLocationInfo.id,
-        second: this.selectValue
-      })
+      // await this.setDeviceTrace({
+      //   id: this.currentLocationInfo.id,
+      //   second: this.selectValue
+      // })
       await this.handleSearchGpsInfo()
       this.initWatchTrack()
       this.hideLoading()

@@ -230,7 +230,7 @@ $basic-ratio: 1.4;
     width: d2r(364px);
     height: d2r(37px);
     font-size: d2r(17px);
-    background: #6fa8e0ff;
+    background: #FF7525;
     color: #ffffff;
     z-index: 100;
     .car-marker-item {
@@ -240,7 +240,7 @@ $basic-ratio: 1.4;
       text-align: center;
       cursor: pointer;
       &.active {
-        background: #9acdffff;
+        background: #f7a271;
       }
     }
   }

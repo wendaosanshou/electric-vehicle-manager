@@ -164,10 +164,12 @@ export default {
               start: dayjs(startDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss"),
               end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
             });
-            this.historyLocation = await this.addFormattedAddress(this.historyInfo)
-            this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
             await this.drawHistoryLine();
             this.isShowHistoryTrack = true;
+            this.loading.close();
+            // 加载定位和报警数据
+            this.historyLocation = await this.addFormattedAddress(this.historyInfo)
+            this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
           }
         } else {
           this.$message({
@@ -289,7 +291,7 @@ $basic-ratio: 1.4;
       width: d2r(364px);
       height: d2r(37px);
       font-size: d2r(17px);
-      background: #6fa8e0ff;
+      background: #FF7525;
       color: #ffffff;
       z-index: 100;
       .car-marker-item {
@@ -299,7 +301,7 @@ $basic-ratio: 1.4;
         text-align: center;
         cursor: pointer;
         &.active {
-          background: #9acdffff;
+          background: #f7a271;
         }
       }
     }
