@@ -17,11 +17,13 @@
           class="user-add-form device-form-fix"
           label-position="right"
           label-width="220px"
+          ref="advertiseForm"
+          :rules="rules"
           :model="form">
-          <el-form-item label="序号" v-if="isEdit">
+          <el-form-item prop="id" label="序号" v-if="isEdit">
             <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="请输入序号" disabled></el-input>
           </el-form-item>
-          <el-form-item label="上传图片">
+          <el-form-item prop="img_url" label="上传图片">
             <div class="form-btn-wrap">
               <el-input
                 class="ipt-fix ipt-half-width"
@@ -40,10 +42,10 @@
               </el-upload>
             </div>
           </el-form-item>
-          <el-form-item label="跳转url">
+          <el-form-item prop="page_url" label="跳转url">
             <el-input class="ipt-fix" size="mini" v-model="form.page_url" placeholder="请输入跳转url"></el-input>
           </el-form-item>
-          <el-form-item label="生效时间">
+          <el-form-item prop="start_time" label="生效时间">
             <el-date-picker
               class="ipt-fix ipt-timer-selector"
               v-model="form.start_time"
@@ -52,7 +54,7 @@
               placeholder="请选择生效时间">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="截止时间">
+          <el-form-item prop="end_time" label="截止时间">
             <el-date-picker
               class="ipt-fix ipt-timer-selector"
               v-model="form.end_time"
@@ -61,7 +63,7 @@
               placeholder="请选择截止时间">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="备注说明">
+          <el-form-item prop="note" label="备注说明">
             <el-input type="textarea"
             class="ipt-fix"
             size="mini"
@@ -74,7 +76,7 @@
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="primary" @click="handleConfirmAdvertise">确 定</el-button>
+        <el-button size="mini" type="primary" @click="onConfirm('advertiseForm')">确 定</el-button>
         <el-button size="mini" @click="onDialogHide">取 消</el-button>
       </div>
     </el-dialog>
@@ -99,6 +101,11 @@ export default {
         start_time: "",
         end_time: "",
         note: ""
+      },
+      rules: {
+        img_url: [{ required: true, message: "请上传广告图片", trigger: "change" }],
+        start_time: [{ required: true, message: "请选择生效时间", trigger: "blur" }],
+        end_time: [{ required: true, message: "请选择截止时间", trigger: "blur" }],
       }
     };
   },
@@ -208,8 +215,18 @@ export default {
       //   note: this.form.note
       // });
     },
+    onConfirm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.handleConfirmAdvertise()
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      })
+    },
     async handleConfirmAdvertise() {
-      const isAllowConfirm = this.form.img_url && this.form.page_url && this.form.start_time && this.form.end_time && this.form.note
+      const isAllowConfirm = this.form.img_url && this.form.start_time && this.form.end_time
       if (isAllowConfirm) {
         if (this.isAdd) {
           await this.handleAddAdvertise()
