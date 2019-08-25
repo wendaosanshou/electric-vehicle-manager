@@ -97,25 +97,39 @@ export default {
       })
     },
     getAlarmMarkerContent(item) {
-      let { lng, lat } = item
+      let { id } = item
       let markerContent = document.createElement("div");
       let timeContent = document.createElement("div");
       let iconContent = document.createElement("div");
-      markerContent.className = 'alarm-mark';
+      markerContent.className = `alarm-mark js-alarm-${id}`;
       iconContent.className = `alarm-mark-content ${item.iconClass}`
       timeContent.className = 'alarm-time-content'
       timeContent.innerHTML = this.getUtcOffsetTime(item.signal_time)
       markerContent.append(iconContent)
       markerContent.append(timeContent)
       setTimeout(() => {
-        $(iconContent).on("click", () => {
-          let $parent = $(iconContent).parent('.alarm-mark')
-          let hasActive = $parent.attr('class').indexOf('is-active') > -1
+        this.$eventBus.$off('alarmTableClick')
+        this.$eventBus.$on('alarmTableClick', (row) => {
+          let { lng, lat, id } = row
+          this.map.panTo([lng, lat])
+          $('.alarm-mark')
+            .removeClass('is-active')
+            .parents('.amap-marker')
+            .removeClass('is-high-zindex')
+          $(`.js-alarm-${id}`)
+            .parents('.amap-marker')
+            .addClass('is-high-zindex')
+          $(`.js-alarm-${id}`).click()
+        })
+        let $this = $(markerContent)
+        $this.on("click", () => {
+          let hasActive = $this.attr('class').indexOf('is-active') > -1
           if (hasActive) {
-            $parent.removeClass('is-active')
+            $this.removeClass('is-active')
           } else {
-            $parent.addClass('is-active')
+            $this.addClass('is-active')
           }
+          this.$eventBus.$emit('alarmIconClick', item)
         });
       }, 100);
       return markerContent;
@@ -133,6 +147,7 @@ export default {
         })
         this.alarmMarkerClusterer.push(marker)
       });
+      $('.alarm-mark-content').removeClass('is-hide')
       // this.addAlarmMarkerClusterer()
       this.map.setFitView();
     },

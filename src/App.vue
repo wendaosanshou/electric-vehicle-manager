@@ -478,6 +478,10 @@ $basic-ratio: 1.4;
   }
 }
 
+.amap-marker.is-high-zindex {
+  z-index: 9999!important;
+}
+
 .alarm-mark-content {
   position: absolute;
   left: 0;
@@ -486,6 +490,7 @@ $basic-ratio: 1.4;
   height: d2r(54px);
   background: url("~@/assets/icons/weiyi_icon@2x.png");
   background-size: 100% 100%;
+  z-index: 10;
   &.item-icon-weiyi {
     background: url("~@/assets/icons/weiyi_icon@2x.png");
     background-size: 100% 100%;
@@ -743,5 +748,9 @@ $basic-ratio: 1.4;
 
 .amap-marker-content {
   background: transparent!important;
+}
+
+.table-allow-click .el-table__row {
+  cursor: pointer;
 }
 </style>

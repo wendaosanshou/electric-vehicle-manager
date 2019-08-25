@@ -9,8 +9,9 @@
         :close-on-click-modal="false"
       >
         <div class="dialog-content">
-          <!-- {{filterAlarmAnalyse[0]}} -->
-        <el-table ref="userTable" class="table-analysis table-fix table-fix-yellow table-disable-select-all" size="mini" :data="filterAlarmAnalyse" border style="width: 100%" max-height="340">
+        <el-table ref="userTable" class="table-analysis table-allow-click table-fix table-fix-yellow table-disable-select-all" size="mini" :data="filterAlarmAnalyse" border style="width: 100%" max-height="340"
+          @row-click="onRowClick"
+          highlight-current-row>
             <el-table-column prop="vehicleAccount" label="车主姓名"></el-table-column>
             <el-table-column prop="imei" width="130" label="IMEI"></el-table-column>
             <el-table-column prop="signal_time" width="120" label="告警时间">
@@ -53,7 +54,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      localPageIndex: 0
+      localPageIndex: 0,
+      alarmIconActiveId: ''
     }
   },
   model: {
@@ -104,12 +106,36 @@ export default {
     visible() {
       this.dialogVisible = this.visible
       this.localPageIndex = this.pageIndex
+      this.initAlarmIconClick()
     },
     pageIndex() {
       this.localPageIndex = this.pageIndex
     }
   },
   methods: {
+    getRowClassName(row) {
+      console.log('getRowClassName', row)
+      if (row && row.isAlarmActive) {
+        return 'is-alarm-active'
+      } else {
+        return ''
+      }
+    },
+    initAlarmIconClick() {
+      this.$eventBus.$off('alarmIconClick')
+      this.$eventBus.$on('alarmIconClick', (row) => {
+        console.log('alarmIconClick', row)
+        this.filterAlarmAnalyse.forEach(item => {
+          if (item.id === row.id) {
+            this.$refs.userTable.setCurrentRow(item);
+          }
+        });
+      })
+    },
+    onRowClick(row) {
+      console.log(row)
+      this.$eventBus.$emit('alarmTableClick', row)
+    },
     getAlarmNote(note) {
       if (note) {
         return note.replace(/[^\u4e00-\u9fa5|,]/gi, '')
