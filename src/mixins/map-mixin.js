@@ -42,10 +42,10 @@ export default {
     },
     async addFormattedAddress(locationList) {
       let formattedAddressList = []
-      console.log('addFormattedAddress', locationList)
+      // console.log('addFormattedAddress', locationList)
       for (let index = 0; index < locationList.length; index++) {
         const item = locationList[index]
-        console.log('formattedAddress', item)
+        // console.log('formattedAddress', item)
         if (item && item.lng && item.lat) {
           let formattedAddress = await this.getFormattedAddress(item)
           formattedAddressList.push({
@@ -59,7 +59,7 @@ export default {
     async getFormattedAddress(item) {
       const { lng, lat } = item
       let lnglat = [lng, lat]
-      console.log('getFormattedAddress', lnglat)
+      // console.log('getFormattedAddress', lnglat)
       return new Promise((resolve, reject) => {
         AMap.plugin('AMap.Geocoder', function() {
           let geocoder = new AMap.Geocoder()

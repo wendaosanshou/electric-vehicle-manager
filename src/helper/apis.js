@@ -217,7 +217,7 @@ export default {
   batchImportProducts(data) {
     const { token, formData, account } = data
     return $ajax.post(requestUrl(`produce/batch/${account}?token=${token}`), formData, {
-      'Content-Type': 'multipart/form-data '
+      'Content-Type': 'multipart/form-data'
     });
   },
   deleteProduct(data) {

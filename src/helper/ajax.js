@@ -50,9 +50,10 @@ function requestHandle(params) {
           defer.resolve(res.data);
         } else {
           defer.reject(res.data);
-          let message = res.data.msg || getErrorTips(res.data.code)
-          if (res.data.code === '10007') {
-            vm.$message.error(`${message}！`);
+          const { data, msg } = res.data
+          let message = msg || getErrorTips(res.data.code)
+          if (res.data.code === '10018' && data && data.length > 0) {
+            vm.$message.error(`${message},重复IMEI号：${data.join(',')}`);
           } else {
             vm.$message.error(`${message}！`);
           }

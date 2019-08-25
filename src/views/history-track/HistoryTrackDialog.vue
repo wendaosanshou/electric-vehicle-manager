@@ -118,7 +118,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["historyLineInfo", "currentLocationInfo"]),
+    ...mapGetters(["currentLocationInfo"]),
     positionCenter() {
       const { lat, lng } = this.currentLocationInfo;
       return [lng, lat];

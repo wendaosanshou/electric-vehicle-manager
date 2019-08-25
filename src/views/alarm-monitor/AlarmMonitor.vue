@@ -26,7 +26,9 @@
           <el-table-column prop="note"  min-width="130" label="告警类型">
             <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
           </el-table-column>
-          <el-table-column prop="signal_time" min-width="130" label="告警时间"></el-table-column>
+          <el-table-column prop="signal_time" min-width="130" label="告警时间">
+            <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+          </el-table-column>
           <el-table-column prop="formattedAddress" min-width="430" label="告警地点"></el-table-column>
       </el-table>
     </div>

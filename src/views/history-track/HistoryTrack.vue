@@ -53,7 +53,9 @@
         </div>
         <div class="history-location">
           <el-table class="table-analysis table-analysis-fix" size="mini" :data="historyLocation" border style="width: 100%" :height="alartMonitorMapHeight" :max-height="alartMonitorMapHeight">
-            <el-table-column prop="signal_time"  min-width="130" label="经过时间"></el-table-column>
+            <el-table-column prop="signal_time"  min-width="130" label="经过时间">
+              <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+            </el-table-column>
             <el-table-column prop="formattedAddress" min-width="130" label="经过地点"></el-table-column>
           </el-table>
         </div>
@@ -63,7 +65,9 @@
           <el-table-column prop="note"  min-width="130" label="告警类型">
             <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
           </el-table-column>
-          <el-table-column prop="signal_time" min-width="130" label="告警时间"></el-table-column>
+          <el-table-column prop="signal_time" min-width="130" label="告警时间">
+            <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+          </el-table-column>
           <el-table-column prop="formattedAddress" min-width="130" label="告警地点"></el-table-column>
         </el-table>
       </div>

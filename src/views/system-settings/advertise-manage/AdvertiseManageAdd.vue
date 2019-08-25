@@ -49,7 +49,6 @@
             <el-date-picker
               class="ipt-fix ipt-timer-selector"
               v-model="form.start_time"
-              type="datetime"
               size="mini"
               placeholder="请选择生效时间">
             </el-date-picker>
@@ -58,7 +57,6 @@
             <el-date-picker
               class="ipt-fix ipt-timer-selector"
               v-model="form.end_time"
-              type="datetime"
               size="mini"
               placeholder="请选择截止时间">
             </el-date-picker>

@@ -4,6 +4,7 @@
       <div class="home-sidebar-title">
         <i class="home-sidebar-logo"></i>
         <span class="home-sidebar-text">电动车智慧管理平台</span>
+        <!-- {{filterSidebarMenus[0]}} -->
       </div>
       <div class="home-sidebar-menu">
         <el-menu
@@ -158,6 +159,7 @@ export default {
       callback();
     };
     return {
+      isAfterUpdateMenuActive: false,
       passwordStep: 1,
       passwordDialogVisible: false,
       passwordForm: {
@@ -500,9 +502,25 @@ export default {
         this.$router.replace("/login");
       }
     },
+    initActiveMenuStatus(menus) {
+      const routePath = this.$route.path;
+      if (routePath && menus && menus.length > 0) {
+        for (let index = 0; index < menus.length; index++) {
+          const menuItem = menus[index];
+          if (routePath === `/${menuItem.path}`) {
+            this.updateDefaultActiveMenu(menuItem.index)
+          } 
+          
+          if (menuItem.children && menuItem.children.length > 0) {
+            this.initActiveMenuStatus(menuItem.children);
+          }
+        }
+      }
+    },
     initActiveMenu() {
       const { path } = this.$route;
       let activeMenu = "";
+      this.initActiveMenuStatus(this.filterSidebarMenus)
       switch (path) {
         case "/location-monitor":
           activeMenu = "定位监控";
@@ -634,7 +652,7 @@ $basic-ratio: 1.4;
 
 // 兼容文案显示效果
 .el-menu-item span {
-  transition: all 0.3s;
+  transition: opacity 0.3s;
   opacity: 1;
 }
 

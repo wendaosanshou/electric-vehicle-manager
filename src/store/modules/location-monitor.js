@@ -390,12 +390,12 @@ const locationMonitor = {
         }
 
         if (result.data && result.data.length > 0) {
-          if (result.data && result.data.length > 1000) {
-            vm.$message({
-              type: "warning",
-              message: "该设备轨迹数据较多，请耐心等待~"
-            });
-          }
+          // if (result.data && result.data.length > 1000) {
+          //   vm.$message({
+          //     type: "warning",
+          //     message: "该设备轨迹数据较多，请耐心等待~"
+          //   });
+          // }
           let devices = []
           let gpsDatas = []
           // 获取所有设备

@@ -29,7 +29,9 @@
             <div class="map-content" id="js-track-map"></div>
             <div class="history-location">
               <el-table class="table-analysis table-analysis-fix" size="mini" :data="addAddressTrickList" border style="width: 300px" height="527px" max-height="527px">
-                <el-table-column prop="signal_time"  min-width="130" label="经过时间"></el-table-column>
+                <el-table-column prop="signal_time"  min-width="130" label="经过时间">
+                  <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+                </el-table-column>
                 <el-table-column prop="formattedAddress" min-width="130" label="经过地点"></el-table-column>
               </el-table>
             </div>
@@ -39,7 +41,9 @@
               <el-table-column prop="note" min-width="130" label="告警类型">
                 <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
               </el-table-column>
-              <el-table-column prop="signal_time" min-width="130" label="告警时间"></el-table-column>
+              <el-table-column prop="signal_time" min-width="130" label="告警时间">
+                <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+              </el-table-column>
               <el-table-column prop="formattedAddress" min-width="130" label="告警地点"></el-table-column>
             </el-table>
           </div>
@@ -61,10 +65,11 @@
 /* eslint-disable */
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
+import HistoryMixin from "@/mixins/history-mixin";
 import { setTimeout, setInterval, clearInterval } from 'timers';
 
 export default {
-  mixins: [MapMixin],
+  mixins: [MapMixin, HistoryMixin],
   data() {
     return {
       dialogVisible: false,
@@ -203,79 +208,9 @@ export default {
     },
     drawTrickListLine() {
       this.map.clearMap();
-      let paths = this.trickList.map(item => {
-        const { lng, lat } = item
-        return [lng, lat]
-      })
-      this.drawStartTrickMarker(paths)
-      if (paths && paths.length > 0) {
-        this.drawEndTrickMarker(paths)
-        new AMap.Polyline({
-          map: this.map,
-          path: paths,
-          strokeWeight: 7,
-          strokeOpacity: 0.8,
-          strokeColor: "#FF7525",
-          showDir: true
-        });
-      }
+      this.drawHistoryMaker(this.trickList)
       // eslint-disable-next-line
       this.map.setFitView()
-    },
-    getStartMarkerContent(item, type="start") {
-      let markerContent = document.createElement("div");
-      let timeContent = document.createElement("div");
-      let iconContent = document.createElement("div");
-      let typeClass = 'is-start'
-      if (type === 'end') {
-        typeClass === 'is-end'
-      }
-      markerContent.className = `track-mark is-active ${typeClass}`;
-      iconContent.className = 'track-mark-content'
-      timeContent.className = 'track-mark-time'
-      timeContent.innerHTML = item.signal_time
-      markerContent.append(iconContent)
-      markerContent.append(timeContent)
-      setTimeout(() => {
-        $(iconContent).on("click", () => {
-          let $parent = $(iconContent).parent('.track-mark')
-          let hasActive = $parent.attr('class').indexOf('is-active') > -1
-          if (hasActive) {
-            $parent.removeClass('is-active')
-          } else {
-            $parent.addClass('is-active')
-          }
-        });
-      }, 100);
-      return markerContent;
-    },
-    getEndMarkerContent() {
-      let markerContent = document.createElement("div");
-      markerContent.className = "track-mark-end";
-      return markerContent;
-    },
-    drawStartTrickMarker() {
-      let [startPoint] = this.trickList;
-      console.log('drawStartTrickMarker', startPoint)
-      new AMap.Marker({
-        map: this.map,
-        position: [startPoint.lng, startPoint.lat],
-        content: this.getStartMarkerContent(startPoint),
-        anchor: "bottom-center",
-        offset: new AMap.Pixel(0, 0)
-      });
-    },
-    drawEndTrickMarker(path) {
-      let [firstPosition] = path;
-      new AMap.Marker({
-        map: this.map,
-        position: firstPosition,
-        content: this.getEndMarkerContent(),
-        anchor: "bottom-center",
-        offset: new AMap.Pixel(0, 0)
-      });
-    },
-    drawAllTrickPointMarker() {
     },
     async init() {
       this.initAMap("js-track-map", this.positionCenter);
