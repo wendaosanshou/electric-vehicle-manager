@@ -2,10 +2,40 @@
 import { mapGetters, mapActions } from "vuex";
 import dayjs from "dayjs";
 
+function throttle(fn, wait, options = {}) {
+  let timer;
+  let previous = 0;
+  let throttled = function () {
+      let now = +new Date();
+      // remaining 不触发下一次函数的剩余时间
+      if (!previous && options.leading === false) previous = now;
+      let remaining = wait - (now - previous);
+      if (remaining < 0) {
+          if (timer) {
+              clearTimeout(timer);
+              timer = null;
+          }
+          previous = now;
+          fn.apply(this, arguments)
+      } else if (!timer && options.trailing !== false) {
+          timer = setTimeout(() => {
+              previous = options.leading === false ? 0 : new Date().getTime();
+              timer = null;
+              fn.apply(this, arguments);
+          }, remaining);
+      }
+  }
+  return throttled;
+}
+
+
 export default {
   data() {
     return {
-      loading: {}
+      loading: {},
+      graspRoadPath: [],
+      lastPoint: [],
+      allHistory: []
     };
   },
   computed: {
@@ -64,12 +94,16 @@ export default {
     },
     getCarMarkerContent() {
       let markerContent = document.createElement("div");
-      markerContent.className = "mark-car";
+      let carContent = document.createElement("div");
+      markerContent.append(carContent)
+      markerContent.className = "mark-car"
+      carContent.className = "mark-car-content";
       return markerContent;
     },
-    drawCarMarker(path) {
-      let [firstPosition] = path;
-      console.log(firstPosition)
+    drawCarMarker(historyInfo) {
+      let paths = historyInfo.map(item => [item.lng, item.lat]);
+      let [firstPosition] = paths;
+      this.graspRoadPath = paths
       this.carMarker = new AMap.Marker({
         map: this.map,
         position: firstPosition,
@@ -78,23 +112,32 @@ export default {
         offset: new AMap.Pixel(0, 0)
       });
 
-      var passedPolyline = new AMap.Polyline({
+      let passedPolyline = new AMap.Polyline({
         map: this.map,
         strokeColor: "#FF7525", //线颜色
-        strokeWeight: 6 //线宽
+        strokeWeight: 6, //线宽
+        lineJoin: "round"
       });
       let that = this
+      let throttleSetCenter = throttle(() => {
+        // console.log('setCenter', that.lastPoint)
+        this.map.panTo(that.lastPoint)
+      }, 300, {
+        leading: false
+      })
       this.carMarker.on("moving", function(e) {
-        console.log('moving', e)
-        // if (e.passedPath && e.passedPath.length > 1) {
-        //   let [lastPoint] = e.passedPath.slice(-1)
-        //   that.map.setCenter([lastPoint.lng, lastPoint.lat])
-        // }
+        // console.log('moving', e)
+        if (e.passedPath && e.passedPath.length > 1) {
+          let [lastPoint] = e.passedPath.slice(-1)
+          that.lastPoint = [lastPoint.lng, lastPoint.lat]
+          throttleSetCenter()
+        }
         passedPolyline.setPath(e.passedPath);
       });
-      // this.map.setZoomAndCenter(20, [firstPosition.lng, firstPosition.lat])
+      // this.map.setZoomAndCenter(15, firstPosition)
     },
-    drawGraspRoadPath(paths) {
+    drawGraspRoadPath(historyInfo) {
+      let paths = historyInfo.map(item => [item.lng, item.lat]);
       console.log("drawGraspRoadPath", paths);
       new AMap.Polyline({
         map: this.map,
@@ -102,9 +145,22 @@ export default {
         strokeWeight: 7,
         strokeOpacity: 0.8,
         strokeColor: "#FF7525",
+        lineJoin: "round",
         showDir: true
       });
       // this.map.setFitView();
+    },
+    drawCableLine(historyInfo) {
+      let paths = historyInfo.map(item => [item.lng, item.lat]);
+      new AMap.Polyline({
+        map: this.map,
+        path: paths,
+        strokeWeight: 4,
+        strokeOpacity: 0.8,
+        strokeColor: "#E4E4ED",
+        lineJoin: "round",
+        strokeStyle: "dashed"
+      });
     },
     convertGraspRoad(paths) {
       let graspRoad = new AMap.GraspRoad();
@@ -175,7 +231,7 @@ export default {
       markerContent.className = "history-point-mark";
       iconContent.className = "history-point-inner";
       timeContent.className = "history-point-time";
-      timeContent.innerHTML = item.signal_time;
+      timeContent.innerHTML = this.getUtcOffsetTime(item.signal_time);
       markerContent.append(iconContent);
       markerContent.append(timeContent);
       setTimeout(() => {
@@ -200,7 +256,7 @@ export default {
       markerContent.className = `track-mark is-active ${typeClass}`;
       iconContent.className = "track-mark-content";
       timeContent.className = "track-mark-time";
-      timeContent.innerHTML = item.signal_time;
+      timeContent.innerHTML = this.getUtcOffsetTime(item.signal_time);
       markerContent.append(iconContent);
       markerContent.append(timeContent);
       setTimeout(() => {
@@ -232,7 +288,7 @@ export default {
         map: this.map,
         position: [startItem.lng, startItem.lat],
         content: this.getStartMarkerContent(startItem, type),
-        anchor: "middle-center",
+        anchor: "bottom-center",
         offset: new AMap.Pixel(0, 0)
       });
     },
@@ -256,12 +312,28 @@ export default {
     },
     async drawHistoryLine() {
       this.map.clearMap();
-      this.graspRoadPath = this.getHistoryLineData(this.historyInfo);
-      // 画轨迹
-      this.drawGraspRoadPath(this.graspRoadPath);
-      // 画点
-      this.drawHistoryMaker(this.historyInfo);
-      this.drawCarMarker(this.graspRoadPath);
+      if (this.historyInfo && this.historyInfo.length > 0) {
+        let prevHistory = this.historyInfo[0]
+        let prevIndex = 0
+        this.allHistory = []
+        for (let index = 0; index < this.historyInfo.length; index++) {
+          const currentHistory = this.historyInfo[index];
+          // 画轨迹
+          this.drawGraspRoadPath(currentHistory);
+          // 画点
+          if (index > prevIndex) {
+            let [prevLastPoint] = prevHistory.slice(-1)
+            let [currentStartPoint] = currentHistory
+            this.drawCableLine([prevLastPoint, currentStartPoint])
+            prevIndex = index
+            prevHistory = currentHistory
+          }
+          this.allHistory = this.allHistory.concat(currentHistory)
+        }
+        console.log('allHistory', JSON.parse(JSON.stringify(this.allHistory)), JSON.parse(JSON.stringify(this.historyInfo)))
+        this.drawHistoryMaker(this.allHistory);
+        this.drawCarMarker(this.allHistory);
+      }
       this.map.setFitView();
     }
   }

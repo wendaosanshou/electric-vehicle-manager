@@ -11,7 +11,7 @@ const getToken = rootState => {
   return userInfo.token || "";
 };
 
-// const convertHistoryGps = async list => {
+// const convertAmapGps = async list => {
 //   let promiseArr = [];
 //   let tid = ''
 //   try {
@@ -58,7 +58,7 @@ const getToken = rootState => {
 //   }
 // };
 
-const convertHistoryGps = async list => {
+const convertAmapGps = async list => {
   let sliceList = []
   let convertLocations = []
   try {
@@ -68,26 +68,27 @@ const convertHistoryGps = async list => {
       item.lat = item.lat / 1000000;
       item.lngLat = [item.lng, item.lat]
       return item
+    }).sort((a, b) => {
+      return a.signal_time - b.signal_time
     })
+    // console.log('before', JSON.parse(JSON.stringify(list)))
     // 再切分数组
     for (let i = 0; i < list.length; i = i + 40) {
       sliceList.push(list.slice(i, i + 40))
     }
-    console.log('sliceList', sliceList)
+    // console.log('sliceList', sliceList)
     // 再通过高德来转
     for(let i = 0; i < sliceList.length; i++) {
       let lngLats = sliceList[i].map(item => item.lngLat)
       await new Promise((resolve, reject) => {
         AMap.convertFrom(lngLats, "gps", function(status, result) {
           if (result.info === "ok") {
-            // console.log('convertFrom', result.locations)
             let locations = result.locations.map(location => {
               return {
                 lng: location.lng,
                 lat: location.lat
               }
             })
-            // console.log('convert-index', i)
             convertLocations = convertLocations.concat(locations)
           }
           resolve()
@@ -95,15 +96,60 @@ const convertHistoryGps = async list => {
       })
     }
     convertLocations.forEach((item, index) => {
-      list[index].lng = item.lng,
+      list[index].lng = item.lng
       list[index].lat = item.lat
+      list[index].lngLat = [item.lng, item.lat]
     })
-
+    // console.log('after', JSON.parse(JSON.stringify(list)), convertLocations)
     return Promise.resolve(list)
   } catch (error) {
     return Promise.resolve(list);
   }
 };
+
+const convertHistoryGps = async list => {
+  let preItem = list[0]
+  let historyList = []
+  let preIndex = 0
+  // list = list.sort((a, b) => {
+  //   return a.signal_time - b.signal_time
+  // }).filter((item, index) => {
+  //   if (index > 0) {
+  //     let prevItem = list[index - 1]
+  //     if (item.signal_time === prevItem.signal_time && item.lng === prevItem.lng && item.lat === prevItem.lat) {
+  //       return false
+  //     } else {
+  //       return true
+  //     }
+  //   } else {
+  //     return true
+  //   }
+  // })
+  list = list.sort((a, b) => {
+    return a.signal_time - b.signal_time
+  })
+  console.log('convertHistoryGps', JSON.parse(JSON.stringify(list)), list.length)
+  for (let index = 0; index < list.length; index++) {
+    const item = list[index]
+    let distance = AMap.GeometryUtil.distance(preItem.lngLat, item.lngLat);
+    let costTime = dayjs(item.signal_time).diff(dayjs(preItem.signal_time), 'second')
+    // console.log(distance, costTime, distance / costTime)
+    preItem = item
+    // console.log(distance, costTime)
+    // 两个点直接距离大于1公里则表示不是一条轨迹
+    if (distance > 5000) {
+      historyList.push(list.slice(preIndex, index - 1))
+      preIndex = index
+      // 两个相邻点时间超过4小时且距离大于1千米
+    } else if (costTime > 60 * 60 * 1000 * 4 && distance > 1000) {
+      historyList.push(list.slice(preIndex, index - 1))
+      preIndex = index
+    }
+  }
+  historyList.push(list.slice(preIndex, list.length))
+  console.log('historyList', historyList)
+  return Promise.resolve(historyList)
+}
 
 const accountList = [
   {
@@ -300,7 +346,7 @@ const locationMonitor = {
         });
         if (result.data) {
           let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
-          await convertHistoryGps(deviceInfos);
+          await convertAmapGps(deviceInfos);
           commit("updateDeviceInfo", deviceInfos[0]);
         } else {
           vm.$message({
@@ -323,7 +369,7 @@ const locationMonitor = {
         });
         if (result.data) {
           let deviceInfos = result.data && result.data.length > 0 ? result.data : [result.data]
-          await convertHistoryGps(deviceInfos);
+          await convertAmapGps(deviceInfos);
           console.log(deviceInfos)
           commit("updateDeviceInfo", deviceInfos[0]);
           commit("updateWebDeviceInfo", deviceInfos);
@@ -346,7 +392,7 @@ const locationMonitor = {
           data
         });
         console.log('getAllDevice', result)
-        await convertHistoryGps(result.data);
+        await convertAmapGps(result.data);
         commit("updateAllDeviceInfo", result.data);
       } catch (error) {
         console.log(error);
@@ -359,7 +405,7 @@ const locationMonitor = {
           token: getToken(rootState),
           data
         });
-        await convertHistoryGps(result.data);
+        await convertAmapGps(result.data);
         commit("updateWebDeviceInfo", result.data);
       } catch (error) {
         console.log(error);
@@ -385,33 +431,14 @@ const locationMonitor = {
           ...data
         });
         if (result.alarm && result.alarm.length > 0) {
-          await convertHistoryGps(result.alarm);
+          await convertAmapGps(result.alarm);
           commit('updateHistoryAlarm', result.alarm)
         }
 
         if (result.data && result.data.length > 0) {
-          // if (result.data && result.data.length > 1000) {
-          //   vm.$message({
-          //     type: "warning",
-          //     message: "该设备轨迹数据较多，请耐心等待~"
-          //   });
-          // }
-          let devices = []
-          let gpsDatas = []
-          // 获取所有设备
-          result.data.forEach(item => {
-            if (item.device && devices.indexOf(item.device) === -1) {
-              devices.push(item.device)
-            }
-          })
-          // 过滤掉单设备
-          if (devices.length > 1) {
-            gpsDatas = result.data.filter(item => item.device === devices[devices.length - 1])
-          } else {
-            gpsDatas = result.data
-          }
-          await convertHistoryGps(gpsDatas);
-          commit("updateHistoryInfo", gpsDatas);
+          await convertAmapGps(result.data);
+          let historyList = await convertHistoryGps(result.data);
+          commit("updateHistoryInfo", historyList);
         } else {
           commit("updateHistoryInfo", []);
           vm.$message({
@@ -432,11 +459,11 @@ const locationMonitor = {
           ...data
         });
         if (result.alarm && result.alarm.length > 0) {
-          await convertHistoryGps(result.alarm);
+          await convertAmapGps(result.alarm);
           commit('updateTrackAlarms', result.alarm)
         }
         if (result.data && result.data.length > 0) {
-          await convertHistoryGps(result.data);
+          await convertAmapGps(result.data);
           commit("updateTrackList", result.data);
         } else {
           commit("updateTrackList", []);

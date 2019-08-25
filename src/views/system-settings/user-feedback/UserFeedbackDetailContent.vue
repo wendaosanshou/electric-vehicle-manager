@@ -323,20 +323,6 @@ export default {
   },
   computed: {
     ...mapGetters(["feedbackDetail", "workItem", "vehicleInfo"]),
-    // previewFeedbackImgs() {
-    //   return this.feedbackImgs.map((item, index) => {
-    //     let img = document.createElement('img');
-    //     img.src = item;
-    //     return {
-    //       src: item,
-    //       msrc: item,
-    //       alt: `图片详情-${index + 1}`,
-    //       title: `图片详情-${index + 1}`,
-    //       w: img.width * 1.5,
-    //       h: img.height * 1.5
-    //     }
-    //   })
-    // },
     isRecordSetting() {
       return this.$route && this.$route.name === "RecordSetting";
     },
@@ -394,9 +380,12 @@ export default {
       })
     },
     async initPreviewFeedbackImgs() {
-      this.previewFeedbackImgs = await Promise.all(this.feedbackImgs.map(async (item, index) => {
-        await this.getImagesOption(item, index)
+      let feedbackImgs = this.getFeedbackImgs(this.feedbackDetail)
+      this.previewFeedbackImgs = await Promise.all(feedbackImgs.map(async (item, index) => {
+        console.log('initPreviewFeedbackImgs', item)
+        return await this.getImagesOption(item, index)
       }))
+      console.log(this.previewFeedbackImgs)
     },
     getFeedbackImgs(feedbackDetail) {
       let feedback = this.feedbackDetail.feedback || {}
@@ -406,6 +395,7 @@ export default {
       // if (user && user.head) {
       //   feedbackImgs.push(user.head)
       // }
+      console.log('feedbackImgs', feedbackImgs)
       return feedbackImgs.filter(item => item.indexOf('http') > -1)
     },
     async initProcessDetail() {
@@ -414,8 +404,6 @@ export default {
       let feedback = this.feedbackDetail.feedback || {}
       let user = this.feedbackDetail.user || {}
       let vehicle = this.feedbackDetail.vehicle || {}
-      this.feedbackImgs = this.getFeedbackImgs(this.feedbackDetail)
-      this.initPreviewFeedbackImgs()
       this.form = {
         pre_time: contract.pre_time,
         contract_active: contract.contract_start,
@@ -445,6 +433,8 @@ export default {
         feedback_process: feedback.process_feedback,
         feedback_id: feedback.id
       };
+
+      this.initPreviewFeedbackImgs()
     },
     getIdcardContent(card) {
       if (card === 0) {

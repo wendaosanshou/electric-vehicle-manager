@@ -616,9 +616,16 @@ $basic-ratio: 1.4;
 .mark-car {
   width: d2r(48px);
   height: d2r(53px);
-  background: url("~@/assets/icons/motuochefuwu-copy@2x.png");
-  background-size: 100% 100%;
+  // background: #ffffff;
+  .mark-car-content {
+    width: d2r(48px);
+    height: d2r(53px);
+    background: url("~@/assets/icons/motuochefuwu-copy@2x.png");
+    background-size: 100% 100%;
+  }
 }
+
+
 
 .amap-info-content {
   background: #ffffff00;
@@ -734,5 +741,7 @@ $basic-ratio: 1.4;
   text-align: center!important;
 }
 
-
+.amap-marker-content {
+  background: transparent!important;
+}
 </style>

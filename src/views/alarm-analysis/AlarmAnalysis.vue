@@ -177,7 +177,9 @@ export default {
           this.isAlarmTableVisible = true;
           this.addAlarmMarkers(this.alarmAnalyse)
           this.hideLoading()
-          this.filterAlarmAnalysis = await this.addFormattedAddress(this.alarmAnalyse)
+          await this.addFormattedAddress(this.alarmAnalyse, (result) => {
+            this.filterAlarmAnalysis = result
+          })
         } else {
           if (!startDate || !endDate) {
             this.$message({

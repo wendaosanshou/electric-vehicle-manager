@@ -30,7 +30,7 @@
             <div class="history-location">
               <el-table class="table-analysis table-analysis-fix" size="mini" :data="addAddressTrickList" border style="width: 300px" height="527px" max-height="527px">
                 <el-table-column prop="signal_time"  min-width="130" label="经过时间">
-                  <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+                  <template slot-scope="scope">{{getUtcOffsetTime(scope.row.signal_time)}}</template>
                 </el-table-column>
                 <el-table-column prop="formattedAddress" min-width="130" label="经过地点"></el-table-column>
               </el-table>
@@ -42,7 +42,7 @@
                 <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
               </el-table-column>
               <el-table-column prop="signal_time" min-width="130" label="告警时间">
-                <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+                <template slot-scope="scope">{{getUtcOffsetTime(scope.row.signal_time)}}</template>
               </el-table-column>
               <el-table-column prop="formattedAddress" min-width="130" label="告警地点"></el-table-column>
             </el-table>
@@ -135,6 +135,8 @@ export default {
     ...mapMutations(['resetTrackAlarms', 'updateTrackAlarmId']),
     resetTrack() {
       clearInterval(this.trackId)
+      this.trackTime = 0
+      this.trackCount = 0
       this.resetTrackAlarms()
     },
     initWatchTrack() {
@@ -192,8 +194,12 @@ export default {
             userId,
             alarmId: this.trickAlarmId
           })
-          this.addAddressTrickAlarms = await this.addFormattedAddress(this.trickAlarms)
-          this.addAddressTrickList = await this.addFormattedAddress(this.trickList)
+          await this.addFormattedAddress(this.trickAlarms, (result) => {
+            this.addAddressTrickAlarms = result
+          })
+          await this.addFormattedAddress(this.trickList, (result) => {
+            this.addAddressTrickList = result
+          })
           this.drawTrickListLine()
         } else {
           this.$message({

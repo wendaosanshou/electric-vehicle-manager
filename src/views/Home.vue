@@ -607,8 +607,8 @@ export default {
     async initAllBusinessPoint() {
       //  进页面初始化角色模板数据
       await this.getAllBusinessPoint();
-      await this.getBusinessHandle();
-      await this.getBusinessInstall();
+      // await this.getBusinessHandle();
+      // await this.getBusinessInstall();
     },
     initCurrentPage() {
       const { path } = this.$route

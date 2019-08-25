@@ -1,6 +1,6 @@
 import $ajax from "./ajax";
 
-const BASE_API_URI = 'http://47.92.237.140'
+const BASE_API_URI = 'http://api.renownchn.com'
 
 function requestUrl(path) {
   return `${BASE_API_URI}/api/v1/${path}`;

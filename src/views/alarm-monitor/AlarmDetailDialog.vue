@@ -32,7 +32,7 @@
           </div>
           <div class="form-title">告警信息</div>
           <div class="form-item-wrap">
-            <div class="form-item">告警时间：{{getUtcOffsestTime(currentAlarm.signal_time)}}</div>
+            <div class="form-item">告警时间：{{getUtcOffsetTime(currentAlarm.signal_time)}}</div>
             <div class="form-item">告警事件：{{getAlarmLabel(currentAlarm.alarm)}}</div>
           </div>
         </div>

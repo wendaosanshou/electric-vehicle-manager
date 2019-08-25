@@ -40,7 +40,7 @@ export default {
       this.pageHeight = `${mapHeight}px`
       this.alartMonitorMapHeight = `${mapHeight - 200}px`
     },
-    async addFormattedAddress(locationList) {
+    async addFormattedAddress(locationList, callback) {
       let formattedAddressList = []
       // console.log('addFormattedAddress', locationList)
       for (let index = 0; index < locationList.length; index++) {
@@ -52,6 +52,9 @@ export default {
             ...item,
             formattedAddress
           })
+          if (callback && typeof callback === 'function') {
+            callback(formattedAddressList)
+          }
         }
       }
       return formattedAddressList
@@ -101,7 +104,7 @@ export default {
       markerContent.className = 'alarm-mark';
       iconContent.className = `alarm-mark-content ${item.iconClass}`
       timeContent.className = 'alarm-time-content'
-      timeContent.innerHTML = this.getUtcOffsestTime(item.signal_time)
+      timeContent.innerHTML = this.getUtcOffsetTime(item.signal_time)
       markerContent.append(iconContent)
       markerContent.append(timeContent)
       setTimeout(() => {

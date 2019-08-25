@@ -15,7 +15,7 @@
             <el-table-column prop="imei" width="130" label="IMEI"></el-table-column>
             <el-table-column prop="signal_time" width="120" label="告警时间">
               <template slot-scope="scope">
-                {{getUtcOffsestTime(scope.row.signal_time)}}
+                {{getUtcOffsetTime(scope.row.signal_time)}}
               </template>
             </el-table-column>
             <el-table-column prop="note" width="120" label="告警类型">

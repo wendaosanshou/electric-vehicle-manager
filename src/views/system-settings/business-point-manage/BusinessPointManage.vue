@@ -99,8 +99,8 @@ export default {
   },
   watch: {
     $route() {
-      this.initAllBusinessPoint();
       this.initBusinessType()
+      this.initAllBusinessPoint();
     }
   },
   methods: {
@@ -108,12 +108,12 @@ export default {
     ...mapActions(["getAllOrg", "getAllBusinessPoint", 'getBusinessHandle', 'getBusinessInstall', 'getOrgAttribute']),
     initBusinessType() {
       const { path } = this.$route
-      console.log('initBusinessType', path)
       if (path === '/business-manage') {
         this.updateBusinessType(1)
       } else if (path === '/equipment-manage') {
         this.updateBusinessType(2)
       }
+      console.log('initBusinessType', path)
     },
     async handleGetAttributeList() {
       await this.getOrgAttribute({
@@ -177,6 +177,7 @@ export default {
     BusinessPointDelete
   },
   mounted() {
+    this.initBusinessType()
     this.initAllBusinessPoint();
   }
 };

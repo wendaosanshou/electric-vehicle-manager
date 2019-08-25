@@ -72,7 +72,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      firmwareUploadUrl: "http://47.92.237.140/api/v1/file/firmware",
+      firmwareUploadUrl: "http://api.renownchn.com/api/v1/file/firmware",
       form: {
         version: "",
         version_url: "",

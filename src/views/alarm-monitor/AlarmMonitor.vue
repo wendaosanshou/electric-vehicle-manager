@@ -27,7 +27,7 @@
             <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
           </el-table-column>
           <el-table-column prop="signal_time" min-width="130" label="告警时间">
-            <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+            <template slot-scope="scope">{{getUtcOffsetTime(scope.row.signal_time)}}</template>
           </el-table-column>
           <el-table-column prop="formattedAddress" min-width="430" label="告警地点"></el-table-column>
       </el-table>
@@ -113,7 +113,9 @@ export default {
         page_index: this.pageIndex,
         alarm: this.alarmValue
       });
-      this.filterAlarmAnalysis = await this.addFormattedAddress(this.alarmAnalyse)
+      await this.addFormattedAddress(this.alarmAnalyse, (result) => {
+        this.filterAlarmAnalysis = result
+      })
     },
     onSelectAlarm(value) {
       this.alarmValue = value

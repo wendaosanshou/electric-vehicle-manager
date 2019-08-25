@@ -54,7 +54,7 @@
         <div class="history-location">
           <el-table class="table-analysis table-analysis-fix" size="mini" :data="historyLocation" border style="width: 100%" :height="alartMonitorMapHeight" :max-height="alartMonitorMapHeight">
             <el-table-column prop="signal_time"  min-width="130" label="经过时间">
-              <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+              <template slot-scope="scope">{{getUtcOffsetTime(scope.row.signal_time)}}</template>
             </el-table-column>
             <el-table-column prop="formattedAddress" min-width="130" label="经过地点"></el-table-column>
           </el-table>
@@ -66,7 +66,7 @@
             <template slot-scope="scope">{{getAlarmLabel(scope.row.alarm)}}</template>
           </el-table-column>
           <el-table-column prop="signal_time" min-width="130" label="告警时间">
-            <template slot-scope="scope">{{getUtcOffsestTime(scope.row.signal_time)}}</template>
+            <template slot-scope="scope">{{getUtcOffsetTime(scope.row.signal_time)}}</template>
           </el-table-column>
           <el-table-column prop="formattedAddress" min-width="130" label="告警地点"></el-table-column>
         </el-table>
@@ -128,7 +128,6 @@ export default {
   computed: {
     ...mapGetters([
       "historyInfo",
-      "historyLineInfo",
       "deviceIds",
       "allLocationInfo",
       "currentLocationInfo",
@@ -172,8 +171,12 @@ export default {
             this.isShowHistoryTrack = true;
             this.loading.close();
             // 加载定位和报警数据
-            this.historyLocation = await this.addFormattedAddress(this.historyInfo)
-            this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
+            await this.addFormattedAddress(this.allHistory, (result) => {
+              this.historyLocation = result
+            })
+            await this.addFormattedAddress(this.historyAlarm, (result) => {
+              this.historyAlarmWithAddress = result
+            })
           }
         } else {
           this.$message({

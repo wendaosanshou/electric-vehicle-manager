@@ -33,7 +33,7 @@
         </div>-->
         <div class="form-title">数据时间</div>
         <div class="form-item-wrap">
-          <div class="form-item">更新时间：{{getUtcOffsestTime(deviceInfo.recv_time)}}</div>
+          <div class="form-item">更新时间：{{getUtcOffsetTime(deviceInfo.recv_time)}}</div>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
