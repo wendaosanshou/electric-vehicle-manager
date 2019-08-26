@@ -123,7 +123,7 @@ $basic-ratio: 1.4;
           background-size: 100% 100%;
         }
         &.item-icon-neizhidiya {
-          background: url("~@/assets/icons/neizhidiya_icon@2x.png");
+          background: url("~@/assets/icons/didianya_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-duandian {
