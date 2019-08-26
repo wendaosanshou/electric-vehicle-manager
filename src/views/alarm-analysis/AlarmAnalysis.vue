@@ -158,6 +158,7 @@ export default {
     },
     async handleSearchAlarm() {
       this.showLoading()
+      this.resetAlarmAnalyse()
       try {
         const [startDate, endDate] = this.pickerTime;
         if (startDate && endDate && this.searchValue) {

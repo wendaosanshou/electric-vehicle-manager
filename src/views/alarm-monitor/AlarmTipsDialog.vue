@@ -10,7 +10,12 @@
     >
       <!-- {{alarmTypeList}} -->
       <div class="dialog-content">
-        <div class="form-item" v-for="(item, index) in alarmTypeList" :key="index" @click="onAlarmTipsClick(item)">
+        <div
+          class="form-item"
+          v-for="(item, index) in alarmTypeList"
+          :key="index"
+          @click="onAlarmTipsClick(item)"
+        >
           <i class="item-icon" :class="[`item-icon-${item.icon}`]"></i>
           <span class="item-content">{{`${item.content}(${item.count})`}}</span>
         </div>
@@ -29,7 +34,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["alarmLatest", "alarmTypeList"]),
+    ...mapGetters(["alarmLatest", "alarmTypeList"])
   },
   model: {
     prop: "visible",
@@ -44,13 +49,13 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateAlarmTypeList']),
+    ...mapMutations(["updateAlarmTypeList"]),
     onDialogHide() {
       this.$emit("change", false);
     },
     onAlarmTipsClick(item) {
-      console.log('onAlarmTipsClick', item)
-      this.$emit('on-select-alarm', item.value)
+      console.log("onAlarmTipsClick", item);
+      this.$emit("on-select-alarm", item.value);
     }
   }
 };
@@ -88,11 +93,11 @@ $basic-ratio: 1.4;
       border-bottom: 1px solid #f0f3f7;
       cursor: pointer;
       .item-icon {
-        width: d2r(22px);
-        height: d2r(27px);
-        broder: 0;
+        width: d2r(32px);
+        height: d2r(32px);
         background: url("~@/assets/icons/weiyi_icon@2x.png");
         background-size: 100% 100%;
+        border: 0;
         &.item-icon-weiyi {
           background: url("~@/assets/icons/weiyi_icon@2x.png");
           background-size: 100% 100%;
@@ -102,7 +107,7 @@ $basic-ratio: 1.4;
           background-size: 100% 100%;
         }
         &.item-icon-gaowen {
-          background: url("~@/assets/icons/gaowen_icon@2x.png");
+          background: url("~@/assets/icons/gaowei_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-chaosu {
@@ -110,7 +115,7 @@ $basic-ratio: 1.4;
           background-size: 100% 100%;
         }
         &.item-icon-diya {
-          background: url("~@/assets/icons/diya_icon@2x.png");
+          background: url("~@/assets/icons/didianya_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-gaoya {
@@ -122,19 +127,19 @@ $basic-ratio: 1.4;
           background-size: 100% 100%;
         }
         &.item-icon-duandian {
-          background: url("~@/assets/icons/duandian_icon@2x.png");
+          background: url("~@/assets/icons/dianping-di_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-duandian2 {
-          background: url("~@/assets/icons/duandian2_icons@2x.png");
+          background: url("~@/assets/icons/duandian_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-suaidao {
-          background: url("~@/assets/icons/suaidao_icons@2x.png");
+          background: url("~@/assets/icons/shuaidao_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-chaosu {
-          background: url("~@/assets/icons/chaosu_icon@2x.png");
+          background: url("~@/assets/icons/chaosu_icons@2x.png");
           background-size: 100% 100%;
         }
         &.item-icon-jinjigaojing {
@@ -146,7 +151,7 @@ $basic-ratio: 1.4;
           background-size: 100% 100%;
         }
         &.item-icon-fangdao {
-          background: url("~@/assets/icons/fangdao_icon@2x.png");
+          background: url("~@/assets/icons/fangdao_icons@2x.png");
           background-size: 100% 100%;
         }
       }

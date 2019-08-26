@@ -130,7 +130,8 @@ export default {
       this.pickerTime = []
     },
     onBackHistoryTrack() {
-      this.activeType = 'destory'
+      this.activeType = ''
+      this.carSpeed = 1
       this.isShowHistoryTrack = false
       this.initAMap();
     },
@@ -173,6 +174,7 @@ export default {
             end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
           });
           await this.drawHistoryLine();
+          this.activeType = "";
           this.isShowHistoryTrack = true;
         } else {
           this.$message({

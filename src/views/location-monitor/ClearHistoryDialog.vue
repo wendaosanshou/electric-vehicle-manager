@@ -76,13 +76,9 @@ export default {
       this.$emit("change", false);
     },
     async onDialogConfirm() {
-      const [startDate, endDate] = this.pickerTime
-      if (startDate && endDate) {
-        console.log({
-          id: this.currentLocationInfo.id,
-          start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
-        })
+      console.log(this.pickerTime)
+      if (this.pickerTime && this.pickerTime.length > 1) {
+        const [startDate, endDate] = this.pickerTime
         await this.clearHistoryInfo({
           id: this.currentLocationInfo.id,
           start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),

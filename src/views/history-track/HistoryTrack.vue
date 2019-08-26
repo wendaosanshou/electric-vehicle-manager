@@ -147,9 +147,12 @@ export default {
     resetMap() {
       this.isShowHistoryTrack = false
       this.map.clearMap();
+      this.historyAlarmWithAddress = []
+      this.historyLocation = []
     },
     async onHistorySearch() {
       this.clearHistoryInfo()
+      this.resetMap()
       const [startDate, endDate] = this.pickerTime;
       try {
         if (startDate && endDate && this.searchValue) {
@@ -168,6 +171,7 @@ export default {
               end: dayjs(endDate).subtract(utcOffset, 'minute').format("YYYY-MM-DD HH:mm:ss")
             });
             await this.drawHistoryLine();
+            this.activeType = "";
             this.isShowHistoryTrack = true;
             this.loading.close();
             // 加载定位和报警数据
@@ -191,6 +195,7 @@ export default {
     },
     onBackHistoryTrack() {
       this.activeType = ''
+      this.carSpeed = 1
       this.isShowHistoryTrack = false;
       this.init();
     },

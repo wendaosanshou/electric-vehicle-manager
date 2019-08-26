@@ -122,8 +122,13 @@ export default {
       this.pageSize = 10
       this.handleSearchAlarm()
     },
+    resetAlarmMonitor() {
+      this.map.clearMap()
+      this.filterAlarmAnalysis = []
+    },
     async onSearchAlarm() {
       this.showLoading()
+      this.resetAlarmMonitor()
       try {
         this.alarmValue = 0
         this.pageSize = 1000
