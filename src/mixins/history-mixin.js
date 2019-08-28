@@ -99,7 +99,7 @@ export default {
       markerContent.className = "mark-car"
       carContent.className = "mark-car-content";
       setTimeout(() => {
-        $('.mark-car').parents('.amap-marker').css('z-index', 1000)
+        $('.mark-car').parents('.amap-marker').addClass('is-high-zindex')
       }, 100)
       return markerContent;
     },
