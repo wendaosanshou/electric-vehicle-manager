@@ -64,12 +64,6 @@ const Login = {
     currentAlarm: {},
     alarmAnalyseTotal: 0,
     alarmTypeList: [
-      // {
-      //   value: 1,
-      //   icon: "weiyi",
-      //   content: "位移报警（未启用）",
-      //   count: 0
-      // },
       {
         value: 2,
         icon: "gaowen",
@@ -79,27 +73,21 @@ const Login = {
       {
         value: 4,
         icon: "neizhidiya",
-        content: "电池低电压告警",
+        content: "设备电池低电压告警",
         count: 0
       },
       {
         value: 8,
         icon: "duandian",
-        content: "电瓶低电压告警",
+        content: "车辆电池低电压告警",
         count: 0
       },
       {
         value: 16,
         icon: "duandian2",
-        content: "电瓶断电/剪线告警",
+        content: "车辆断电告警",
         count: 0
       },
-      // {
-      //   value: 32,
-      //   icon: "zhendong",
-      //   content: "震动报警（未启用）",
-      //   count: 0
-      // },
       {
         value: 64,
         icon: "suaidao",
@@ -109,25 +97,13 @@ const Login = {
       {
         value: 128,
         icon: "chaosu",
-        content: "超速告警",
+        content: "车辆超速告警",
         count: 0
       },
-      // {
-      //   value: 256,
-      //   icon: "jinjigaojing",
-      //   content: "紧急报警（未启用）",
-      //   count: 0
-      // },
-      // {
-      //   value: 512,
-      //   icon: "feifaxingshi",
-      //   content: "非法行驶报警（未启用）",
-      //   count: 0
-      // },
       {
         value: 1024,
         icon: "fangdao",
-        content: "车辆异常移动告警",
+        content: "防盗告警",
         count: 0
       }
     ]

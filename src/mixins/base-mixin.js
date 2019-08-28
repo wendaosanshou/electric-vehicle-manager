@@ -1,4 +1,5 @@
 /* eslint-disable */
+const shortid = require('shortid');
 import { mapGetters } from "vuex";
 import dayjs from 'dayjs'
 
@@ -28,6 +29,14 @@ export default {
     }
   },
   methods: {
+    getShortidList(list) {
+      return list.map(item => {
+        return {
+          shortid: shortid.generate(),
+          ...item
+        }
+      })
+    },
     showLoading() {
       this.loadingPic = this.$loading({
         lock: true,

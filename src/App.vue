@@ -133,11 +133,11 @@ $basic-ratio: 1.4;
   box-sizing: border-box;
   .el-table__header-wrapper .el-table__header {
     thead {
-      color: #3B4859;
-      background: #9E9DB6;
+      color: #3b4859;
+      background: #9e9db6;
       tr,
       th {
-        background: #9E9DB6;
+        background: #9e9db6;
       }
     }
   }
@@ -162,7 +162,8 @@ $basic-ratio: 1.4;
   }
 }
 
-.el-table__fixed .el-table__header, .el-table__fixed-right .el-table__header{
+.el-table__fixed .el-table__header,
+.el-table__fixed-right .el-table__header {
   thead {
     color: #ffffff;
     background: #bbbbc4;
@@ -213,7 +214,7 @@ $basic-ratio: 1.4;
 }
 
 .ipt-date-fix {
-  border-radius: 0!important;
+  border-radius: 0 !important;
 }
 
 .el-select-dropdown__item,
@@ -312,7 +313,7 @@ $basic-ratio: 1.4;
   width: 134px;
   height: 124px;
   border-radius: 100%;
-  background: url('~@/assets/icons/img_information.png');
+  background: url("~@/assets/icons/img_information.png");
   background-size: 100% 100%;
   .mark-content-1 {
     width: auto;
@@ -342,7 +343,7 @@ $basic-ratio: 1.4;
   position: relative;
   width: 10px;
   height: 10px;
-  background: #FF7525;
+  background: #ff7525;
   border-radius: 100%;
   cursor: pointer;
   &.is-active {
@@ -370,8 +371,8 @@ $basic-ratio: 1.4;
     line-height: d2r(22px);
     padding: 0 d2r(5px);
     font-size: d2r(13px);
-    color: #D0021B;
-    border: 1px solid #D0021BFF;
+    color: #d0021b;
+    border: 1px solid #d0021bff;
     background: #ffffff;
     white-space: nowrap;
     text-align: left;
@@ -381,8 +382,8 @@ $basic-ratio: 1.4;
 
 .alarm-mark {
   position: relative;
-  width: d2r(44px);
-  height: d2r(54px);
+  width: d2r(32px);
+  height: d2r(32px);
   &.is-active {
     .alarm-time-content {
       display: block;
@@ -398,8 +399,8 @@ $basic-ratio: 1.4;
     line-height: 22px;
     padding: 0 5px;
     font-size: d2r(13px);
-    color: #D0021B;
-    border: 1px solid #D0021BFF;
+    color: #d0021b;
+    border: 1px solid #d0021bff;
     background: #ffffff;
     white-space: nowrap;
     text-align: left;
@@ -415,7 +416,7 @@ $basic-ratio: 1.4;
   font-size: d2r(17px);
   text-align: center;
   line-height: d2r(56px);
-  background: #FF7525FF;
+  background: #ff7525ff;
   border-radius: 100%;
 }
 
@@ -469,8 +470,8 @@ $basic-ratio: 1.4;
     line-height: d2r(22px);
     padding: 0 d2r(5px);
     font-size: d2r(13px);
-    color: #D0021B;
-    border: 1px solid #D0021BFF;
+    color: #d0021b;
+    border: 1px solid #d0021bff;
     background: #ffffff;
     white-space: nowrap;
     text-align: left;
@@ -479,15 +480,15 @@ $basic-ratio: 1.4;
 }
 
 .amap-marker.is-high-zindex {
-  z-index: 9999!important;
+  z-index: 9999 !important;
 }
 
 .alarm-mark-content {
   position: absolute;
   left: 0;
   top: 0;
-  width: d2r(44px);
-  height: d2r(54px);
+  width: d2r(32px);
+  height: d2r(32px);
   background: url("~@/assets/icons/weiyi_icon@2x.png");
   background-size: 100% 100%;
   z-index: 10;
@@ -500,7 +501,7 @@ $basic-ratio: 1.4;
     background-size: 100% 100%;
   }
   &.item-icon-gaowen {
-    background: url("~@/assets/icons/gaowen_icon@2x.png");
+    background: url("~@/assets/icons/gaowei_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-chaosu {
@@ -508,7 +509,7 @@ $basic-ratio: 1.4;
     background-size: 100% 100%;
   }
   &.item-icon-diya {
-    background: url("~@/assets/icons/diya_icon@2x.png");
+    background: url("~@/assets/icons/didianya_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-gaoya {
@@ -516,23 +517,23 @@ $basic-ratio: 1.4;
     background-size: 100% 100%;
   }
   &.item-icon-neizhidiya {
-    background: url("~@/assets/icons/neizhidiya_icon@2x.png");
+    background: url("~@/assets/icons/didianya_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-duandian {
-    background: url("~@/assets/icons/duandian_icon@2x.png");
+    background: url("~@/assets/icons/dianping-di_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-duandian2 {
-    background: url("~@/assets/icons/duandian2_icons@2x.png");
+    background: url("~@/assets/icons/duandian_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-suaidao {
-    background: url("~@/assets/icons/suaidao_icons@2x.png");
+    background: url("~@/assets/icons/shuaidao_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-chaosu {
-    background: url("~@/assets/icons/chaosu_icon@2x.png");
+    background: url("~@/assets/icons/chaosu_icons@2x.png");
     background-size: 100% 100%;
   }
   &.item-icon-jinjigaojing {
@@ -544,7 +545,7 @@ $basic-ratio: 1.4;
     background-size: 100% 100%;
   }
   &.item-icon-fangdao {
-    background: url("~@/assets/icons/fangdao_icon@2x.png");
+    background: url("~@/assets/icons/fangdao_icons@2x.png");
     background-size: 100% 100%;
   }
 }
@@ -629,8 +630,6 @@ $basic-ratio: 1.4;
     background-size: 100% 100%;
   }
 }
-
-
 
 .amap-info-content {
   background: #ffffff00;
@@ -743,11 +742,11 @@ $basic-ratio: 1.4;
 }
 
 .pswp__caption__center {
-  text-align: center!important;
+  text-align: center !important;
 }
 
 .amap-marker-content {
-  background: transparent!important;
+  background: transparent !important;
 }
 
 .table-allow-click .el-table__row {

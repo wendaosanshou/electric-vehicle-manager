@@ -2,7 +2,7 @@
   <div class="point-content">
     <!-- {{businessForm}} -->
     <!-- {{businessForm}}<br/>{{defaultForm}} -->
-    <!-- {{filterAllOrg}}--{{useOrg}}--{{businessType}} -->
+    <!-- {{filterAllOrg}} -->
     <div class="point-item" v-if="isAddForm">
       <div class="point-item-label">父节点组织名称</div>
       <el-input class="item-ipt ipt-fix" v-model="businessForm.parentName" size="mini" placeholder="请填写当前组织名称" disabled></el-input>
@@ -35,13 +35,13 @@
         :disabled="!hasOrgSelector || isDeleteForm"
         placeholder="请选择组织类型"
       >
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in filterAllOrg" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="item in getShortidList(filterAllOrg)" :key="item.shortid"></el-option>
       </el-select>
     </div>
     <div class="point-item">
       <div class="point-item-label">渠道属性</div>
       <el-select class="item-ipt ipt-fix" size="small" v-model="businessForm.attribute_id" @change="handleAttributeChange" :disabled="disabledAttribute" placeholder="请选择渠道属性">
-        <el-option :label="item.name" :value="item.id" v-for="(item, index) in orgAttribute" :key="index"></el-option>
+        <el-option :label="item.name" :value="item.id" v-for="item in getShortidList(orgAttribute)" :key="item.shortid"></el-option>
       </el-select>
     </div>
     <div class="btn-confirm-wrap">
@@ -54,9 +54,11 @@
 
 <script>
 /* eslint-disable */
+const shortid = require('shortid');
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { setTimeout } from 'timers'
 
+console.log('shortid', shortid)
 export default {
   data() {
     return {
