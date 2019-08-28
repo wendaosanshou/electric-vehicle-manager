@@ -98,6 +98,9 @@ export default {
       markerContent.append(carContent)
       markerContent.className = "mark-car"
       carContent.className = "mark-car-content";
+      setTimeout(() => {
+        $('.mark-car').parents('.amap-marker').css('z-index', 1000)
+      }, 100)
       return markerContent;
     },
     drawCarMarker(historyInfo) {
@@ -114,9 +117,10 @@ export default {
 
       let passedPolyline = new AMap.Polyline({
         map: this.map,
-        strokeColor: "#FF7525", //线颜色
-        strokeWeight: 6, //线宽
-        lineJoin: "round"
+        strokeColor: "#0960BD", //线颜色
+        strokeWeight: 8, //线宽
+        lineJoin: "round",
+        showDir: true
       });
       let that = this
       let throttleSetCenter = throttle(() => {
@@ -142,11 +146,10 @@ export default {
       new AMap.Polyline({
         map: this.map,
         path: paths,
-        strokeWeight: 7,
+        strokeWeight: 8,
         strokeOpacity: 0.8,
-        strokeColor: "#FF7525",
-        lineJoin: "round",
-        showDir: true
+        strokeColor: "#0960BD",
+        lineJoin: "round"
       });
       // this.map.setFitView();
     },

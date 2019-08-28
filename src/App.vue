@@ -343,7 +343,7 @@ $basic-ratio: 1.4;
   position: relative;
   width: 10px;
   height: 10px;
-  background: #ff7525;
+  background: #0960BD;
   border-radius: 100%;
   cursor: pointer;
   &.is-active {
@@ -620,13 +620,13 @@ $basic-ratio: 1.4;
 }
 
 .mark-car {
-  width: d2r(48px);
-  height: d2r(53px);
+  width: d2r(34px);
+  height: d2r(44px);
   // background: #ffffff;
   .mark-car-content {
-    width: d2r(48px);
-    height: d2r(53px);
-    background: url("~@/assets/icons/motuochefuwu-copy@2x.png");
+    width: d2r(34px);
+    height: d2r(44px);
+    background: url("~@/assets/icons/diandongcheguanli_h@2x.png");
     background-size: 100% 100%;
   }
 }

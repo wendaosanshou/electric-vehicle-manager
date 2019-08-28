@@ -71,27 +71,9 @@ const Login = {
         count: 0
       },
       {
-        value: 4,
-        icon: "neizhidiya",
-        content: "设备电池低电压告警",
-        count: 0
-      },
-      {
-        value: 8,
-        icon: "duandian",
-        content: "车辆电池低电压告警",
-        count: 0
-      },
-      {
         value: 16,
         icon: "duandian2",
         content: "车辆断电告警",
-        count: 0
-      },
-      {
-        value: 64,
-        icon: "suaidao",
-        content: "车辆碰撞/倾覆告警",
         count: 0
       },
       {
@@ -104,6 +86,24 @@ const Login = {
         value: 1024,
         icon: "fangdao",
         content: "防盗告警",
+        count: 0
+      },
+      {
+        value: 64,
+        icon: "suaidao",
+        content: "车辆碰撞/倾覆告警",
+        count: 0
+      },
+      {
+        value: 4,
+        icon: "neizhidiya",
+        content: "设备电池低电压告警",
+        count: 0
+      },
+      {
+        value: 8,
+        icon: "duandian",
+        content: "车辆电池低电压告警",
         count: 0
       }
     ]
