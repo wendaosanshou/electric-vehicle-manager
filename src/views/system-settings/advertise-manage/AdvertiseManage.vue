@@ -12,10 +12,10 @@
         ref="userTable"
         class="table-fix table-disable-select-all"
         size="mini"
-        :data="allGuide"
+        :data="addIndexAllGuide"
         border
         style="width: 100%">
-        <el-table-column align="center" prop="id" min-width="70" label="序号" sortable></el-table-column>
+        <el-table-column align="center" prop="index" min-width="70" label="序号" sortable></el-table-column>
         <el-table-column align="center" prop="img_url" min-width="220" label="广告页图片" sortable></el-table-column>
         <el-table-column align="center" prop="page_url" min-width="180"  label="广告页链接" sortable></el-table-column>
         <el-table-column align="center" prop="create_time" min-width="180"  label="创建时间" sortable></el-table-column>
@@ -65,7 +65,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["allGuide", "allGuideTotal"])
+    ...mapGetters(["allGuide", "allGuideTotal"]),
+    addIndexAllGuide() {
+      return this.getPageIndexList(this.allGuide, this.pageSize, this.pageIndex)
+    }
   },
   methods: {
     ...mapActions(["getAllGuide"]),

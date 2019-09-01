@@ -24,10 +24,10 @@
         <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="handleRefresh">查询</el-button>
     </div>
     <div class="table-container">
-    <el-table class="table-analysis table-fix" align="center" size="mini" :data="attributeList" border style="width: 100%">
-        <el-table-column prop="id" align="center" label="类型编号" sortable>
+    <el-table class="table-analysis table-fix" align="center" size="mini" :data="addIndexAttributeList" border style="width: 100%">
+        <el-table-column prop="index" align="center" label="类型编号" sortable>
           <template slot-scope="scope">
-            {{getAttributeId(scope.row.id)}}
+            {{getAttributeId(scope.row.index)}}
           </template>
         </el-table-column>
         <el-table-column prop="name" align="center" label="类型名称" sortable></el-table-column>
@@ -84,7 +84,10 @@ export default {
       }
     },
     computed: {
-      ...mapGetters(['attributeList', 'attributeListCount'])
+      ...mapGetters(['attributeList', 'attributeListCount']),
+      addIndexAttributeList() {
+        return this.getPageIndexList(this.attributeList, this.pageSize, this.pageIndex)
+      }
     },
     methods: {
       ...mapActions(['getAttributeList', 'deleteAttribute']),

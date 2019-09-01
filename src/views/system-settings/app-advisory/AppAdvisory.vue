@@ -16,7 +16,7 @@
         stripe
         style="width: 100%"
       >
-        <el-table-column prop="id" label="序号" min-width="70" align="center" sortable></el-table-column>
+        <el-table-column prop="index" label="序号" min-width="70" align="center" sortable></el-table-column>
         <el-table-column prop="title" label="资讯标题" min-width="180" align="center" sortable></el-table-column>
         <!-- <el-table-column label="创建人" align="center"></el-table-column> -->
         <el-table-column prop="time" label="创建时间" min-width="140" align="center" sortable></el-table-column>
@@ -64,10 +64,11 @@ export default {
   computed: {
     ...mapGetters(["infoWeb", "appInfoCount"]),
     sortInfoWeb() {
-      if (this.infoWeb && this.infoWeb.length > 0) {
-        return this.infoWeb.sort((a, b) => a.id - b.id);
-      }
-      return this.infoWeb;
+      // if (this.infoWeb && this.infoWeb.length > 0) {
+      //   return this.infoWeb.sort((a, b) => a.id - b.id);
+      // }
+      // return this.infoWeb;
+      return this.getPageIndexList(this.infoWeb, this.pageSize, this.pageIndex)
     }
   },
   methods: {

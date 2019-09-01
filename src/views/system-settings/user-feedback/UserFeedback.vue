@@ -81,10 +81,11 @@
       ref="userTable"
       class="table-fix table-disable-select-all"
       size="mini"
-      :data="feedbackList"
+      :data="addIndexFeedbackList"
       border
       style="width: 100%"
     >
+      <el-table-column align="center" prop="index" label="序号" sortable></el-table-column>
       <el-table-column align="center" prop="account" label="用户手机号" sortable></el-table-column>
       <el-table-column align="center" prop="name" label="用户姓名" sortable></el-table-column>
       <el-table-column align="center" prop="feedback_type" label="意见分类" sortable></el-table-column>
@@ -177,7 +178,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['feedbackList', 'feedbackListTotal'])
+    ...mapGetters(['feedbackList', 'feedbackListTotal']),
+    addIndexFeedbackList() {
+      return this.getPageIndexList(this.feedbackList, this.pageSize, this.pageIndex)
+    }
   },
   methods: {
     ...mapActions(["getFeedback", "getFeedbackDetail"]),

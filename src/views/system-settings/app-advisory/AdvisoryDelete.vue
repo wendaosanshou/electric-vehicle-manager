@@ -13,7 +13,7 @@
       </div>
       <div class="dialog-content">
         <el-table class="table-fix" size="mini" :data="tableData" border style="width: 100%">
-          <el-table-column prop="id" label="序号" align="center"></el-table-column>
+          <el-table-column prop="index" label="序号" align="center"></el-table-column>
           <el-table-column prop="title" label="资讯标题" width="120" align="center"></el-table-column>
           <!-- <el-table-column label="创建人" align="center"></el-table-column> -->
           <el-table-column prop="time" label="创建时间" align="center"></el-table-column>

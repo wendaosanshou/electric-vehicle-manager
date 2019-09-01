@@ -40,18 +40,18 @@
       </div>
     </div>
     <div class="table-container">
+      <div class="device-total">设备总数：{{productListTotal}}</div>
       <el-table
         id="device-out-table"
         ref="userTable"
         class="table-fix"
         size="mini"
-        :data="productList"
+        :data="addIndexProductList"
         border
         @selection-change="handleSelectionChange"
-        style="width: 100%"
-      >
+        style="width: 100%">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" align="center" label="序号" sortable></el-table-column>
+        <el-table-column prop="index" align="center" label="序号" sortable></el-table-column>
         <el-table-column prop="imei" align="center" label="IMEI" sortable></el-table-column>
         <el-table-column prop="operation" align="center" label="创建人" sortable></el-table-column>
         <el-table-column prop="import_time" align="center" label="入库时间" sortable></el-table-column>
@@ -116,6 +116,9 @@ export default {
   },
   computed: {
     ...mapGetters(["productList", "productListTotal"]),
+    addIndexProductList() {
+      return this.getPageIndexList(this.productList, this.pageSize, this.pageIndex)
+    },
     hasRebotImeis() {
       return this.rebotImeis && this.rebotImeis.length > 0
     }
@@ -310,4 +313,10 @@ $basic-ratio: 1.4;
   margin-left: d2r(10px);
 }
 
+.device-total {
+  text-align: left;
+  width: 100%;
+  height: d2r(34px);
+  font-size: d2r(14px);
+}
 </style>

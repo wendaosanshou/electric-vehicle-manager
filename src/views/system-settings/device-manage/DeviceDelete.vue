@@ -18,7 +18,7 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="id" align="center" label="序号"></el-table-column>
+          <el-table-column prop="index" align="center" label="序号"></el-table-column>
           <el-table-column prop="imei" align="center" label="IMEI"></el-table-column>
           <el-table-column prop="operation" align="center" label="创建人"></el-table-column>
           <el-table-column prop="import_time" align="center" label="入库时间"></el-table-column>

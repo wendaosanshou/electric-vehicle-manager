@@ -12,10 +12,10 @@
         ref="userTable"
         class="table-fix table-disable-select-all"
         size="mini"
-        :data="apkList"
+        :data="addIndexApkList"
         border
         style="width: 100%">
-        <el-table-column align="center" prop="id" min-width="70" label="序号" sortable></el-table-column>
+        <el-table-column align="center" prop="index" min-width="70" label="序号" sortable></el-table-column>
         <el-table-column align="center" prop="name" min-width="120" label="APP名称" sortable></el-table-column>
         <el-table-column align="center" prop="version" min-width="120" label="版本名称" sortable></el-table-column>
         <el-table-column align="center" prop="update_time" min-width="140" label="更新时间" sortable></el-table-column>
@@ -68,7 +68,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["apkList", "apkListTotal"])
+    ...mapGetters(["apkList", "apkListTotal"]),
+    addIndexApkList() {
+      return this.getPageIndexList(this.apkList, this.pageSize, this.pageIndex)
+    }
   },
   methods: {
     ...mapActions(["getApkList"]),

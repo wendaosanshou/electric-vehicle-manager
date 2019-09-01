@@ -72,13 +72,13 @@
       ref="userTable"
       class="table-fix table-disable-select-all"
       size="mini"
-      :data="productPages"
+      :data="addIndexProductPages"
       border
       style="width: 100%"
       @selection-change="handleSelectionChange"
       @select="handleSelect"
     >
-      <el-table-column align="center" prop="id" label="序号" sortable></el-table-column>
+      <el-table-column align="center" prop="index" label="序号" sortable></el-table-column>
       <el-table-column align="center" prop="imei" label="IMEI" sortable></el-table-column>
       <el-table-column align="center" prop="operation" label="创建人" sortable></el-table-column>
       <el-table-column align="center" prop="import_time" label="入库时间" sortable></el-table-column>
@@ -128,7 +128,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['productPages', 'productPagesTotal'])
+    ...mapGetters(['productPages', 'productPagesTotal']),
+    addIndexProductPages() {
+      return this.getPageIndexList(this.productPages, this.pageSize, this.pageIndex)
+    }
   },
   methods: {
     ...mapActions(["getProductPage"]),

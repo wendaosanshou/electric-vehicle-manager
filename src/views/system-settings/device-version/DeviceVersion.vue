@@ -37,11 +37,11 @@
       ref="userTable"
       class="table-fix table-disable-select-all"
       size="mini"
-      :data="firewareList"
+      :data="addIndexFirewareList"
       border
       style="width: 100%"
     >
-      <el-table-column align="center" prop="id" label="序号" sortable></el-table-column>
+      <el-table-column align="center" prop="index" label="序号" sortable></el-table-column>
       <el-table-column align="center" prop="version" width="120" label="版本名称" sortable></el-table-column>
       <el-table-column align="center" prop="version_date" width="120" label="上传时间" sortable></el-table-column>
       <el-table-column align="center" prop="operation" width="120" label="上传操作人" sortable></el-table-column>
@@ -88,7 +88,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['firewareList', 'firewareListTotal'])
+    ...mapGetters(['firewareList', 'firewareListTotal']),
+    addIndexFirewareList() {
+      return this.getPageIndexList(this.firewareList, this.pageSize, this.pageIndex)
+    }
   },
   methods: {
     ...mapActions(["getFirmwareList"]),

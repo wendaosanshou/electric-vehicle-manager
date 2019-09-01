@@ -29,6 +29,14 @@ export default {
     }
   },
   methods: {
+    getPageIndexList(list, pageSize, pageIndex) {
+      return list.map((item, index) => {
+        return {
+          index: (pageIndex - 1) * pageSize + index + 1,
+          ...item
+        }
+      })
+    },
     getShortidList(list) {
       return list.map(item => {
         return {

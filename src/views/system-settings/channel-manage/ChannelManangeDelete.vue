@@ -13,9 +13,9 @@
       </div>
       <div class="dialog-content">
          <el-table class="table-analysis table-fix" size="mini" :data="tableData" border style="width: 100%">
-            <el-table-column prop="id" align="center" label="类型编号">
+            <el-table-column prop="index" align="center" label="类型编号">
               <template slot-scope="scope">
-                {{getAttributeId(scope.row.id)}}
+                {{getAttributeId(scope.row.index)}}
               </template>
             </el-table-column>
             <el-table-column prop="name" align="center" label="类型名称"></el-table-column>
