@@ -42,19 +42,32 @@ export default {
     },
     async addFormattedAddress(locationList, callback) {
       let formattedAddressList = []
-      // console.log('addFormattedAddress', locationList)
       for (let index = 0; index < locationList.length; index++) {
         const item = locationList[index]
-        // console.log('formattedAddress', item)
         if (item && item.lng && item.lat) {
-          let formattedAddress = await this.getFormattedAddress(item)
+          try {
+            let formattedAddress = await this.getFormattedAddress(item)
+            formattedAddressList.push({
+              ...item,
+              formattedAddress
+            })
+            if (callback && typeof callback === 'function') {
+              callback(formattedAddressList)
+            }
+          } catch (error) {
+            formattedAddressList.push({
+              ...item,
+              formattedAddress: '暂无数据'
+            })
+            callback(formattedAddressList)
+            // console.log('formattedAddress', error)
+          }
+        } else {
           formattedAddressList.push({
             ...item,
-            formattedAddress
+            formattedAddress: '暂无数据'
           })
-          if (callback && typeof callback === 'function') {
-            callback(formattedAddressList)
-          }
+          callback(formattedAddressList)
         }
       }
       return formattedAddressList
@@ -72,6 +85,7 @@ export default {
                 const address = result.regeocode.formattedAddress
                 resolve(address)
             } else {
+              reject()
               console.log('format-error', result)
             }
           })
