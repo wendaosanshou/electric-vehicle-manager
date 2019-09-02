@@ -86,11 +86,20 @@ export default {
     deepClone(data) {
       return JSON.parse(JSON.stringify(data));
     },
-    onSearchApkList() {
-      this.getApkList({
+    onRefetchList() {
+      if (this.apkList && this.apkList.length === 0 && this.pageIndex > 1) {
+        let hasExtra = this.apkListTotal % this.pageSize !== 0
+        let maxIndex = Math.floor(this.apkListTotal / this.pageSize) // 最大的index
+        this.pageIndex = hasExtra ? maxIndex + 1 : maxIndex
+        this.onSearchApkList()
+      }
+    },
+    async onSearchApkList() {
+      await this.getApkList({
         page_size: this.pageSize,
         page_index: this.pageIndex
       });
+      this.onRefetchList()
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize;

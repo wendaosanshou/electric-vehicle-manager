@@ -168,16 +168,24 @@ export default {
       this.pageIndex = pageIndex
       this.handleSearchProducts()
     },
-    handleSearchProducts() {
-      this.searchProducts({
+    async handleSearchProducts() {
+      await this.searchProducts({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         imei: this.imei,
         is_install: this.isInstall
       });
+      this.onRefetchList()
+    },
+    onRefetchList() {
+      if (this.productList && this.productList.length === 0 && this.pageIndex > 1) {
+        let hasExtra = this.productListTotal % this.pageSize !== 0
+        let maxIndex = Math.floor(this.productListTotal / this.pageSize) // 最大的index
+        this.pageIndex = hasExtra ? maxIndex + 1 : maxIndex
+        this.handleSearchProducts()
+      }
     },
     onSearchProducts() {
-      this.pageIndex = 1
       this.handleSearchProducts()
     }
   },

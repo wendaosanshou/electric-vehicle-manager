@@ -64,10 +64,6 @@ export default {
   computed: {
     ...mapGetters(["infoWeb", "appInfoCount"]),
     sortInfoWeb() {
-      // if (this.infoWeb && this.infoWeb.length > 0) {
-      //   return this.infoWeb.sort((a, b) => a.id - b.id);
-      // }
-      // return this.infoWeb;
       return this.getPageIndexList(this.infoWeb, this.pageSize, this.pageIndex)
     }
   },
@@ -87,11 +83,20 @@ export default {
         pageSize: this.pageSize
       });
     },
-    initInfoWeb() {
-      this.getInfoWeb({
+    onRefetchList() {
+      if (this.infoWeb && this.infoWeb.length === 0 && this.pageIndex > 1) {
+        let hasExtra = this.appInfoCount % this.pageSize !== 0
+        let maxIndex = Math.floor(this.appInfoCount / this.pageSize) // 最大的index
+        this.pageIndex = hasExtra ? maxIndex + 1 : maxIndex
+        this.initInfoWeb()
+      }
+    },
+    async initInfoWeb() {
+      await this.getInfoWeb({
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       });
+      this.onRefetchList()
     }
   },
   components: {

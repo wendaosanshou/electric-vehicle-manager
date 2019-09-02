@@ -58,7 +58,7 @@ export default {
       return `000${id}`.substr(-3)
     },
     getAttributeLable(type) {
-      console.log(type)
+      // console.log(type)
       let label = '业务办理点'
       switch (type) {
         case 1:

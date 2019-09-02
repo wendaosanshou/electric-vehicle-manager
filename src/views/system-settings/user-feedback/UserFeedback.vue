@@ -86,16 +86,16 @@
       style="width: 100%"
     >
       <el-table-column align="center" prop="index" label="序号" sortable></el-table-column>
-      <el-table-column align="center" prop="account" label="用户手机号" sortable></el-table-column>
-      <el-table-column align="center" prop="name" label="用户姓名" sortable></el-table-column>
-      <el-table-column align="center" prop="feedback_type" label="意见分类" sortable></el-table-column>
+      <el-table-column align="center" prop="account" label="用户手机号" min-width="140" sortable></el-table-column>
+      <el-table-column align="center" prop="name" label="用户姓名" min-width="100" sortable></el-table-column>
+      <el-table-column align="center" prop="feedback_type" label="意见分类" min-width="100" sortable></el-table-column>
       <el-table-column align="center" width="260" prop="content" label="意见内容" sortable></el-table-column>
-      <el-table-column align="center" prop="process" label="处理状态" sortable>
+      <el-table-column align="center" prop="process" label="处理状态" min-width="100" sortable>
         <template slot-scope="scope">
           {{getProcessTips(scope.row.process)}}
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="operation" label="处理人账号" sortable>
+      <el-table-column align="center" prop="operation" label="处理人账号" min-width="120" sortable>
       </el-table-column>
       <el-table-column align="center" width="160" prop="process_time" label="处理时间" sortable>
         <template slot-scope="scope">
@@ -203,15 +203,22 @@ export default {
     deepClone(data) {
       return JSON.parse(JSON.stringify(data))
     },
+    onRefetchList() {
+      if (this.feedbackList && this.feedbackList.length === 0 && this.pageIndex > 1) {
+        let hasExtra = this.feedbackListTotal % this.pageSize !== 0
+        let maxIndex = Math.floor(this.feedbackListTotal / this.pageSize) // 最大的index
+        this.pageIndex = hasExtra ? maxIndex + 1 : maxIndex
+        this.handleSearchFeedback()
+      }
+    },
     onSearchFeedback() {
-      this.pageIndex = 1
       this.handleSearchFeedback()
     },
     initSearchFeedback() {
       this.handleSearchFeedback()
     },
-    handleSearchFeedback() {
-       this.getFeedback({
+    async handleSearchFeedback() {
+      await this.getFeedback({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         type: this.feedbackType,
@@ -220,6 +227,7 @@ export default {
         process: this.process,
         operation: this.operation
       });
+      this.onRefetchList()
     },
     async onEditDetail(item) {
       await this.getFeedbackDetail({

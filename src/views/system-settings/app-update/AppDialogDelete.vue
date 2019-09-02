@@ -18,7 +18,7 @@
           stripe
           style="width: 100%"
         >
-         <el-table-column prop="id" align="center" label="序号"></el-table-column>
+        <el-table-column prop="index" align="center" label="序号"></el-table-column>
         <el-table-column prop="name" align="center" label="APP名称"></el-table-column>
         <el-table-column prop="version" align="center" label="版本名称"></el-table-column>
         <el-table-column prop="update_time" align="center" width="160" label="更新时间"></el-table-column>

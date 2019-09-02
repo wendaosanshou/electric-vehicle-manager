@@ -77,11 +77,20 @@ export default {
     deepClone(data) {
       return JSON.parse(JSON.stringify(data));
     },
-    onSearchAllGuide() {
-      this.getAllGuide({
+    onRefetchList() {
+      if (this.allGuide && this.allGuide.length === 0 && this.pageIndex > 1) {
+        let hasExtra = this.allGuideTotal % this.pageSize !== 0
+        let maxIndex = Math.floor(this.allGuideTotal / this.pageSize) // 最大的index
+        this.pageIndex = hasExtra ? maxIndex + 1 : maxIndex
+        this.onSearchAllGuide()
+      }
+    },
+    async onSearchAllGuide() {
+      await this.getAllGuide({
         pageSize: this.pageSize,
         pageIndex: this.pageIndex
       });
+      this.onRefetchList()
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize;

@@ -39,7 +39,7 @@
         <el-table-column prop="note" align="center" label="渠道类型说明" sortable></el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <channel-manange-delete :defaultData="scope.row" @onRefresh="initAttributeList"></channel-manange-delete>
+            <channel-manange-delete :defaultData="scope.row" @onRefresh="handleRefresh"></channel-manange-delete>
           </template>
         </el-table-column>
     </el-table>
@@ -95,7 +95,7 @@ export default {
         return `000${id}`.substr(-3)
       },
       getAttributeLable(type) {
-        console.log(type)
+        // console.log(type)
         let label = '业务办理点'
         switch (type) {
           case 1:
@@ -117,15 +117,24 @@ export default {
         this.initAttributeList()
       },
       async handleRefresh() {
-        this.pageIndex = 1
         await this.getAttributeList({
           pageSize: this.pageSize,
           pageIndex: this.pageIndex,
           type: this.searchType
         })
+        this.onRefetchList()
       },
-      initAttributeList() {
-        this.getAttributeList({
+      onRefetchList() {
+        // 当现在查出来的数据为空的情况下
+        if (this.attributeList && this.attributeList.length === 0 && this.pageIndex > 1) {
+          let hasExtra = this.attributeListCount % this.pageSize !== 0
+          let maxIndex = Math.floor(this.attributeListCount / this.pageSize) // 最大的index
+          this.pageIndex = hasExtra ? maxIndex + 1 : maxIndex
+          this.initAttributeList()
+        }
+      },
+      async initAttributeList() {
+        await this.getAttributeList({
           pageSize: this.pageSize,
           pageIndex: this.pageIndex,
           type: this.searchType
