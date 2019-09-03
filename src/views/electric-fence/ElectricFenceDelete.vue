@@ -55,7 +55,7 @@ export default {
       } else {
         this.$message({
           type: "warning",
-          message: `请在查询模式下选中对应电子围栏后再进行删除操作`
+          message: `请选中对应电子围栏后再进行删除操作`
         })
       }
     },

@@ -317,6 +317,7 @@ export default {
         type: "array"
       });
       try {
+        let currentTime = this.getCurrentTime()
         FileSaver.saveAs(
           //Blob 对象表示一个不可变、原始数据的类文件对象。
           //Blob 表示的不一定是JavaScript原生格式的数据。
@@ -324,7 +325,7 @@ export default {
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
-          "工作人员管理.xlsx"
+          `工作人员管理-${currentTime}.xlsx`
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);

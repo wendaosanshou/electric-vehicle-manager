@@ -635,6 +635,8 @@ export default {
     exportExcel(id) {
       /* 从表生成工作簿对象 */
       let excelName = this.getMenuName()
+      let currentTime = this.getCurrentTime()
+      excelName = `${excelName}-${currentTime}`
       var wb = XLSX.utils.table_to_book(document.querySelector(id));
       console.log(wb)
       /* 获取二进制字符串作为输出 */

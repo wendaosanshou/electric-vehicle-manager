@@ -34,12 +34,14 @@
             type="primary"
             icon="el-icon-search"
             @click="handleSearchFenceAlarms"
+            v-if="isSearchModel"
           >查询</el-button>
           <electric-fence-delete
             :fenceList="fenceObjList"
             class="button-delete"
             ref="fenceDelete"
             @on-delete="handleDeletFench"
+            v-if="isModifyModel"
           ></electric-fence-delete>
         </div>
       </div>
@@ -50,9 +52,7 @@
           @change="handleFenceChange"
           v-model="fenceValue"
           placeholder="请选择电子围栏"
-          multiple
-          :disabled="isModifyModel"
-        >
+          multiple>
           <el-option :label="item.name" :value="item.id" v-for="item in allFence" :key="item.id"></el-option>
         </el-select>
         <el-button class="button-export button-fix" size="mini" @click="exportExcel">导出</el-button>
@@ -127,7 +127,23 @@
           label-position="right"
           label-width="220px"
           :model="form">
-          <!-- <el-form-item label="电子围栏时间段">
+          <el-form-item label="电子围栏命名">
+            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入电子围栏名称"></el-input>
+          </el-form-item>
+          <el-form-item label="是否永久有效">
+            <el-select
+              class="ipt-fix ipt-selector"
+              size="mini"
+              v-model="longEffective"
+              placeholder="请选择是否永久有效">
+              <el-option
+                :label="item.label"
+                :value="item.value"
+                v-for="item in longEffectiveList"
+                :key="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="电子围栏时间段" v-if="!isLongEffective">
             <el-date-picker
             v-model="addFencePickerTime"
             size="mini"
@@ -138,9 +154,6 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             align="right"></el-date-picker>
-          </el-form-item> -->
-          <el-form-item label="电子围栏命名">
-            <el-input class="ipt-fix" size="mini" v-model="form.name" placeholder="请输入电子围栏名称"></el-input>
           </el-form-item>
           <el-form-item label="电子围栏说明">
             <el-input
@@ -210,6 +223,17 @@ export default {
           label: "查询模式"
         }
       ],
+      longEffective: 0,
+      longEffectiveList: [
+        {
+          value: 0,
+          label: "非永久有效"
+        },
+        {
+          value: 1,
+          label: "永久有效"
+        }
+      ],
       form: {
         name: "",
         note: ""
@@ -217,36 +241,7 @@ export default {
       searchPickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
-        },
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
+        }
       }
     };
   },
@@ -259,6 +254,12 @@ export default {
       "fenceAlarmTotal",
       "pickerOptions"
     ]),
+    isLongEffective() {
+      return this.longEffective === 1
+    },
+    isSearchModel() {
+      return this.fenceModelValue === 1;
+    },
     isModifyModel() {
       return this.fenceModelValue === 0;
     },
@@ -302,6 +303,7 @@ export default {
         type: "array"
       });
       try {
+        let currentTime = this.getCurrentTime()
         FileSaver.saveAs(
           //Blob 对象表示一个不可变、原始数据的类文件对象。
           //Blob 表示的不一定是JavaScript原生格式的数据。
@@ -309,7 +311,7 @@ export default {
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
           new Blob([wbout], { type: "application/octet-stream" }),
           //设置导出文件名称
-          "电子围栏.xlsx"
+          `电子围栏-${currentTime}.xlsx`
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
@@ -381,7 +383,7 @@ export default {
       this.drawAllFence();
     },
     onDialogHide() {
-      this.map.clearMap();
+      this.resetMap();
       this.resetFormData()
       this.dialogVisible = false;
     },
@@ -400,9 +402,11 @@ export default {
         });
       }
       if (this.form.name && this.form.note) {
+        let startTime = this.isLongEffective ? dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss") : dayjs(startDate).format("YYYY-MM-DD HH:mm:ss")
+        let endTime = this.isLongEffective ? dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss") : dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
         const params = {
-          start_time: dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss"),
-          end_time: dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss"),
+          start_time: startTime,
+          end_time: endTime,
           data: this.pathString,
           name: this.form.name,
           note: this.form.note
@@ -529,7 +533,8 @@ $basic-ratio: 1.4;
         margin-left: auto;
       }
       .ipt-selector-long {
-        width: d2r(898px);
+        box-sizing: border-box;
+        width: d2r(870px);
       }
     }
   }

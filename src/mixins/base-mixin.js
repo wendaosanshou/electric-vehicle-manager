@@ -29,6 +29,9 @@ export default {
     }
   },
   methods: {
+    getCurrentTime() {
+      return dayjs().format('YYYY年MM月DD日')
+    },
     getPageIndexList(list, pageSize, pageIndex) {
       return list.map((item, index) => {
         return {
