@@ -21,7 +21,7 @@
           size="mini"
           class="ipt-fix time-picker"
           type="datetimerange"
-          :picker-options="searchPickerOptions"
+          :picker-options="pickerOptions"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -143,13 +143,12 @@
                 :key="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="电子围栏时间段" v-if="!isLongEffective">
+          <el-form-item label="有效时间" v-if="!isLongEffective">
             <el-date-picker
             v-model="addFencePickerTime"
             size="mini"
             class="ipt-fix time-picker dialog-time-picker"
             type="datetimerange"
-            :picker-options="pickerOptions"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
