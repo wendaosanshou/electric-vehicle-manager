@@ -26,6 +26,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           align="right"
+          :disabled="!isSearchModel"
         ></el-date-picker>
         <div class="button-container">
           <el-button
@@ -52,10 +53,11 @@
           @change="handleFenceChange"
           v-model="fenceValue"
           placeholder="请选择电子围栏"
+          :disabled="isCreateModel"
           multiple>
           <el-option :label="item.name" :value="item.id" v-for="item in allFence" :key="item.id"></el-option>
         </el-select>
-        <el-button class="button-export button-fix" size="mini" @click="exportExcel">导出</el-button>
+        <el-button class="button-export button-fix" size="mini" @click="exportExcel" v-if="isSearchModel">导出</el-button>
       </div>
     </div>
     <div class="monitor-container js-map-container map-cursor-default" :style="{height: pageHeight}">
@@ -214,12 +216,16 @@ export default {
       fenceModelValue: 1,
       fenceModels: [
         {
-          value: 0,
+          value: 1,
+          label: "查询模式"
+        },
+        {
+          value: 2,
           label: "编辑模式"
         },
         {
-          value: 1,
-          label: "查询模式"
+          value: 3,
+          label: "创建模式"
         }
       ],
       longEffective: 0,
@@ -260,7 +266,10 @@ export default {
       return this.fenceModelValue === 1;
     },
     isModifyModel() {
-      return this.fenceModelValue === 0;
+      return this.fenceModelValue === 2;
+    },
+    isCreateModel() {
+      return this.fenceModelValue === 3;
     },
     fenceAlarmArea() {
       if (this.fenceAlarm && this.fenceAlarm.length > 0) {
@@ -319,10 +328,10 @@ export default {
     },
     fenceModelChange(fenceModel) {
       this.resetMap();
-      if (fenceModel === 0) {
+      if (fenceModel === 3) {
         this.initFenceEnv();
         this.map.setDefaultCursor("crosshair");
-      } else if (fenceModel === 1) {
+      } else {
         this.map.setDefaultCursor("pointer");
         if (this.mouseTool) {
           this.mouseTool.close();
