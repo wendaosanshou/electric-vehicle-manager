@@ -351,9 +351,9 @@ export default {
         zooms: [3, 20],
         resizeEnable: true
       }
-      if (position && position.length > 0) {
-        params.center = position
-      }
+      // if (position && position.length > 0) {
+      //   params.center = position
+      // }
       this.map = new AMap.Map(selector, params)
       console.log(this.map)
       this.addControl(this.map)

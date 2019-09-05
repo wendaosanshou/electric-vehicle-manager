@@ -29,6 +29,33 @@ export default {
     }
   },
   methods: {
+    setCityBounds() {
+      let citysearch = new AMap.CitySearch();
+      let that = this
+      //自动获取用户IP，返回当前城市
+      citysearch.getLocalCity(function(status, result) {
+        console.log(result)
+        if (status === 'complete' && result.info === 'OK') {
+          if (result && result.city && result.bounds) {
+              //地图显示当前城市
+              let citybounds = result.bounds;
+              that.map.setBounds(citybounds);
+          }
+        }
+      })
+
+      // let geocoder = new AMap.Geocoder({
+      //   city: "010", //城市设为北京，默认：“全国”
+      // });
+      // let that = this
+      // geocoder.getLocation(address, function(status, result) {
+      //   console.log(result)
+      //   if (status === 'complete'&&result.geocodes.length) {
+      //     let lnglat = result.geocodes[0].location
+      //     that.map.panTo(lnglat);
+      //   }
+      // });
+    },
     getCurrentTime() {
       return dayjs().format('YYYY年MM月DD日')
     },

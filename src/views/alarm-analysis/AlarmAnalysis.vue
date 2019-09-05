@@ -203,7 +203,7 @@ export default {
       let [{ lng, lat }] = this.allDeviceInfo
       console.log('init', this.allDeviceInfo)
       this.initAMap("map-container", []);
-      this.map.setFitView()
+      this.setCityBounds()
       this.initPickerTime()
     }
   },

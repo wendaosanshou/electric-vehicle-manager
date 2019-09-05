@@ -469,6 +469,7 @@ export default {
       const [{ lng, lat }] = this.allLocationInfo;
       const positionCenter = [lng, lat];
       this.initAMap("electric-map-container", positionCenter);
+      this.setCityBounds()
     },
     async init() {
       this.resetFenceAlarm();

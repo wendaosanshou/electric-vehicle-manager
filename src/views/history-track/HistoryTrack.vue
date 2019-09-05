@@ -204,6 +204,7 @@ export default {
       const locationArray = this.allLocationInfo.map(item => [item.lng, item.lat]);
       const [positionCenter] = locationArray;
       this.initAMap("history-map-container", positionCenter);
+      this.setCityBounds()
     }
   },
   beforeDestroy() {

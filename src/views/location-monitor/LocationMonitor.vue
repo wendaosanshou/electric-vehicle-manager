@@ -144,6 +144,7 @@ export default {
       console.log(positionCenter)
       this.initAMap('map-container', position)
       this.addCicleMarkers()
+      this.setCityBounds()
     },
     async drawHeatMap() {
       const heatMapData = this.getHeatMapData()

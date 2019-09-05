@@ -19,13 +19,13 @@
         :data="tableData"
         border
         style="width: 100%">
-        <el-table-column align="center" prop="id" width="70" label="序号"></el-table-column>
-        <el-table-column align="center" prop="img_url" width="220" label="广告页图片"></el-table-column>
-        <el-table-column align="center" prop="page_url" width="180"  label="广告页链接"></el-table-column>
-        <el-table-column align="center" prop="create_time" width="180"  label="创建时间"></el-table-column>
-        <el-table-column align="center" prop="start_time" width="180"  label="生效时间"></el-table-column>
-        <el-table-column align="center" prop="end_time" width="180"  label="截止时间"></el-table-column>
-        <el-table-column align="center" prop="note" width="220"  label="备注信息"></el-table-column>
+        <el-table-column align="center" prop="index" min-width="70" label="序号"></el-table-column>
+        <el-table-column align="center" prop="img_url" min-width="220" label="广告页图片"></el-table-column>
+        <el-table-column align="center" prop="page_url" min-width="220"  label="广告页链接"></el-table-column>
+        <el-table-column align="center" prop="create_time" min-width="160"  label="创建时间"></el-table-column>
+        <el-table-column align="center" prop="start_time" min-width="160"  label="生效时间"></el-table-column>
+        <el-table-column align="center" prop="end_time" min-width="160"  label="截止时间"></el-table-column>
+        <el-table-column align="center" prop="note" min-width="220"  label="备注信息"></el-table-column>
       </el-table>
       </div>
       <div slot="footer" class="dialog-footer">
