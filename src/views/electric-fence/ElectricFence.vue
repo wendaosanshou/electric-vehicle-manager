@@ -41,7 +41,7 @@
             class="button-search button-fix"
             size="mini"
             type="primary"
-            icon="el-icon-search"
+            icon="el-icon-edit-outline"
             @click="onModifyFence"
             v-if="isModifyModel"
           >编辑</el-button>
@@ -421,6 +421,9 @@ export default {
       this.drawAllFence();
     },
     onDialogHide() {
+      // if (!this.isModifyFence) {
+      //   this.resetMap();
+      // }
       this.resetMap();
       this.resetFormData()
       this.dialogVisible = false;
@@ -533,20 +536,27 @@ export default {
       this.form.note = "";
     },
     onModifyFence() {
-      const [fence] = this.fenceObjList
-      if (fence && fence.id && fence.name) {
-        console.log('onModifyFence', fence)
-        this.form.id = fence.id
-        this.form.name = fence.name
-        this.form.note = fence.note
-        this.pathString = fence.data
-        let isLongEffective = fence.start_time === '1999-11-30 23:59:59' && fence.end_time === '2998-11-30 23:59:59'
-        this.longEffective = isLongEffective ? 1 : 0
-        if (!isLongEffective) {
-          this.addFencePickerTime = [fence.start_time, fence.end_time]
+      if (this.fenceObjList && this.fenceObjList.length === 1) {
+        const [fence] = this.fenceObjList
+        if (fence && fence.id && fence.name) {
+          console.log('onModifyFence', fence)
+          this.form.id = fence.id
+          this.form.name = fence.name
+          this.form.note = fence.note
+          this.pathString = fence.data
+          let isLongEffective = fence.start_time === '1999-11-30 23:59:59' && fence.end_time === '2998-11-30 23:59:59'
+          this.longEffective = isLongEffective ? 1 : 0
+          if (!isLongEffective) {
+            this.addFencePickerTime = [fence.start_time, fence.end_time]
+          }
+          this.isModifyFence = true
+          this.dialogVisible = true
         }
-        this.isModifyFence = true
-        this.dialogVisible = true
+      } else {
+        this.$message({
+          type: "error",
+          message: `请选中一个电子围栏后再进行编辑~`
+        });
       }
     },
     initFenceEnv() {
