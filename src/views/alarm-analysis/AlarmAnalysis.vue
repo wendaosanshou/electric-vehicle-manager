@@ -76,7 +76,8 @@ export default {
       searchValue: "",
       alarmValue: 0,
       pageIndex: 1,
-      pageSize: 1000,
+      pageSize: 10,
+      isSearchAllAlarm: false,
       searchType: 'account',
       filterAlarmAnalysis: [],
       pickerOptions: {
@@ -122,7 +123,8 @@ export default {
       "alarmTypes",
       "deviceInfo",
       'alarmAnalyse',
-      'allDeviceInfo'
+      'allDeviceInfo',
+      'afterSearchAllAlarm'
     ])
   },
   watch: {
@@ -134,8 +136,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getAlarmAnalyse", "getDeviceInfo"]),
-    ...mapMutations(['clearAlarmAnalyse']),
+    ...mapActions(["getAllAlarmAnalyse", "getAlarmAnalyse", "getDeviceInfo"]),
+    ...mapMutations(['clearAlarmAnalyse', 'updateAfterSearchAllAlarm']),
     resetAlarmAnalyse() {
       this.map.clearMap();
       this.clearAlarmAnalyse()
@@ -143,29 +145,42 @@ export default {
     },
     handleCurrentChange(pageIndex) {
       this.pageIndex = pageIndex
+      console.log(this.pageIndex)
       this.handleSearchAlarm()
     },
     onSelectAlarm(value) {
       this.alarmValue = value
-      this.pageSize = 10
+      this.pageIndex = 1
       this.handleSearchAlarm()
     },
     onSearchAlarm() {
       // 查询所有报警类型
       this.alarmValue = 0
-      this.pageSize = 10000
+      this.pageIndex = 1
+      this.updateAfterSearchAllAlarm(false)
+      this.resetAlarmAnalyse()
       this.handleSearchAlarm()
     },
     async handleSearchAlarm() {
-      this.showLoading()
-      this.resetAlarmAnalyse()
       try {
         const [startDate, endDate] = this.pickerTime;
         if (startDate && endDate && this.searchValue) {
+          this.showLoading()
           await this.getDeviceInfo({
             type: this.searchType,
             value: this.searchValue
           });
+          // 如果是查询所有
+          if (this.alarmValue === 0 && !this.afterSearchAllAlarm) {
+            await this.getAllAlarmAnalyse({
+              id: this.deviceInfo.id,
+              start: this.getUtcTime(startDate),
+              end: this.getUtcTime(endDate),
+              page_size: 10000,
+              page_index: 1,
+              alarm: this.alarmValue
+            })
+          }
           await this.getAlarmAnalyse({
             id: this.deviceInfo.id,
             start: this.getUtcTime(startDate),

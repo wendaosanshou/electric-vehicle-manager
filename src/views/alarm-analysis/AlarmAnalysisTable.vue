@@ -26,17 +26,16 @@
             </el-table-column>
             <el-table-column prop="formattedAddress" min-width="430" label="告警地点"></el-table-column>
         </el-table>
-
+        <!-- {{localPageIndex}} -->
         <el-pagination
-        class="pagination-fix"
-          :page-sizes="[10, 20, 30, 40]"
+          class="pagination-fix"
           :page-size="pageSize"
           layout="prev, pager, next"
-          :current-page.sync="localPageIndex"
+          :current-page="localPageIndex"
           :total="alarmAnalyseTotal"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-        ></el-pagination>
+          ></el-pagination>
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" type="primary" @click="onDialogHide">确 定</el-button>
@@ -146,6 +145,7 @@ export default {
       this.$emit('size-change', pageSize)
     },
     handleCurrentChange(pageIndex){
+      this.localPageIndex = pageIndex
       this.$emit('current-change', pageIndex)
     },
     onDialogHide() {

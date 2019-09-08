@@ -5,7 +5,7 @@
         <el-date-picker
           v-model="pickerTime"
           size="mini"
-          clss="ipt-fix"
+          class="ipt-fix"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"

@@ -37,6 +37,14 @@
             @click="handleSearchFenceAlarms"
             v-if="isSearchModel"
           >查询</el-button>
+          <el-button
+            class="button-search button-fix"
+            size="mini"
+            type="primary"
+            icon="el-icon-search"
+            @click="onModifyFence"
+            v-if="isModifyModel"
+          >编辑</el-button>
           <electric-fence-delete
             :fenceList="fenceObjList"
             class="button-delete"
@@ -67,7 +75,7 @@
           <div class="electric-item-title">闯禁区违法情况</div>
           <div class="electric-item-content">
             <div class="electric-alarm-list" v-if="hasFenceAlarmArea">
-              <div class="electric-alarm-item" v-for="(item, index) in fenceAlarmArea" :key="index">
+              <div class="electric-alarm-item" v-for="(item, index) in fenceAlarmArea" :key="index" @click="handleAlarmDetail(item)">
                 <div class="alarm-item-title">
                   <i class="item-icon"></i>
                   <span class="item-text">违章{{index + 1}}</span>
@@ -182,12 +190,13 @@
       :data="fenceAlarm"
       border
       style="width: 100%"
-      v-show="false"
-    >
+      v-show="false">
       <el-table-column prop="start_time" label="时 间" align="center"></el-table-column>
       <el-table-column prop="certificates_code" label="违法人" width="120" align="center"></el-table-column>
       <el-table-column prop="plate" label="车牌号" align="center"></el-table-column>
     </el-table>
+
+    <location-dialog v-model="filingDialogVisible" dialogType="isFence"></location-dialog>
   </div>
 </template>
 
@@ -200,17 +209,21 @@ import XLSX from "xlsx";
 import MapMixin from "@/mixins/map-mixin";
 import MenuContent from "./menu-context";
 import ElectricFenceDelete from "./ElectricFenceDelete.vue";
+import LocationDialog from '../location-monitor/LocationDialog'
 
 export default {
   mixins: [MapMixin],
   data() {
     return {
       pickerTime: "",
-      addFencePickerTime: "",
+      addFencePickerTime: [],
       fenceValue: [],
       fenceObjList: [],
       fencePolygons: [],
+      modifyFenceId: "",
+      isModifyFence: false,
       dialogVisible: false,
+      filingDialogVisible: false,
       mouseTool: "",
       pathString: "",
       fenceModelValue: 1,
@@ -240,8 +253,10 @@ export default {
         }
       ],
       form: {
+        id: "",
         name: "",
-        note: ""
+        note: "",
+        fenceData: ""
       },
       searchPickerOptions: {
         disabledDate(time) {
@@ -257,7 +272,7 @@ export default {
       "allFence",
       "fenceAlarm",
       "fenceAlarmTotal",
-      "pickerOptions"
+      "pickerOptions",
     ]),
     isLongEffective() {
       return this.longEffective === 1
@@ -297,8 +312,18 @@ export default {
       "addFence",
       "getAllFence",
       "deleteFence",
-      "getFenceAlarm"
+      "getFenceAlarm",
+      "getDeviceInfoAndUpdate",
+      "modifyFence"
     ]),
+    async handleAlarmDetail(alarmDetail) {
+      console.log(alarmDetail)
+      await this.getDeviceInfoAndUpdate({
+        type: 'cert',
+        value: alarmDetail.certificates_code
+      })
+      this.filingDialogVisible = true
+    },
     exportExcel() {
       /* 从表生成工作簿对象 */
       var wb = XLSX.utils.table_to_book(
@@ -387,6 +412,11 @@ export default {
     handleFenceChange(fenceId) {
       this.fenceObjList = this.allFence.filter(item => {
         return this.fenceValue.indexOf(item.id) > -1;
+      }).map((item, index) => {
+        return {
+          index: index + 1,
+          ...item
+        }
       });
       this.drawAllFence();
     },
@@ -400,31 +430,77 @@ export default {
         name: "",
         note: ""
       }
+      this.longEffective = 0
+      this.addFencePickerTime = []
+    },
+    async handleModifyFence() {
+      const [startDate, endDate] = this.addFencePickerTime;
+      let startTime = dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
+      let endTime = dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
+      if (!this.isLongEffective) {
+        if (startDate && endDate) {
+          startTime = dayjs(startDate).format("YYYY-MM-DD HH:mm:ss")
+          endTime = dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+        } else {
+          return this.$message({
+            type: "error",
+            message: `输入信息不完整`
+          });
+        }
+      }
+      await this.modifyFence({
+        id: this.form.id,
+        start_time: startTime,
+        end_time: endTime,
+        data: this.pathString,
+        name: this.form.name,
+        note: this.form.note
+      });
+      this.afterConfirmFence()
+    },
+    async handleAddFence() {
+      const [startDate, endDate] = this.addFencePickerTime;
+      let startTime = dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
+      let endTime = dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
+      if (!this.isLongEffective) {
+        if (startDate && endDate) {
+          startTime = dayjs(startDate).format("YYYY-MM-DD HH:mm:ss")
+          endTime = dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
+        } else {
+          return this.$message({
+            type: "error",
+            message: `输入信息不完整`
+          });
+        }
+      }
+      await this.addFence({
+        start_time: startTime,
+        end_time: endTime,
+        data: this.pathString,
+        name: this.form.name,
+        note: this.form.note
+      });
+      this.afterConfirmFence()
+    },
+    afterConfirmFence() {
+      this.form.name = "";
+      this.form.note = "";
+      this.getAllFence();
+      this.onDialogHide();
     },
     async handleConfirmAddFence() {
-      const [startDate, endDate] = this.addFencePickerTime;
       if (this.form.name && this.form.name.length > 10) {
         return this.$message({
           type: "error",
           message: `名称较长无法保存`
         });
       }
-      if (this.form.name && this.form.note) {
-        let startTime = this.isLongEffective ? dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss") : dayjs(startDate).format("YYYY-MM-DD HH:mm:ss")
-        let endTime = this.isLongEffective ? dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss") : dayjs(endDate).format("YYYY-MM-DD HH:mm:ss")
-        const params = {
-          start_time: startTime,
-          end_time: endTime,
-          data: this.pathString,
-          name: this.form.name,
-          note: this.form.note
-        };
-        console.log(params)
-        await this.addFence(params);
-        this.form.name = "";
-        this.form.note = "";
-        this.getAllFence();
-        this.onDialogHide();
+      if (this.form.name) {
+        if (this.isModifyFence) {
+          await this.handleModifyFence()
+        } else {
+          await this.handleAddFence()
+        }
       } else {
         this.$message({
           type: "error",
@@ -446,8 +522,8 @@ export default {
       }
       const [startDate, endDate] = this.pickerTime;
       const params = {
-        start_time: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
-        end_time: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
+        start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
+        end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),
         arr_id: this.fenceValue,
         page_size: 10000,
         page_index: 1
@@ -455,7 +531,23 @@ export default {
       await this.getFenceAlarm(params);
       this.form.name = "";
       this.form.note = "";
-
+    },
+    onModifyFence() {
+      const [fence] = this.fenceObjList
+      if (fence && fence.id && fence.name) {
+        console.log('onModifyFence', fence)
+        this.form.id = fence.id
+        this.form.name = fence.name
+        this.form.note = fence.note
+        this.pathString = fence.data
+        let isLongEffective = fence.start_time === '1999-11-30 23:59:59' && fence.end_time === '2998-11-30 23:59:59'
+        this.longEffective = isLongEffective ? 1 : 0
+        if (!isLongEffective) {
+          this.addFencePickerTime = [fence.start_time, fence.end_time]
+        }
+        this.isModifyFence = true
+        this.dialogVisible = true
+      }
     },
     initFenceEnv() {
       this.mouseTool = new AMap.MouseTool(this.map);
@@ -471,6 +563,7 @@ export default {
           const { lat, lng } = item;
           this.pathString += `${lat},${lng};`;
         });
+        this.isModifyFence = false
         this.dialogVisible = true;
       });
     },
@@ -489,7 +582,8 @@ export default {
     }
   },
   components: {
-    ElectricFenceDelete
+    ElectricFenceDelete,
+    LocationDialog
   },
   mounted() {
     this.init();
@@ -543,7 +637,7 @@ $basic-ratio: 1.4;
       }
       .ipt-selector-long {
         box-sizing: border-box;
-        width: d2r(870px);
+        width: d2r(898px);
       }
     }
   }
@@ -628,6 +722,7 @@ $basic-ratio: 1.4;
         }
         .electric-alarm-item {
           padding-top: d2r(19px);
+          cursor: pointer;
           .alarm-item-title {
             box-sizing: border-box;
             display: flex;

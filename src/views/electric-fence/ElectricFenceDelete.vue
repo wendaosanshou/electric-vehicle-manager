@@ -19,7 +19,7 @@
       </div>
       <div class="dialog-content">
         <el-table class="table-fix" size="mini" :data="fenceList" border style="width: 100%">
-          <el-table-column prop="id" label="序号" align="center"></el-table-column>
+          <el-table-column prop="index" label="序号" align="center"></el-table-column>
           <el-table-column prop="name" label="名称" width="120" align="center"></el-table-column>
           <el-table-column prop="start_time" label="开始时间" align="center"></el-table-column>
           <el-table-column prop="end_time" label="截止时间" align="center"></el-table-column>

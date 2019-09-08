@@ -263,6 +263,10 @@ export default {
     const { token } = data
     return $ajax.post(requestUrl(`fence/add?token=${token}`), data);
   },
+  modifyFence(data) {
+    const { token } = data
+    return $ajax.post(requestUrl(`fence/modify?token=${token}`), data);
+  },
   deleteFence(data) {
     const { id, token } = data
     return $ajax.get(requestUrl(`fence/delete/${id}?token=${token}`), data);

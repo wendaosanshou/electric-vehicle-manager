@@ -1,6 +1,6 @@
 <template>
   <div class="location-dialog">
-    <el-dialog class="dialog-small-right dialog-fix" title="备案信息" :visible.sync="dialogVisible" @close="onDialogHide" :modal="false">
+    <el-dialog class="dialog-small-right dialog-fix" :class="{'is-electric-fence': isElectricFence}" title="备案信息" :visible.sync="dialogVisible" @close="onDialogHide" :modal="false">
       <div class="dialog-content">
         <div class="form-title">车主信息</div>
         <div class="form-item-wrap">
@@ -59,10 +59,17 @@ export default {
     event: 'change'
   },
   props: {
-    visible: Boolean
+    visible: Boolean,
+    dialogType: {
+      type: String,
+      default: ''
+    }
   },
   computed: {
     ...mapGetters(['deviceInfo']),
+    isElectricFence() {
+      return this.dialogType && this.dialogType === 'isFence'
+    },
     vehicleInfo() {
       if (this.deviceInfo && this.deviceInfo.vehicle_info) {
         return this.deviceInfo.vehicle_info

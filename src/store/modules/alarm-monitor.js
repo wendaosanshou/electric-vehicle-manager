@@ -59,10 +59,12 @@ const Login = {
   state: {
     alarmId: 0,
     alarmLatest: [],
-    alarmAnalyse: {},
+    alarmAnalyse: [],
+    allAlarmAnalyse: [],
     alarmTypeClass: '',
     currentAlarm: {},
     alarmAnalyseTotal: 0,
+    afterSearchAllAlarm: false,
     alarmTypeList: [
       {
         value: 2,
@@ -145,6 +147,10 @@ const Login = {
           }
         });
       });
+      state.afterSearchAllAlarm = true
+    },
+    updateAfterSearchAllAlarm(state, afterSearchAllAlarm) {
+      state.afterSearchAllAlarm = afterSearchAllAlarm
     },
     updateAlarmAnalyseIcon(state, result) {
       result.data.forEach((item) => {
@@ -182,9 +188,9 @@ const Login = {
           // 如果是查询所有类型
           if (alarm === 0) {
             commit('updateAlarmAnalyseTotal', result)
-            commit("updateAllAlarmAnalyse", result);
+            commit("updateAlarmAnalyse", result);
           } else {
-            commit("updateAllAlarmAnalyse", result);
+            commit("updateAlarmAnalyse", result);
             commit('updateAlarmAnalyseIcon', result)
           }
         } else {
@@ -202,6 +208,29 @@ const Login = {
     },
     async getAlarmAnalyse({ commit, rootState }, data) {
       try {
+        const result = await $apis.getAlarmAnalyse({
+          token: getToken(rootState),
+          ...data
+        });
+        if (result.data && result.data.length > 0) {
+          await convertGps(result.data)
+          commit("updateAlarmAnalyse", result);
+          commit('updateAlarmAnalyseIcon', result)
+        } else {
+          commit("clearAlarmAnalyse");
+          vm.$message({
+            type: "error",
+            message: "暂无数据~"
+          });
+          return Promise.reject();
+        }
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error);
+      }
+    },
+    async getAllAlarmAnalyse({ commit, rootState }, data) {
+      try {
         const { alarm } =  data
         const result = await $apis.getAlarmAnalyse({
           token: getToken(rootState),
@@ -212,10 +241,6 @@ const Login = {
           // 如果是查询所有类型
           if (alarm === 0) {
             commit('updateAlarmAnalyseTotal', result)
-            commit("updateAllAlarmAnalyse", result);
-          } else {
-            commit("updateAllAlarmAnalyse", result);
-            commit('updateAlarmAnalyseIcon', result)
           }
         } else {
           commit("clearAlarmAnalyse");
@@ -279,7 +304,9 @@ const Login = {
     },
     alarmTypeClass: state => state.alarmTypeClass,
     currentAlarm: state => state.currentAlarm,
-    alarmAnalyseTotal: state => state.alarmAnalyseTotal
+    alarmAnalyseTotal: state => state.alarmAnalyseTotal,
+    allAlarmAnalyse: state => state.allAlarmAnalyse,
+    afterSearchAllAlarm: state => state.afterSearchAllAlarm
   }
 };
 

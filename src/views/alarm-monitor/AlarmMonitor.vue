@@ -159,7 +159,7 @@ export default {
       }
     },
     drawAlarmMap() {
-      console.log(this.alarmAnalyse)
+      console.log('[alarmAnalyse]', this.alarmAnalyse)
       const [{ lng, lat }] = this.alarmAnalyse
       this.initAMap('map-container', [lng, lat]);
       this.addAlarmMarkers(this.alarmAnalyse)

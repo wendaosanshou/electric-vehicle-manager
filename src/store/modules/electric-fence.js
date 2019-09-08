@@ -47,6 +47,22 @@ const electricFence = {
         return Promise.reject(error);
       }
     },
+    async modifyFence({ commit, rootState }, data) {
+      try {
+        const result = await $apis.modifyFence({
+          token: getToken(rootState),
+          ...data
+        });
+        vm.$message({
+          type: "success",
+          message: "编辑成功!"
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error);
+      }
+    },
     async deleteFence({ commit, rootState }, data) {
       try {
         const result = await $apis.deleteFence({

@@ -236,6 +236,10 @@ $basic-ratio: 1.4;
 }
 
 .dialog-small-right {
+  &.is-electric-fence .el-dialog {
+    margin-top: d2r(255px) !important;
+    margin-right: d2r(364px);
+  }
   .el-dialog {
     margin-top: d2r(230px) !important;
     margin-right: d2r(64px);
@@ -392,7 +396,7 @@ $basic-ratio: 1.4;
   .alarm-time-content {
     box-sizing: border-box;
     position: absolute;
-    left: d2r(60px);
+    left: d2r(40px);
     top: 50%;
     transform: translate(0, -50%);
     height: 22px;

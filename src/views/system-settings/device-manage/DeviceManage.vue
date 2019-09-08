@@ -15,23 +15,42 @@
     </div>
     <div class="device-manage-header">
       <div class="device-manage-menu">
-        <div class="menu-account menu-ipt-wraper">
-          <span class="menu-label">IMEI</span>
-          <el-input class="menu-ipt ipt-fix" size="mini" v-model="imei" placeholder="请输入imei号"></el-input>
-        </div>
-        <div class="ipt-select-wraper">
-          <span class="menu-label">使用状态</span>
-          <el-select
-          class="ipt-fix menu-ipt-selector"
-          size="mini"
-          v-model="isInstall"
-          placeholder="请选择使用情况">
-          <el-option
-            :label="item.label"
-            :value="item.value"
-            v-for="item in installList"
-            :key="item.value"></el-option>
-          </el-select>
+        <div class="menu-item-container">
+          <div class="menu-item">
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label">入库时间</span>
+              <el-date-picker
+                v-model="pickerTime"
+                size="mini"
+                class="ipt-fix ipt-long"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+                :picker-options="pickerOptions"></el-date-picker>
+            </div>
+          </div>
+          <div class="menu-item menu-item-last">
+            <div class="menu-account menu-ipt-wraper">
+              <span class="menu-label">IMEI</span>
+              <el-input class="menu-ipt ipt-fix" size="mini" v-model="imei" placeholder="请输入imei号"></el-input>
+            </div>
+            <div class="ipt-select-wraper">
+              <span class="menu-label">使用状态</span>
+              <el-select
+              class="ipt-fix menu-ipt-selector"
+              size="mini"
+              v-model="isInstall"
+              placeholder="请选择使用情况">
+              <el-option
+                :label="item.label"
+                :value="item.value"
+                v-for="item in installList"
+                :key="item.value"></el-option>
+              </el-select>
+            </div>
+          </div>
         </div>
         <div class="menu-btn-wraper">
           <el-button icon="el-icon-search" class="button-fix" size="mini" type="primary" @click="onSearchProducts">查询</el-button>
@@ -88,6 +107,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import dayjs from 'dayjs'
 import PageTitle from "@/components/PageTitle.vue";
 import DeviceEdit from './DeviceEdit.vue'
 import DeviceAddMore from './DeviceAddMore.vue'
@@ -97,6 +117,7 @@ export default {
   data() {
     return {
       allUser: [],
+      pickerTime: [],
       pageSize: 10,
       pageIndex: 1,
       isInstall: -1, // 0-未安装 1-已安装 -1所有
@@ -115,7 +136,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["productList", "productListTotal"]),
+    ...mapGetters(["productList", "productListTotal", "pickerOptions"]),
     addIndexProductList() {
       return this.getPageIndexList(this.productList, this.pageSize, this.pageIndex)
     },
@@ -169,11 +190,20 @@ export default {
       this.handleSearchProducts()
     },
     async handleSearchProducts() {
+      const [startTime, endTime] = this.pickerTime
+      let start = dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
+      let end = dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
+      if (startTime && endTime) {
+        start = dayjs(startTime).format("YYYY-MM-DD HH:mm:ss")
+        end = dayjs(endTime).format("YYYY-MM-DD HH:mm:ss")
+      }
       await this.searchProducts({
         page_size: this.pageSize,
         page_index: this.pageIndex,
         imei: this.imei,
-        is_install: this.isInstall
+        is_install: this.isInstall,
+        start: start,
+        end: end
       });
       this.onRefetchList()
     },
@@ -239,12 +269,24 @@ $basic-ratio: 1.4;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: d2r(80px);
+    min-height: d2r(80px);
     padding: 0 d2r(37px) 0 d2r(23px);
     background: #f5f5f6;
+    .menu-item-container {
+      padding: d2r(17px) 0;
+    }
+    .menu-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      &.menu-item-last {
+        margin-top: 10px;
+      }
+    }
     .menu-ipt-wraper {
       display: flex;
       flex-direction: row;
@@ -260,8 +302,12 @@ $basic-ratio: 1.4;
         color: rgba(59, 72, 89, 1);
         white-space: nowrap;
       }
-      .menu-ipt {
+      .ipt-long {
+        width: d2r(600px);
         margin-left: d2r(10px);
+      }
+      .menu-ipt {
+        margin-left: d2r(30px);
       }
     }
     .menu-user-name {
