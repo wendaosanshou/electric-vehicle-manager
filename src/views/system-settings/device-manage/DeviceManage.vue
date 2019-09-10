@@ -180,6 +180,7 @@ export default {
     },
     onClearSearchParams() {
       this.imei = ''
+      this.pickerTime = []
     },
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
