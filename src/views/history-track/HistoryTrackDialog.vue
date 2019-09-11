@@ -163,7 +163,7 @@ export default {
       console.log(this.pickerTime);
       this.renderLoading()
       try {
-        const [startDate, endDate] = this.pickerTime;
+        const [startDate, endDate] = this.pickerTime || [];
         if (startDate && endDate) {
           this.resetMap()
           let utcOffset =  dayjs(startDate).utcOffset()

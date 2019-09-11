@@ -191,7 +191,7 @@ export default {
       this.handleSearchProducts()
     },
     async handleSearchProducts() {
-      const [startTime, endTime] = this.pickerTime
+      const [startTime, endTime] = this.pickerTime || []
       let start = dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
       let end = dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
       if (startTime && endTime) {

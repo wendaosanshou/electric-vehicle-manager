@@ -437,7 +437,7 @@ export default {
       this.addFencePickerTime = []
     },
     async handleModifyFence() {
-      const [startDate, endDate] = this.addFencePickerTime;
+      const [startDate, endDate] = this.addFencePickerTime || [];
       let startTime = dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
       let endTime = dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
       if (!this.isLongEffective) {
@@ -462,7 +462,7 @@ export default {
       this.afterConfirmFence()
     },
     async handleAddFence() {
-      const [startDate, endDate] = this.addFencePickerTime;
+      const [startDate, endDate] = this.addFencePickerTime || [];
       let startTime = dayjs('2000-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
       let endTime = dayjs('2999-00-00 23:59:59').format("YYYY-MM-DD HH:mm:ss")
       if (!this.isLongEffective) {
@@ -523,7 +523,7 @@ export default {
           message: `请选择要查询的电子围栏`
         });
       }
-      const [startDate, endDate] = this.pickerTime;
+      const [startDate, endDate] = this.pickerTime || [];
       const params = {
         start: dayjs(startDate).format("YYYY-MM-DD HH:mm:ss"),
         end: dayjs(endDate).format("YYYY-MM-DD HH:mm:ss"),

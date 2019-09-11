@@ -576,8 +576,11 @@ export default {
         case "/app-advisory":
           activeMenu = "系统设置 > APP资讯管理";
           break;
-        case "/device-manage":
-          activeMenu = "系统设置 > 设备管理";
+        case "/channel-manage":
+          activeMenu = "系统设置 > 渠道属性管理";
+          break;
+        case "/advertise-manage":
+          activeMenu = "系统设置 > APP广告管理";
           break;
         case "/device-update":
           activeMenu = "系统设置 > 设备在线升级";

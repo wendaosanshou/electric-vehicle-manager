@@ -20,8 +20,8 @@
           ref="advertiseForm"
           :rules="rules"
           :model="form">
-          <el-form-item prop="id" label="序号" v-if="isEdit">
-            <el-input class="ipt-fix" size="mini" v-model="form.id" placeholder="请输入序号" disabled></el-input>
+          <el-form-item prop="index" label="序号" v-if="isEdit">
+            <el-input class="ipt-fix" size="mini" v-model="form.index" placeholder="请输入序号" disabled></el-input>
           </el-form-item>
           <el-form-item prop="img_url" label="上传图片">
             <div class="form-btn-wrap">
@@ -142,7 +142,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["addGuide", "addApkFile"]),
+    ...mapActions(["addGuide", "modifyGuide"]),
     onBeforeUpload(file) {
       const { name } = file
       console.log(name)
@@ -204,14 +204,23 @@ export default {
       });
     },
     async handleEditAdvertise() {
-      // await this.addGuide({
-      //   name: this.form.name,
-      //   img_url: this.form.img_url,
-      //   page_url: this.form.page_url,
-      //   start_time: dayjs(this.form.start_time).format("YYYY-MM-DD HH:mm:ss"),
-      //   end_time: dayjs(this.form.end_time).format("YYYY-MM-DD HH:mm:ss"),
-      //   note: this.form.note
-      // });
+      console.log({
+        id: this.form.id,
+        name: this.form.name,
+        img_url: this.form.img_url,
+        page_url: this.form.page_url,
+        start_time: dayjs(this.form.start_time).format("YYYY-MM-DD HH:mm:ss"),
+        end_time: dayjs(this.form.end_time).format("YYYY-MM-DD HH:mm:ss"),
+        note: this.form.note
+      })
+      await this.modifyGuide({
+        name: this.form.name,
+        img_url: this.form.img_url,
+        page_url: this.form.page_url,
+        start_time: dayjs(this.form.start_time).format("YYYY-MM-DD HH:mm:ss"),
+        end_time: dayjs(this.form.end_time).format("YYYY-MM-DD HH:mm:ss"),
+        note: this.form.note
+      });
     },
     onConfirm(formName) {
       this.$refs[formName].validate(valid => {

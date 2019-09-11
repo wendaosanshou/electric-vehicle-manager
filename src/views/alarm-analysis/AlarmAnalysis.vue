@@ -163,7 +163,7 @@ export default {
     },
     async handleSearchAlarm() {
       try {
-        const [startDate, endDate] = this.pickerTime;
+        const [startDate, endDate] = this.pickerTime || [];
         if (startDate && endDate && this.searchValue) {
           this.showLoading()
           await this.getDeviceInfo({

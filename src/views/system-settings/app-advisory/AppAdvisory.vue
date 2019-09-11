@@ -25,7 +25,7 @@
         <el-table-column label="操作" align="center" min-width="260">
           <template slot-scope="scope">
             <div class="table-col-btn-wrap">
-              <!-- <advisory-add :defaultData="scope.row" dialogType="edit" @onRefresh="initInfoWeb"></advisory-add> -->
+              <advisory-add :defaultData="scope.row" dialogType="edit" @onRefresh="initInfoWeb"></advisory-add>
               <advisory-delete :defaultData="scope.row" @onRefresh="initInfoWeb"></advisory-delete>
             </div>
           </template>

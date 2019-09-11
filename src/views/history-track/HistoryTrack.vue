@@ -153,7 +153,7 @@ export default {
     async onHistorySearch() {
       this.clearHistoryInfo()
       this.resetMap()
-      const [startDate, endDate] = this.pickerTime;
+      const [startDate, endDate] = this.pickerTime || [];
       try {
         if (startDate && endDate && this.searchValue) {
           let utcOffset = dayjs().utcOffset()
