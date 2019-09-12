@@ -1,34 +1,34 @@
-import Vue from "vue";
-import { $apis } from "@/helper";
+import Vue from 'vue';
+import { $apis } from '@/helper';
 
 const vm = new Vue();
 
-const getToken = rootState => {
+const getToken = (rootState) => {
   const { userInfo } = rootState.login;
-  return userInfo.token || "";
+  return userInfo.token || '';
 };
 
 const Login = {
   state: {
     allGuide: [],
-    allGuideTotal: 0
+    allGuideTotal: 0,
   },
   mutations: {
     updateAllGuide(state, result) {
       state.allGuide = result.data;
       state.allGuideTotal = result.total;
-    }
+    },
   },
   actions: {
     async addGuide({ commit, rootState }, data) {
       try {
         const result = await $apis.addGuide({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         vm.$message({
-          type: "success",
-          message: "添加成功!"
+          type: 'success',
+          message: '添加成功!',
         });
         console.log(result);
       } catch (error) {
@@ -40,11 +40,11 @@ const Login = {
       try {
         const result = await $apis.modifyGuide({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         vm.$message({
-          type: "success",
-          message: "添加成功!"
+          type: 'success',
+          message: '更新成功!',
         });
         console.log(result);
       } catch (error) {
@@ -56,9 +56,9 @@ const Login = {
       try {
         const result = await $apis.getAllGuide({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
-        commit("updateAllGuide", result);
+        commit('updateAllGuide', result);
         console.log(result);
       } catch (error) {
         console.log(error);
@@ -69,23 +69,23 @@ const Login = {
       try {
         const result = await $apis.deleteGuide({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         vm.$message({
-          type: "success",
-          message: "删除成功!"
+          type: 'success',
+          message: '删除成功!',
         });
         console.log(result);
       } catch (error) {
         console.log(error);
         return Promise.reject(error);
       }
-    }
+    },
   },
   getters: {
     allGuide: state => state.allGuide,
-    allGuideTotal: state => state.allGuideTotal
-  }
+    allGuideTotal: state => state.allGuideTotal,
+  },
 };
 
 export default Login;

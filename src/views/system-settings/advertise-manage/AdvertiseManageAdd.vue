@@ -70,7 +70,7 @@
             :autosize="{ minRows: 10, maxRows: 10}"
             v-model="form.note" placeholder="请输入版本说明（200字内）"></el-input>
           </el-form-item>
-          
+
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -128,8 +128,8 @@ export default {
     dialogTips() {
       if (this.isEdit) {
         return {
-          btn: '编辑',
-          title: '编辑广告',
+          btn: '修改',
+          title: '修改广告',
           icon: 'el-icon-edit'
         }
       } else {

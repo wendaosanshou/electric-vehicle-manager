@@ -1,10 +1,10 @@
-import { $apis } from "@/helper";
 import Vue from "vue";
+import { $apis } from "@/helper";
 const vm = new Vue();
 
-const getToken = rootState => {
+const getToken = (rootState) => {
   const { userInfo } = rootState.login;
-  return userInfo.token || "";
+  return userInfo.token || '';
 };
 
 const electricFence = {
@@ -12,7 +12,7 @@ const electricFence = {
     allFence: [],
     fenceAlarm: [],
     fenceAlarmTotal: 0,
-    fenceBounds: {}
+    fenceBounds: {},
   },
   mutations: {
     updateAllFence(state, allFence) {
@@ -20,26 +20,26 @@ const electricFence = {
     },
     updateFenceAlarm(state, result) {
       state.fenceAlarm = result.data;
-      state.fenceAlarmTotal = result.total
+      state.fenceAlarmTotal = result.total;
     },
     resetFenceAlarm(state) {
       state.fenceAlarm = [];
-      state.fenceAlarmTotal = 0
+      state.fenceAlarmTotal = 0;
     },
     updateFenceBounds(state, fenceBounds) {
       state.fenceBounds = fenceBounds;
-    }
+    },
   },
   actions: {
     async addFence({ commit, rootState }, data) {
       try {
         const result = await $apis.addFence({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         vm.$message({
-          type: "success",
-          message: "添加成功!"
+          type: 'success',
+          message: '添加成功!',
         });
         console.log(result);
       } catch (error) {
@@ -51,11 +51,11 @@ const electricFence = {
       try {
         const result = await $apis.modifyFence({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         vm.$message({
-          type: "success",
-          message: "编辑成功!"
+          type: 'success',
+          message: '更新成功!',
         });
         console.log(result);
       } catch (error) {
@@ -67,11 +67,11 @@ const electricFence = {
       try {
         const result = await $apis.deleteFence({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         vm.$message({
-          type: "success",
-          message: "删除成功!"
+          type: 'success',
+          message: '删除成功!',
         });
         console.log(result);
       } catch (error) {
@@ -83,9 +83,9 @@ const electricFence = {
       try {
         const result = await $apis.getAllFence({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
-        commit("updateAllFence", result.data);
+        commit('updateAllFence', result.data);
         console.log(result);
       } catch (error) {
         console.log(error);
@@ -96,9 +96,9 @@ const electricFence = {
       try {
         const result = await $apis.getOneFence({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
-        commit("updateAllFence", result.data);
+        commit('updateAllFence', result.data);
         console.log(result);
       } catch (error) {
         console.log(error);
@@ -109,28 +109,28 @@ const electricFence = {
       try {
         const result = await $apis.getFenceAlarm({
           token: getToken(rootState),
-          ...data
+          ...data,
         });
         if (result.data && result.data.length === 0) {
           vm.$message({
-            type: "error",
-            message: "未查到违法情况或违章记录!"
+            type: 'error',
+            message: '未查到违法情况或违章记录!',
           });
         }
-        commit('updateFenceAlarm', result)
+        commit('updateFenceAlarm', result);
         console.log(result);
       } catch (error) {
         console.log(error);
         return Promise.reject(error);
       }
-    }
+    },
   },
   getters: {
     allFence: state => state.allFence,
     fenceAlarm: state => state.fenceAlarm,
     fenceBounds: state => state.fenceBounds,
-    fenceAlarmTotal: state => state.fenceAlarmTotal
-  }
+    fenceAlarmTotal: state => state.fenceAlarmTotal,
+  },
 };
 
 export default electricFence;

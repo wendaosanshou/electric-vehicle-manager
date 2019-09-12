@@ -1,101 +1,102 @@
-import { $apis, $util } from "@/helper";
 import Vue from 'vue';
-const vm = new Vue()
+import { $apis, $util } from "@/helper";
+
+const vm = new Vue();
 
 const getToken = (rootState) => {
-  const { userInfo } = rootState.login
-  return userInfo.token || ''
-}
+  const { userInfo } = rootState.login;
+  return userInfo.token || '';
+};
 
 const RoleManage = {
   state: {
-    allRoles: []
+    allRoles: [],
   },
   mutations: {
     updateAllRoles(state, allRoles) {
       if (allRoles && allRoles.length > 0) {
-        state.allRoles = allRoles.map(item => {
-          let authors = item.author.split(",");
-          let roleNames = authors.map(roleType => $util.getRoleName(+roleType));
+        state.allRoles = allRoles.map((item) => {
+          const authors = item.author.split(',');
+          const roleNames = authors.map(roleType => $util.getRoleName(+roleType));
           item.roleNames = roleNames;
           return item;
         });
       }
-    }
+    },
   },
   actions: {
     async getAllRoles({ commit, rootState }, data) {
       try {
         const result = await $apis.getAllRole({
-          token: getToken(rootState)
+          token: getToken(rootState),
         });
-        commit("updateAllRoles", result.data);
+        commit('updateAllRoles', result.data);
       } catch (error) {
         console.log(error);
-        return Promise.reject(error)
+        return Promise.reject(error);
       }
     },
     async addRole({ commit, rootState }, data) {
       try {
         const result = await $apis.addRole({
           token: getToken(rootState),
-          data
+          data,
         });
         vm.$message({
-          type: "success",
-          message: "添加成功!"
+          type: 'success',
+          message: '添加成功!',
         });
         console.log(result);
       } catch (error) {
         console.log(error);
-        return Promise.reject(error)
+        return Promise.reject(error);
       }
     },
     async editRole({ commit, rootState }, data) {
       try {
-        console.log("editRole", data);
+        console.log('editRole', data);
         const result = await $apis.editRole({
           token: getToken(rootState),
-          data
+          data,
         });
         vm.$message({
-          type: "success",
-          message: "编辑成功!"
+          type: 'success',
+          message: '更新成功!',
         });
         console.log(result);
       } catch (error) {
         console.log(error);
-        return Promise.reject(error)
+        return Promise.reject(error);
       }
     },
     async deleteRole({ commit, rootState }, data) {
       try {
         const result = await $apis.deleteRole(data.id, {
-          token: getToken(rootState)
+          token: getToken(rootState),
         });
         vm.$message({
-          type: "success",
-          message: "删除成功!"
+          type: 'success',
+          message: '删除成功!',
         });
         console.log(result);
       } catch (error) {
-        console.log(error)
-        return Promise.reject(error)
+        console.log(error);
+        return Promise.reject(error);
       }
-    }
+    },
   },
   getters: {
     allRoles: state => state.allRoles,
-    nextRoleId: state => {
+    nextRoleId: (state) => {
       let nexeRoleId = 0;
-      state.allRoles.forEach(item => {
+      state.allRoles.forEach((item) => {
         if (item.id && item.code > nexeRoleId) {
           nexeRoleId = item.code;
         }
       });
       return nexeRoleId + 1;
-    }
-  }
+    },
+  },
 };
 
 export default RoleManage;

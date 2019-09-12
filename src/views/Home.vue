@@ -509,8 +509,8 @@ export default {
           const menuItem = menus[index];
           if (routePath === `/${menuItem.path}`) {
             this.updateDefaultActiveMenu(menuItem.index)
-          } 
-          
+          }
+
           if (menuItem.children && menuItem.children.length > 0) {
             this.initActiveMenuStatus(menuItem.children);
           }
@@ -587,6 +587,9 @@ export default {
           break;
         case "/device-version":
           activeMenu = "系统设置 > 设备版本管理";
+          break;
+        case "/device-manage":
+          activeMenu = "系统设置 > 设备管理";
           break;
         case "/app-update":
           activeMenu = "系统设置 > APP升级管理";

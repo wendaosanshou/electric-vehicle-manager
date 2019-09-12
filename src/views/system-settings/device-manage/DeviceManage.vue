@@ -304,7 +304,7 @@ $basic-ratio: 1.4;
         white-space: nowrap;
       }
       .ipt-long {
-        width: d2r(600px);
+        width: d2r(655px);
         margin-left: d2r(10px);
       }
       .menu-ipt {
