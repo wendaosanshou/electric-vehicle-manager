@@ -214,6 +214,7 @@ export default {
         note: this.form.note
       })
       await this.modifyGuide({
+        id: this.form.id,
         name: this.form.name,
         img_url: this.form.img_url,
         page_url: this.form.page_url,
