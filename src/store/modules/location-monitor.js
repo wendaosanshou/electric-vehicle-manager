@@ -111,24 +111,10 @@ const convertHistoryGps = async list => {
   let preItem = list[0]
   let historyList = []
   let preIndex = 0
-  // list = list.sort((a, b) => {
-  //   return a.signal_time - b.signal_time
-  // }).filter((item, index) => {
-  //   if (index > 0) {
-  //     let prevItem = list[index - 1]
-  //     if (item.signal_time === prevItem.signal_time && item.lng === prevItem.lng && item.lat === prevItem.lat) {
-  //       return false
-  //     } else {
-  //       return true
-  //     }
-  //   } else {
-  //     return true
-  //   }
-  // })
   list = list.sort((a, b) => {
     return a.signal_time - b.signal_time
-  })
-  console.log('convertHistoryGps', JSON.parse(JSON.stringify(list)), list.length)
+  }).filter(item => item && item.lat > 0 && item.lng > 0)
+  console.log('convertHistoryGps', JSON.parse(JSON.stringify(list)))
   for (let index = 0; index < list.length; index++) {
     const item = list[index]
     let distance = AMap.GeometryUtil.distance(preItem.lngLat, item.lngLat);

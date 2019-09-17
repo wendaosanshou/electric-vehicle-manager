@@ -117,7 +117,7 @@ export default {
 
       let passedPolyline = new AMap.Polyline({
         map: this.map,
-        strokeColor: "#0960BD", //线颜色
+        strokeColor: "#CCCCCC", //线颜色
         strokeWeight: 8, //线宽
         lineJoin: "round",
         showDir: true
@@ -142,19 +142,24 @@ export default {
     },
     drawGraspRoadPath(historyInfo) {
       let paths = historyInfo.map(item => [item.lng, item.lat]);
-      console.log("drawGraspRoadPath", paths);
+      // console.log("drawGraspRoadPath", paths);
       new AMap.Polyline({
         map: this.map,
         path: paths,
         strokeWeight: 8,
         strokeOpacity: 0.8,
         strokeColor: "#0960BD",
-        lineJoin: "round"
+        lineJoin: "round",
+        showDir: true
       });
       // this.map.setFitView();
     },
     drawCableLine(historyInfo) {
-      let paths = historyInfo.map(item => [item.lng, item.lat]);
+      let paths = historyInfo.map(item => {
+        if(item && item.lng && item.lat) {
+          return [item.lng, item.lat]
+        }
+      });
       new AMap.Polyline({
         map: this.map,
         path: paths,
