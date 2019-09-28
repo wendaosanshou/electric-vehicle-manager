@@ -1,29 +1,17 @@
 # electric-vehicle-manager
 
-## Project setup
+## 安装依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 开发模式下启动项目
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 编译并且打包
 ```
 npm run build
 ```
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
