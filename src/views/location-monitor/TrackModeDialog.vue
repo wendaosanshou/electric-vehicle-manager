@@ -27,7 +27,7 @@
         </div>
         <div class="track-content">
           <div class="map-container">
-            <div class="device-status-container">
+            <div class="device-status-container" v-if="isShowDeviceStatus">
               <div class="device-status-top">
                 <i class="el-icon-time icon-time"></i>
                 <div class="device-time-content">{{deviceStatus.signal_time}}至{{recvTime}}</div>
@@ -89,6 +89,7 @@ export default {
   mixins: [MapMixin, HistoryMixin],
   data() {
     return {
+      isShowDeviceStatus: false,
       dialogVisible: false,
       trackId: '',
       timeId: '',
@@ -182,6 +183,8 @@ export default {
       this.trackTime = 0
       this.trackCount = 0
       this.resetTrackAlarms()
+      this.addAddressTrickList = []
+      this.addAddressTrickAlarms = []
     },
     initWatchTrack() {
       this.$message({
@@ -248,6 +251,7 @@ export default {
             this.addAddressTrickList = result
           })
           this.drawTrickListLine()
+          this.isShowDeviceStatus = true
         } else {
           this.$message({
             type: "error",
