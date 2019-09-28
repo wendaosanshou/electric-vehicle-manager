@@ -11,6 +11,15 @@ const getToken = rootState => {
   return userInfo.token || "";
 };
 
+const getUtcOffsetTime = (time) => {
+  if (time) {
+    let utcOffset = dayjs(time).utcOffset()
+    return dayjs(time).add(utcOffset, 'minute').format('YYYY-MM-DD HH:mm:ss')
+  } else {
+    return time
+  }
+}
+
 // const convertAmapGps = async list => {
 //   let promiseArr = [];
 //   let tid = ''
@@ -206,6 +215,7 @@ const locationMonitor = {
     trickList: [],
     trickAlarmId: 0,
     deviceInfo: {},
+    deviceStatus: {},
     accountList: accountList,
     pickerOptions: pickerOptions
   },
@@ -251,6 +261,26 @@ const locationMonitor = {
     },
     updateDeviceIds(state, deviceIds) {
       state.deviceIds = deviceIds;
+    },
+    updateDeviceStatus(state, deviceStatus) {
+      console.log('deviceStatus', deviceStatus)
+      deviceStatus.recv_time = getUtcOffsetTime(deviceStatus.recv_time)
+      deviceStatus.signal_time = getUtcOffsetTime(deviceStatus.signal_time)
+      state.deviceStatus = deviceStatus
+      let deviceStatusTips = '离线'
+      const { status, online } = state.deviceStatus
+      if (!online) {
+        deviceStatusTips = '离线'
+      } else if (status && status >= 0) {
+        let hexStatus = parseInt(status, 10).toString(2)
+        if (hexStatus) {
+          // 找到第9位数字
+          deviceStatusTips = hexStatus.substr(8,1) === '0' ? '运动' : '停留'
+        } else {
+          deviceStatusTips = '停留'
+        }
+      }
+      state.deviceStatus.deviceStatusTips = deviceStatusTips
     },
     updateWebDeviceInfo(state, webDeviceInfo) {
       console.log("webDeviceInfo", webDeviceInfo);
@@ -410,6 +440,28 @@ const locationMonitor = {
         return Promise.reject(error)
       }
     },
+    async getDeviceStatus({ commit, rootState }, data) {
+      try {
+        const result = await $apis.getDeviceStatus({
+          token: getToken(rootState),
+          ...data
+        });
+        if (result.data && result.data.length > 0) {
+          await convertAmapGps(result.data);
+          commit('updateDeviceStatus', result.data[0])
+        } else {
+          vm.$message({
+            type: "error",
+            message: "获取当前设备状态异常~"
+          });
+          return Promise.reject()
+        }
+        console.log(result)
+      } catch (error) {
+        console.log(error);
+        return Promise.reject(error)
+      }
+    },
     async getHistoryInfo({ commit, rootState }, data) {
       try {
         const result = await $apis.getAlarmHistoryInfo({
@@ -515,7 +567,20 @@ const locationMonitor = {
     historyAlarm: state => state.historyAlarm,
     trickAlarms: state => state.trickAlarms,
     trickAlarmId: state => state.trickAlarmId,
-    trickList: state => state.trickList
+    trickList: state => state.trickList,
+    deviceStatus: state => state.deviceStatus,
+    deviceStatusTips: state => {
+      let deviceStatusTips = '停留'
+      const { status } = state.deviceStatus
+      if (status && status >= 0) {
+        let hexStatus = parseInt(status, 10).toString(2)
+        if (hexStatus) {
+          // 找到第9位数字
+          deviceStatusTips = hexStatus.substr(8,1) === '0' ? '运动' : '停留'
+        }
+      }
+      return deviceStatusTips
+    }
   }
 };
 

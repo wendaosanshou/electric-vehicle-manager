@@ -8,6 +8,7 @@
       @close="onDialogHide">
       <div class="track-dialog-content">
         <div class="track-header">
+          <!-- {{currentLocationInfo}} -->
           <div class="track-header-account">车辆账号：{{userInfo.phone}}</div>
           <div class="track-header-username">车主姓名：{{userInfo.name}}</div>
           <div class="track-header-selector">
@@ -26,6 +27,21 @@
         </div>
         <div class="track-content">
           <div class="map-container">
+            <div class="device-status-container">
+              <div class="device-status-top">
+                <i class="el-icon-time icon-time"></i>
+                <div class="device-time-content">{{deviceStatus.signal_time}}至{{recvTime}}</div>
+                <div class="device-tips-content">{{deviceStatus.deviceStatusTips}}</div>
+              </div>
+              <div class="device-status-content">
+                <i class="el-icon-edit"></i>
+                <div class="device-tips-content">{{costTime}}</div>
+              </div>
+              <div class="device-status-content">
+                <i class="el-icon-location-information"></i>
+                <div class="device-tips-content">{{lastFormatAddress}}</div>
+              </div>
+            </div>
             <div class="map-content" id="js-track-map"></div>
             <div class="history-location">
               <el-table class="table-analysis table-analysis-fix" size="mini" :data="addAddressTrickList" border style="width: 300px" height="527px" max-height="527px">
@@ -67,6 +83,7 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from "@/mixins/history-mixin";
 import { setTimeout, setInterval, clearInterval } from 'timers';
+import dayjs from 'dayjs';
 
 export default {
   mixins: [MapMixin, HistoryMixin],
@@ -74,6 +91,7 @@ export default {
     return {
       dialogVisible: false,
       trackId: '',
+      timeId: '',
       trackTime: 0,
       trackCount: 0,
       selectList: [{
@@ -88,7 +106,9 @@ export default {
       }],
       selectValue: 30,
       addAddressTrickList: [],
-      addAddressTrickAlarms: []
+      addAddressTrickAlarms: [],
+      recvTime: '',
+      costTime: ''
     };
   },
   model: {
@@ -99,7 +119,14 @@ export default {
     visible: Boolean
   },
   computed: {
-    ...mapGetters(['currentLocationInfo', 'deviceParams', 'deviceInfo', 'trickAlarms', 'trickList', 'trickAlarmId']),
+    ...mapGetters(['currentLocationInfo', 'deviceParams', 'deviceInfo', 'trickAlarms', 'trickList', 'trickAlarmId', 'deviceStatus']),
+    lastFormatAddress() {
+      if (this.addAddressTrickList && this.addAddressTrickList.length > 0) {
+        const lastAddressItem = this.addAddressTrickList[this.addAddressTrickList.length - 1]
+        return lastAddressItem.formattedAddress
+      }
+      return ''
+    },
     positionCenter() {
       const { lat, lng } = this.currentLocationInfo;
       return [lng, lat];
@@ -123,7 +150,7 @@ export default {
       if (this.dialogVisible) {
         this.handleSearchGpsInfo()
         setTimeout(() => {
-          this.init()
+          this.initMap()
           this.initDeviceParams()
           this.updateTrackAlarmId(0)
         }, 10)
@@ -133,10 +160,25 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getUserInfoGps", "setDeviceTrace", "getDeviceParams", "getWebDevice"]),
+    ...mapActions(["getUserInfoGps", "setDeviceTrace", "getDeviceParams", "getWebDevice", "getDeviceStatus"]),
     ...mapMutations(['resetTrackAlarms', 'updateTrackAlarmId']),
+    initTimeCountdown() {
+      let recvTime = dayjs(this.deviceStatus.recv_time)
+      let costTime = this.getUtcTime(dayjs(recvTime) - dayjs(this.deviceStatus.signal_time))
+      this.costTime = dayjs(costTime).format('HH小时mm分ss秒')
+      this.recvTime = dayjs(recvTime).format('YYYY-MM-DD HH:mm:ss')
+      clearInterval(this.timeId)
+      this.timeId = setInterval(() => {
+        recvTime += 1000
+        costTime = this.getUtcTime(dayjs(recvTime) - dayjs(this.deviceStatus.signal_time))
+        // console.log(recvTime, costTime)
+        this.costTime = dayjs(costTime).format('HH小时mm分ss秒')
+        this.recvTime = dayjs(recvTime).format('YYYY-MM-DD HH:mm:ss')
+      }, 1000)
+    },
     resetTrack() {
       clearInterval(this.trackId)
+      clearInterval(this.timeId)
       this.trackTime = 0
       this.trackCount = 0
       this.resetTrackAlarms()
@@ -149,7 +191,7 @@ export default {
       clearInterval(this.trackId)
       this.trackId = setInterval(() => {
         this.trackTime = this.trackTime + 1
-        console.log(this.trackTime)
+        // console.log(this.trackTime)
         if (this.trackTime === this.selectValue) {
           this.trackCount = this.trackCount + 1
           this.trackTime = 0
@@ -163,6 +205,9 @@ export default {
     },
     async initDeviceParams() {
       await this.getDeviceParams({
+        id: this.currentLocationInfo.id
+      })
+      await this.getDeviceStatus({
         id: this.currentLocationInfo.id
       })
       this.selectValue = this.deviceParams.interval_time
@@ -217,10 +262,12 @@ export default {
     drawTrickListLine() {
       this.map.clearMap();
       this.drawHistoryMaker(this.trickList)
+      // this.drawDeviceStatus(this.deviceStatus)
       // eslint-disable-next-line
       this.map.setFitView()
+      this.initTimeCountdown()
     },
-    async init() {
+    async initMap() {
       this.initAMap("js-track-map", this.positionCenter);
     }
   },
@@ -292,5 +339,65 @@ $basic-ratio: 1.4;
   text-align: right;
   font-size: d2r(13px);
   margin-left: auto;
+}
+
+.device-status-container {
+  position: absolute;
+  right: d2r(490px);
+  top: d2r(160px);
+  width: 240px;
+  min-height: 80px;
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px 0px rgba(159,158,193,1);
+  padding: d2r(16px);
+  font-size: d2r(16px);
+  z-index: 11111;
+  .device-status-top {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .icon-time {
+      margin: 10px 6px 0 0;
+    }
+    .device-time-content {
+      width: 130px;
+      height: auto;
+      text-align: left;
+    }
+    .device-tips-content {
+      width: 40px;
+      height: auto;
+      margin-left: 16px;
+      text-align: center;
+      border-radius: 4px;
+      color: #F66713;
+      margin-top: 6px;
+      border: 1px solid #F66713;
+      background: #f9ddc9;
+      cursor: pointer;
+    }
+  }
+  .device-status-content {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 5px;
+    text-align: left;
+    .el-icon-edit {
+      margin-top: 2px;
+      margin-right: 6px;
+    }
+    .el-icon-location-information {
+      margin-top: 2px;
+      margin-right: 6px;
+    }
+  }
 }
 </style>

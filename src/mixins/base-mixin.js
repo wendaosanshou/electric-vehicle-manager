@@ -91,7 +91,9 @@ export default {
       }, 3000)
     },
     hideLoading() {
-      this.loadingPic.close();
+      if (this.loadingPic && this.loadingPic.close) {
+        this.loadingPic.close();
+      }
     },
     getUtcTime(time) {
       if (time) {

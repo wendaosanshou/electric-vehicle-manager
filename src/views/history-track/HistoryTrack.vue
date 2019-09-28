@@ -40,8 +40,8 @@
       <div class="hisotry-map-container">
         <div class="hisotry-map-content" :style="{height: alartMonitorMapHeight}">
           <div class="car-marker-menu" v-if="isShowHistoryTrack">
-            <div class="car-marker-item" :class="{active: carSpeed === 0.25}" @click="onSetSpeed(0.25)">1/4X</div>
             <div class="car-marker-item" :class="{active: carSpeed === 0.5}" @click="onSetSpeed(0.5)">1/2X</div>
+            <div class="car-marker-item" :class="{active: carSpeed === 1}" @click="onSetSpeed(1)">1X</div>
             <div class="car-marker-item" :class="{active: carSpeed === 2}" @click="onSetSpeed(2)">2X</div>
             <div class="car-marker-item" :class="{active: carSpeed === 4}" @click="onSetSpeed(4)">4X</div>
             <div class="car-marker-item" :class="{active: activeType === 'pause'}" @click="pauseMove">暂停</div>
@@ -174,6 +174,9 @@ export default {
             this.activeType = "";
             this.isShowHistoryTrack = true;
             this.loading.close();
+            // 先显示数据再转数据
+            this.historyLocation = this.allHistory
+            this.historyAlarmWithAddress = this.historyAlarm
             // 加载定位和报警数据
             await this.addFormattedAddress(this.allHistory, (result) => {
               this.historyLocation = result

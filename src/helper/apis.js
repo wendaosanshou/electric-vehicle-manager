@@ -65,6 +65,10 @@ export default {
     const { token } = data
     return $ajax.get(requestUrl(`dev/${data.type}/${data.value}`), { token });
   },
+  getDeviceStatus(data) {
+    const { token, id } = data
+    return $ajax.post(requestUrl(`dev/id`), { token, data: [id] });
+  },
   getHistoryInfo(data) {
     const { token } = data
     return $ajax.post(requestUrl(`history/info?token=${token}`), data);

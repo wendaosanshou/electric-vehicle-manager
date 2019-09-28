@@ -566,6 +566,10 @@ $basic-ratio: 1.4;
   }
 }
 
+.amap-info-close {
+  display: none !important;
+}
+
 .location-marker {
   position: relative;
   width: d2r(400px);

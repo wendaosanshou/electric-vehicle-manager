@@ -27,16 +27,8 @@
         </div>
         <div class="map-container">
           <div class="car-marker-menu" v-if="isShowHistoryTrack">
-            <div
-              class="car-marker-item"
-              :class="{active: carSpeed === 0.25}"
-              @click="onSetSpeed(0.25)"
-            >1/4X</div>
-            <div
-              class="car-marker-item"
-              :class="{active: carSpeed === 0.5}"
-              @click="onSetSpeed(0.5)"
-            >1/2X</div>
+            <div class="car-marker-item" :class="{active: carSpeed === 0.5}" @click="onSetSpeed(0.5)">1/2X</div>
+            <div class="car-marker-item" :class="{active: carSpeed === 1}" @click="onSetSpeed(1)">1X</div>
             <div class="car-marker-item" :class="{active: carSpeed === 2}" @click="onSetSpeed(2)">2X</div>
             <div class="car-marker-item" :class="{active: carSpeed === 4}" @click="onSetSpeed(4)">4X</div>
             <div class="car-marker-item" :class="{active: activeType === 'pause'}" @click="pauseMove">暂停</div>

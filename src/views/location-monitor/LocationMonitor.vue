@@ -138,11 +138,7 @@ export default {
       })
     },
     drawAMap() {
-      const locationArray = this.getLocationArray(this.allLocationInfo)
-      const [positionCenter] = locationArray
-      const position = this.isInit ? [] : positionCenter
-      console.log(positionCenter)
-      this.initAMap('map-container', position)
+      this.initAMap('map-container', [])
       this.addCicleMarkers()
       if (this.isInit) {
         this.setCityBounds()
@@ -167,6 +163,8 @@ export default {
     },
     async init() {
       this.isInit = true
+      // 提前初始化，防止页面白屏
+      this.initAMap('map-container', [])
       await this.getWebDevice()
       await this.getAllDevice()
       this.drawAMap()

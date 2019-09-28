@@ -89,7 +89,7 @@ export default {
       if (this.isPauseMove) {
         this.resumeMove();
       } else {
-        this.carMarker.moveAlong(this.graspRoadPath, 500 * this.carSpeed);
+        this.carMarker.moveAlong(this.graspRoadPath, 400 * this.carSpeed);
       }
     },
     getCarMarkerContent() {
@@ -117,7 +117,7 @@ export default {
 
       let passedPolyline = new AMap.Polyline({
         map: this.map,
-        strokeColor: "#CCCCCC", //线颜色
+        strokeColor: "#0960BD", //线颜色
         strokeWeight: 8, //线宽
         lineJoin: "round",
         showDir: true
@@ -147,7 +147,6 @@ export default {
         map: this.map,
         path: paths,
         strokeWeight: 8,
-        strokeOpacity: 0.8,
         strokeColor: "#0960BD",
         lineJoin: "round",
         showDir: true
@@ -316,6 +315,33 @@ export default {
         this.drawStartEndMaker(startEl, "start");
         this.drawHistoryLineMaker(middleList);
         this.drawStartEndMaker(endEl, "end");
+      }
+    },
+    getDeviceStatusContent(item) {
+      console.log(item)
+      let markerContent = document.createElement("div");
+      let timeContent = document.createElement("div");
+      let tipsContent = document.createElement("div");
+      let { signal_time, recv_time, deviceStatusTips } = item
+      timeContent.innerHTML = `${signal_time}至${recv_time}`
+      tipsContent.innerHTML = `${deviceStatusTips}`
+      markerContent.className = "device-status-content";
+      timeContent.className = "device-time-content";
+      tipsContent.className = "device-tips-content";
+      markerContent.append(timeContent);
+      markerContent.append(tipsContent)
+      return markerContent
+    },
+    drawDeviceStatus(item) {
+      if (item && item.lng) {
+        let position = [item.lng, item.lat]
+        console.log('drawDeviceStatus', position)
+        let infoWindow = new AMap.InfoWindow({
+          content: this.getDeviceStatusContent(item),
+          anchor: "bottom-center",
+          offset: new AMap.Pixel(16, -26)
+        });
+        infoWindow.open(this.map, position)
       }
     },
     async drawHistoryLine() {
