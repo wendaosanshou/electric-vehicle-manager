@@ -319,7 +319,6 @@ export default {
         map: this.map,
         position: position,
         content: content,
-        icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
         anchor: 'middle-center',
         offset: new AMap.Pixel(0, 0)
       })

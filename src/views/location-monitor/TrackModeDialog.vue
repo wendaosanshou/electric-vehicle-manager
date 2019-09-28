@@ -121,12 +121,14 @@ export default {
     visible() {
       this.dialogVisible = this.visible;
       if (this.dialogVisible) {
-        this.resetTrack()
+        this.handleSearchGpsInfo()
         setTimeout(() => {
           this.init()
           this.initDeviceParams()
           this.updateTrackAlarmId(0)
         }, 10)
+      } else {
+        this.resetTrack()
       }
     }
   },

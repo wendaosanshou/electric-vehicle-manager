@@ -59,6 +59,9 @@ export default {
     getCurrentTime() {
       return dayjs().format('YYYY年MM月DD日')
     },
+    getTimestamp(time) {
+      return dayjs(time)
+    },
     getPageIndexList(list, pageSize, pageIndex) {
       return list.map((item, index) => {
         return {

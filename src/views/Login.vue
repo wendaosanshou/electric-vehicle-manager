@@ -31,7 +31,7 @@
                 type="text"
                 placeholder="验证码"
                 v-model="verifyCode"
-              >
+                @keyup.enter="onLogin">
             </div>
             <div class="form-verifycode-number" @click="refreshCode">
               <verify-code class="verifycode-label" :identifyCode="identifyCode"></verify-code>

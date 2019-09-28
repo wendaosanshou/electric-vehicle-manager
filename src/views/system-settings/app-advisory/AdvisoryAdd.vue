@@ -65,11 +65,11 @@
             </div>
           </el-form-item>
           <el-form-item label="生效时间">
-            <el-date-picker class="ipt-fix" size="mini" v-model="form.active_time" type="datetime" placeholder="生效时间"></el-date-picker>
+            <el-date-picker class="ipt-fix" size="mini" v-model="form.active_time" type="datetime" placeholder="生效时间" :picker-options="activePickerOptions"></el-date-picker>
           </el-form-item>
           <el-form-item label="截止时间">
             <div class="form-btn-wrap">
-              <el-date-picker class="ipt-fix" size="mini" v-model="form.expire_time" type="datetime" placeholder="截止时间"></el-date-picker>
+              <el-date-picker class="ipt-fix" size="mini" v-model="form.expire_time" type="datetime" placeholder="截止时间" :picker-options="expirePickerOptions"></el-date-picker>
             </div>
           </el-form-item>
           <el-form-item label="备注信息">
@@ -115,6 +115,22 @@ export default {
         html_url: "",
         active_time: "",
         expire_time: ""
+      },
+      activePickerOptions: {
+        disabledDate: (time, a, b) => {
+          if (this.form.expire_time) {
+            return time.getTime() >= this.getTimestamp(this.form.expire_time);
+          }
+          return false
+        }
+      },
+      expirePickerOptions: {
+        disabledDate: (time, a, b) => {
+          if (this.form.active_time) {
+            return time.getTime() <= this.getTimestamp(this.form.active_time);
+          }
+          return false
+        }
       }
     };
   },
