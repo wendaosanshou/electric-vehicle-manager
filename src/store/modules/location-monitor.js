@@ -273,9 +273,11 @@ const locationMonitor = {
         deviceStatusTips = '离线'
       } else if (status && status >= 0) {
         let hexStatus = parseInt(status, 10).toString(2)
-        if (hexStatus) {
-          // 找到第9位数字
-          deviceStatusTips = hexStatus.substr(8,1) === '0' ? '运动' : '停留'
+        if (hexStatus && hexStatus.length >= 40) {
+          let reverseHexStatus = hexStatus.split('').reverse().join('')
+          // 找到第99位数字
+          deviceStatusTips = reverseHexStatus.substr(39, 1)  === '0' ? '运动' : '停留'
+          // deviceStatusTips = '运动'
         } else {
           deviceStatusTips = '停留'
         }

@@ -27,19 +27,26 @@
         </div>
         <div class="track-content">
           <div class="map-container">
-            <div class="device-status-container" v-if="isShowDeviceStatus">
+            <div class="device-status-container" :class="deivceStatusType" v-if="isShowDeviceStatus">
               <div class="device-status-top">
                 <i class="el-icon-time icon-time"></i>
-                <div class="device-time-content">{{deviceStatus.signal_time}}至{{recvTime}}</div>
-                <div class="device-tips-content">{{deviceStatus.deviceStatusTips}}</div>
+                <div class="device-time-content" v-if="deivceStatusType === 'is-stop'">
+                  {{deviceStatus.signal_time}}至{{recvTime}}
+                </div>
+                <div class="device-time-content" v-else>{{deviceStatus.signal_time}}</div>
+                <div class="device-tips-content" :class="deivceStatusClass">{{deviceStatus.deviceStatusTips}}</div>
               </div>
-              <div class="device-status-content">
+              <div class="device-status-content" v-if="deivceStatusType === 'is-running'">
+                <i class="el-icon-bicycle"></i>
+                <div class="device-time-content">{{deviceStatus.speed}}公里/小时</div>
+              </div>
+              <div class="device-status-content" v-if="deivceStatusType === 'is-stop'">
                 <i class="el-icon-edit"></i>
-                <div class="device-tips-content">{{costTime}}</div>
+                <div class="device-time-content">{{costTime}}</div>
               </div>
               <div class="device-status-content">
                 <i class="el-icon-location-information"></i>
-                <div class="device-tips-content">{{lastFormatAddress}}</div>
+                <div class="device-time-content">{{lastFormatAddress}}</div>
               </div>
             </div>
             <div class="map-content" id="js-track-map"></div>
@@ -128,6 +135,24 @@ export default {
       }
       return ''
     },
+    deivceStatusType() {
+      if (this.deviceStatus.deviceStatusTips === '离线') {
+        return 'is-not-online'
+      } else if (this.deviceStatus.deviceStatusTips === '停留') {
+        return 'is-stop'
+      } else if (this.deviceStatus.deviceStatusTips === '运动') {
+        return 'is-running'
+      }
+    },
+    deivceStatusClass() {
+      if (this.deviceStatus.deviceStatusTips === '离线') {
+        return 'color-gray'
+      } else if (this.deviceStatus.deviceStatusTips === '停留') {
+        return 'color-yellow'
+      } else if (this.deviceStatus.deviceStatusTips === '运动') {
+        return 'color-blue'
+      }
+    },
     positionCenter() {
       const { lat, lng } = this.currentLocationInfo;
       return [lng, lat];
@@ -164,7 +189,7 @@ export default {
     ...mapActions(["getUserInfoGps", "setDeviceTrace", "getDeviceParams", "getWebDevice", "getDeviceStatus"]),
     ...mapMutations(['resetTrackAlarms', 'updateTrackAlarmId']),
     initTimeCountdown() {
-      let recvTime = dayjs(this.deviceStatus.recv_time)
+      let recvTime = dayjs()
       let costTime = this.getUtcTime(dayjs(recvTime) - dayjs(this.deviceStatus.signal_time))
       this.costTime = dayjs(costTime).format('HH小时mm分ss秒')
       this.recvTime = dayjs(recvTime).format('YYYY-MM-DD HH:mm:ss')
@@ -350,13 +375,23 @@ $basic-ratio: 1.4;
   right: d2r(490px);
   top: d2r(160px);
   width: 240px;
-  min-height: 80px;
+  height: auto;
   background: #ffffff;
   border-radius: 5px;
   box-shadow: 0px 5px 10px 0px rgba(159,158,193,1);
   padding: d2r(16px);
   font-size: d2r(16px);
   z-index: 11111;
+  &.is-running, &.is-not-online {
+    .device-status-top {
+      .icon-time {
+        margin-top: 2px;
+      }
+      .device-tips-content {
+        margin-top: -2px;
+      }
+    }
+  }
   .device-status-top {
     width: 100%;
     height: auto;
@@ -383,6 +418,21 @@ $basic-ratio: 1.4;
       border: 1px solid #F66713;
       background: #f9ddc9;
       cursor: pointer;
+      &.color-gray {
+        color: #918E8E;
+        background: #dcd9d9;
+        border: 1px solid #918E8E;
+      }
+      &.color-yellow {
+        color: #F66713;
+        background: #fde5d6;
+        border: 1px solid #F66713;
+      }
+      &.color-blue {
+        color: #409DE6;
+        background: #e5f1fb;
+        border: 1px solid #409DE6;
+      }
     }
   }
   .device-status-content {
@@ -395,6 +445,10 @@ $basic-ratio: 1.4;
     margin-top: 5px;
     text-align: left;
     .el-icon-edit {
+      margin-top: 2px;
+      margin-right: 6px;
+    }
+    .el-icon-bicycle {
       margin-top: 2px;
       margin-right: 6px;
     }
