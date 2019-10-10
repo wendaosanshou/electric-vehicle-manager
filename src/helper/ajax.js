@@ -4,7 +4,7 @@ import { $util } from "@/helper";
 import Vue from "vue";
 const vm = new Vue();
 
-axios.defaults.timeout = 5000
+axios.defaults.timeout = 60000
 
 function getErrorTips(code) {
   const errorMap = {

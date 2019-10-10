@@ -98,9 +98,6 @@ export default {
       markerContent.append(carContent)
       markerContent.className = "mark-car"
       carContent.className = "mark-car-content";
-      setTimeout(() => {
-        $('.mark-car').parents('.amap-marker').addClass('is-high-zindex')
-      }, 100)
       return markerContent;
     },
     drawCarMarker(historyInfo) {
@@ -112,13 +109,14 @@ export default {
         position: firstPosition,
         content: this.getCarMarkerContent(),
         anchor: "bottom-center",
-        offset: new AMap.Pixel(0, 0)
+        offset: new AMap.Pixel(0, 0),
+        zIndex: 10000
       });
 
       let passedPolyline = new AMap.Polyline({
         map: this.map,
         strokeColor: "#0960BD", //线颜色
-        strokeWeight: 8, //线宽
+        strokeWeight: 6, //线宽
         lineJoin: "round",
         showDir: true
       });
@@ -146,28 +144,31 @@ export default {
       new AMap.Polyline({
         map: this.map,
         path: paths,
-        strokeWeight: 8,
+        strokeWeight: 6,
         strokeColor: "#0960BD",
         lineJoin: "round",
-        showDir: true
+        showDir: true,
+        zIndex: 10
       });
       // this.map.setFitView();
     },
     drawCableLine(historyInfo) {
-      let paths = historyInfo.map(item => {
-        if(item && item.lng && item.lat) {
-          return [item.lng, item.lat]
-        }
+      let paths = historyInfo.filter(item => item.lng && item.lat).map(item => {
+        return [item.lng, item.lat]
       });
-      new AMap.Polyline({
-        map: this.map,
-        path: paths,
-        strokeWeight: 4,
-        strokeOpacity: 0.8,
-        strokeColor: "#E4E4ED",
-        lineJoin: "round",
-        strokeStyle: "dashed"
-      });
+      if (paths && paths.length > 0) {
+        new AMap.Polyline({
+          map: this.map,
+          path: paths,
+          strokeWeight: 4,
+          strokeOpacity: 0.8,
+          strokeColor: "#E4E4ED",
+          // strokeColor: "#0960BD",
+          lineJoin: "round",
+          strokeStyle: "dashed",
+          zIndex: 10
+        });
+      }
     },
     convertGraspRoad(paths) {
       let graspRoad = new AMap.GraspRoad();
@@ -279,16 +280,71 @@ export default {
       }, 100);
       return markerContent;
     },
-    drawHistoryLineMaker(historyInfo) {
-      historyInfo.forEach(item => {
-        new AMap.Marker({
-          map: this.map,
-          position: [item.lng, item.lat],
-          content: this.getLineMarkerContent(item),
-          anchor: "middle-center",
-          offset: new AMap.Pixel(0, 0)
+    drawUiMarkers(historyInfo) {
+      let that = this
+      console.log(historyInfo)
+      AMapUI.load(['ui/misc/PointSimplifier', 'lib/$'], function(PointSimplifier, $) {
+
+        if (!PointSimplifier.supportCanvas) {
+            alert('当前环境不支持 Canvas！');
+            return;
+        }
+
+        var pointSimplifierIns = new PointSimplifier({
+            map: that.map, //所属的地图实例
+            zIndex: 110,
+            getPosition: function(item) {
+                console.log(item)
+                if (!item) {
+                    return null;
+                }
+                //返回经纬度
+                return [item.lng, item.lat];
+            },
+            getHoverTitle: function(dataItem, idx) {
+              console.log(dataItem)
+              return dataItem.signal_time
+            },
+            renderOptions: {
+              //点的样式
+              pointStyle: {
+                width: 7,
+                height: 7,
+                fillStyle: '#ffffff',
+                lineWidth: 2,
+                strokeStyle: '#0960BD'
+              },
+              //鼠标hover时的title信息
+              hoverTitleStyle: {
+                position: 'top'
+              }
+            }
+        });
+
+        window.pointSimplifierIns = pointSimplifierIns;
+
+        pointSimplifierIns.setData(historyInfo);
+
+        pointSimplifierIns.on('pointClick pointMouseover pointMouseout', function(e, record) {
+            //console.log(e.type, record);
         });
       });
+    },
+    drawHistoryLineMaker(historyInfo) {
+      let unitNum = Math.floor(historyInfo.lenght / 100) > 1 ? Math.floor(historyInfo.lenght / 100) : 1
+      console.log('drawHistoryLineMaker', unitNum, historyInfo.lenght)
+      for (let index = 0; index < historyInfo.length; index++) {
+        const item = historyInfo[index];
+        if (index % unitNum === 0) {
+          new AMap.Marker({
+            map: this.map,
+            position: [item.lng, item.lat],
+            content: this.getLineMarkerContent(item),
+            anchor: "middle-center",
+            offset: new AMap.Pixel(0, 0)
+          });
+        }
+      }
     },
     drawStartEndMaker(startItem, type) {
       new AMap.Marker({
@@ -313,7 +369,8 @@ export default {
         let middleList = historyInfo.slice(1, -1);
         let endEl = historyInfo[historyInfo.length - 1];
         this.drawStartEndMaker(startEl, "start");
-        this.drawHistoryLineMaker(middleList);
+        // this.drawHistoryLineMaker(middleList);
+        this.drawUiMarkers(middleList)
         this.drawStartEndMaker(endEl, "end");
       }
     },
@@ -355,7 +412,7 @@ export default {
           // 画轨迹
           this.drawGraspRoadPath(currentHistory);
           // 画点
-          if (index > prevIndex) {
+          if (index > prevIndex && prevHistory.length > 0 && currentHistory.length > 0) {
             let [prevLastPoint] = prevHistory.slice(-1)
             let [currentStartPoint] = currentHistory
             this.drawCableLine([prevLastPoint, currentStartPoint])

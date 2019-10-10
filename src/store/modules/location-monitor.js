@@ -123,26 +123,26 @@ const convertHistoryGps = async list => {
   list = list.sort((a, b) => {
     return a.signal_time - b.signal_time
   }).filter(item => item && item.lat > 0 && item.lng > 0)
-  console.log('convertHistoryGps', JSON.parse(JSON.stringify(list)))
+  console.log('convertHistoryGps', JSON.parse(JSON.stringify(list)), list.length)
   for (let index = 0; index < list.length; index++) {
     const item = list[index]
     let distance = AMap.GeometryUtil.distance(preItem.lngLat, item.lngLat);
     let costTime = dayjs(item.signal_time).diff(dayjs(preItem.signal_time), 'second')
-    // console.log(distance, costTime, distance / costTime)
+    console.log(distance, costTime)
     preItem = item
     // console.log(distance, costTime)
     // 两个点直接距离大于1公里则表示不是一条轨迹
     if (distance > 5000) {
-      historyList.push(list.slice(preIndex, index - 1))
+      historyList.push(list.slice(preIndex, index))
       preIndex = index
       // 两个相邻点时间超过4小时且距离大于1千米
     } else if (costTime > 60 * 60 * 1000 * 4 && distance > 1000) {
-      historyList.push(list.slice(preIndex, index - 1))
+      historyList.push(list.slice(preIndex, index))
       preIndex = index
     }
   }
   historyList.push(list.slice(preIndex, list.length))
-  console.log('historyList', historyList)
+  console.log('historyList', JSON.parse(JSON.stringify(historyList)))
   return Promise.resolve(historyList)
 }
 

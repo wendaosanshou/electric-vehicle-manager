@@ -154,6 +154,7 @@ export default {
       this.clearHistoryInfo()
       this.resetMap()
       const [startDate, endDate] = this.pickerTime || [];
+      // this.drawUiMarkers()
       try {
         if (startDate && endDate && this.searchValue) {
           let utcOffset = dayjs().utcOffset()
@@ -175,15 +176,27 @@ export default {
             this.isShowHistoryTrack = true;
             this.loading.close();
             // 先显示数据再转数据
-            this.historyLocation = this.allHistory
-            this.historyAlarmWithAddress = this.historyAlarm
+            this.historyLocation = this.allHistory.map(item => {
+              return {
+                ...item,
+                formattedAddress: '地址批量获取中...'
+              }
+            })
+            this.historyAlarmWithAddress = this.historyAlarm.map(item => {
+              return {
+                ...item,
+                formattedAddress: '地址批量获取中...'
+              }
+            })
             // 加载定位和报警数据
-            await this.addFormattedAddress(this.allHistory, (result) => {
-              this.historyLocation = result
-            })
-            await this.addFormattedAddress(this.historyAlarm, (result) => {
-              this.historyAlarmWithAddress = result
-            })
+            this.historyLocation = await this.addFormattedAddress(this.allHistory)
+            this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
+            // await this.addFormattedAddress(this.allHistory, (result) => {
+            //   this.historyLocation = result
+            // })
+            // await this.addFormattedAddress(this.historyAlarm, (result) => {
+            //   this.historyAlarmWithAddress = result
+            // })
           }
         } else {
           this.$message({

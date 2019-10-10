@@ -269,12 +269,28 @@ export default {
             userId,
             alarmId: this.trickAlarmId
           })
-          await this.addFormattedAddress(this.trickAlarms, (result) => {
-            this.addAddressTrickAlarms = result
+           // 先显示数据再转数据
+          this.addAddressTrickAlarms = this.trickAlarms.map(item => {
+            return {
+              ...item,
+              formattedAddress: '地址批量获取中...'
+            }
           })
-          await this.addFormattedAddress(this.trickList, (result) => {
-            this.addAddressTrickList = result
+          this.addAddressTrickList = this.addAddressTrickList.map(item => {
+            return {
+              ...item,
+              formattedAddress: '地址批量获取中...'
+            }
           })
+
+          this.addAddressTrickAlarms = await this.addFormattedAddress(this.trickAlarms)
+          this.addAddressTrickList = await this.addFormattedAddress(this.trickList)
+          // await this.addFormattedAddress(this.trickAlarms, (result) => {
+          //   this.addAddressTrickAlarms = result
+          // })
+          // await this.addFormattedAddress(this.trickList, (result) => {
+          //   this.addAddressTrickList = result
+          // })
           this.drawTrickListLine()
           this.isShowDeviceStatus = true
         } else {
