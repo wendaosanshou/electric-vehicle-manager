@@ -81,6 +81,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from '@/mixins/history-mixin'
 import { Promise } from 'q';
+import throttle from 'lodash/throttle'
 
 export default {
   mixins: [MapMixin, HistoryMixin],
@@ -189,14 +190,14 @@ export default {
               }
             })
             // 加载定位和报警数据
-            this.historyLocation = await this.addFormattedAddress(this.allHistory)
+            // this.historyLocation = await this.addFormattedAddress(this.allHistory)
             this.historyAlarmWithAddress = await this.addFormattedAddress(this.historyAlarm)
-            // await this.addFormattedAddress(this.allHistory, (result) => {
-            //   this.historyLocation = result
-            // })
-            // await this.addFormattedAddress(this.historyAlarm, (result) => {
-            //   this.historyAlarmWithAddress = result
-            // })
+            await this.addFormattedAddress(this.allHistory, throttle((result) => {
+              this.historyLocation = result
+            }, 1000))
+            await this.addFormattedAddress(this.historyAlarm, throttle((result) => {
+              this.historyAlarmWithAddress = result
+            }, 1000))
           }
         } else {
           this.$message({

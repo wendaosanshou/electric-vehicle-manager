@@ -91,6 +91,7 @@ import MapMixin from "@/mixins/map-mixin";
 import HistoryMixin from "@/mixins/history-mixin";
 import { setTimeout, setInterval, clearInterval } from 'timers';
 import dayjs from 'dayjs';
+import throttle from 'lodash/throttle'
 
 export default {
   mixins: [MapMixin, HistoryMixin],
@@ -285,12 +286,12 @@ export default {
 
           this.addAddressTrickAlarms = await this.addFormattedAddress(this.trickAlarms)
           this.addAddressTrickList = await this.addFormattedAddress(this.trickList)
-          // await this.addFormattedAddress(this.trickAlarms, (result) => {
-          //   this.addAddressTrickAlarms = result
-          // })
-          // await this.addFormattedAddress(this.trickList, (result) => {
-          //   this.addAddressTrickList = result
-          // })
+          await this.addFormattedAddress(this.trickAlarms, throttle((result) => {
+            this.addAddressTrickAlarms = result
+          }, 1000))
+          await this.addFormattedAddress(this.trickList, throttle((result) => {
+            this.addAddressTrickList = result
+          }, 1000))
           this.drawTrickListLine()
           this.isShowDeviceStatus = true
         } else {

@@ -303,7 +303,7 @@ export default {
             },
             getHoverTitle: function(dataItem, idx) {
               console.log(dataItem)
-              return dataItem.signal_time
+              return that.getUtcOffsetTime(dataItem.signal_time)
             },
             renderOptions: {
               //点的样式
