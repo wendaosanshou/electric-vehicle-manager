@@ -35,7 +35,9 @@ export default {
       loading: {},
       graspRoadPath: [],
       lastPoint: [],
-      allHistory: []
+      allHistory: [],
+      isAfterSetUiMarker: false,
+      pointSimplifierIns: {}
     };
   },
   computed: {
@@ -280,6 +282,12 @@ export default {
       }, 100);
       return markerContent;
     },
+    cleartUiMarkers() {
+      console.log(this.pointSimplifierIns)
+      if (this.pointSimplifierIns && typeof this.pointSimplifierIns.setData === 'function') {
+        this.pointSimplifierIns.setData([]);
+      }
+    },
     drawUiMarkers(historyInfo) {
       let that = this
       console.log(historyInfo)
@@ -294,7 +302,6 @@ export default {
             map: that.map, //所属的地图实例
             zIndex: 110,
             getPosition: function(item) {
-                console.log(item)
                 if (!item) {
                     return null;
                 }
@@ -321,10 +328,10 @@ export default {
             }
         });
 
-        window.pointSimplifierIns = pointSimplifierIns;
+        that.pointSimplifierIns = pointSimplifierIns;
 
         pointSimplifierIns.setData(historyInfo);
-
+        that.isAfterSetUiMarker = true
         pointSimplifierIns.on('pointClick pointMouseover pointMouseout', function(e, record) {
             //console.log(e.type, record);
         });

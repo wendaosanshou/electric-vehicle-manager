@@ -149,6 +149,7 @@ export default {
     },
     resetMap() {
       this.isShowHistoryTrack = false
+      this.cleartUiMarkers()
       this.map.clearMap();
     },
     async onSearchHistory() {

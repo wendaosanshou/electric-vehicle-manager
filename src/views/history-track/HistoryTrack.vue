@@ -153,6 +153,7 @@ export default {
     },
     async onHistorySearch() {
       this.clearHistoryInfo()
+      this.cleartUiMarkers()
       this.resetMap()
       const [startDate, endDate] = this.pickerTime || [];
       // this.drawUiMarkers()
@@ -226,6 +227,7 @@ export default {
   },
   beforeDestroy() {
     this.clearHistoryInfo()
+    this.cleartUiMarkers()
   },
   mounted() {
     this.initPickerTime()
