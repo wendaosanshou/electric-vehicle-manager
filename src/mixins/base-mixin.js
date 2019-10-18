@@ -111,6 +111,14 @@ export default {
         return time
       }
     },
+    getHistoryUtcOffsetTime(time) {
+      if (time) {
+        let utcOffset = dayjs(time).utcOffset()
+        return dayjs(time).add(utcOffset, 'minute').format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        return time
+      }
+    },
     initPickerTime() {
       const end = dayjs().toDate();
       const start = dayjs().set('h', 0).set('m', 0).set('s', 0).toDate();
