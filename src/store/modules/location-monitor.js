@@ -286,7 +286,31 @@ const locationMonitor = {
     },
     updateWebDeviceInfo(state, webDeviceInfo) {
       console.log("webDeviceInfo", webDeviceInfo);
-      state.webDeviceInfo = webDeviceInfo;
+      let newList = [...webDeviceInfo]
+      let len = newList.length
+      let mockWebDeviceInfo = []
+      // let randomList = [0.1, 0.2, 0.5, 0.6]
+      for (let i = 0; i < 4625; i++) {
+        let randomIndex = Math.floor(Math.random() * len)
+        let mockOneInfo = newList[randomIndex]
+        let webDeviceInfo = {}
+        if (i < 2000) {
+          webDeviceInfo = {
+            ...mockOneInfo,
+            lat: Math.random() + mockOneInfo.lat,
+            lng: Math.random() + mockOneInfo.lng,
+          }
+        } else {
+          webDeviceInfo = {
+            ...mockOneInfo,
+            lat: Math.random() * 0.4 + mockOneInfo.lat,
+            lng: Math.random() * 0.3 + mockOneInfo.lng,
+          }
+        }
+        mockWebDeviceInfo.push(webDeviceInfo)
+      }
+      state.webDeviceInfo = newList.concat(mockWebDeviceInfo)
+      // state.webDeviceInfo = webDeviceInfo
     },
     updateAllDeviceInfo(state, allDeviceInfo) {
       state.allDeviceInfo = allDeviceInfo;

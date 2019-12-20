@@ -148,7 +148,25 @@ export default {
       }, 100);
       return markerContent;
     },
+    addMassMarks(datas) {
+      var massMarks = new AMap.MassMarks(datas, {
+        zIndex: 100,
+        style: {
+          url: 'https://s2.ax1x.com/2019/12/20/QXy9B9.png',
+          anchor: new AMap.Pixel(-40, -40),
+          size: new AMap.Size(80, 80)
+        }
+      });
+
+      massMarks.on('click', (e) => {
+        console.log('click', e.data)
+        this.addLocationMarker(e.data)
+      });
+
+      massMarks.setMap(this.map);
+    },
     addAlarmMarkers(alarmAnalyse) {
+      console.log('addAlarmMarkers', alarmAnalyse)
       this.map.clearMap();
       this.alarmMarkerClusterer = []
       alarmAnalyse.forEach(item => {
@@ -161,8 +179,9 @@ export default {
         })
         this.alarmMarkerClusterer.push(marker)
       });
+      // this.addMassMarks(alarmAnalyse)
       $('.alarm-mark-content').removeClass('is-hide')
-      // this.addAlarmMarkerClusterer()
+      this.addAlarmMarkerClusterer()
       this.map.setFitView();
     },
     renderClusterMarker(context, markers, marker) {
@@ -191,8 +210,6 @@ export default {
     },
     addLocationMarker(info) {
       const position = [info.lng, info.lat]
-      this.map.clearMap()
-      // that.addCicleMarkers();
       this.addInfoWindow(position, this.getLocationMarkerContent())
       setTimeout(() => {
         this.initLocaionEvent(position)
@@ -263,7 +280,7 @@ export default {
           that.toogleLocationLabel($this.attr('class'), position, that)
         })
         .on('click', '.location-marker-icon', () => {
-          that.addCicleMarkers()
+          this.infoWindow.close()
         })
     },
     getCicleMarkerContent(positionInfo) {
@@ -280,9 +297,6 @@ export default {
           e.stopPropagation()
           if (path === '/location-monitor') {
             this.updateCurrentLocationInfo(positionInfo)
-            // setTimeout(() => {
-            //   this.addLocationMarker(positionInfo)
-            // }, 100)
             this.addLocationMarker(positionInfo)
           } else if (path === '/history-track') {
             this.updateCurrentLocationInfo(positionInfo)
@@ -295,17 +309,16 @@ export default {
       return markerContent
     },
     addCicleMarkers() {
-      console.log('addCicleMarkers')
+      // console.log('addCicleMarkers', this.allLocationInfo)
       this.map.clearMap()
-      this.markerClusterer = []
-      this.allLocationInfo.forEach(item => {
-        const { lng, lat } = item
-        const position = [lng, lat]
-        this.addMarker(position, this.getCicleMarkerContent(item))
-      })
-      this.addMarkerClusterer()
-    },
-    addCicleMarkersNoClear() {
+      // let massCiclrMarkers = this.allLocationInfo.map(item => {
+      //  return {
+      //   ...item,
+      //   lnglat: [item.lng, item.lat]
+      //  }
+      // })
+      // this.addMassMarks(massCiclrMarkers)
+
       this.markerClusterer = []
       this.allLocationInfo.forEach(item => {
         const { lng, lat } = item
@@ -325,12 +338,12 @@ export default {
       this.markerClusterer.push(marker)
     },
     addInfoWindow(position, content) {
-      let infoWindow = new AMap.InfoWindow({
+      this.infoWindow = new AMap.InfoWindow({
         content: content, //使用默认信息窗体框样式，显示信息内容
         anchor: 'bottom-center',
         offset: new AMap.Pixel(6, 22)
       })
-      infoWindow.open(this.map, position)
+      this.infoWindow.open(this.map, position)
     },
     addControl(map) {
       AMap.plugin(["AMap.ToolBar"],function(){
