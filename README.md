@@ -15,3 +15,5 @@ npm run serve
 npm run build
 ```
 
+## 访问地址
+http://eriding.renownchn.com/web
