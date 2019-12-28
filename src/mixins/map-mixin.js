@@ -182,7 +182,7 @@ export default {
       // this.addMassMarks(alarmAnalyse)
       $('.alarm-mark-content').removeClass('is-hide')
       this.addAlarmMarkerClusterer()
-      this.map.setFitView();
+      // this.map.setFitView();
     },
     renderClusterMarker(context, markers, marker) {
       let markerContent = document.createElement('div')

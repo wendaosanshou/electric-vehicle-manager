@@ -140,11 +140,11 @@ export default {
     drawAMap() {
       this.initAMap('map-container', [])
       this.addCicleMarkers()
-      if (this.isInit) {
-        this.setCityBounds()
-      } else {
-        this.map.setFitView();
-      }
+      // if (this.isInit) {
+      //   this.setCityBounds()
+      // } else {
+      //   this.map.setFitView();
+      // }
     },
     async drawHeatMap() {
       const heatMapData = this.getHeatMapData()

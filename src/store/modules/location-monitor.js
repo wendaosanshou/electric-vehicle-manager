@@ -289,23 +289,18 @@ const locationMonitor = {
       let newList = [...webDeviceInfo]
       let len = newList.length
       let mockWebDeviceInfo = []
-      // let randomList = [0.1, 0.2, 0.5, 0.6]
-      for (let i = 0; i < 4625; i++) {
+      let maxCount = 10234
+      let randomList = [0.1, 0.2, 0.5, 0.6, 0.8]
+      for (let i = 0; i < maxCount; i++) {
         let randomIndex = Math.floor(Math.random() * len)
         let mockOneInfo = newList[randomIndex]
         let webDeviceInfo = {}
-        if (i < 2000) {
-          webDeviceInfo = {
-            ...mockOneInfo,
-            lat: Math.random() + mockOneInfo.lat,
-            lng: Math.random() + mockOneInfo.lng,
-          }
-        } else {
-          webDeviceInfo = {
-            ...mockOneInfo,
-            lat: Math.random() * 0.4 + mockOneInfo.lat,
-            lng: Math.random() * 0.3 + mockOneInfo.lng,
-          }
+        let randomLevelIndex = Math.floor(i / (maxCount / randomList.length)) || 0
+        let randomLevel = randomList[randomLevelIndex]
+        webDeviceInfo = {
+          ...mockOneInfo,
+          lat: Math.random() * randomLevel + mockOneInfo.lat,
+          lng: Math.random() * randomLevel + mockOneInfo.lng,
         }
         mockWebDeviceInfo.push(webDeviceInfo)
       }
